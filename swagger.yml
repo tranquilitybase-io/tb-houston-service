@@ -61,7 +61,7 @@ paths:
                 description: is admin?
 
 
-  /applications:
+  /applications/:
     get:
       operationId: application.read_all
       tags:
@@ -97,7 +97,7 @@ paths:
                   type: string
                   description: notes
 
-  /application:
+  /application/:
     post:
       operationId: application.create
       tags:
@@ -243,7 +243,7 @@ paths:
                 type: integer
 
 
-  /keyValues/team:
+  /keyValues/team/:
     get:
       operationId: team.read_all
       tags:
@@ -353,7 +353,7 @@ paths:
           description: Successfully deleted a team
           
 
-  /keyValues/environment:
+  /keyValues/environment/:
     get:
       operationId: environment.read_all
       tags:
@@ -463,7 +463,7 @@ paths:
           description: Successfully deleted an environment 
           
 
-  /keyValues/ci:
+  /keyValues/ci/:
     get:
       operationId: ci.read_all
       tags:
@@ -573,7 +573,7 @@ paths:
           description: Successfully deleted an CI
           
 
-  /keyValues/cd:
+  /keyValues/cd/:
     get:
       operationId: cd.read_all
       tags:
@@ -683,7 +683,7 @@ paths:
           description: Successfully deleted an CD
           
 
-  /keyValues/sourceControl:
+  /keyValues/sourceControl/:
     get:
       operationId: sourcecontrol.read_all
       tags:
@@ -958,6 +958,60 @@ paths:
                   type: string
                   description: lastUpdated
 
+  /solution/:
+    post:
+      operationId: solution.create
+      tags:
+        - solution
+      summary: Create a solution and add it to the solutions list
+      description: Create a new solution in the solutions list
+      parameters:
+        - name: solution
+          in: body
+          description: solution to create
+          required: True
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                description: name
+              description:
+                type: string
+                description: description
+              businessUnit:
+                type: string
+                description: businessUnit
+              costCentre:
+                type: string
+                description: costCentre
+              ci:
+                type: string
+                description: ci
+              cd:
+                type: string
+                description: cd
+              sourceControl:
+                type: string
+                description: sourceControl
+              environments:
+                type: array
+                description: environment
+              active:
+                type: boolean
+                description: active
+              favourite:
+                type: boolean
+                description: favourite
+              teams:
+                type: integer
+                description: teams
+              lastUpdated:
+                type: string
+                description: lastUpdated
+      responses:
+        201:
+          description: Successfully created a solution
 
   /solution/{id}:
     get:
@@ -1019,65 +1073,22 @@ paths:
                   type: string
                   description: lastUpdated
 
-  /solution/:
-    post:
-      operationId: solution.create
+    delete:
+      operationId: solution.delete
       tags:
         - solution
-      summary: Create a solution and add it to the solutions list
-      description: Create a new solution in the solutions list
+      summary: Delete a solution from the list
+      description: Delete a solution
       parameters:
-        - name: solution
-          in: body
-          description: solution to create
+        - name: id
+          in: path
+          type: integer
           required: True
-          schema:
-            type: object
-            properties:
-              id: 
-                type: integer
-                description: id
-              name:
-                type: string
-                description: name
-              description:
-                type: string
-                description: description
-              businessUnit:
-                type: string
-                description: businessUnit
-              costCentre:
-                type: string
-                description: costCentre
-              ci:
-                type: string
-                description: ci
-              cd:
-                type: string
-                description: cd
-              sourceControl:
-                type: string
-                description: sourceControl
-              environments:
-                type: array
-                description: environment
-              active:
-                type: boolean
-                description: active
-              favourite:
-                type: boolean
-                description: favourite
-              teams:
-                type: integer
-                description: teams
-              lastUpdated:
-                type: string
-                description: lastUpdated
       responses:
-        201:
-          description: Successfully created a solution
+        200:
+          description: Successfully deleted a solution
 
-
+          
   /activators/:
     get:
       operationId: activator.read_all
