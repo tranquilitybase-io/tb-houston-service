@@ -105,7 +105,7 @@ def read_all():
     data = schema.dump(solutions_arr)
     app.logger.debug("solutions data:")
     app.logger.debug(data)
-    return jsonify(data)
+    return data
 
 
 def read_one(id):

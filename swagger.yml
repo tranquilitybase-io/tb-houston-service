@@ -61,6 +61,18 @@ paths:
                 description: is admin?
 
 
+  /health:
+    get:
+      operationId: health.check
+      tags: 
+        - health
+      summary: health check
+      description: health check
+      responses:
+        200:
+          description: Successful
+
+
   /applications/:
     get:
       operationId: application.read_all
