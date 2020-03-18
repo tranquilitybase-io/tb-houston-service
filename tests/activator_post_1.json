@@ -1,0 +1,53 @@
+ {
+    "activatorId": 2,
+    "name": "Multi region kubernetes",
+    "type": "Mirco-services",
+    "status": "Available",
+    "sensitivity": "Restricted",
+    "category": "Tier 1",
+    "envs": ["POC", "AWS", "Other", "Fancy" ],
+    "platforms": [
+      "GCP"
+    ],
+    "lastUpdated": "2020-01-09T15:59:10.916Z",
+    "userCapacity": 1300,
+    "serverCapacity": 2000,
+    "regions": [
+      "UK",
+      "DB"
+    ],
+    "hosting": [
+      "Appengine"
+    ],
+    "apiManagement": [
+      "ApiGee"
+    ],
+    "ci": [
+      "Jenkins",
+      "Travis"
+    ],
+    "cd": [
+      "Codeship",
+      "Option"
+    ],
+    "sourceControl": [
+      "JIRA",
+      "Option"
+    ],
+    "businessUnit": "M&A Business Unit",
+    "technologyOwner": "Nathanael Stoltenberg",
+    "technologyOwnerEmail": "Nathanael.Stoltenberg@yahoo.com",
+    "billing": "Monthly: Eagle tier 1",
+    "activator": "Multi Region Kubernetes",
+    "resources": [
+      {
+        "name": "GKE Cluster",
+        "ipAddress": "40.123.45.236"
+      },
+      {
+        "name": "Cloud SQL",
+        "ipAddress": "40.123.45.236"
+      }
+    ],
+    "description": "Some very long description that I did not want to copy. Some very long description that I did not want to copy. Some very long description that I did not want to copy"
+  }
