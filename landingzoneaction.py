@@ -9,7 +9,7 @@ from datetime import datetime
 # 3rd party modules
 from flask import make_response, abort
 from config import db, app
-from models import LandingZoneAction, LandingZoneSchema
+from models import LandingZoneAction, LandingZoneActionSchema
 from pprint import pformat
 
 
@@ -25,7 +25,7 @@ def read_all():
     landingZoneActions = LandingZoneAction.query.all()
 
     # Serialize the data for the response
-    landingZoneAction_schema = LandingZoneSchema(many=True)
+    landingZoneAction_schema = LandingZoneActionSchema(many=True)
     data = landingZoneAction_schema.dump(landingZoneActions)
     app.logger.debug("landingZoneAction data:")
     app.logger.debug(pformat(data))
@@ -65,6 +65,10 @@ def create(landingZoneAction):
     :return:             201 on success, 406 on landingZoneAction exists
     """
 
+    # we don't need the id, the is generated automatically on the database
+    if ('id' in landingZoneAction):
+      del landingZoneAction["id"]
+
     schema = LandingZoneActionSchema()
     new_landingZoneAction = schema.load(landingZoneAction, session=db.session)
     db.session.add(new_landingZoneAction)
@@ -90,6 +94,9 @@ def update(id, landingZoneAction):
 
     app.logger.debug("landingZoneAction: ")
     app.logger.debug(pformat(landingZoneAction))
+
+    if landingZoneAction["id"] != id:
+      abort(400, f"Key mismatch in path and body")
 
     # Does the landingZoneAction exist in landingZoneActions?
     existing_landingZoneAction = LandingZoneAction.query.filter(LandingZoneAction.id == id).one_or_none()

@@ -394,6 +394,7 @@ class LandingZoneAction(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String)
     categoryName = db.Column(db.String)
+    categoryClass= db.Column(db.String)
     completionRate = db.Column(db.Integer)
     locked = db.Column(db.Boolean)
 

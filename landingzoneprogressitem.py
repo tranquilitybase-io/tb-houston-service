@@ -1,6 +1,6 @@
 """
-This is the landingZoneProgressitem module and supports all the ReST actions for the
-landingZoneProgressitem collection
+This is the landingZoneProgressItem module and supports all the ReST actions for the
+landingZoneProgressItem collection
 """
 
 # System modules
@@ -25,40 +25,40 @@ def apply_state_transition(lz_progress_items):
 
 def read_all():
     """
-    This function responds to a request for /api/landingZoneProgressitems
-    with the complete lists of landingZoneProgressitems
+    This function responds to a request for /api/landingZoneProgressItems
+    with the complete lists of landingZoneProgressItems
 
-    :return:        json string of list of landingZoneProgressitems
+    :return:        json string of list of landingZoneProgressItems
     """
 
     # Create the list of people from our data
-    landingZoneProgressitems = LandingZoneProgressItem.query.all()
-    modifiedLandingZoneProgressItems = apply_state_transition(landingZoneProgressitems)
+    landingZoneProgressItems = LandingZoneProgressItem.query.all()
+    modifiedLandingZoneProgressItems = apply_state_transition(landingZoneProgressItems)
 
     # Serialize the data for the response
-    landingZoneProgressitem_schema = LandingZoneProgressItemSchema(many=True)
-    data = landingZoneProgressitem_schema.dump(modifiedLandingZoneProgressItems)
-    app.logger.debug("landingZoneProgressitem data:")
+    landingZoneProgressItem_schema = LandingZoneProgressItemSchema(many=True)
+    data = landingZoneProgressItem_schema.dump(modifiedLandingZoneProgressItems)
+    app.logger.debug("landingZoneProgressItem data:")
     app.logger.debug(pformat(data))
     return data
 
 
 def read_one(id):
     """
-    This function responds to a request for /api/landingZoneProgressitem/{id}
-    with one matching landingZoneProgressitem from landingZoneProgressitems
+    This function responds to a request for /api/landingZoneProgressItem/{id}
+    with one matching landingZoneProgressItem from landingZoneProgressItems
 
-    :param landingZoneProgressitem:   id of the landingZoneProgressitem to find
-    :return:              landingZoneProgressitem matching the id
+    :param landingZoneProgressItem:   id of the landingZoneProgressItem to find
+    :return:              landingZoneProgressItem matching the id
     """
 
-    landingZoneProgressitem = (LandingZoneProgressItem.query.filter(LandingZoneProgressItem.id == id).one_or_none())
+    landingZoneProgressItem = (LandingZoneProgressItem.query.filter(LandingZoneProgressItem.id == id).one_or_none())
 
-    if landingZoneProgressitem is not None:
+    if landingZoneProgressItem is not None:
         # Serialize the data for the response
-        landingZoneProgressitem_schema = LandingZoneProgressItemSchema()
-        data = landingZoneProgressitem_schema.dump(landingZoneProgressitem)
-        app.logger.debug("landingZoneProgressitem data:")
+        landingZoneProgressItem_schema = LandingZoneProgressItemSchema()
+        data = landingZoneProgressItem_schema.dump(landingZoneProgressItem)
+        app.logger.debug("landingZoneProgressItem data:")
         app.logger.debug(pformat(data))
         return data
     else:
@@ -67,82 +67,92 @@ def read_one(id):
         )
 
 
-def create(landingZoneProgressitem):
+def create(landingZoneProgressItem):
     """
-    This function creates a new landingZoneProgressitem in the landingZoneProgressitem structure
-    based on the passed in landingZoneProgressitem data
+    This function creates a new landingZoneProgressItem in the landingZoneProgressItem structure
+    based on the passed in landingZoneProgressItem data
 
-    :param landingZoneProgressitem:  landingZoneProgressitem to create in landingZoneProgressitem list
-    :return:             201 on success, 406 on landingZoneProgressitem exists
+    :param landingZoneProgressItem:  landingZoneProgressItem to create in landingZoneProgressItem list
+    :return:             201 on success, 406 on landingZoneProgressItem exists
     """
+  
+    # we don't need the id, the is generated automatically on the database
+    if ('id' in landingZoneProgressItem):
+      del landingZoneProgressItem["id"]
 
     schema = LandingZoneProgressItemSchema()
-    new_landingZoneProgressitem = schema.load(landingZoneProgressitem, session=db.session)
-    db.session.add(new_landingZoneProgressitem)
+    new_landingZoneProgressItem = schema.load(landingZoneProgressItem, session=db.session)
+    db.session.add(new_landingZoneProgressItem)
     db.session.commit()
 
-    # Serialize and return the newly created landingZoneProgressitem
+    # Serialize and return the newly created landingZoneProgressItem
     # in the response
-    data = schema.dump(new_landingZoneProgressitem)
-    app.logger.debug("landingZoneProgressitem data:")
+    data = schema.dump(new_landingZoneProgressItem)
+    app.logger.debug("landingZoneProgressItem data:")
     app.logger.debug(pformat(data))
 
     return data, 201
 
 
-def update(id, landingZoneProgressitem):
+def update(id, landingZoneProgressItem):
     """
-    This function updates an existing landingZoneProgressitem in the landingZoneProgressitem list
+    This function updates an existing landingZoneProgressItem in the landingZoneProgressItem list
 
-    :param id: id of the landingZoneProgressitem to update in the landingZoneProgressitem list
-    :param landingZoneProgressitem:   landingZoneProgressitem to update
-    :return: updated landingZoneProgressitem
+    :param id: id of the landingZoneProgressItem to update in the landingZoneProgressItem list
+    :param landingZoneProgressItem:   landingZoneProgressItem to update
+    :return: updated landingZoneProgressItem
     """
 
-    app.logger.debug("landingZoneProgressitem: ")
-    app.logger.debug(pformat(landingZoneProgressitem))
+    app.logger.debug("landingZoneProgressItem: ")
+    app.logger.debug(pformat(landingZoneProgressItem))
 
-    # Does the landingZoneProgressitem exist in landingZoneProgressitems?
-    existing_landingZoneProgressitem = LandingZoneProgressItem.query.filter(LandingZoneProgressItem.id == id).one_or_none()
+    app.logger.debug(id)
+    app.logger.debug(landingZoneProgressItem["id"])
 
-    # Does landingZoneProgressitem exist?
-    if existing_landingZoneProgressitem is not None:
+    if landingZoneProgressItem["id"] != id:
+      abort(400, f"Key mismatch in path and body")
+
+    # Does the landingZoneProgressItem exist in landingZoneProgressItems?
+    existing_landingZoneProgressItem = LandingZoneProgressItem.query.filter(LandingZoneProgressItem.id == id).one_or_none()
+
+    # Does landingZoneProgressItem exist?
+    if existing_landingZoneProgressItem is not None:
         schema = LandingZoneProgressItemSchema()
-        update_landingZoneProgressitem = schema.load(landingZoneProgressitem, session=db.session)
-        update_landingZoneProgressitem.id = id
+        update_landingZoneProgressItem = schema.load(landingZoneProgressItem, session=db.session)
+        update_landingZoneProgressItem.id = id
 
-        db.session.merge(update_landingZoneProgressitem)
+        db.session.merge(update_landingZoneProgressItem)
         db.session.commit()
 
-        # return the updated landingZoneProgressitem in the response
-        data = schema.dump(update_landingZoneProgressitem)
-        app.logger.debug("landingZoneProgressitem data:")
+        # return the updated landingZoneProgressItem in the response
+        data = schema.dump(update_landingZoneProgressItem)
+        app.logger.debug("landingZoneProgressItem data:")
         app.logger.debug(pformat(data))
         return data, 200
 
-    # otherwise, nope, landingZoneProgressitem doesn't exist, so that's an error
+    # otherwise, nope, landingZoneProgressItem doesn't exist, so that's an error
     else:
         abort(404, f"LandingZoneProgressItem not found")
 
 
 def delete(id):
     """
-    This function deletes an landingZoneProgressitem from the landingZoneProgressitem list
+    This function deletes an landingZoneProgressItem from the landingZoneProgressItem list
 
-    :param id: id of the landingZoneProgressitem to delete
+    :param id: id of the landingZoneProgressItem to delete
     :return:             200 on successful delete, 404 if not found
     """
-    # Does the landingZoneProgressitem to delete exist?
-    existing_landingZoneProgressitem = LandingZoneProgressItem.query.filter(LandingZoneProgressItem.id == id).one_or_none()
+    # Does the landingZoneProgressItem to delete exist?
+    existing_landingZoneProgressItem = LandingZoneProgressItem.query.filter(LandingZoneProgressItem.id == id).one_or_none()
 
     # if found?
-    if existing_landingZoneProgressitem is not None:
-        db.session.delete(existing_landingZoneProgressitem)
+    if existing_landingZoneProgressItem is not None:
+        db.session.delete(existing_landingZoneProgressItem)
         db.session.commit()
 
         return make_response(f"LandingZoneProgressItem id {id} successfully deleted", 200)
 
-    # Otherwise, nope, landingZoneProgressitem to delete not found
+    # Otherwise, nope, landingZoneProgressItem to delete not found
     else:
         abort(404, f"LandingZoneProgressItem id {id} not found")
 
