@@ -1436,3 +1436,30 @@ paths:
       responses:
         200:
           description: Successfully deleted an activator 
+
+
+  /landingzoneprogressitems/:
+    get:
+      operationId: landingzoneprogressitem.read_all
+      tags:
+        - landingzoneprogressitem
+      summary: Read the entire list of landingzoneprogressitems
+      description: Read the list of landingzoneprogressitems
+      responses:
+        200:
+          description: Successfully ran landingzoneprogressitem list operation
+          schema:
+            type: array
+            items:
+              properties:
+                id:
+                  type: integer
+                  description: id
+                label:
+                  type: string
+                  description: label
+                completed:
+                  type: boolean
+                  description: completed
+
+

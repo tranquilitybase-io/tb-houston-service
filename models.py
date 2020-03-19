@@ -369,3 +369,42 @@ class SolutionEnhancedSchema(ma.ModelSchema):
         except Exception as e:
             app.logger.warning(e)
         return out_data
+
+
+# LandingZoneProgressItem
+class LandingZoneProgressItem(db.Model):
+    __tablename__ = "landingzoneprogressitem"
+    id = db.Column(db.Integer, primary_key=True)
+    label = db.Column(db.String)
+    completed = db.Column(db.Boolean)
+
+
+class LandingZoneProgressItemSchema(ma.ModelSchema):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    class Meta:
+        model = LandingZoneProgressItem
+        sqla_session = db.session
+
+
+# LandingZoneAction
+class LandingZoneAction(db.Model):
+    __tablename__ = "landingzoneaction"
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String)
+    categoryName = db.Column(db.String)
+    completionRate = db.Column(db.Integer)
+    locked = db.Column(db.Boolean)
+
+
+class LandingZoneActionSchema(ma.ModelSchema):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    class Meta:
+        model = LandingZoneAction
+        sqla_session = db.session
+
+
+
