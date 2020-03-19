@@ -8,5 +8,5 @@ COPY *.py /
 COPY swagger.yml /
 COPY app.sh /
 RUN ["chmod", "+x", "/app.sh"]
-EXPOSE 3000
+EXPOSE 5000
 CMD ["/bin/bash", "/app.sh"]

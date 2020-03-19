@@ -1183,7 +1183,7 @@ paths:
                   type: string
                   description: activator
 
-  /activator:
+  /activator/:
     post:
       operationId: activator.create
       tags:
@@ -1461,5 +1461,4 @@ paths:
                 completed:
                   type: boolean
                   description: completed
-
 
