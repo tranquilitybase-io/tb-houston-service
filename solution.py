@@ -105,7 +105,7 @@ def read_all():
     data = schema.dump(solutions_arr)
     app.logger.debug("solutions data:")
     app.logger.debug(data)
-    return jsonify(data)
+    return data
 
 
 def read_one(id):
@@ -139,18 +139,44 @@ def create(solution):
     :param solution:  solution to create in solutions list
     :return:        201 on success, 406 on solutions exists
     """
-    id = solution.get("id", None)
+
+    app.logger.debug("Before")
+    app.logger.debug(pformat(solution))
+
     lastUpdated = ModelTools.get_utc_timestamp()
 
+    # Defaults
+    if (solution.get('active') == None):
+      solution['active'] = True
+
+    if (solution.get('favourite') == None):
+      solution['favourite'] = True
+
+    if (solution.get('teams') == None):
+      solution['teams'] = 0
+
+    # Remove applications because Solutions don't have 
+    # any applications when they are first created
+    if ('applications' in solution):
+      del solution['applications']
+
+    # we don't need the id, the is generated automatically on the database
+    if ('id' in solution):
+      del solution["id"]
+
+    solution['lastUpdated'] = ModelTools.get_utc_timestamp()
+      
+    app.logger.debug("After")
+    app.logger.debug(pformat(solution))
+
     schema = SolutionSchema()
-    new_solutions = schema.load(solution, session=db.session)
-    db.session.add(new_solutions)
+    new_solution = schema.load(solution, session=db.session)
+    db.session.add(new_solution)
     db.session.commit()
 
     # Serialize and return the newly created solution
     # in the response
-    data = schema.dump(new_solutions)
-
+    data = schema.dump(new_solution)
     return data, 201
 
 

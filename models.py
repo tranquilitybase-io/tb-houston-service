@@ -16,7 +16,10 @@ class ModelTools():
         return datetime.now().strftime(("%Y-%m-%d %H:%M:%S"))
 
     def datetime_as_string(dt):
-        return dt.strftime("%Y-%m-%d %H:%M:%S")
+        if dt is None:
+            return datetime.utcnow().strftime(("%Y-%m-%d %H:%M:%S"))
+        else:
+            return dt.strftime("%Y-%m-%d %H:%M:%S")
 
     def load_json_array(s):
         try:
