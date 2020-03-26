@@ -155,6 +155,25 @@ class ActivatorSchema(ma.ModelSchema):
             app.logger.warning(e)
         return out_data
 
+# Application
+class Application(db.Model):
+    __tablename__ = "application"
+    id = db.Column(db.Integer, primary_key=True)
+    solutionId = db.Column(db.Integer, db.ForeignKey('solution.id'))
+    activatorId = db.Column(db.Integer, db.ForeignKey('activator.id'))
+    name = db.Column(db.String(255))
+    env = db.Column(db.String(64))
+    status = db.Column(db.String(64))
+    description = db.Column(db.String(255))
+
+class ApplicationSchema(ma.ModelSchema):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    class Meta:
+        model = Application
+        sqla_session = db.session
+
 # Solutions
 class Solution(db.Model):
     __tablename__ = "solution"
@@ -197,25 +216,6 @@ class SolutionSchema(ma.ModelSchema):
         except Exception as e:
             app.logger.warning(e)
         return out_data
-
-# Application
-class Application(db.Model):
-    __tablename__ = "application"
-    id = db.Column(db.Integer, primary_key=True)
-    solutionId = db.Column(db.Integer, db.ForeignKey('solution.id'))
-    activatorId = db.Column(db.Integer, db.ForeignKey('activator.id'))
-    name = db.Column(db.String(255))
-    env = db.Column(db.String(64))
-    status = db.Column(db.String(64))
-    description = db.Column(db.String(255))
-
-class ApplicationSchema(ma.ModelSchema):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
-    class Meta:
-        model = Application
-        sqla_session = db.session
 
 # class ApplicationActivatorSchema(ma.ModelSchema):
 #     def __init__(self, **kwargs):
