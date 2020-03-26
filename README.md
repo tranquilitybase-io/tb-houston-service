@@ -1,5 +1,6 @@
 # Build a container image using the Dockerfile
-gcloud builds submit --tag gcr.io/eagle-console-resources/tb-houston-service-image .
+docker build -t gcr.io/tranquility-base-images/tb-houston-service:alpha .
+docker push gcr.io/tranquility-base-images/tb-houston-service:alpha
 
 # list existing containers and remove them
 docker container list -a 
@@ -15,7 +16,7 @@ gcloud auth configure-docker
 
 
 # run the docker image
-docker run -p 3000:3000 gcr.io/eagle-console-resources/tb-houston-service-image
+docker run -p 3000:80 gcr.io/tranquility-base-images/tb-houston-service:alpha
 
 
 # References

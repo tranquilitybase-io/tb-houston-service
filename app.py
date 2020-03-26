@@ -18,4 +18,4 @@ connex_app.app.logger.setLevel(gunicorn_logger.level)
 connex_app.add_api('swagger.yml', strict_validation=False)
 
 if __name__ == "__main__":
-    connex_app.run(port=3000, debug=os.environ['DEBUG'])
+    connex_app.run(port=80, debug=os.environ['DEBUG'])

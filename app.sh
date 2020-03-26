@@ -1,6 +1,6 @@
 LOGLEVEL=debug
 NUMBER_OF_WORKERS=5
-PORT=3000
+PORT=80
 DB_SERVER_IP=localhost
 
 if [ ! -z "${1}" ]; then
