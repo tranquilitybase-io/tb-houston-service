@@ -7,10 +7,18 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: my-secret-pw
+      MYSQL_USER: eagle-user
+      MYSQL_PASSWORD: eagle-user-secret-pw
       MYSQL_DATABASE: eagle_db
+    ports:
+    - '3306:3306'
 
   houston-service:
     image: gcr.io/tranquility-base-images/tb-houston-service:alpha
     restart: always
+    environment:
+        SQLALCHEMY_DATABASE_URI: 'mysql+mysqlconnector://eagle-user:eagle-user-secret-pw@mysql57/eagle_db'
+    depends_on:
+        - postgres
     ports:
       - 8080:80
