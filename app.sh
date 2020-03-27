@@ -1,7 +1,7 @@
 LOGLEVEL=debug
 NUMBER_OF_WORKERS=5
 PORT=80
-DB_SERVER_IP=localhost
+DB_SERVER_IP=mysql57
 
 if [ ! -z "${1}" ]; then
 	PORT=${1}

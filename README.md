@@ -14,6 +14,8 @@ docker image rm xxxxxx
 # Authorize Docker command line interface
 gcloud auth configure-docker
 
+# Run the stack (houston-service + mysql57)
+docker-compose -f stack.yml up
 
 # run the docker image
 docker run -p 3000:80 gcr.io/tranquility-base-images/tb-houston-service:alpha
