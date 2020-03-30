@@ -81,7 +81,7 @@ def create(activator):
 
     # Otherwise, it already exists, that's an error
     else:
-        abort(406, f"Activator already exists")
+        abort(406, f"Activator id {id} already exists")
 
 
 def update(id, activator):
@@ -122,7 +122,7 @@ def update(id, activator):
 
     # otherwise, nope, deployment doesn't exist, so that's an error
     else:
-        abort(404, f"Activator not found")
+        abort(404, f"Activator id {id} not found")
 
 
 def delete(id):
@@ -144,4 +144,30 @@ def delete(id):
 
     # Otherwise, nope, activator to delete not found
     else:
+        abort(404, f"Activator id {id} not found")
+
+
+def setActivatorStatus(activator):
+    " update the activator status"
+
+    print(pformat(activator))
+    app.logger.info(activator)
+    # Does the activator to delete exist?
+    existing_activator = Activator.query.filter(Activator.id == activator['id']).one_or_none()
+
+    # if found?
+    if existing_activator is not None:
+        existing_activator.status = activator['status']
+        # TODO: When we can support 'user'
+        # existing_activator.user = activator['accessRequestedBy']
+
+        db.session.merge(existing_activator)
+        db.session.commit()
+
+        id = activator['id']
+        return make_response(f"Activator {id} successfully updated", 200)
+
+    # Otherwise, nope, activator to update was not found
+    else:
+        id = activator['id']
         abort(404, f"Activator id {id} not found")

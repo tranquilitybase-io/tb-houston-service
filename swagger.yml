@@ -1435,6 +1435,39 @@ paths:
           description: Successfully deleted an activator 
 
 
+  /setactivatorstatus/:
+    post:
+      operationId: activator.setActivatorStatus
+      tags:
+        - activator
+      summary: set activator status
+      description: set activator status
+      parameters:
+        - name: activator
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              id: 
+                type: integer
+              status:
+                type: string
+              accessRequestedBy:
+                type: string
+      responses:
+        200:
+          description: Successfully updated an activator
+          schema:
+            type: object
+            properties:
+              id: 
+                type: integer
+              status: 
+                type: string
+                
+
+
   /landingzoneprogressitems/:
     get:
       operationId: landingzoneprogressitem.read_all
