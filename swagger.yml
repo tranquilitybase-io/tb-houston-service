@@ -33,7 +33,7 @@ paths:
       parameters:
         - name: login_details
           in: body
-          required: True
+          required: true
           schema:
             type: object
             properties:
@@ -120,7 +120,7 @@ paths:
         - name: application
           in: body
           description: The application to create
-          required: True
+          required: true
           schema:
             type: object
             properties:
@@ -159,7 +159,7 @@ paths:
           in: path
           description: id of the application to get from the list
           type: integer
-          required: True
+          required: true
       responses:
         200:
           description: Successfully read an application from the list
@@ -192,7 +192,7 @@ paths:
           in: path
           description: id of the application to update
           type: integer
-          required: True
+          required: true
         - name: application
           in: body
           schema:
@@ -224,7 +224,7 @@ paths:
         - name: id
           in: path
           type: integer
-          required: True
+          required: true
       responses:
         200:
           description: Successfully deleted an application 
@@ -242,7 +242,7 @@ paths:
           in: path
           description: activatorId
           type: integer
-          required: True
+          required: true
       responses:
         200:
           description: Successfully read activatorId
@@ -286,7 +286,7 @@ paths:
         - name: team
           in: body
           description: Team to create
-          required: True
+          required: true
           schema:
             type: object
             properties:
@@ -312,7 +312,7 @@ paths:
           in: path
           description: key of the team to get from the list
           type: string
-          required: True
+          required: true
       responses:
         200:
           description: Successfully read a team from the list
@@ -335,7 +335,7 @@ paths:
           in: path
           description: key of the team to update
           type: string
-          required: True
+          required: true
         - name: team
           in: body
           schema:
@@ -359,7 +359,7 @@ paths:
         - name: key
           in: path
           type: string
-          required: True
+          required: true
       responses:
         200:
           description: Successfully deleted a team
@@ -396,7 +396,7 @@ paths:
         - name: environment
           in: body
           description: Environment to create
-          required: True
+          required: true
           schema:
             type: object
             properties:
@@ -422,7 +422,7 @@ paths:
           in: path
           description: key of the environment to get from the list
           type: string
-          required: True
+          required: true
       responses:
         200:
           description: Successfully read an environment from the list
@@ -445,7 +445,7 @@ paths:
           in: path
           description: key of the environment to update
           type: string
-          required: True
+          required: true
         - name: environment 
           in: body
           schema:
@@ -469,7 +469,7 @@ paths:
         - name: key
           in: path
           type: string
-          required: True
+          required: true
       responses:
         200:
           description: Successfully deleted an environment 
@@ -506,7 +506,7 @@ paths:
         - name: ci
           in: body
           description: CI to create
-          required: True
+          required: true
           schema:
             type: object
             properties:
@@ -532,7 +532,7 @@ paths:
           in: path
           description: key of the ci to get from the list
           type: string
-          required: True
+          required: true
       responses:
         200:
           description: Successfully read an ci from the list
@@ -555,7 +555,7 @@ paths:
           in: path
           description: key of the ci to update
           type: string
-          required: True
+          required: true
         - name: ci
           in: body
           schema:
@@ -579,7 +579,7 @@ paths:
         - name: key
           in: path
           type: string
-          required: True
+          required: true
       responses:
         200:
           description: Successfully deleted an CI
@@ -616,7 +616,7 @@ paths:
         - name: cd
           in: body
           description: CD to create
-          required: True
+          required: true
           schema:
             type: object
             properties:
@@ -642,7 +642,7 @@ paths:
           in: path
           description: key of the cd to get from the list
           type: string
-          required: True
+          required: true
       responses:
         200:
           description: Successfully read an cd from the list
@@ -665,7 +665,7 @@ paths:
           in: path
           description: key of the cd to update
           type: string
-          required: True
+          required: true
         - name: cd
           in: body
           schema:
@@ -689,7 +689,7 @@ paths:
         - name: key
           in: path
           type: string
-          required: True
+          required: true
       responses:
         200:
           description: Successfully deleted an CD
@@ -726,7 +726,7 @@ paths:
         - name: sourceControl
           in: body
           description: sourcecontrol to create
-          required: True
+          required: true
           schema:
             type: object
             properties:
@@ -752,7 +752,7 @@ paths:
           in: path
           description: key of the sourcecontrol to get from the list
           type: string
-          required: True
+          required: true
       responses:
         200:
           description: Successfully read an sourcecontrol from the list
@@ -775,7 +775,7 @@ paths:
           in: path
           description: key of the sourcecontrol to update
           type: string
-          required: True
+          required: true
         - name: sourceControl
           in: body
           schema:
@@ -799,7 +799,7 @@ paths:
         - name: key
           in: path
           type: string
-          required: True
+          required: true
       responses:
         200:
           description: Successfully deleted a sourcecontrol
@@ -836,7 +836,7 @@ paths:
         - name: businessUnit
           in: body
           description: BusinessUnit to create
-          required: True
+          required: true
           schema:
             type: object
             properties:
@@ -863,7 +863,7 @@ paths:
           in: path
           description: key of the businessUnit to get from the list
           type: string
-          required: True
+          required: true
       responses:
         200:
           description: Successfully read an businessUnit from the list
@@ -886,7 +886,7 @@ paths:
           in: path
           description: key of the businessUnit to update
           type: string
-          required: True
+          required: true
         - name: businessUnit
           in: body
           schema:
@@ -910,7 +910,7 @@ paths:
         - name: key
           in: path
           type: string
-          required: True
+          required: true
       responses:
         200:
           description: Successfully deleted an BusinessUnit
@@ -981,7 +981,7 @@ paths:
         - name: solution
           in: body
           description: solution to create
-          required: True
+          required: true
           schema:
             type: object
             properties:
@@ -1037,7 +1037,7 @@ paths:
           in: path
           description: the id of the solution
           type: integer
-          required: True
+          required: true
       responses:
         200:
           description: Successfully read a solution
@@ -1095,7 +1095,7 @@ paths:
         - name: id
           in: path
           type: integer
-          required: True
+          required: true
       responses:
         200:
           description: Successfully deleted a solution
@@ -1194,7 +1194,7 @@ paths:
         - name: activator
           in: body
           description: activator to create
-          required: True
+          required: true
           schema:
             type: object
             properties:
@@ -1258,9 +1258,6 @@ paths:
               billing:
                 type: string
                 description: billing
-              lastUpdated:
-                type: string
-                description: update
               resources:
                 type: array
                 description: resources
@@ -1280,7 +1277,7 @@ paths:
           in: path
           description: key of the activator to get from the list
           type: string
-          required: True
+          required: true
       responses:
         200:
           description: Successfully read an activator from the list
@@ -1346,7 +1343,7 @@ paths:
           in: path
           description: key of the activator to update
           type: integer
-          required: True
+          required: true
         - name: activator
           in: body
           schema:
@@ -1432,10 +1429,43 @@ paths:
         - name: id
           in: path
           type: string
-          required: True
+          required: true
       responses:
         200:
           description: Successfully deleted an activator 
+
+
+  /setactivatorstatus/:
+    post:
+      operationId: activator.setActivatorStatus
+      tags:
+        - activator
+      summary: set activator status
+      description: set activator status
+      parameters:
+        - name: activator
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              id: 
+                type: integer
+              status:
+                type: string
+              accessRequestedBy:
+                type: string
+      responses:
+        200:
+          description: Successfully updated an activator
+          schema:
+            type: object
+            properties:
+              id: 
+                type: integer
+              status: 
+                type: string
+                
 
 
   /landingzoneprogressitems/:
@@ -1473,7 +1503,7 @@ paths:
         - name: landingZoneProgressItem
           in: body
           description: landingzoneprogressitem to create
-          required: True
+          required: true
           schema:
             type: object
             properties:
@@ -1511,7 +1541,7 @@ paths:
           in: path
           description: key of the landingzoneprogressitem to get from the list
           type: integer
-          required: True
+          required: true
       responses:
         200:
           description: Successfully read an landingzoneprogressitem from the list
@@ -1536,7 +1566,7 @@ paths:
           in: path
           description: key of the landingzoneprogressitem to update
           type: integer
-          required: True
+          required: true
         - name: landingZoneProgressItem
           in: body
           schema:
@@ -1574,7 +1604,7 @@ paths:
         - name: id
           in: path
           type: string
-          required: True
+          required: true
       responses:
         200:
           description: Successfully deleted a landingzoneprogressitem
@@ -1621,7 +1651,7 @@ paths:
         - name: landingZoneAction
           in: body
           description: landingzoneaction to create
-          required: True
+          required: true
           schema:
             type: object
             properties:
@@ -1672,7 +1702,7 @@ paths:
           in: path
           description: key of the landingzoneaction to get from the list
           type: integer
-          required: True
+          required: true
       responses:
         200:
           description: Successfully read an landingzoneaction from the list
@@ -1701,7 +1731,7 @@ paths:
           in: path
           description: key of the landingzoneaction to update
           type: integer
-          required: True
+          required: true
         - name: landingZoneAction
           in: body
           schema:
@@ -1758,7 +1788,7 @@ paths:
         - name: id
           in: path
           type: string
-          required: True
+          required: true
       responses:
         200:
           description: Successfully deleted a landingzoneaction

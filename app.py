@@ -2,14 +2,15 @@ import os
 import config
 import logging
 
-print("CONFIGFILE: {}".format(os.environ['CONFIGFILE']))
 print("DEBUG: {}".format(os.environ['DEBUG']))
+print("SQLALCHEMY_DATABASE_URI: {}".format(os.environ['SQLALCHEMY_DATABASE_URI']))
 
 # Get theapplication instance
 connex_app = config.connex_app
 
 # connect logging between gunicorn and Flask
-gunicorn_logger = logging.getLogger("gunicorn.error")
+#gunicorn_logger = logging.getLogger("gunicorn.error")
+gunicorn_logger = logging.getLogger("gunicorn.info")
 connex_app.app.logger.handlers = gunicorn_logger.handlers
 connex_app.app.logger.setLevel(gunicorn_logger.level)
 

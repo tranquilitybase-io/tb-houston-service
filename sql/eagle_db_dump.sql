@@ -1,13 +1,13 @@
--- MySQL dump 10.13  Distrib 8.0.19, for osx10.15 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.19, for Win64 (x86_64)
 --
--- Host: localhost    Database: eagle_db
+-- Host: 127.0.0.1    Database: eagle_db
 -- ------------------------------------------------------
--- Server version	8.0.19
+-- Server version	5.7.28-log
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!50503 SET NAMES utf8mb4 */;
+/*!50503 SET NAMES utf8 */;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
@@ -23,7 +23,7 @@ DROP TABLE IF EXISTS `activator`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `activator` (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) DEFAULT NULL,
   `type` varchar(255) DEFAULT NULL,
   `available` tinyint(1) DEFAULT NULL,
@@ -32,8 +32,8 @@ CREATE TABLE `activator` (
   `envs` varchar(255) DEFAULT NULL,
   `platforms` varchar(255) DEFAULT NULL,
   `lastUpdated` datetime DEFAULT NULL,
-  `userCapacity` int DEFAULT NULL,
-  `serverCapacity` int DEFAULT NULL,
+  `userCapacity` int(11) DEFAULT NULL,
+  `serverCapacity` int(11) DEFAULT NULL,
   `regions` varchar(255) DEFAULT NULL,
   `hosting` varchar(255) DEFAULT NULL,
   `apiManagement` varchar(255) DEFAULT NULL,
@@ -49,7 +49,7 @@ CREATE TABLE `activator` (
   `status` varchar(255) DEFAULT NULL,
   `description` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=97 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=104 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -58,7 +58,7 @@ CREATE TABLE `activator` (
 
 LOCK TABLES `activator` WRITE;
 /*!40000 ALTER TABLE `activator` DISABLE KEYS */;
-INSERT INTO `activator` VALUES (1,'CMS Web App','Web application',1,'Public','Tier 3','[\"POC\", \"DEV\"]','[\"GCP\"]','2020-01-09 15:59:10',1000,1200,'[\"UK\", \"DB\"]','[\"Appengine\"]','[\"ApiGee\"]','[\"Jenkins\", \"Travis\"]','[\"Codeship\", \"Option\"]','[\"JIRA\", \"Option\"]','FICC Business Unit','Sanjeev Gupta','s.gupta@company.name','Monthly: Eagle tier 3','Single Region Kubernetes','[{\"ipAddress\": \"40.123.45.236\", \"name\": \"GKE Cluster\"}, {\"ipAddress\": \"40.123.45.236\", \"name\": \"Cloud SQL\"}]','False','Some very long description that I did not want to copy. Some very long description that I did not want to copy. Some very long description that I did not want to copy'),(2,'Multi region kubernetes','Mirco-services',1,'Restricted','Tier 1','[\"POC\", \"AWS\", \"Other\", \"Fancy\"]','[\"GCP\"]','2020-01-09 15:59:10',1300,2000,'[\"UK\", \"DB\"]','[\"Appengine\"]','[\"ApiGee\"]','[\"Jenkins\", \"Travis\"]','[\"Codeship\", \"Option\"]','[\"JIRA\", \"Option\"]','M&A Business Unit','Nathanael Stoltenberg','Nathanael.Stoltenberg@yahoo.com','Monthly: Eagle tier 1','Multi Region Kubernetes','[{\"name\": \"GKE Cluster\", \"ipAddress\": \"40.123.45.236\"}, {\"name\": \"Cloud SQL\", \"ipAddress\": \"40.123.45.236\"}]','True','Some very long description that I did not want to copy. Some very long description that I did not want to copy. Some very long description that I did not want to copy'),(3,'Multi region kubernetes','Mirco-services',0,'Restricted','Tier 1','[\"POC\", \"AWS\", \"Other\", \"Fancy\"]','[\"GCP\"]','2020-01-09 15:59:10',1300,2000,'[\"UK\", \"DB\"]','[\"Appengine\"]','[\"ApiGee\"]','[\"Jenkins\", \"Travis\"]','[\"Codeship\", \"Option\"]','[\"JIRA\", \"Option\"]','M&A Business Unit','Nathanael Stoltenberg','Nathanael.Stoltenberg@yahoo.com','Monthly: Eagle tier 1','Multi Region Kubernetes','[{\"name\": \"GKE Cluster\", \"ipAddress\": \"40.123.45.236\"}, {\"name\": \"Cloud SQL\", \"ipAddress\": \"40.123.45.236\"}]','True','Some very long description that I did not want to copy. Some very long description that I did not want to copy. Some very long description that I did not want to copy'),(34,'TEST1','microservices',1,'string','string','[\"string\"]','[\"platform1\", \"platform2\"]','2020-03-20 11:12:13',1000,0,'[\"UK\", \"US\", \"FG\", \"DF\"]','[\"string\"]','[\"string\"]','[\"string\"]','[\"string\"]','[\"sourceControl1\"]','string','technologyOwner','technologyOwnerEmail','string','activator1','[{\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"AAA Cluster\"}, {\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"BBB Cluster\"}, {\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"GGG Cluster\"}, {\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"GGG Cluster\"}]','Active',NULL),(35,'TEST1','microservices',1,'string','string','[\"string\"]','[\"platform1\", \"platform2\"]','2020-03-20 11:12:13',1000,0,'[\"UK\", \"US\", \"FG\", \"DF\"]','[\"string\"]','[\"string\"]','[\"string\"]','[\"string\"]','[\"sourceControl1\"]','string','technologyOwner','technologyOwnerEmail','string','activator1','[{\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"AAA Cluster\"}, {\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"BBB Cluster\"}, {\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"GGG Cluster\"}, {\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"GGG Cluster\"}]','Active',NULL),(36,'TEST1','microservices',1,'string','string','[\"string\"]','[\"platform1\", \"platform2\"]','2020-03-20 11:12:13',1000,0,'[\"UK\", \"US\", \"FG\", \"DF\"]','[\"string\"]','[\"string\"]','[\"string\"]','[\"string\"]','[\"sourceControl1\"]','string','technologyOwner','technologyOwnerEmail','string','activator1','[{\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"AAA Cluster\"}, {\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"BBB Cluster\"}, {\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"GGG Cluster\"}, {\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"GGG Cluster\"}]','Active',NULL),(37,'TEST1','microservices',1,'string','string','[\"string\"]','[\"platform1\", \"platform2\"]','2020-03-20 11:12:13',1000,0,'[\"UK\", \"US\", \"FG\", \"DF\"]','[\"string\"]','[\"string\"]','[\"string\"]','[\"string\"]','[\"sourceControl1\"]','string','technologyOwner','technologyOwnerEmail','string','activator1','[{\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"AAA Cluster\"}, {\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"BBB Cluster\"}, {\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"GGG Cluster\"}, {\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"GGG Cluster\"}]','Active',NULL),(38,'TEST1','microservices',1,'string','string','[\"string\"]','[\"platform1\", \"platform2\"]','2020-03-20 11:12:13',1000,0,'[\"UK\", \"US\", \"FG\", \"DF\"]','[\"string\"]','[\"string\"]','[\"string\"]','[\"string\"]','[\"sourceControl1\"]','string','technologyOwner','technologyOwnerEmail','string','activator1','[{\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"AAA Cluster\"}, {\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"BBB Cluster\"}, {\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"GGG Cluster\"}, {\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"GGG Cluster\"}]','Active',NULL),(39,'TEST1','microservices',1,'string','string','[\"string\"]','[\"platform1\", \"platform2\"]','2020-03-20 11:12:13',1000,0,'[\"UK\", \"US\", \"FG\", \"DF\"]','[\"string\"]','[\"string\"]','[\"string\"]','[\"string\"]','[\"sourceControl1\"]','string','technologyOwner','technologyOwnerEmail','string','activator1','[{\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"AAA Cluster\"}, {\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"BBB Cluster\"}, {\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"GGG Cluster\"}, {\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"GGG Cluster\"}]','Active',NULL),(40,'TEST1','microservices',1,'string','string','[\"string\"]','[\"platform1\", \"platform2\"]','2020-03-20 11:12:13',1000,0,'[\"UK\", \"US\", \"FG\", \"DF\"]','[\"string\"]','[\"string\"]','[\"string\"]','[\"string\"]','[\"sourceControl1\"]','string','technologyOwner','technologyOwnerEmail','string','activator1','[{\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"AAA Cluster\"}, {\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"BBB Cluster\"}, {\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"GGG Cluster\"}, {\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"GGG Cluster\"}]','Active',NULL),(41,'TEST1','microservices',1,'string','string','[\"string\"]','[\"platform1\", \"platform2\"]','2020-03-20 11:12:13',1000,0,'[\"UK\", \"US\", \"FG\", \"DF\"]','[\"string\"]','[\"string\"]','[\"string\"]','[\"string\"]','[\"sourceControl1\"]','string','technologyOwner','technologyOwnerEmail','string','activator1','[{\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"AAA Cluster\"}, {\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"BBB Cluster\"}, {\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"GGG Cluster\"}, {\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"GGG Cluster\"}]','Active',NULL),(42,'TEST1','microservices',1,'string','string','[\"string\"]','[\"platform1\", \"platform2\"]','2020-03-20 11:12:13',1000,0,'[\"UK\", \"US\", \"FG\", \"DF\"]','[\"string\"]','[\"string\"]','[\"string\"]','[\"string\"]','[\"sourceControl1\"]','string','technologyOwner','technologyOwnerEmail','string','activator1','[{\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"AAA Cluster\"}, {\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"BBB Cluster\"}, {\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"GGG Cluster\"}, {\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"GGG Cluster\"}]','Active',NULL),(45,'TEST1','microservices',1,'string','string','[\"string\"]','[\"platform1\", \"platform2\"]','2020-03-20 11:12:13',1000,0,'[\"UK\", \"US\", \"FG\", \"DF\"]','[\"string\"]','[\"string\"]','[\"string\"]','[\"string\"]','[\"sourceControl1\"]','string','technologyOwner','technologyOwnerEmail','string','activator1','[{\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"AAA Cluster\"}, {\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"BBB Cluster\"}, {\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"GGG Cluster\"}, {\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"GGG Cluster\"}]','Active',NULL),(46,'TEST1','microservices',1,'string','string','[\"string\"]','[\"platform1\", \"platform2\"]','2020-03-20 11:12:13',1000,0,'[\"UK\", \"US\", \"FG\", \"DF\"]','[\"string\"]','[\"string\"]','[\"string\"]','[\"string\"]','[\"sourceControl1\"]','string','technologyOwner','technologyOwnerEmail','string','activator1','[{\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"AAA Cluster\"}, {\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"BBB Cluster\"}, {\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"GGG Cluster\"}, {\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"GGG Cluster\"}]','Active',NULL),(47,'TEST1','microservices',1,'string','string','[\"string\"]','[\"platform1\", \"platform2\"]','2020-03-20 11:12:13',1000,0,'[\"UK\", \"US\", \"FG\", \"DF\"]','[\"string\"]','[\"string\"]','[\"string\"]','[\"string\"]','[\"sourceControl1\"]','string','technologyOwner','technologyOwnerEmail','string','activator1','[{\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"AAA Cluster\"}, {\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"BBB Cluster\"}, {\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"GGG Cluster\"}, {\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"GGG Cluster\"}]','Active',NULL),(48,'TEST1','microservices',1,'string','string','[\"string\"]','[\"platform1\", \"platform2\"]','2020-03-20 11:12:13',1000,0,'[\"UK\", \"US\", \"FG\", \"DF\"]','[\"string\"]','[\"string\"]','[\"string\"]','[\"string\"]','[\"sourceControl1\"]','string','technologyOwner','technologyOwnerEmail','string','activator1','[{\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"AAA Cluster\"}, {\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"BBB Cluster\"}, {\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"GGG Cluster\"}, {\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"GGG Cluster\"}]','Active',NULL),(49,'TEST1','microservices',1,'string','string','[\"string\"]','[\"platform1\", \"platform2\"]','2020-03-20 11:12:13',1000,0,'[\"UK\", \"US\", \"FG\", \"DF\"]','[\"string\"]','[\"string\"]','[\"string\"]','[\"string\"]','[\"sourceControl1\"]','string','technologyOwner','technologyOwnerEmail','string','activator1','[{\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"AAA Cluster\"}, {\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"BBB Cluster\"}, {\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"GGG Cluster\"}, {\"ipAddress\": \"xxx.xxx.xxx.xxx\", \"name\": \"GGG Cluster\"}]','Active',NULL);
+INSERT INTO `activator` VALUES (1,'CMS Web App','Web application',1,'Public','Tier 3','[\"POC\", \"DEV\"]','[\"GCP\"]','2020-01-09 15:59:10',1000,1200,'[\"UK\", \"DB\"]','[\"Appengine\"]','[\"ApiGee\"]','[\"Jenkins\", \"Travis\"]','[\"Codeship\", \"Option\"]','[\"JIRA\", \"Option\"]','FICC Business Unit','Sanjeev Gupta','s.gupta@company.name','Monthly: Eagle tier 3','Single Region Kubernetes','[{\"ipAddress\": \"40.123.45.236\", \"name\": \"GKE Cluster\"}, {\"ipAddress\": \"40.123.45.236\", \"name\": \"Cloud SQL\"}]','False','Some very long description that I did not want to copy. Some very long description that I did not want to copy. Some very long description that I did not want to copy'),(2,'Multi region kubernetes','Micro-services',1,'Restricted','Tier 1','[\"POC\", \"AWS\", \"Other\", \"Fancy\"]','[\"GCP\"]','2020-01-09 15:59:10',1300,2000,'[\"UK\", \"DB\"]','[\"Appengine\"]','[\"ApiGee\"]','[\"Jenkins\", \"Travis\"]','[\"Codeship\", \"Option\"]','[\"JIRA\", \"Option\"]','M&A Business Unit','Nathanael Stoltenberg','Nathanael.Stoltenberg@yahoo.com','Monthly: Eagle tier 1','Multi Region Kubernetes','[{\"name\": \"GKE Cluster\", \"ipAddress\": \"40.123.45.236\"}, {\"name\": \"Cloud SQL\", \"ipAddress\": \"40.123.45.236\"}]','True','Some very long description that I did not want to copy. Some very long description that I did not want to copy. Some very long description that I did not want to copy'),(3,'SQL Single region kubernetes','Micro-services',1,'Restricted','Tier 2','[\"POC\", \"Prod\"]','[\"Azure\", \"GCP\", \"AWS\", \"Other\", \"Fancy\"]','2020-01-09 15:59:10',100,120,'[\"UK\", \"DB\"]','[\"Appengine\"]','[\"ApiGee\"]','[\"Jenkins\", \"Travis\"]','[\"Codeship\", \"Option\"]','[\"JIRA\", \"Option\"]','Equity Capital Business Unit','Brando Howell','Brando.Howell@hotmail.com','Monthly: Eagle tier 2','SQL Single region kubernetes','[{\"name\": \"ITSO\", \"ipAddress\": \"40.123.45.236\"}, {\"name\": \"Cloud SQL\", \"ipAddress\": \"40.123.45.236\"}]','Available','Some very long description that I did not want to copy. Some very long description that I did not want to copy. Some very long description that I did not want to copy'),(101,'CMS Web App','Web application',1,'Public','Tier 3','[\"POC\", \"DEV\"]','[\"GCP\"]','2020-01-09 15:59:10',500,300,'[\"UK\", \"DB\"]','[\"Appengine\"]','[\"ApiGee\"]','[\"Jenkins\", \"Travis\"]','[\"Codeship\", \"Option\"]','[\"JIRA\", \"Option\"]','Debit Capital Business Unit','Mohammed Will PhD','Mohammed.Will@gmail.com','Monthly: Eagle tier 3','CMS Web App','[{\"name\": \"GKE Cluster\", \"ipAddress\": \"40.123.45.236\"}, {\"name\": \"ITSO\", \"ipAddress\": \"40.123.45.236\"}]','Locked','Some very long description that I did not want to copy. Some very long description that I did not want to copy. Some very long description that I did not want to copy'),(102,'Multi region kubernetes','Micro-services',1,'Restricted','Tier 1','[\"POC\", \"AWS\", \"Other\", \"Fancy\"]','[\"GCP\"]','2020-01-09 15:59:10',1600,2500,'[\"UK\", \"DB\"]','[\"Appengine\"]','[\"ApiGee\"]','[\"Jenkins\", \"Travis\"]','[\"Codeship\", \"Option\"]','[\"JIRA\", \"Option\"]','FICC Business Unit','Tressa Ullrich','Tressa97@yahoo.com','Monthly: Eagle tier 1','Multi region kubernetes','[{\"name\": \"ITSO\", \"ipAddress\": \"40.123.45.236\"}, {\"name\": \"Cloud SQL\", \"ipAddress\": \"40.123.45.236\"}]','Locked','Some very long description that I did not want to copy. Some very long description that I did not want to copy. Some very long description that I did not want to copy'),(103,'SQL Single region kubernetes','Micro-services',1,'Restricted','Tier 2','[\"POC\", \"Prod\"]','[\"Azure\", \"GCP\", \"AWS\", \"Other\", \"Fancy\"]','2020-01-09 15:59:10',900,600,'[\"UK\", \"DB\"]','[\"Appengine\"]','[\"ApiGee\"]','[\"Jenkins\", \"Travis\"]','[\"Codeship\", \"Option\"]','[\"JIRA\", \"Option\"]','M&A Business Unit','Rose Dickens Sr.','Rose.Dickens19@hotmail.com','Monthly: Eagle tier 2','SQL Single region kubernetes','[{\"name\": \"GKE Cluster\", \"ipAddress\": \"40.123.45.236\"}, {\"name\": \"ITSO\", \"ipAddress\": \"40.123.45.236\"}]','Available','Some very long description that I did not want to copy. Some very long description that I did not want to copy. Some very long description that I did not want to copy');
 /*!40000 ALTER TABLE `activator` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -70,15 +70,15 @@ DROP TABLE IF EXISTS `application`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `application` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `solutionId` int NOT NULL,
-  `activatorId` int NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `solutionId` int(11) NOT NULL,
+  `activatorId` int(11) NOT NULL,
   `name` varchar(255) DEFAULT NULL,
   `env` varchar(255) DEFAULT NULL,
   `status` varchar(255) DEFAULT NULL,
   `description` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=58 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=58 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -87,7 +87,7 @@ CREATE TABLE `application` (
 
 LOCK TABLES `application` WRITE;
 /*!40000 ALTER TABLE `application` DISABLE KEYS */;
-INSERT INTO `application` VALUES (1,1,1,'Placeholder','DEV','Active','\n    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eius'),(9,1,2,'Other App','POC','Active','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et do'),(10,2,3,'Other App','POC','Active','\n    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.\n  '),(11,2,2,'Great App','Prod','Active','\n    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.\n  '),(12,3,3,'Placeholder','Prod','Active','\n    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.\n  '),(13,1,2,'Other App','POC','Active','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et do'),(14,1,2,'Other App','POC','Active','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et do'),(49,0,0,'test','dev','status','test application'),(50,0,0,'test','dev','status','test application'),(51,0,0,'test','dev','status','test application'),(52,0,0,'test','dev','status','test application'),(53,0,0,'test','dev','status','test application'),(54,0,0,'test','dev','status','test application'),(55,0,0,'test','dev','status','test application'),(56,0,0,'test','dev','status','test application'),(57,0,0,'test','dev','status','test application');
+INSERT INTO `application` VALUES (1,1,1,'Placeholder','DEV','Active','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et do'),(2,1,2,'Other App','POC','Active','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et do'),(3,2,3,'Other App','POC','Active','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et do'),(4,2,2,'Great App','Prod','Active','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et do'),(5,3,3,'Placeholder','Prod','Active','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et do'),(6,1,2,'My First App','POC','Active','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et do'),(7,1,2,'Application v1.0.1','POC','Active','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et do'),(8,4,1,'Application v1.0.2','dev','Active','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et do'),(9,4,2,'Application v1.1.0','dev','Active','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et do'),(10,5,3,'Application v1.1.1','dev','Active','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et do'),(11,5,4,'Application v1.1.2','dev','Active','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et do'),(12,5,5,'Application v2.0.0','dev','Active','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et do'),(13,6,6,'Application v2.0.1','dev','Inactive','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et do'),(14,7,7,'Application v3.0.0','dev','Inactive','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et do'),(15,8,8,'Application v4.0.0','dev','Inactive','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et do'),(16,9,9,'Application v5.0.0','dev','Inactive','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et do');
 /*!40000 ALTER TABLE `application` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -102,7 +102,7 @@ CREATE TABLE `businessunit` (
   `key` varchar(255) NOT NULL,
   `value` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`key`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -126,7 +126,7 @@ CREATE TABLE `cd` (
   `key` varchar(100) NOT NULL,
   `value` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`key`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -150,7 +150,7 @@ CREATE TABLE `ci` (
   `key` varchar(100) NOT NULL,
   `value` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`key`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -174,7 +174,7 @@ CREATE TABLE `environment` (
   `key` varchar(100) NOT NULL,
   `value` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`key`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -188,6 +188,59 @@ INSERT INTO `environment` VALUES ('Development','Development'),('Production','Pr
 UNLOCK TABLES;
 
 --
+-- Table structure for table `landingzoneaction`
+--
+
+DROP TABLE IF EXISTS `landingzoneaction`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `landingzoneaction` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) DEFAULT NULL,
+  `categoryName` varchar(255) DEFAULT NULL,
+  `categoryClass` varchar(255) DEFAULT NULL,
+  `completionRate` int(11) DEFAULT NULL,
+  `locked` tinyint(1) DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `landingzoneaction`
+--
+
+LOCK TABLES `landingzoneaction` WRITE;
+/*!40000 ALTER TABLE `landingzoneaction` DISABLE KEYS */;
+INSERT INTO `landingzoneaction` VALUES (1,'Folder structure','','folder-structure',50,0),(2,'WAN','Network Setup','network-setup',100,0),(3,'LAN','Network Setup','network-setup',25,0),(4,'DNS','Network Setup','network-setup',75,1),(5,'Internet access','Network Setup','network-setup',9,1),(6,'SSO','AD Integration','ad-integration',25,0),(7,'ADFS','AD Integration','ad-integration',0,0),(8,'Stackdriver','Logging','logging',50,0),(9,'Data Dog','Logging','logging',30,0),(10,'Cloud Health','Billing/Cost Management','billing-cost-management',19,0),(11,'Security','','security',13,0),(12,'Multizone setup','','multizone-setup',12,0);
+/*!40000 ALTER TABLE `landingzoneaction` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `landingzoneprogressitem`
+--
+
+DROP TABLE IF EXISTS `landingzoneprogressitem`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `landingzoneprogressitem` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `label` varchar(255) DEFAULT NULL,
+  `completed` tinyint(1) DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `landingzoneprogressitem`
+--
+
+LOCK TABLES `landingzoneprogressitem` WRITE;
+/*!40000 ALTER TABLE `landingzoneprogressitem` DISABLE KEYS */;
+INSERT INTO `landingzoneprogressitem` VALUES (0,'WAN',1),(1,'DNS',1),(2,'ADFS',0),(3,'SSO',0),(4,'Logging',0),(5,'Billing',0);
+/*!40000 ALTER TABLE `landingzoneprogressitem` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `solution`
 --
 
@@ -195,7 +248,7 @@ DROP TABLE IF EXISTS `solution`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `solution` (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) DEFAULT NULL,
   `description` varchar(255) DEFAULT NULL,
   `businessUnit` varchar(255) DEFAULT NULL,
@@ -209,7 +262,7 @@ CREATE TABLE `solution` (
   `teams` varchar(255) DEFAULT NULL,
   `lastUpdated` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -218,7 +271,7 @@ CREATE TABLE `solution` (
 
 LOCK TABLES `solution` WRITE;
 /*!40000 ALTER TABLE `solution` DISABLE KEYS */;
-INSERT INTO `solution` VALUES (1,'Risk Engine','Solution for internal users to be able to process settlement for FX transactions','Modern Apps','XXX-123-456-YYY','Jenkins CI','Spinnaker','GitHub','[\"Development\"]',1,1,'2','2020-03-08 23:07:00'),(2,'Back Office Settlements','Solution for internal users to be able to process settlement for FX transactions','Modern Apps','XXX-111-444-YYY','Jenkins CI','Spinnaker','GitHub','[\"Production\"]',1,0,'2','2020-03-08 23:07:00'),(3,'FX Engine','Solution for internal users to be able to process settlement for FX transactions','Modern Apps','XXX-554-325-YYY','Jenkins CI','Spinnaker','GitHub','[\"Development\"]',0,0,'2','2020-03-08 23:07:00'),(4,'string','string','string','string','string','string','string','[]',1,1,'0','2020-02-01 12:12:12');
+INSERT INTO `solution` VALUES (1,'Risk Engine','Solution for internal users to be able to process settlement for FX transactions','Modern Apps','XXX-123-456-YYY','Jenkins CI','Spinnaker','GitHub','[\"Development\"]',1,1,'2','2020-03-08 23:07:00'),(2,'Back Office Settlements','Solution for internal users to be able to process settlement for FX transactions','Modern Apps','XXX-111-444-YYY','Jenkins CI','Spinnaker','GitHub','[\"Production\"]',1,0,'2','2020-03-08 23:07:00'),(3,'FX Engine','Solution for internal users to be able to process settlement for FX transactions','Modern Apps','XXX-554-325-YYY','Jenkins CI','Spinnaker','GitHub','[\"Development\"]',0,0,'2','2020-03-08 23:07:00'),(11,'Portfolio Valuation','A portfolio valuation is done to determine and report alternative investments\' performance, which is often required for financial reporting and tax compliance, and also affects the investment manager\'s compensation.','Data','XXX-333-222-IUY','Bamboo','Screwdriver','Cloud native','[\"Production\"]',1,1,'0','2020-03-18 21:02:02'),(12,'Corporate Treasury','The treasury department occupies a central role in the finances of the modern corporation. It takes responsible for the company\'s liquidity—ensures that a company has enough cash available at all times to meet the needs of its primary business operations.','Modern Apps','XXX-333-222-IUY','Team City','Team City','GitHub','[\"Production\"]',1,1,'0','2020-03-18 21:13:14'),(13,'Internal Audit','Internal auditing is the independent and objective evaluation of an organisation\'s internal controls to effectively manage risk within its risk appetite. Internal audit should monitor that any weaknesses identified are also addressed.','Modern Apps','XXX-333-222-IUY','Travis','Screwdriver','Cloud native','[\"Development\"]',1,1,'0','2020-03-18 21:15:22'),(14,'Realtime Margin','Use real-time margin monitoring to see your current margin requirements at a glance, and to understand the margin implications of any transaction before you transmit an order. The Account window shows your account details.','Data','ABC-123-ABC-123','Cloud native','Spinnaker','Cloud native','[\"Development\"]',1,1,'0','2020-03-18 21:19:58'),(15,'Product Control','product control are a center of cost responsible for the daily PnL(Profit and Loss) and its explanation for a dedicated trading desk. The team is responsible to communicate this result within the bank and to the authority FED or ECB.','Data','dat-000-ser-322','Bamboo','Screwdriver','BitBucket','[\"Production\"]',1,1,'0','2020-03-18 21:25:10'),(16,'General Ledger','A general ledger (GL) is a set of numbered accounts a business uses to keep track of its financial transactions and to prepare financial reports. Each account is a unique record summarizing each type of asset, liability, equity, revenue and expense.','Data','ldf-343-sds-232','Cloud native','Team City','Cloud native','[\"Development\", \"Production\"]',1,1,'0','2020-03-18 21:43:54'),(17,'Corporate Finance','Corporate finance is the division of finance that deals with financing, capital structuring, and investment decisions. Corporate finance is primarily concerned with maximizing shareholder value throug','Modern Apps','ASD-456-FFH-234','Bamboo','Screwdriver','Cloud native','[\"Production\"]',1,1,'0','2020-03-19 23:41:59');
 /*!40000 ALTER TABLE `solution` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -233,7 +286,7 @@ CREATE TABLE `sourcecontrol` (
   `key` varchar(100) NOT NULL,
   `value` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`key`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -257,7 +310,7 @@ CREATE TABLE `team` (
   `key` varchar(100) NOT NULL,
   `value` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`key`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -279,4 +332,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-03-18 14:50:37
+-- Dump completed on 2020-03-26 16:05:37

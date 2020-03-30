@@ -3,16 +3,15 @@ from marshmallow import fields, pre_load, post_dump
 from config import db, ma, app
 import json
 
-
 class ModelTools():
 
-    def get_utc_epoch():
+    def get_utc_epoch(self):
         return datetime.utcnow().strftime('%s')
 
-    def get_utc_timestamp():
+    def get_utc_timestamp(self):
         return datetime.utcnow().strftime(("%Y-%m-%d %H:%M:%S"))
 
-    def get_timestamp():
+    def get_timestamp(self):
         return datetime.now().strftime(("%Y-%m-%d %H:%M:%S"))
 
     def datetime_as_string(dt):
@@ -37,7 +36,6 @@ class ModelTools():
         new_dict['username'] = "XXXXX"
         new_dict['password'] = "XXXXX"
         return new_dict
-
 
 # Activator
 class Activator(db.Model):
@@ -157,18 +155,16 @@ class ActivatorSchema(ma.ModelSchema):
             app.logger.warning(e)
         return out_data
 
-
 # Application
 class Application(db.Model):
     __tablename__ = "application"
     id = db.Column(db.Integer, primary_key=True)
-    solutionId = db.Column(db.Integer)
-    activatorId = db.Column(db.Integer)
+    solutionId = db.Column(db.Integer, db.ForeignKey('solution.id'))
+    activatorId = db.Column(db.Integer, db.ForeignKey('activator.id'))
     name = db.Column(db.String(255))
     env = db.Column(db.String(64))
     status = db.Column(db.String(64))
     description = db.Column(db.String(255))
-
 
 class ApplicationSchema(ma.ModelSchema):
     def __init__(self, **kwargs):
@@ -177,111 +173,6 @@ class ApplicationSchema(ma.ModelSchema):
     class Meta:
         model = Application
         sqla_session = db.session
-
-
-class ApplicationActivatorSchema(ma.ModelSchema):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
-    class Meta:
-        model = Application
-        sqla_session = db.session
-
-
-# Team
-class Team(db.Model):
-    __tablename__ = "team"
-    key = db.Column(db.String(255), primary_key=True)
-    value = db.Column(db.String(255))
-
-
-class TeamSchema(ma.ModelSchema):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
-    class Meta:
-        model = Team
-        sqla_session = db.session
-
-
-# Environment
-class Environment(db.Model):
-    __tablename__ = "environment"
-    key = db.Column(db.String(255), primary_key=True)
-    value = db.Column(db.String(255))
-
-
-class EnvironmentSchema(ma.ModelSchema):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
-    class Meta:
-        model = Environment
-        sqla_session = db.session
-
-
-# CI
-class CI(db.Model):
-    __tablename__ = "ci"
-    key = db.Column(db.String(255), primary_key=True)
-    value = db.Column(db.String(255))
-
-
-class CISchema(ma.ModelSchema):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
-    class Meta:
-        model = CI
-        sqla_session = db.session
-
-
-# CD
-class CD(db.Model):
-    __tablename__ = "cd"
-    key = db.Column(db.String(255), primary_key=True)
-    value = db.Column(db.String(255))
-
-
-class CDSchema(ma.ModelSchema):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
-    class Meta:
-        model = CD
-        sqla_session = db.session
-
-
-# SourceControl
-class SourceControl(db.Model):
-    __tablename__ = "sourcecontrol"
-    key = db.Column(db.String(255), primary_key=True)
-    value = db.Column(db.String(255))
-
-
-class SourceControlSchema(ma.ModelSchema):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
-    class Meta:
-        model = SourceControl
-        sqla_session = db.session
-
-# BusinessUnit
-class BusinessUnit(db.Model):
-    __tablename__ = "businessunit"
-    key = db.Column(db.String(255), primary_key=True)
-    value = db.Column(db.String(255))
-
-
-class BusinessUnitSchema(ma.ModelSchema):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
-    class Meta:
-        model = BusinessUnit
-        sqla_session = db.session
-
 
 # Solutions
 class Solution(db.Model):
@@ -300,22 +191,7 @@ class Solution(db.Model):
     teams = db.Column(db.Integer())
     lastUpdated = db.Column(db.String(255))
 
-    #applications = db.relationship('Application', backref='solution')
-
-
-class ApplicationActivatorSchema(ma.ModelSchema):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
-    class Meta:
-        model = Application
-        sqla_session = db.session
-
-
-    id = fields.Int()
-    name = fields.Str()
-    activators = fields.Nested('ActivatorSchema')
-
+    applications = db.relationship('Application')
 
 class SolutionSchema(ma.ModelSchema):
     def __init__(self, **kwargs):
@@ -341,43 +217,110 @@ class SolutionSchema(ma.ModelSchema):
             app.logger.warning(e)
         return out_data
 
+# class ApplicationActivatorSchema(ma.ModelSchema):
+#     def __init__(self, **kwargs):
+#         super().__init__(**kwargs)
+#
+#     class Meta:
+#         model = Application
+#         sqla_session = db.session
+#
+#     id = fields.Int()
+#     name = fields.Str()
+#     activators = fields.Nested('ActivatorSchema')
+
+# Team
+class Team(db.Model):
+    __tablename__ = "team"
+    key = db.Column(db.String(255), primary_key=True)
+    value = db.Column(db.String(255))
 
 
-class SolutionEnhancedSchema(ma.ModelSchema):
+class TeamSchema(ma.ModelSchema):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
     class Meta:
-        model = Solution
+        model = Team
         sqla_session = db.session
 
-    
-    #applications = fields.Nested('ApplicationActivatorSchema')
+# Environment
+class Environment(db.Model):
+    __tablename__ = "environment"
+    key = db.Column(db.String(255), primary_key=True)
+    value = db.Column(db.String(255))
 
-    @pre_load
-    def serialize_arrays(self, in_data, **kwargs):
-        try:
-            in_data["environments"] = json.dumps(in_data["environments"])
-        except Exception as e:
-            app.logger.warning(e)
-        return in_data
+class EnvironmentSchema(ma.ModelSchema):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
-    @post_dump
-    def deserialize_arrays(self, out_data, many, **kwargs):
-        try:
-            out_data["environments"] = json.loads(out_data["environments"])
-        except Exception as e:
-            app.logger.warning(e)
-        return out_data
+    class Meta:
+        model = Environment
+        sqla_session = db.session
+
+# CI
+class CI(db.Model):
+    __tablename__ = "ci"
+    key = db.Column(db.String(255), primary_key=True)
+    value = db.Column(db.String(255))
 
 
+class CISchema(ma.ModelSchema):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    class Meta:
+        model = CI
+        sqla_session = db.session
+# CD
+class CD(db.Model):
+    __tablename__ = "cd"
+    key = db.Column(db.String(255), primary_key=True)
+    value = db.Column(db.String(255))
+
+
+class CDSchema(ma.ModelSchema):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    class Meta:
+        model = CD
+        sqla_session = db.session
+
+# SourceControl
+class SourceControl(db.Model):
+    __tablename__ = "sourcecontrol"
+    key = db.Column(db.String(255), primary_key=True)
+    value = db.Column(db.String(255))
+
+class SourceControlSchema(ma.ModelSchema):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    class Meta:
+        model = SourceControl
+        sqla_session = db.session
+
+# BusinessUnit
+class BusinessUnit(db.Model):
+    __tablename__ = "businessunit"
+    key = db.Column(db.String(255), primary_key=True)
+    value = db.Column(db.String(255))
+
+
+class BusinessUnitSchema(ma.ModelSchema):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    class Meta:
+        model = BusinessUnit
+        sqla_session = db.session
 # LandingZoneProgressItem
 class LandingZoneProgressItem(db.Model):
     __tablename__ = "landingzoneprogressitem"
     id = db.Column(db.Integer, primary_key=True)
     label = db.Column(db.String)
     completed = db.Column(db.Boolean)
-
 
 class LandingZoneProgressItemSchema(ma.ModelSchema):
     def __init__(self, **kwargs):
@@ -386,7 +329,6 @@ class LandingZoneProgressItemSchema(ma.ModelSchema):
     class Meta:
         model = LandingZoneProgressItem
         sqla_session = db.session
-
 
 # LandingZoneAction
 class LandingZoneAction(db.Model):
@@ -398,7 +340,6 @@ class LandingZoneAction(db.Model):
     completionRate = db.Column(db.Integer)
     locked = db.Column(db.Boolean)
 
-
 class LandingZoneActionSchema(ma.ModelSchema):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -408,4 +349,29 @@ class LandingZoneActionSchema(ma.ModelSchema):
         sqla_session = db.session
 
 
+# class SolutionEnhancedSchema(ma.ModelSchema):
+#     def __init__(self, **kwargs):
+#         super().__init__(**kwargs)
+#
+#     class Meta:
+#         model = Solution
+#         sqla_session = db.session
+#
+#     # applications = fields.Nested('ApplicationActivatorSchema')
+#
+#     @pre_load
+#     def serialize_arrays(self, in_data, **kwargs):
+#         try:
+#             in_data["environments"] = json.dumps(in_data["environments"])
+#         except Exception as e:
+#             app.logger.warning(e)
+#         return in_data
+#
+#     @post_dump
+#     def deserialize_arrays(self, out_data, many, **kwargs):
+#         try:
+#             out_data["environments"] = json.loads(out_data["environments"])
+#         except Exception as e:
+#             app.logger.warning(e)
+#         return out_data
 
