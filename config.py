@@ -17,7 +17,10 @@ connex_app = connexion.App(__name__, specification_dir=basedir)
 app = connex_app.app
 #CORS(app)
 
-app.config.from_envvar('CONFIGFILE')
+#app.config.from_envvar('CONFIGFILE')
+SQLALCHEMY_DATABASE_URI = os.environ['SQLALCHEMY_DATABASE_URI']
+SQLALCHEMY_ECHO = True
+SQLALCHEMY_TRACK_MODIFICATIONS = True
 
 # Create the SqlAlchemy db instance
 db = SQLAlchemy(app)
