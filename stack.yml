@@ -14,7 +14,7 @@ services:
     - '3306:3306'
 
   houston-service:
-    image: gcr.io/tranquility-base-images/tb-houston-service:alpha0.2
+    image: gcr.io/tranquility-base-images/tb-houston-service:alpha
     restart: always
     environment:
         SQLALCHEMY_DATABASE_URI: 'mysql+mysqlconnector://eagle-user:eagle-user-secret-pw@mysql57/eagle_db'
