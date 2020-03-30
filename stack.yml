@@ -14,10 +14,12 @@ services:
     - '3306:3306'
 
   houston-service:
-    image: gcr.io/tranquility-base-images/tb-houston-service:alpha0.1
+    image: gcr.io/tranquility-base-images/tb-houston-service:alpha0.2
     restart: always
     environment:
         SQLALCHEMY_DATABASE_URI: 'mysql+mysqlconnector://eagle-user:eagle-user-secret-pw@mysql57/eagle_db'
+        SQLALCHEMY_ECHO: 'True'
+        SQLALCHEMY_TRACK_MODIFICATIONS: 'True'
     depends_on:
         - mysql57
     ports:
