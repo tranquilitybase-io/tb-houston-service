@@ -18,7 +18,7 @@ gcloud auth configure-docker
 docker-compose -f stack.yml up
 
 # run the docker image
-docker run -p 3000:80 gcr.io/tranquility-base-images/tb-houston-service:alpha
+docker run -p 3000:3000 gcr.io/tranquility-base-images/tb-houston-service:alpha
 
 
 # References
