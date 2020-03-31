@@ -351,6 +351,7 @@ class LandingZoneAction(db.Model):
     categoryClass= db.Column(db.String)
     completionRate = db.Column(db.Integer)
     locked = db.Column(db.Boolean())
+    routerLink = db.Column(db.String)
 
 class LandingZoneActionSchema(ma.ModelSchema):
     def __init__(self, **kwargs):
