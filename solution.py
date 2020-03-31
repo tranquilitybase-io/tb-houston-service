@@ -56,7 +56,7 @@ def read_one(id):
     sol = (Solution.query.filter(Solution.id == id).one_or_none())
 
     if sol is not None:
-        solution = build_solution(sol)
+        solution = solution_extension.build_solution(sol)
         # Serialize the data for the response
         solution_schema = ExtendedSolutionSchema()
         data = solution_schema.dump(solution)
