@@ -1453,6 +1453,8 @@ paths:
                 type: integer
               status:
                 type: string
+              accessRequestedBy: 
+                type: integer
       responses:
         200:
           description: Successfully updated an activator

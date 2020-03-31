@@ -16,6 +16,7 @@ from extendedSchemas import ExtendedActivatorSchema
 from extendedSchemas import ExtendedUserSchema
 import user_extension
 import activator_extension
+import flask_tools
 from pprint import pformat
 
 
@@ -50,11 +51,12 @@ def read_one(id):
     :return:              activator matching key
     """
 
-    activator = (Activator.query.filter(Activator.id == id).one_or_none())
+    act = (Activator.query.filter(Activator.id == id).one_or_none())
+    activator = activator_extension.build_activator(act)
 
     if activator is not None:
         # Serialize the data for the response
-        activator_schema = ActivatorSchema()
+        activator_schema = ExtendedActivatorSchema()
         data = activator_schema.dump(activator)
         return data
     else:
@@ -168,14 +170,15 @@ def setActivatorStatus(activator):
     # if found?
     if existing_activator is not None:
         existing_activator.status = activator['status']
-        # TODO: When we can support 'user'
-        # existing_activator.user = activator['accessRequestedBy']
+        existing_activator.userId = activator['accessRequestedBy']
 
         db.session.merge(existing_activator)
         db.session.commit()
 
-        id = activator['id']
-        return make_response(f"Activator {id} successfully updated", 200)
+        activator = activator_extension.build_activator(existing_activator)
+        activator_schema = ExtendedActivatorSchema()
+        data = activator_schema.dump(activator)
+        return data, 200
 
     # Otherwise, nope, activator to update was not found
     else:
