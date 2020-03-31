@@ -30,6 +30,6 @@ def build_activator(act):
         'status': act.status,
         'description': act.description
     }
-    act_dict['user'] = user_extension.build_user(act.userId)
+    act_dict['accessRequestedBy'] = user_extension.build_user(act.userId)
 
     return act_dict
