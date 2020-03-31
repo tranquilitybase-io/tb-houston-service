@@ -16,6 +16,14 @@ class HealthSchema(Schema):
     status = fields.Str()
 
 
+class ExtendedUserSchema(Schema):
+    id = fields.Int()
+    username = fields.Str()
+    firstname = fields.Str()
+    lastname = fields.Str()
+    isAdmin = fields.Boolean()
+
+
 class ExtendedActivatorSchema(Schema):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -45,6 +53,7 @@ class ExtendedActivatorSchema(Schema):
     resources = fields.List(fields.Dict())
     status = fields.Str()
     description = fields.Str()
+    user = fields.Nested(ExtendedUserSchema(many=False))
 
 
 class ExtendedApplicationSchema(Schema):

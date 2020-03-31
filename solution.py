@@ -13,72 +13,8 @@ from models import Application, Activator
 from models import Solution, SolutionSchema
 from models import ModelTools
 from extendedSchemas import ExtendedSolutionSchema
+import solution_extension
 from pprint import pformat
-
-
-def build_solution(sol):
-  sol_dict = {
-    'id': sol.id,
-    'name': sol.name,
-    'description': sol.description,
-    'businessUnit': sol.businessUnit,
-    'costCentre': sol.costCentre,
-    'ci': sol.ci,
-    'cd': sol.cd,
-    'sourceControl': sol.sourceControl,
-    'environments': ModelTools.load_json_array(sol.environments),
-    'active': sol.active,
-    'favourite': sol.favourite,
-    'teams': sol.teams,
-    'lastUpdated': ModelTools.datetime_as_string(sol.lastUpdated)
-  }
-
-  apps = Application.query.filter(Application.solutionId == sol.id).all()
-  app_arr = []
-  if apps is not None:
-    app_dict = {}
-    for ap in apps:
-      app_dict = {
-        'id': ap.id,
-        'name': ap.name,
-        'env': ap.env,
-        'status': ap.status,
-        'description': ap.description
-      }
-      acts = Activator.query.filter(Activator.id == ap.activatorId).all()
-      act_dict = {}
-      for act in acts:
-        act_dict = { 
-          'name': act.name,
-          'type': act.type,
-          'available': act.available,
-          'sensitivity': act.sensitivity,
-          'category': act.category,
-          'envs': ModelTools.load_json_array(act.envs),
-          'platforms': ModelTools.load_json_array(act.platforms),
-          'lastUpdated': ModelTools.datetime_as_string(act.lastUpdated),
-          'userCapacity': act.userCapacity,
-          'serverCapacity': act.serverCapacity,
-          'regions': ModelTools.load_json_array(act.regions),
-          'hosting': ModelTools.load_json_array(act.hosting),
-          'apiManagement': ModelTools.load_json_array(act.apiManagement),
-          'ci': ModelTools.load_json_array(act.ci),
-          'cd': ModelTools.load_json_array(act.cd),
-          'sourceControl': ModelTools.load_json_array(act.sourceControl),
-          'businessUnit': act.businessUnit,
-          'technologyOwner': act.technologyOwner,
-          'technologyOwnerEmail': act.technologyOwnerEmail,
-          'billing': act.billing,
-          'activator': act.activator,
-          'resources': ModelTools.load_json_array(act.resources),
-          'status': act.status,
-          'description': act.description
-        }
-      app_dict['activator'] = act_dict
-      app_arr.append(app_dict)
-
-  sol_dict['applications'] = app_arr
-  return sol_dict
 
 
 def read_all():
@@ -95,7 +31,7 @@ def read_all():
 
     solutions_arr = []
     for sol in solutions:
-        solutions_arr.append(build_solution(sol))
+        solutions_arr.append(solution_extension.build_solution(sol))
 
     app.logger.debug("solutions array:")
     app.logger.debug(pformat(solutions_arr))
@@ -120,7 +56,7 @@ def read_one(id):
     sol = (Solution.query.filter(Solution.id == id).one_or_none())
 
     if sol is not None:
-        solution = build_solution(sol)
+        solution = solution_extension.build_solution(sol)
         # Serialize the data for the response
         solution_schema = ExtendedSolutionSchema()
         data = solution_schema.dump(solution)

@@ -9,7 +9,13 @@ from datetime import datetime
 # 3rd party modules
 from flask import make_response, abort
 from config import db, app
-from models import Activator, ActivatorSchema
+from models import User
+from models import Activator
+from models import ModelTools
+from extendedSchemas import ExtendedActivatorSchema
+from extendedSchemas import ExtendedUserSchema
+import user_extension
+import activator_extension
 from pprint import pformat
 
 
@@ -21,11 +27,15 @@ def read_all():
     :return:        json string of list of activators
     """
 
-    # Create the list of activatorss from our data
-    activator = Activator.query.order_by(Activator.id).all()
+    # Create the list of activators from our data
+    activators = Activator.query.order_by(Activator.id).all()
+    activators_arr = []
+    for act in activators:
+        activators_arr.append(activator_extension.build_activator(act))
+
     # Serialize the data for the response
-    activator_schema = ActivatorSchema(many=True)
-    data = activator_schema.dump(activator)
+    activator_schema = ExtendedActivatorSchema(many=True)
+    data = activator_schema.dump(activators_arr)
     app.logger.debug("read_all")
     app.logger.debug(pformat(data))
     return data

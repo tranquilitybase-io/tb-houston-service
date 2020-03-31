@@ -37,13 +37,24 @@ class ModelTools():
         new_dict['password'] = "XXXXX"
         return new_dict
 
+
+# User
+class User(db.Model):
+    __tablename__ = "user"
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(100))
+    firstname = db.Column(db.String(100))
+    lastname = db.Column(db.String(100))
+    isAdmin = db.Column(db.Boolean())
+
+
 # Activator
 class Activator(db.Model):
     __tablename__ = "activator"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255))
     type = db.Column(db.String(255))
-    available = db.Column(db.Boolean)
+    available = db.Column(db.Boolean())
     sensitivity = db.Column(db.String(255))
     category = db.Column(db.String(255))
     envs = db.Column(db.String(255))
@@ -65,6 +76,7 @@ class Activator(db.Model):
     resources = db.Column(db.String(255))
     status = db.Column(db.String(255))
     description = db.Column(db.String(255))
+    userId = db.Column(db.Integer, db.ForeignKey('user.id'))
 
 
 class ActivatorSchema(ma.ModelSchema):
@@ -186,8 +198,8 @@ class Solution(db.Model):
     cd = db.Column(db.String(255))
     sourceControl = db.Column(db.String(255))
     environments = db.Column(db.String(255))
-    active = db.Column(db.Boolean)
-    favourite = db.Column(db.Boolean)
+    active = db.Column(db.Boolean())
+    favourite = db.Column(db.Boolean())
     teams = db.Column(db.Integer())
     lastUpdated = db.Column(db.String(255))
 
@@ -320,7 +332,7 @@ class LandingZoneProgressItem(db.Model):
     __tablename__ = "landingzoneprogressitem"
     id = db.Column(db.Integer, primary_key=True)
     label = db.Column(db.String)
-    completed = db.Column(db.Boolean)
+    completed = db.Column(db.Boolean())
 
 class LandingZoneProgressItemSchema(ma.ModelSchema):
     def __init__(self, **kwargs):
@@ -338,7 +350,7 @@ class LandingZoneAction(db.Model):
     categoryName = db.Column(db.String)
     categoryClass= db.Column(db.String)
     completionRate = db.Column(db.Integer)
-    locked = db.Column(db.Boolean)
+    locked = db.Column(db.Boolean())
 
 class LandingZoneActionSchema(ma.ModelSchema):
     def __init__(self, **kwargs):
