@@ -11,6 +11,7 @@ from config import db, app
 from pprint import pformat
 from models import ModelTools
 from models import User
+from extendedSchemas import ExtendedUserSchema
 
 
 def check_credentials(login_details):
@@ -26,15 +27,20 @@ def check_credentials(login_details):
     password = login_details['password']
 
     if (username == 'admin@your.company' and password == 'pass1'):
-      data = User.query.filter(User.email == username).one_or_none()
-      if data is not None:
+      user = User.query.filter(User.email == username).one_or_none()
+      schema = ExtendedUserSchema(many=False)
+      if user is not None:
         app.logger.debug('LOGIN accepted!');
+        schema = ExtendedUserSchema(many=False)
+        data = schema.dump(user)
         return data, 200
 
     if (username == 'dev@your.company' and password == 'pass2'):
-      data = User.query.filter(User.email == username).one_or_none()
-      if data is not None:
+      user = User.query.filter(User.email == username).one_or_none()
+      if user is not None:
         app.logger.debug('LOGIN accepted!');
+        schema = ExtendedUserSchema(many=False)
+        data = schema.dump(user)
         return data, 200
 
     app.logger.warning('LOGIN FAILED!');
