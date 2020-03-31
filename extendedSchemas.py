@@ -53,7 +53,7 @@ class ExtendedActivatorSchema(Schema):
     resources = fields.List(fields.Dict())
     status = fields.Str()
     description = fields.Str()
-    user = fields.Nested(ExtendedUserSchema(many=False))
+    accessRequestedBy = fields.Nested(ExtendedUserSchema(many=False))
 
 
 class ExtendedApplicationSchema(Schema):
