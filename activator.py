@@ -168,8 +168,10 @@ def setActivatorStatus(activator):
 
     # if found?
     if existing_activator is not None:
-        existing_activator.status = activator['status']
-        existing_activator.userId = activator['accessRequestedBy']
+        if 'status' in activator:
+            existing_activator.status = activator['status']
+        if 'accessRequestedBy' in activator:
+            existing_activator.userId = activator['accessRequestedBy']
 
         db.session.merge(existing_activator)
         db.session.commit()
