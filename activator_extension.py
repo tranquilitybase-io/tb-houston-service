@@ -5,6 +5,7 @@ from extendedSchemas import ExtendedUserSchema
 
 def build_activator(act):
     act_dict = {
+        'id': act.id,
         'name': act.name,
         'type': act.type,
         'available': act.available,
