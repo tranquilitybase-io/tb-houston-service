@@ -16,7 +16,6 @@ from extendedSchemas import ExtendedActivatorSchema
 from extendedSchemas import ExtendedUserSchema
 import user_extension
 import activator_extension
-import flask_tools
 from pprint import pformat
 
 
