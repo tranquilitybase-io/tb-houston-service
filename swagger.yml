@@ -805,7 +805,7 @@ paths:
           description: Successfully deleted a sourcecontrol
 
           
-  /keyValues/businessUnit:
+  /keyValues/businessUnit/:
     get:
       operationId: businessUnit.read_all
       tags:
@@ -1452,8 +1452,6 @@ paths:
               id: 
                 type: integer
               status:
-                type: string
-              accessRequestedBy:
                 type: string
       responses:
         200:
