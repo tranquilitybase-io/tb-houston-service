@@ -5,32 +5,39 @@ import json
 
 class ModelTools():
 
-    def get_utc_epoch(self):
+    @staticmethod
+    def get_utc_epoch():
         return datetime.utcnow().strftime('%s')
 
-    def get_utc_timestamp(self):
+    @staticmethod
+    def get_utc_timestamp():
         return datetime.utcnow().strftime(("%Y-%m-%d %H:%M:%S"))
 
-    def get_timestamp(self):
+    @staticmethod
+    def get_timestamp():
         return datetime.now().strftime(("%Y-%m-%d %H:%M:%S"))
 
+    @staticmethod
     def datetime_as_string(dt):
         if dt is None:
             return datetime.utcnow().strftime(("%Y-%m-%d %H:%M:%S"))
         else:
             return dt.strftime("%Y-%m-%d %H:%M:%S")
 
+    @staticmethod
     def load_json_array(s):
         try:
             return json.loads(s)
         except Exception as e:
             return []
 
+    @staticmethod
     def json_dump(obj):
         #return json.dumps(obj, indent=2, sort_keys=True)
         return json.dumps(obj)
 
     # simple redact function, used prior to logging
+    @staticmethod
     def redact_dict(my_dict):
         new_dict = my_dict.copy()
         new_dict['username'] = "XXXXX"
@@ -361,6 +368,7 @@ class LandingZoneActionSchema(ma.ModelSchema):
         model = LandingZoneAction
         sqla_session = db.session
 
+
 # LandingZoneWAN
 class LandingZoneWAN(db.Model):
     __tablename__ = "landingzonewan"
@@ -393,6 +401,15 @@ class LandingZoneWAN(db.Model):
     vpn__projectName = db.Column(db.String)
     vpn__subnetMode = db.Column(db.String)
     vpn__vpcName = db.Column(db.String)
+
+
+class LandingZoneWANSchema(ma.ModelSchema):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    class Meta:
+        model = LandingZoneWAN
+        sqla_session = db.session
 
 
 # BGPRoutingMode 

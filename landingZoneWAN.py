@@ -7,13 +7,17 @@ landingZoneWAN collection
 from datetime import datetime
 
 # 3rd party modules
-from flask import make_response, abort
+from flask import make_response, abort, jsonify
 from config import db, app
-from models import LandingZoneWAN
-from extendedSchemas import LandingZoneWANSchema
+from models import LandingZoneWAN, LandingZoneWANSchema
+from extendedSchemas import ExtendedLandingZoneWANSchema
+from extendedSchemas import IdSchema
 from pprint import pformat
+from pprint import pprint
 from flatten_json import flatten, unflatten
+import json
 
+delimiter = '__'
 
 def read_all():
     """
@@ -27,11 +31,11 @@ def read_all():
     landingZoneWANs = LandingZoneWAN.query.all()
     landingZoneWANArr = []
     for lzw in landingZoneWANs:
-        landingZoneWANArr.append(unflatten(lzw))
+        landingZoneWANArr.append(unflatten(lzw.__dict__, delimiter))
 
     # Serialize the data for the response
-    landingZoneWAN_schema = LandingZoneWANSchema(many=True)
-    data = landingZoneWAN_schema.dump(landingZoneWANArr)
+    eschema = ExtendedLandingZoneWANSchema(many=True)
+    data = eschema.dump(landingZoneWANArr)
     app.logger.debug("landingZoneWAN data:")
     app.logger.debug(pformat(data))
     return data
@@ -50,9 +54,9 @@ def read_one(id):
 
     if landingZoneWAN is not None:
         # Serialize the data for the response
-        landingZoneWAN_schema = LandingZoneWANSchema(many=False)
-        unflattened_landingZoneWAN = unflatten(landingZoneWAN)
-        data = landingZoneWAN_schema.dump(unflatten(unflattened_landingZoneWAN))
+        landingZoneWAN_schema = ExtendedLandingZoneWANSchema(many=False)
+        unflattened_landingZoneWAN = unflatten(landingZoneWAN.__dict__, delimiter)
+        data = landingZoneWAN_schema.dump(unflattened_landingZoneWAN)
         app.logger.debug("landingZoneWAN data:")
         app.logger.debug(pformat(data))
         return data
@@ -71,19 +75,21 @@ def create(landingZoneWAN):
     :return:             201 on success, 406 on landingZoneWAN exists
     """
 
-    schema = LandingZoneWANSchema()
-    # Turn landingZoneWAN dictionary into a python object 
-    new_landingZoneWAN = schema.load(landingZoneWAN, session=db.session)
+    # we don't need the id, the is generated automatically on the database
+    if ('id' in landingZoneWAN):
+      del landingZoneWAN["id"]
+
     # flatten the python object into a python dictionary
-    flattened_landingZoneWAN = flatten(new_landingZoneWAN)
+    flattened_landingZoneWAN = flatten(landingZoneWAN, delimiter)
+    schema = LandingZoneWANSchema(many=False)
+    new_landingZoneWAN = schema.load(flattened_landingZoneWAN, session=db.session)
     # Save python object to the database
     db.session.add(new_landingZoneWAN)
     db.session.commit()
 
-    # Serialize the python object and return the newly 
-    # created landingZoneWAN json payload
-    # in the response
-    data = schema.dump(new_landingZoneWAN)
+    idSchema = IdSchema(many=False)
+    data = idSchema.dump(new_landingZoneWAN)
+
     app.logger.debug("landingZoneWAN data:")
     app.logger.debug(pformat(data))
 
@@ -110,7 +116,7 @@ def update(id, landingZoneWAN):
 
     # Does landingZoneWAN exist?
     if existing_landingZoneWAN is not None:
-        flattened_landingZoneWAN = flatten(flatten(landingZoneWAN))
+        flattened_landingZoneWAN = flatten(flatten(landingZoneWAN, delimiter))
         existing_landingZoneWAN.googleSession__primaryGcpVpcSubnet = landingZoneWAN.get('googleSession__primaryGcpVpcSubnet', '')
         existing_landingZoneWAN.googleSession__primaryRegion = landingZoneWAN.get('googleSession__primaryRegion', '')
         existing_landingZoneWAN.googleSession__primarySubnetName = landingZoneWAN.get('googleSession__primarySubnetName', '')
@@ -142,7 +148,7 @@ def update(id, landingZoneWAN):
 
         schema = LandingZoneWANSchema()
         # flatten the landingZoneWAN object into a python dictionary
-        flatten_landingZoneWAN = flatten(existing_landingZoneWAN)
+        flatten_landingZoneWAN = flatten(existing_landingZoneWAN, delimiter)
         # load into schema and save to db
         update_landingZoneWAN = schema.load(flatten_landingZoneWAN, session=db.session)
 

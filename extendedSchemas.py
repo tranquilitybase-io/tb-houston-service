@@ -9,6 +9,14 @@ from marshmallow import Schema, fields, pre_load, post_load, pre_dump, post_dump
 #db = SQLAlchemy(app)
 #ma = Marshmallow(app)
 
+
+class IdSchema(Schema):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    id = fields.Int()
+
+
 class HealthSchema(Schema):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -86,7 +94,7 @@ class ExtendedSolutionSchema(Schema):
     applications = fields.Nested(ExtendedApplicationSchema(many=True))
 
 
-class GoogleSessonSchema(Schema):
+class ExtendedGoogleSessionSchema(Schema):
     primaryGcpVpcSubnet = fields.Str()
     primaryRegion = fields.Str()
     primarySubnetName = fields.Str()
@@ -95,37 +103,37 @@ class GoogleSessonSchema(Schema):
     secondarySubnetName = fields.Str()
 
 
-class OnPremiseSessonSchema(Schema):
-    onPremiseSession__primaryBgpPeer = fields.Str()
-    onPremiseSession__primaryPeerIp = fields.Str()
-    onPremiseSession__primaryPeerIpSubnet = fields.Str()
-    onPremiseSession__primarySharedSecret = fields.Str()
-    onPremiseSession__primaryVpnTunnel = fields.Str()
-    onPremiseSession__secondaryBgpPeer = fields.Str()
-    onPremiseSession__secondaryPeerIp = fields.Str()
-    onPremiseSession__secondaryPeerIpSubnet = fields.Str()
-    onPremiseSession__secondarySharedSecret = fields.Str()
-    onPremiseSession__secondaryVpnTunnel = fields.Str()
-    onPremiseSession__vendor = fields.Str()
+class ExtendedOnPremiseSessionSchema(Schema):
+    primaryBgpPeer = fields.Str()
+    primaryPeerIp = fields.Str()
+    primaryPeerIpSubnet = fields.Str()
+    primarySharedSecret = fields.Str()
+    primaryVpnTunnel = fields.Str()
+    secondaryBgpPeer = fields.Str()
+    secondaryPeerIp = fields.Str()
+    secondaryPeerIpSubnet = fields.Str()
+    secondarySharedSecret = fields.Str()
+    secondaryVpnTunnel = fields.Str()
+    vendor = fields.Str()
 
 
-class VPNSchema(Schema):
-    vpn__bgpInterfaceNetLength = fields.Str()
-    vpn__bgpRoutingMode = fields.Str()
-    vpn__cloudRouterName = fields.Str()
-    vpn__description = fields.Str()
-    vpn__externalVpnGateway = fields.Str()
-    vpn__googleASN = fields.Int()
-    vpn__haVpnGateway = fields.Str()
-    vpn__peerASN = fields.Int()
-    vpn__projectName = fields.Str()
-    vpn__subnetMode = fields.Str()
-    vpn__vpcName = fields.Str()
+class ExtendedVPNSchema(Schema):
+    bgpInterfaceNetLength = fields.Str()
+    bgpRoutingMode = fields.Str()
+    cloudRouterName = fields.Str()
+    description = fields.Str()
+    externalVpnGateway = fields.Str()
+    googleASN = fields.Int()
+    haVpnGateway = fields.Str()
+    peerASN = fields.Int()
+    projectName = fields.Str()
+    subnetMode = fields.Str()
+    vpcName = fields.Str()
 
 
-class LandingZoneWANSchema(Schema):
+class ExtendedLandingZoneWANSchema(Schema):
     __envelope__ = {"single": "landingZoneWAN", "many": "landingZoneWANs"}
     id = fields.Int()
-    googleSesson = fields.Nested(GoogleSessionSchema(many=False))
-    onPremiseSession = fields.Nested(OnPremiseSessionSchema(many=False))
-    vpn = fields.Nested(vpnSchema(many=False))
+    googleSession = fields.Nested(ExtendedGoogleSessionSchema(many=False))
+    onPremiseSession = fields.Nested(ExtendedOnPremiseSessionSchema(many=False))
+    vpn = fields.Nested(ExtendedVPNSchema(many=False))

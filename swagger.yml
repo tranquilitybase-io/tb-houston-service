@@ -1807,8 +1807,7 @@ paths:
           schema:
             type: array
             items:
-              properties:
-                $ref: '#/definitions/LandingZoneWAN' 
+              $ref: '#/definitions/LandingZoneWAN' 
 
   /landingzonewan/:
     post:
@@ -1824,15 +1823,9 @@ paths:
           required: true
           schema:
             $ref: '#/definitions/LandingZoneWAN' 
-
       responses:
         201:
           description: Successfully created a landingzonewan
-          schema:
-            type: object
-            items:
-              properties:
-                $ref: '#/definitions/LandingZoneWAN' 
 
   /landingzonewan/{id}:
     get:
@@ -1851,9 +1844,7 @@ paths:
         200:
           description: Successfully read an landingzonewan from the list
           schema:
-            type: object
-            properties:
-              $ref: '#/definitions/LandingZoneWAN' 
+            $ref: '#/definitions/LandingZoneWAN' 
 
     put:
       operationId: landingzonewan.update
@@ -1870,9 +1861,7 @@ paths:
         - name: landingZoneWAN
           in: body
           schema:
-            type: object
-            properties:
-              $ref: '#/definitions/LandingZoneWAN' 
+            $ref: '#/definitions/LandingZoneWAN' 
       responses:
         200:
           description: Successfully updated a landingzonewan
@@ -1895,71 +1884,73 @@ paths:
 
 definitions:
   LandingZoneWAN:
-    id:
-      type: integer
-      description: id
-    googleSession:
-      type: object
-      properties:
-        primaryGcpVpcSubnet:
-          type: string
-        primaryRegion:
-          type: string
-        primarySubnetName:
-          type: string
-        secondaryGcpVpcSubnet:
-          type: string
-        secondaryRegion:
-          type: string
-        secondarySubnetName:
-          type: string
-    onPremiseSession:
-      type: object
-      properties:
-        primaryBgpPeer:
-          type: string
-        primaryPeerIp:
-          type: string
-        primaryPeerIpSubnet:
-          type: string
-        primarySharedSecret:
-          type: string
-        primaryVpnTunnel:
-          type: string
-        secondaryBgpPeer:
-          type: string
-        secondaryPeerIp:
-          type: string
-        secondaryPeerIpSubnet:
-          type: string
-        secondarySharedSecret:
-          type: string
-        secondaryVpnTunnel:
-          type: string
-        vendor:
-          type: string
-    vpn: 
-      type: object
-      properties:
-        bgpInterfaceNetLength:
-          type: string
-        bgpRoutingMode:
-          type: string
-        cloudRouterName:
-          type: string
-        description:
-          type: string
-        externalVpnGateway:
-          type: string
-        googleASN: 
-          type: integer
-        haVpnGateway:
-          type: string
-        peerASN:
-          type: integer
-        projectName:
-          type: string
-        subnetMode:
-          type: string
-        vpcName:
-          type: string
+    type: object
+    properties:
+      id:
+        type: integer
+        description: id
+      googleSession:
+        type: object
+        properties:
+          primaryGcpVpcSubnet:
+            type: string
+          primaryRegion:
+            type: string
+          primarySubnetName:
+            type: string
+          secondaryGcpVpcSubnet:
+            type: string
+          secondaryRegion:
+            type: string
+          secondarySubnetName:
+            type: string
+      onPremiseSession:
+        type: object
+        properties:
+          primaryBgpPeer:
+            type: string
+          primaryPeerIp:
+            type: string
+          primaryPeerIpSubnet:
+            type: string
+          primarySharedSecret:
+            type: string
+          primaryVpnTunnel:
+            type: string
+          secondaryBgpPeer:
+            type: string
+          secondaryPeerIp:
+            type: string
+          secondaryPeerIpSubnet:
+            type: string
+          secondarySharedSecret:
+            type: string
+          secondaryVpnTunnel:
+            type: string
+          vendor:
+            type: string
+      vpn: 
+        type: object
+        properties:
+          bgpInterfaceNetLength:
+            type: string
+          bgpRoutingMode:
+            type: string
+          cloudRouterName:
+            type: string
+          description:
+            type: string
+          externalVpnGateway:
+            type: string
+          googleASN: 
+            type: integer
+          haVpnGateway:
+            type: string
+          peerASN:
+            type: integer
+          projectName:
+            type: string
+          subnetMode:
+            type: string
+          vpcName:
+            type: string
