@@ -42,9 +42,9 @@ class ModelTools():
 class User(db.Model):
     __tablename__ = "user"
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(100))
-    firstname = db.Column(db.String(100))
-    lastname = db.Column(db.String(100))
+    email = db.Column(db.String(100))
+    firstName = db.Column(db.String(100))
+    lastName = db.Column(db.String(100))
     isAdmin = db.Column(db.Boolean())
 
 
@@ -351,6 +351,7 @@ class LandingZoneAction(db.Model):
     categoryClass= db.Column(db.String)
     completionRate = db.Column(db.Integer)
     locked = db.Column(db.Boolean())
+    routerLink = db.Column(db.String)
 
 class LandingZoneActionSchema(ma.ModelSchema):
     def __init__(self, **kwargs):
@@ -359,31 +360,4 @@ class LandingZoneActionSchema(ma.ModelSchema):
     class Meta:
         model = LandingZoneAction
         sqla_session = db.session
-
-
-# class SolutionEnhancedSchema(ma.ModelSchema):
-#     def __init__(self, **kwargs):
-#         super().__init__(**kwargs)
-#
-#     class Meta:
-#         model = Solution
-#         sqla_session = db.session
-#
-#     # applications = fields.Nested('ApplicationActivatorSchema')
-#
-#     @pre_load
-#     def serialize_arrays(self, in_data, **kwargs):
-#         try:
-#             in_data["environments"] = json.dumps(in_data["environments"])
-#         except Exception as e:
-#             app.logger.warning(e)
-#         return in_data
-#
-#     @post_dump
-#     def deserialize_arrays(self, out_data, many, **kwargs):
-#         try:
-#             out_data["environments"] = json.loads(out_data["environments"])
-#         except Exception as e:
-#             app.logger.warning(e)
-#         return out_data
 
