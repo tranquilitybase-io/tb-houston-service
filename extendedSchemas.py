@@ -18,9 +18,9 @@ class HealthSchema(Schema):
 
 class ExtendedUserSchema(Schema):
     id = fields.Int()
-    username = fields.Str()
-    firstname = fields.Str()
-    lastname = fields.Str()
+    email = fields.Str()
+    firstName = fields.Str()
+    lastName = fields.Str()
     isAdmin = fields.Boolean()
 
 
@@ -53,7 +53,7 @@ class ExtendedActivatorSchema(Schema):
     resources = fields.List(fields.Dict())
     status = fields.Str()
     description = fields.Str()
-    user = fields.Nested(ExtendedUserSchema(many=False))
+    accessRequestedBy = fields.Nested(ExtendedUserSchema(many=False))
 
 
 class ExtendedApplicationSchema(Schema):

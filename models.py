@@ -42,9 +42,9 @@ class ModelTools():
 class User(db.Model):
     __tablename__ = "user"
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(100))
-    firstname = db.Column(db.String(100))
-    lastname = db.Column(db.String(100))
+    email = db.Column(db.String(100))
+    firstName = db.Column(db.String(100))
+    lastName = db.Column(db.String(100))
     isAdmin = db.Column(db.Boolean())
 
 
@@ -352,6 +352,7 @@ class LandingZoneAction(db.Model):
     categoryClass= db.Column(db.String)
     completionRate = db.Column(db.Integer)
     locked = db.Column(db.Boolean())
+    routerLink = db.Column(db.String)
 
 class LandingZoneActionSchema(ma.ModelSchema):
     def __init__(self, **kwargs):
@@ -360,90 +361,4 @@ class LandingZoneActionSchema(ma.ModelSchema):
     class Meta:
         model = LandingZoneAction
         sqla_session = db.session
-
-# LandingZoneWAN
-class LandingZoneWAN(db.Model):
-    __tablename__ = "landingzonewan"
-    id = db.Column(db.Integer, primary_key=True)
-    googleSession__primaryGcpVpcSubnet = db.Column(db.String)
-    googleSession__primaryRegion = db.Column(db.String)
-    googleSession__primarySubnetName = db.Column(db.String)
-    googleSession__secondaryGcpVpcSubnet = db.Column(db.String)
-    googleSession__secondaryRegion = db.Column(db.String)
-    googleSession__secondarySubnetName = db.Column(db.String)
-    onPremiseSession__primaryBgpPeer = db.Column(db.String)
-    onPremiseSession__primaryPeerIp = db.Column(db.String)
-    onPremiseSession__primaryPeerIpSubnet = db.Column(db.String)
-    onPremiseSession__primarySharedSecret = db.Column(db.String)
-    onPremiseSession__primaryVpnTunnel = db.Column(db.String)
-    onPremiseSession__secondaryBgpPeer = db.Column(db.String)
-    onPremiseSession__secondaryPeerIp = db.Column(db.String)
-    onPremiseSession__secondaryPeerIpSubnet = db.Column(db.String)
-    onPremiseSession__secondarySharedSecret = db.Column(db.String)
-    onPremiseSession__secondaryVpnTunnel = db.Column(db.String)
-    onPremiseSession__vendor = db.Column(db.String)
-    vpn__bgpInterfaceNetLength = db.Column(db.String)
-    vpn__bgpRoutingMode = db.Column(db.String)
-    vpn__cloudRouterName = db.Column(db.String)
-    vpn__description = db.Column(db.String)
-    vpn__externalVpnGateway = db.Column(db.String)
-    vpn__googleASN = db.Column(db.Integer)
-    vpn__haVpnGateway = db.Column(db.String)
-    vpn__peerASN = db.Column(db.Integer)
-    vpn__projectName = db.Column(db.String)
-    vpn__subnetMode = db.Column(db.String)
-    vpn__vpcName = db.Column(db.String)
-
-
-# BGPRoutingMode 
-class BGPRoutingMode(db.Model):
-    __tablename__ = "bgproutingmode"
-    id = db.Column(db.Integer, primary_key=True)
-    key = db.Column(db.String)
-    value = db.Column(db.String)
-
-
-class BGPRoutingModeSchema(ma.ModelSchema):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
-    class Meta:
-        model = BGPRoutingMode
-        sqla_session = db.session
-
-
-# SubnetMode
-class SubnetMode(db.Model):
-    __tablename__ = "subnetmode"
-    id = db.Column(db.Integer, primary_key=True)
-    key = db.Column(db.String)
-    value = db.Column(db.String)
-
-
-class SubnetModeSchema(ma.ModelSchema):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
-    class Meta:
-        model = SubnetMode
-        sqla_session = db.session
- 
-
-# VPNOnPremiseVendor
-class VPNOnPremiseVendor(db.Model):
-    __tablename__ = "vpnonpremisevendor"
-    id = db.Column(db.Integer, primary_key=True)
-    key = db.Column(db.String)
-    value = db.Column(db.String)
-
-
-class VPNOnPremiseSchema(ma.ModelSchema):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
-    class Meta:
-        model = VPNOnPremiseVendor
-        sqla_session = db.session
-
-
 
