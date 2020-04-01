@@ -49,9 +49,9 @@ class ModelTools():
 class User(db.Model):
     __tablename__ = "user"
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(100))
-    firstname = db.Column(db.String(100))
-    lastname = db.Column(db.String(100))
+    email = db.Column(db.String(100))
+    firstName = db.Column(db.String(100))
+    lastName = db.Column(db.String(100))
     isAdmin = db.Column(db.Boolean())
 
 
@@ -192,6 +192,9 @@ class ApplicationSchema(ma.ModelSchema):
     class Meta:
         model = Application
         sqla_session = db.session
+
+    solutionId = fields.Int()
+    activatorId = fields.Int()
 
 # Solutions
 class Solution(db.Model):

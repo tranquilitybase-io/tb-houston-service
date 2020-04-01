@@ -26,9 +26,9 @@ class HealthSchema(Schema):
 
 class ExtendedUserSchema(Schema):
     id = fields.Int()
-    username = fields.Str()
-    firstname = fields.Str()
-    lastname = fields.Str()
+    email = fields.Str()
+    firstName = fields.Str()
+    lastName = fields.Str()
     isAdmin = fields.Boolean()
 
 

@@ -78,9 +78,11 @@ def create(activator):
         Activator.query.filter(Activator.id == id).one_or_none()
     )
 
+
     if existing_activator is None:
         schema = ActivatorSchema()
         new_activator = schema.load(activator, session=db.session)
+        new_activator.lastUpdated = ModelTools.get_utc_timestamp()
         db.session.add(new_activator)
         db.session.commit()
 
@@ -118,8 +120,9 @@ def update(id, activator):
         schema = ActivatorSchema()
         update_activator = schema.load(activator, session=db.session)
         update_activator.id = activator['id']
-        update_activator.name = activator['name']
-        update_activator.envs = activator['envs']
+        update_activator.name = activator.get('name', '')
+        update_activator.envs = activator.get('envs', '')
+        new_activator.lastUpdated = ModelTools.get_utc_timestamp()
 
         db.session.merge(update_activator)
         db.session.commit()
@@ -167,9 +170,9 @@ def setActivatorStatus(activator):
 
     # if found?
     if existing_activator is not None:
-        existing_activator.status = activator['status']
-        # TODO: When we can support 'user'
-        # existing_activator.user = activator['accessRequestedBy']
+        existing_activator.status = activator.get('status', existing_activator.status)
+        existing_activator.accessRequestedBy = activator.get('accessRequestedBy', existing_activator.accessRequestedBy)
+        existing_activator.lastUpdated = ModelTools.get_utc_timestamp()
 
         db.session.merge(existing_activator)
         db.session.commit()

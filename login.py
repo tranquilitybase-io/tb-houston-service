@@ -10,12 +10,13 @@ from flask import make_response, abort
 from config import db, app
 from pprint import pformat
 from models import ModelTools
+from models import User
+from extendedSchemas import ExtendedUserSchema
 
 
 def check_credentials(login_details):
     """
     This function responds to a request for /api/login
-
     :return:        json string of user details
     """
 
@@ -25,24 +26,21 @@ def check_credentials(login_details):
     password = login_details['password']
 
     if (username == 'admin@your.company' and password == 'pass1'):
-      data = {
-        "id": "admin@your.company",
-        "firstName": "Adam",
-        "lastName": "Smith",
-        "isAdmin": True
-      }
-      app.logger.debug('LOGIN accepted!');
-      return data, 200
+      user = User.query.filter(User.email == username).one_or_none()
+      schema = ExtendedUserSchema(many=False)
+      if user is not None:
+        app.logger.debug('LOGIN accepted!');
+        schema = ExtendedUserSchema(many=False)
+        data = schema.dump(user)
+        return data, 200
 
     if (username == 'dev@your.company' and password == 'pass2'):
-      data = {
-        "id": "dev@your.company",
-        "firstName": "John",
-        "lastName": "Snow",
-        "isAdmin": False
-      }
-      app.logger.debug('LOGIN accepted!');
-      return data, 200
+      user = User.query.filter(User.email == username).one_or_none()
+      if user is not None:
+        app.logger.debug('LOGIN accepted!');
+        schema = ExtendedUserSchema(many=False)
+        data = schema.dump(user)
+        return data, 200
 
     app.logger.warning('LOGIN FAILED!');
     abort(
