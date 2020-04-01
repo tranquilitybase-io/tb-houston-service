@@ -15,9 +15,10 @@ from models import ModelTools
 from extendedSchemas import ExtendedSolutionSchema
 import solution_extension
 from pprint import pformat
+from pprint import pprint
 
 
-def read_all():
+def read_all(active=None):
     """
     This function responds to a request for /api/solutions
     with the complete lists of solutions
@@ -25,8 +26,15 @@ def read_all():
     :return:        json string of list of solutions
     """
 
+    print("Active: ")
+    pprint(active)
+
     # Create the list of solutions from our data
-    solutions = Solution.query.order_by(Solution.id).all()
+    if active != None:
+        solutions = Solution.query.filter(Solution.active == active).order_by(Solution.id).all()
+    else:
+        solutions = Solution.query.order_by(Solution.id).all()
+
     app.logger.debug("solution.read_all")
 
     solutions_arr = []

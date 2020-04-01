@@ -86,7 +86,7 @@ class ExtendedSolutionSchema(Schema):
     applications = fields.Nested(ExtendedApplicationSchema(many=True))
 
 
-class GoogleSessonSchema(Schema):
+class GoogleSessionSchema(Schema):
     primaryGcpVpcSubnet = fields.Str()
     primaryRegion = fields.Str()
     primarySubnetName = fields.Str()
@@ -95,7 +95,7 @@ class GoogleSessonSchema(Schema):
     secondarySubnetName = fields.Str()
 
 
-class OnPremiseSessonSchema(Schema):
+class OnPremiseSessionSchema(Schema):
     onPremiseSession__primaryBgpPeer = fields.Str()
     onPremiseSession__primaryPeerIp = fields.Str()
     onPremiseSession__primaryPeerIpSubnet = fields.Str()
@@ -128,4 +128,4 @@ class LandingZoneWANSchema(Schema):
     id = fields.Int()
     googleSesson = fields.Nested(GoogleSessionSchema(many=False))
     onPremiseSession = fields.Nested(OnPremiseSessionSchema(many=False))
-    vpn = fields.Nested(vpnSchema(many=False))
+    vpn = fields.Nested(VPNSchema(many=False))
