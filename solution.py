@@ -13,11 +13,13 @@ from models import Application, Activator
 from models import Solution, SolutionSchema
 from models import ModelTools
 from extendedSchemas import ExtendedSolutionSchema
+from extendedSchemas import SolutionNamesOnlySchema
 import solution_extension
 from pprint import pformat
+from pprint import pprint
 
 
-def read_all():
+def read_all(active=None, namesonly=None):
     """
     This function responds to a request for /api/solutions
     with the complete lists of solutions
@@ -25,20 +27,31 @@ def read_all():
     :return:        json string of list of solutions
     """
 
-    # Create the list of solutions from our data
-    solutions = Solution.query.order_by(Solution.id).all()
     app.logger.debug("solution.read_all")
+    app.logger.debug(f"Active: {active}, namesonly: {namesonly}")
 
-    solutions_arr = []
-    for sol in solutions:
+    # Create the list of solutions from our data
+    if active == None:
+      solutions = Solution.query.order_by(Solution.id).all()
+    else:
+      solutions = Solution.query.filter(Solution.active == active).order_by(Solution.id).all()
+
+
+    if namesonly == True:
+      # Serialize the data for the response
+      schema = SolutionNamesOnlySchema(many=True)
+      data = schema.dump(solutions)
+    else:
+      solutions_arr = []
+      for sol in solutions:
         solutions_arr.append(solution_extension.build_solution(sol))
+      app.logger.debug("solutions array:")
+      app.logger.debug(pformat(solutions_arr))
 
-    app.logger.debug("solutions array:")
-    app.logger.debug(pformat(solutions_arr))
+      # Serialize the data for the response
+      schema = ExtendedSolutionSchema(many=True)
+      data = schema.dump(solutions_arr)
 
-    # Serialize the data for the response
-    schema = ExtendedSolutionSchema(many=True)
-    data = schema.dump(solutions_arr)
     app.logger.debug("solutions data:")
     app.logger.debug(data)
     return data

@@ -84,3 +84,55 @@ class ExtendedSolutionSchema(Schema):
     teams = fields.Str()
     lastUpdated = fields.Str()
     applications = fields.Nested(ExtendedApplicationSchema(many=True))
+
+
+class SolutionNamesOnlySchema(Schema):
+    __envelope__ = {"single": "solution", "many": "solutions"}
+
+    id = fields.Int()
+    name = fields.Str()
+
+
+class GoogleSessionSchema(Schema):
+    primaryGcpVpcSubnet = fields.Str()
+    primaryRegion = fields.Str()
+    primarySubnetName = fields.Str()
+    secondaryGcpVpcSubnet = fields.Str()
+    secondaryRegion = fields.Str()
+    secondarySubnetName = fields.Str()
+
+
+class OnPremiseSessionSchema(Schema):
+    onPremiseSession__primaryBgpPeer = fields.Str()
+    onPremiseSession__primaryPeerIp = fields.Str()
+    onPremiseSession__primaryPeerIpSubnet = fields.Str()
+    onPremiseSession__primarySharedSecret = fields.Str()
+    onPremiseSession__primaryVpnTunnel = fields.Str()
+    onPremiseSession__secondaryBgpPeer = fields.Str()
+    onPremiseSession__secondaryPeerIp = fields.Str()
+    onPremiseSession__secondaryPeerIpSubnet = fields.Str()
+    onPremiseSession__secondarySharedSecret = fields.Str()
+    onPremiseSession__secondaryVpnTunnel = fields.Str()
+    onPremiseSession__vendor = fields.Str()
+
+
+class VPNSchema(Schema):
+    vpn__bgpInterfaceNetLength = fields.Str()
+    vpn__bgpRoutingMode = fields.Str()
+    vpn__cloudRouterName = fields.Str()
+    vpn__description = fields.Str()
+    vpn__externalVpnGateway = fields.Str()
+    vpn__googleASN = fields.Int()
+    vpn__haVpnGateway = fields.Str()
+    vpn__peerASN = fields.Int()
+    vpn__projectName = fields.Str()
+    vpn__subnetMode = fields.Str()
+    vpn__vpcName = fields.Str()
+
+
+class LandingZoneWANSchema(Schema):
+    __envelope__ = {"single": "landingZoneWAN", "many": "landingZoneWANs"}
+    id = fields.Int()
+    googleSesson = fields.Nested(GoogleSessionSchema(many=False))
+    onPremiseSession = fields.Nested(OnPremiseSessionSchema(many=False))
+    vpn = fields.Nested(VPNSchema(many=False))

@@ -256,6 +256,7 @@ class TeamSchema(ma.ModelSchema):
         model = Team
         sqla_session = db.session
 
+
 # Environment
 class Environment(db.Model):
     __tablename__ = "environment"

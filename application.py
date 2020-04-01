@@ -43,6 +43,9 @@ def read_one(id):
 
     application = (Application.query.filter(Application.id == id).one_or_none())
 
+    app.logger.debug("application data:")
+    app.logger.debug(pformat(application))
+
     if application is not None:
         # Serialize the data for the response
         application_schema = ApplicationSchema()

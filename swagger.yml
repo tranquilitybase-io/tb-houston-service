@@ -923,6 +923,13 @@ paths:
         - solution
       summary: Read the entire list of solutions 
       description: Read the list of solutions
+      parameters:
+        - in: query
+          name: active
+          type: boolean
+        - in: query
+          name: namesonly
+          type: boolean
       responses:
         200:
           description: Successfully read solutions list operation
