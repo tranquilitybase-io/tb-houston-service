@@ -256,6 +256,7 @@ class TeamSchema(ma.ModelSchema):
         model = Team
         sqla_session = db.session
 
+
 # Environment
 class Environment(db.Model):
     __tablename__ = "environment"
@@ -360,30 +361,89 @@ class LandingZoneActionSchema(ma.ModelSchema):
         model = LandingZoneAction
         sqla_session = db.session
 
+# LandingZoneWAN
+class LandingZoneWAN(db.Model):
+    __tablename__ = "landingzonewan"
+    id = db.Column(db.Integer, primary_key=True)
+    googleSession__primaryGcpVpcSubnet = db.Column(db.String)
+    googleSession__primaryRegion = db.Column(db.String)
+    googleSession__primarySubnetName = db.Column(db.String)
+    googleSession__secondaryGcpVpcSubnet = db.Column(db.String)
+    googleSession__secondaryRegion = db.Column(db.String)
+    googleSession__secondarySubnetName = db.Column(db.String)
+    onPremiseSession__primaryBgpPeer = db.Column(db.String)
+    onPremiseSession__primaryPeerIp = db.Column(db.String)
+    onPremiseSession__primaryPeerIpSubnet = db.Column(db.String)
+    onPremiseSession__primarySharedSecret = db.Column(db.String)
+    onPremiseSession__primaryVpnTunnel = db.Column(db.String)
+    onPremiseSession__secondaryBgpPeer = db.Column(db.String)
+    onPremiseSession__secondaryPeerIp = db.Column(db.String)
+    onPremiseSession__secondaryPeerIpSubnet = db.Column(db.String)
+    onPremiseSession__secondarySharedSecret = db.Column(db.String)
+    onPremiseSession__secondaryVpnTunnel = db.Column(db.String)
+    onPremiseSession__vendor = db.Column(db.String)
+    vpn__bgpInterfaceNetLength = db.Column(db.String)
+    vpn__bgpRoutingMode = db.Column(db.String)
+    vpn__cloudRouterName = db.Column(db.String)
+    vpn__description = db.Column(db.String)
+    vpn__externalVpnGateway = db.Column(db.String)
+    vpn__googleASN = db.Column(db.Integer)
+    vpn__haVpnGateway = db.Column(db.String)
+    vpn__peerASN = db.Column(db.Integer)
+    vpn__projectName = db.Column(db.String)
+    vpn__subnetMode = db.Column(db.String)
+    vpn__vpcName = db.Column(db.String)
 
-# class SolutionEnhancedSchema(ma.ModelSchema):
-#     def __init__(self, **kwargs):
-#         super().__init__(**kwargs)
-#
-#     class Meta:
-#         model = Solution
-#         sqla_session = db.session
-#
-#     # applications = fields.Nested('ApplicationActivatorSchema')
-#
-#     @pre_load
-#     def serialize_arrays(self, in_data, **kwargs):
-#         try:
-#             in_data["environments"] = json.dumps(in_data["environments"])
-#         except Exception as e:
-#             app.logger.warning(e)
-#         return in_data
-#
-#     @post_dump
-#     def deserialize_arrays(self, out_data, many, **kwargs):
-#         try:
-#             out_data["environments"] = json.loads(out_data["environments"])
-#         except Exception as e:
-#             app.logger.warning(e)
-#         return out_data
+
+# BGPRoutingMode 
+class BGPRoutingMode(db.Model):
+    __tablename__ = "bgproutingmode"
+    id = db.Column(db.Integer, primary_key=True)
+    key = db.Column(db.String)
+    value = db.Column(db.String)
+
+
+class BGPRoutingModeSchema(ma.ModelSchema):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    class Meta:
+        model = BGPRoutingMode
+        sqla_session = db.session
+
+
+# SubnetMode
+class SubnetMode(db.Model):
+    __tablename__ = "subnetmode"
+    id = db.Column(db.Integer, primary_key=True)
+    key = db.Column(db.String)
+    value = db.Column(db.String)
+
+
+class SubnetModeSchema(ma.ModelSchema):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    class Meta:
+        model = SubnetMode
+        sqla_session = db.session
+ 
+
+# VPNOnPremiseVendor
+class VPNOnPremiseVendor(db.Model):
+    __tablename__ = "vpnonpremisevendor"
+    id = db.Column(db.Integer, primary_key=True)
+    key = db.Column(db.String)
+    value = db.Column(db.String)
+
+
+class VPNOnPremiseSchema(ma.ModelSchema):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    class Meta:
+        model = VPNOnPremiseVendor
+        sqla_session = db.session
+
+
 
