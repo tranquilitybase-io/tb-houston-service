@@ -114,49 +114,53 @@ def update(id, landingZoneWAN):
     # Does the landingZoneWAN exist in landingZoneWANs?
     existing_landingZoneWAN = LandingZoneWAN.query.filter(LandingZoneWAN.id == id).one_or_none()
 
+    flattened_landingZoneWAN = flatten(landingZoneWAN, delimiter)
+
     # Does landingZoneWAN exist?
     if existing_landingZoneWAN is not None:
         flattened_landingZoneWAN = flatten(flatten(landingZoneWAN, delimiter))
-        existing_landingZoneWAN.googleSession__primaryGcpVpcSubnet = landingZoneWAN.get('googleSession__primaryGcpVpcSubnet', '')
-        existing_landingZoneWAN.googleSession__primaryRegion = landingZoneWAN.get('googleSession__primaryRegion', '')
-        existing_landingZoneWAN.googleSession__primarySubnetName = landingZoneWAN.get('googleSession__primarySubnetName', '')
-        existing_landingZoneWAN.googleSession__secondaryGcpVpcSubnet = landingZoneWAN('googleSession__secondaryGcpVpcSubnet', '')
-        existing_landingZoneWAN.googleSession__secondaryRegion = landingZoneWAN('googleSession__secondaryRegion', '')
-        existing_landingZoneWAN.googleSession__secondarySubnetName = landingZoneWAN('googleSession__secondarySubnetName', '')
-        existing_landingZoneWAN.onPremiseSession__primaryBgpPeer = landingZoneWAN('onPremiseSession__primaryBgpPeer', '')
-        existing_landingZoneWAN.onPremiseSession__primaryPeerIp = landingZoneWAN('onPremiseSession__primaryPeerIp', '')
-        existing_landingZoneWAN.onPremiseSession__primaryPeerIpSubnet = landingZoneWAN('onPremiseSession__primaryPeerIpSubnet', '')
-        existing_landingZoneWAN.onPremiseSession__primarySharedSecret = landingZoneWAN('onPremiseSession__primarySharedSecret', '')
-        existing_landingZoneWAN.onPremiseSession__primaryVpnTunnel = landingZoneWAN('onPremiseSession__primaryVpnTunnel', '')
-        existing_landingZoneWAN.onPremiseSession__secondaryBgpPeer = landingZoneWAN('onPremiseSession__secondaryBgpPeer', '')
-        existing_landingZoneWAN.onPremiseSession__secondaryPeerIp = landingZoneWAN('onPremiseSession__secondaryPeerIp', '')
-        existing_landingZoneWAN.onPremiseSession__secondaryPeerIpSubnet = landingZoneWAN('onPremiseSession__secondaryPeerIpSubnet', '')
-        existing_landingZoneWAN.onPremiseSession__secondarySharedSecret = landingZoneWAN('onPremiseSession__secondarySharedSecret', '')
-        existing_landingZoneWAN.onPremiseSession__secondaryVpnTunnel = landingZoneWAN('onPremiseSession__secondaryVpnTunnel', '')
-        existing_landingZoneWAN.onPremiseSession__vendor = landingZoneWAN('onPremiseSession__vendor', '')
-        existing_landingZoneWAN.vpn__bgpInterfaceNetLength = landingZoneWAN('vpn__bgpInterfaceNetLength', '')
-        existing_landingZoneWAN.vpn__bgpRoutingMode = landingZoneWAN('vpn__bgpRoutingMode', '')
-        existing_landingZoneWAN.vpn__cloudRouterName = landingZoneWAN('vpn__cloudRouterName', '')
-        existing_landingZoneWAN.vpn__description = landingZoneWAN('vpn__description', '')
-        existing_landingZoneWAN.vpn__externalVpnGateway = landingZoneWAN('vpn__externalVpnGateway', '')
-        existing_landingZoneWAN.vpn__googleASN = landingZoneWAN('vpn__googleASN', 0)
-        existing_landingZoneWAN.vpn__haVpnGateway = landingZoneWAN('vpn__haVpnGateway', '')
-        existing_landingZoneWAN.vpn__peerASN = landingZoneWAN('vpn__peerASN', 0)
-        existing_landingZoneWAN.vpn__projectName = landingZoneWAN('vpn__projectName', '')
-        existing_landingZoneWAN.vpn__subnetMode = landingZoneWAN('vpn__subnetMode', '')
-        existing_landingZoneWAN.vpn__vpcName = landingZoneWAN('vpn__vpcName', '')
+        existing_landingZoneWAN.googleSession__primaryGcpVpcSubnet = flattened_landingZoneWAN.get('googleSession__primaryGcpVpcSubnet', '')
+        existing_landingZoneWAN.googleSession__primaryRegion = flattened_landingZoneWAN.get('googleSession__primaryRegion', '')
+        existing_landingZoneWAN.googleSession__primarySubnetName = flattened_landingZoneWAN.get('googleSession__primarySubnetName', '')
+        existing_landingZoneWAN.googleSession__secondaryGcpVpcSubnet = flattened_landingZoneWAN.get('googleSession__secondaryGcpVpcSubnet', '')
+        existing_landingZoneWAN.googleSession__secondaryRegion = flattened_landingZoneWAN.get('googleSession__secondaryRegion', '')
+        existing_landingZoneWAN.googleSession__secondarySubnetName = flattened_landingZoneWAN.get('googleSession__secondarySubnetName', '')
+        existing_landingZoneWAN.onPremiseSession__primaryBgpPeer = flattened_landingZoneWAN.get('onPremiseSession__primaryBgpPeer', '')
+        existing_landingZoneWAN.onPremiseSession__primaryPeerIp = flattened_landingZoneWAN.get('onPremiseSession__primaryPeerIp', '')
+        existing_landingZoneWAN.onPremiseSession__primaryPeerIpSubnet = flattened_landingZoneWAN.get('onPremiseSession__primaryPeerIpSubnet', '')
+        existing_landingZoneWAN.onPremiseSession__primarySharedSecret = flattened_landingZoneWAN.get('onPremiseSession__primarySharedSecret', '')
+        existing_landingZoneWAN.onPremiseSession__primaryVpnTunnel = flattened_landingZoneWAN.get('onPremiseSession__primaryVpnTunnel', '')
+        existing_landingZoneWAN.onPremiseSession__secondaryBgpPeer = flattened_landingZoneWAN.get('onPremiseSession__secondaryBgpPeer', '')
+        existing_landingZoneWAN.onPremiseSession__secondaryPeerIp = flattened_landingZoneWAN.get('onPremiseSession__secondaryPeerIp', '')
+        existing_landingZoneWAN.onPremiseSession__secondaryPeerIpSubnet = flattened_landingZoneWAN.get('onPremiseSession__secondaryPeerIpSubnet', '')
+        existing_landingZoneWAN.onPremiseSession__secondarySharedSecret = flattened_landingZoneWAN.get('onPremiseSession__secondarySharedSecret', '')
+        existing_landingZoneWAN.onPremiseSession__secondaryVpnTunnel = flattened_landingZoneWAN.get('onPremiseSession__secondaryVpnTunnel', '')
+        existing_landingZoneWAN.onPremiseSession__vendor = flattened_landingZoneWAN.get('onPremiseSession__vendor', '')
+        existing_landingZoneWAN.vpn__bgpInterfaceNetLength = flattened_landingZoneWAN.get('vpn__bgpInterfaceNetLength', '')
+        existing_landingZoneWAN.vpn__bgpRoutingMode = flattened_landingZoneWAN.get('vpn__bgpRoutingMode', '')
+        existing_landingZoneWAN.vpn__cloudRouterName = flattened_landingZoneWAN.get('vpn__cloudRouterName', '')
+        existing_landingZoneWAN.vpn__description = flattened_landingZoneWAN.get('vpn__description', '')
+        existing_landingZoneWAN.vpn__externalVpnGateway = flattened_landingZoneWAN.get('vpn__externalVpnGateway', '')
+        existing_landingZoneWAN.vpn__googleASN = flattened_landingZoneWAN.get('vpn__googleASN', 0)
+        existing_landingZoneWAN.vpn__haVpnGateway = flattened_landingZoneWAN.get('vpn__haVpnGateway', '')
+        existing_landingZoneWAN.vpn__peerASN = flattened_landingZoneWAN.get('vpn__peerASN', 0)
+        existing_landingZoneWAN.vpn__projectName = flattened_landingZoneWAN.get('vpn__projectName', '')
+        existing_landingZoneWAN.vpn__subnetMode = flattened_landingZoneWAN.get('vpn__subnetMode', '')
+        existing_landingZoneWAN.vpn__vpcName = flattened_landingZoneWAN.get('vpn__vpcName', '')
 
         schema = LandingZoneWANSchema()
-        # flatten the landingZoneWAN object into a python dictionary
-        flatten_landingZoneWAN = flatten(existing_landingZoneWAN, delimiter)
-        # load into schema and save to db
-        update_landingZoneWAN = schema.load(flatten_landingZoneWAN, session=db.session)
 
-        db.session.merge(flatten_landingZoneWAN)
+        #if '_sa_instance_state' in existing_landingZoneWAN:
+        #    del existing_landingZoneWAN['_sa_instance_state']
+
+        # load into schema and save to db
+        #update_landingZoneWAN = schema.load(existing_landingZoneWAN, session=db.session)
+
+        db.session.merge(existing_landingZoneWAN)
         db.session.commit()
 
         # return the updated landingZoneWAN in the response
-        data = schema.dump(update_landingZoneWAN)
+        data = schema.dump(existing_landingZoneWAN)
         app.logger.debug("landingZoneWAN data:")
         app.logger.debug(pformat(data))
         return data, 200
