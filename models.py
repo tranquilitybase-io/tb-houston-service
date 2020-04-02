@@ -196,6 +196,7 @@ class ApplicationSchema(ma.ModelSchema):
     solutionId = fields.Int()
     activatorId = fields.Int()
 
+
 # Solutions
 class Solution(db.Model):
     __tablename__ = "solution"
@@ -239,17 +240,6 @@ class SolutionSchema(ma.ModelSchema):
             app.logger.warning(e)
         return out_data
 
-# class ApplicationActivatorSchema(ma.ModelSchema):
-#     def __init__(self, **kwargs):
-#         super().__init__(**kwargs)
-#
-#     class Meta:
-#         model = Application
-#         sqla_session = db.session
-#
-#     id = fields.Int()
-#     name = fields.Str()
-#     activators = fields.Nested('ActivatorSchema')
 
 # Team
 class Team(db.Model):
@@ -362,6 +352,7 @@ class LandingZoneAction(db.Model):
     categoryClass= db.Column(db.String)
     completionRate = db.Column(db.Integer)
     locked = db.Column(db.Boolean())
+    routerLink = db.Column(db.String)
 
 class LandingZoneActionSchema(ma.ModelSchema):
     def __init__(self, **kwargs):
@@ -371,7 +362,7 @@ class LandingZoneActionSchema(ma.ModelSchema):
         model = LandingZoneAction
         sqla_session = db.session
 
-
+        
 # LandingZoneWAN
 class LandingZoneWAN(db.Model):
     __tablename__ = "landingzonewan"
@@ -464,6 +455,3 @@ class VPNOnPremiseSchema(ma.ModelSchema):
     class Meta:
         model = VPNOnPremiseVendor
         sqla_session = db.session
-
-
-

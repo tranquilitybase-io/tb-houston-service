@@ -805,7 +805,7 @@ paths:
           description: Successfully deleted a sourcecontrol
 
           
-  /keyValues/businessUnit:
+  /keyValues/businessUnit/:
     get:
       operationId: businessUnit.read_all
       tags:
@@ -1643,9 +1643,15 @@ paths:
                 categoryClass:
                   type: string
                   description: categoryClass
-                completed:
+                completionRate:
+                  type: integer
+                  description: completionRate
+                locked:
                   type: boolean
-                  description: completed
+                  description: locked
+                routerLink:
+                  type: string
+                  description: routerLink
 
   /landingzoneaction/:
     post:
@@ -1674,6 +1680,12 @@ paths:
               completionRate:
                 type: integer
                 description: completionRate
+              locked:
+                type: boolean
+                description: locked
+              routerLink:
+                type: string
+                description: routerLink
       responses:
         200:
           description: Successfully created a landingzoneaction
@@ -1693,9 +1705,15 @@ paths:
                 categoryClass:
                   type: string
                   description: categoryClass
-                completed:
+                completionRate:
+                  type: integer
+                  description: completionRate
+                locked:
                   type: boolean
-                  description: completed
+                  description: locked
+                routerLink:
+                  type: string
+                  description: routerLink
 
   /landingzoneaction/{id}:
     get:
@@ -1724,8 +1742,12 @@ paths:
                 type: string
               categoryClass:
                 type: string
+              completionRate:
+                type: integer
               locked:
                 type: boolean
+              routerLink:
+                type: string
 
     put:
       operationId: landingzoneaction.update
@@ -1755,13 +1777,16 @@ paths:
                 description: categoryName
               categoryClass:
                 type: string
-                description: string
+                description: categoryClass
               completionRate:
                 type: integer
                 description: completionRate
               locked:
                 type: boolean
                 description: locked
+              routerLink:
+                type: string
+                description: routerLink
       responses:
         200:
           description: Successfully updated a landingzoneaction
@@ -1781,9 +1806,15 @@ paths:
                 categoryClass:
                   type: string
                   description: categoryClass
-                completed:
+                completionRate:
+                  type: integer
+                  description: completionRate
+                locked:
                   type: boolean
-                  description: completed
+                  description: locked
+                routerLink:
+                  type: string
+                  description: routerLink
 
     delete:
       operationId: landingzoneaction.delete
@@ -1799,7 +1830,7 @@ paths:
       responses:
         200:
           description: Successfully deleted a landingzoneaction
-          
+
 
   /landingzonewans/:
     get:
