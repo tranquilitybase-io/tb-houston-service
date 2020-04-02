@@ -47,7 +47,6 @@ def read_all(active=None, namesonly=None):
         solutions_arr.append(solution_extension.build_solution(sol))
       app.logger.debug("solutions array:")
       app.logger.debug(pformat(solutions_arr))
-
       # Serialize the data for the response
       schema = ExtendedSolutionSchema(many=True)
       data = schema.dump(solutions_arr)

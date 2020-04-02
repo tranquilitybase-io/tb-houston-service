@@ -99,7 +99,7 @@ class SolutionNamesOnlySchema(Schema):
 
     id = fields.Int()
     name = fields.Str()
-    
+
     
 class ExtendedGoogleSessionSchema(Schema):
     primaryGcpVpcSubnet = fields.Str()
