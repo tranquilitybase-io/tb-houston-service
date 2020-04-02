@@ -16,12 +16,12 @@ from pprint import pformat
 def read_all():
     """
     This function responds to a request for /api/vpnOnPremiseVendor
-    with the complete lists of VPNOnPremiseVendors 
+    with the complete lists of vpnOnPremiseVendors
 
-    :return:        json string of list of VPNOnPremiseVendors 
+    :return:        json string of list of vpnOnPremiseVendors
     """
 
-    # Create the list of VPNOnPremiseVendors from our data
+    # Create the list of vpnOnPremiseVendors from our data
     vpnOnPremiseVendor = VPNOnPremiseVendor.query.order_by(VPNOnPremiseVendor.key).all()
     app.logger.debug(pformat(vpnOnPremiseVendor))
     # Serialize the data for the response
@@ -30,16 +30,16 @@ def read_all():
     return data
 
 
-def read_one(key):
+def read_one(id):
     """
-    This function responds to a request for /api/vpnOnPremiseVendor/{key}
-    with one matching vpnOnPremiseVendor from VPNOnPremiseVendors 
+    This function responds to a request for /api/subnetmode/{id}
+    with one matching vpnOnPremiseVendor from vpnOnPremiseVendors
 
-    :param application:   key of vpnOnPremiseVendor to find
+    :param application:   id of vpnOnPremiseVendor to find
     :return:              vpnOnPremiseVendor matching key
     """
 
-    vpnOnPremiseVendor = (VPNOnPremiseVendor.query.filter(VPNOnPremiseVendor.key == key).one_or_none())
+    vpnOnPremiseVendor = (VPNOnPremiseVendor.query.filter(VPNOnPremiseVendor.id == id).one_or_none())
 
     if vpnOnPremiseVendor is not None:
         # Serialize the data for the response
@@ -47,9 +47,7 @@ def read_one(key):
         data = vpnOnPremiseVendor_schema.dump(vpnOnPremiseVendor)
         return data
     else:
-        abort(
-            404, "VPNOnPremiseVendor with key {key} not found".format(key=key)
-        )
+        abort(404, f"VPNOnPremiseVendor with id {id} not found")
 
 
 def create(vpnOnPremiseVendor):
@@ -57,35 +55,26 @@ def create(vpnOnPremiseVendor):
     This function creates a new vpnOnPremiseVendor in the vpnOnPremiseVendor list
     based on the passed in vpnOnPremiseVendor data
 
-    :param vpnOnPremiseVendor: vpnOnPremiseVendor to create in vpnOnPremiseVendor structure
+    :param vpnOnPremiseVendor:  vpnOnPremiseVendor to create in vpnOnPremiseVendor structure
     :return:        201 on success, 406 on vpnOnPremiseVendor exists
     """
-    key = vpnOnPremiseVendor.get("key", None)
-    value = vpnOnPremiseVendor.get("value", None)
 
-    # Does the vpnOnPremiseVendor exist already?
-    existing_vpnOnPremiseVendor = (
-        VPNOnPremiseVendor.query.filter(VPNOnPremiseVendor.key == key).one_or_none()
-    )
+    # Remove id as it's created automatically
+    if 'id' in vpnOnPremiseVendor:
+        del vpnOnPremiseVendor['id']
 
-    if existing_vpnOnPremiseVendor is None:
-        schema = VPNOnPremiseVendorSchema()
-        new_vpnOnPremiseVendor = schema.load(vpnOnPremiseVendor, session=db.session)
-        db.session.add(new_vpnOnPremiseVendor)
-        db.session.commit()
+    schema = VPNOnPremiseVendorSchema()
+    new_vpnOnPremiseVendor = schema.load(vpnOnPremiseVendor, session=db.session)
+    db.session.add(new_vpnOnPremiseVendor)
+    db.session.commit()
 
-        # Serialize and return the newly created deployment
-        # in the response
-        data = schema.dump(new_vpnOnPremiseVendor)
-
-        return data, 201
-
-    # Otherwise, it already exists, that's an error
-    else:
-        abort(406, f"VPNOnPremiseVendor already exists")
+    # Serialize and return the newly created deployment
+    # in the response
+    data = schema.dump(new_vpnOnPremiseVendor)
+    return data, 201
 
 
-def update(key, vpnOnPremiseVendor):
+def update(id, vpnOnPremiseVendor):
     """
     This function updates an existing vpnOnPremiseVendor in the vpnOnPremiseVendor list
 
@@ -96,12 +85,12 @@ def update(key, vpnOnPremiseVendor):
 
     app.logger.debug(pformat(vpnOnPremiseVendor))
 
-    if vpnOnPremiseVendor["key"] != key:
+    if vpnOnPremiseVendor.get("id", id) != id:
            abort(400, f"Key mismatch in path and body")
-
+           
     # Does the vpnOnPremiseVendor exist in vpnOnPremiseVendor list?
     existing_vpnOnPremiseVendor = VPNOnPremiseVendor.query.filter(
-            VPNOnPremiseVendor.key == key
+            VPNOnPremiseVendor.id == id 
     ).one_or_none()
 
     # Does vpnOnPremiseVendor exist?
@@ -109,7 +98,9 @@ def update(key, vpnOnPremiseVendor):
     if existing_vpnOnPremiseVendor is not None:
         schema = VPNOnPremiseVendorSchema()
         update_vpnOnPremiseVendor = schema.load(vpnOnPremiseVendor, session=db.session)
-        update_vpnOnPremiseVendor.key = vpnOnPremiseVendor['key']
+        update_vpnOnPremiseVendor.id = id
+        update_vpnOnPremiseVendor.key = vpnOnPremiseVendor.get('key', '')
+        update_vpnOnPremiseVendor.value = vpnOnPremiseVendor.get('value', '')
 
         db.session.merge(update_vpnOnPremiseVendor)
         db.session.commit()
@@ -123,25 +114,25 @@ def update(key, vpnOnPremiseVendor):
         abort(404, f"VPNOnPremiseVendor not found")
 
 
-def delete(key):
+def delete(id):
     """
-    This function deletes a VPNOnPremiseVendor from the VPNOnPremiseVendor list
+    This function deletes a vpnOnPremiseVendor from the vpnOnPremiseVendors list
 
-    :param key: key of the VPNOnPremiseVendor to delete
+    :param key: key of the vpnOnPremiseVendor to delete
     :return:    200 on successful delete, 404 if not found
     """
     # Does the vpnOnPremiseVendor to delete exist?
-    existing_vpnOnPremiseVendor = VPNOnPremiseVendor.query.filter(VPNOnPremiseVendor.key == key).one_or_none()
+    existing_vpnOnPremiseVendor = VPNOnPremiseVendor.query.filter(VPNOnPremiseVendor.id == id).one_or_none()
 
     # if found?
     if existing_vpnOnPremiseVendor is not None:
         db.session.delete(existing_vpnOnPremiseVendor)
         db.session.commit()
 
-        return make_response(f"VPNOnPremiseVendor {key} successfully deleted", 200)
+        return make_response(f"VPNOnPremiseVendor {id} successfully deleted", 200)
 
     # Otherwise, nope, vpnOnPremiseVendor to delete not found
     else:
-        abort(404, f"VPNOnPremiseVendor {key} not found")
+        abort(404, f"VPNOnPremiseVendor {id} not found")
 
 
