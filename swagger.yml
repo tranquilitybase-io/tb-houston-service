@@ -1930,7 +1930,122 @@ paths:
           description: Successfully deleted a landingzonewan
 
 
+  /keyValues/bgproutingmode/:
+    get:
+      operationId: bgpRoutingMode.read_all
+      tags:
+        - bgproutingmode
+      summary: Read the entire list of BGPRoutingModes
+      description: Read the list of BGPRoutingModes
+      responses:
+        200:
+          description: Successfully read BGPRoutingModes list operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/BGPRoutingMode' 
+
+    post:
+      operationId: bgpRoutingMode.create
+      tags:
+        - bgproutingmode
+      summary: Create an BGPRoutingMode and add it to the BGPRoutingMode list
+      description: Create a new BGPRoutingMode in the BGPRoutingMode list
+      parameters:
+        - name: bgpRoutingMode
+          in: body
+          description: BGPRoutingMode to create
+          required: true
+          schema:
+            $ref: '#/definitions/BGPRoutingMode' 
+      responses:
+        201:
+          description: Successfully created an businessUnit
+
+
+  /keyValues/bgproutingmode/{id}:
+    get:
+      operationId: bgpRoutingMode.read_one
+      tags:
+        - bgproutingmode
+      summary: Read one bgproutingmode from the list
+      description: Read one bgproutingmode from the list
+      parameters:
+        - name: id
+          in: path
+          description: id of the bgpRoutingMode to get from the list
+          type: integer
+          required: true
+      responses:
+        200:
+          description: Successfully read a bgpRoutingMode from the list
+          schema:
+            $ref: '#/definitions/BGPRoutingMode' 
+
+    put:
+      operationId: bgpRoutingMode.update
+      tags:
+        - bgproutingmode
+      summary: Update an bgpRoutingMode in the list
+      description: Update an bgpRoutingMode in the list
+      parameters:
+        - name: id
+          in: path
+          description: id of the bgpRoutingMode to update
+          type: integer 
+          required: true
+        - name: bgpRoutingMode
+          in: body
+          schema:
+            $ref: '#/definitions/BGPRoutingMode' 
+      responses:
+        200:
+          description: Successfully updated a bgproutingmode
+
+    delete:
+      operationId: bgpRoutingMode.delete
+      tags:
+        - bgproutingmode
+      summary: Delete an bgproutingmode from the list
+      description: Delete a bgproutingmode
+      parameters:
+        - name: id
+          in: path
+          type: integer
+          required: true
+      responses:
+        200:
+          description: Successfully deleted a bgproutingmode
+
+
 definitions:
+
+  Team:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: id
+      key:
+        type: string
+        description: key
+      value:
+        type: string
+        description: value
+
+  BGPRoutingMode:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: id
+      key:
+        type: string
+        description: key
+      value:
+        type: string
+        description: value
+
   LandingZoneWAN:
     type: object
     properties:

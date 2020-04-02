@@ -455,3 +455,5 @@ class VPNOnPremiseSchema(ma.ModelSchema):
     class Meta:
         model = VPNOnPremiseVendor
         sqla_session = db.session
+
+
