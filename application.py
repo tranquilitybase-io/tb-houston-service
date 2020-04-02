@@ -11,6 +11,7 @@ from flask import make_response, abort
 from config import db, app
 from models import Application, ApplicationSchema
 from pprint import pformat
+from pprint import pprint
 
 
 def read_all():
@@ -67,6 +68,8 @@ def create(application):
     :return:             201 on success, 406 on application exists
     """
 
+    pprint(application)
+    
     schema = ApplicationSchema()
     new_application = schema.load(application, session=db.session)
     db.session.add(new_application)

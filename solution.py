@@ -16,6 +16,7 @@ from extendedSchemas import ExtendedSolutionSchema
 from extendedSchemas import SolutionNamesOnlySchema
 import solution_extension
 from pprint import pformat
+from pprint import pprint
 
 
 def read_all(active=None, namesonly=None):
