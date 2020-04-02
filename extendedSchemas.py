@@ -61,7 +61,7 @@ class ExtendedActivatorSchema(Schema):
     resources = fields.List(fields.Dict())
     status = fields.Str()
     description = fields.Str()
-    user = fields.Nested(ExtendedUserSchema(many=False))
+    accessRequestedBy = fields.Nested(ExtendedUserSchema(many=False))
 
 
 class ExtendedApplicationSchema(Schema):
@@ -100,7 +100,7 @@ class SolutionNamesOnlySchema(Schema):
     id = fields.Int()
     name = fields.Str()
 
-
+    
 class ExtendedGoogleSessionSchema(Schema):
     primaryGcpVpcSubnet = fields.Str()
     primaryRegion = fields.Str()
