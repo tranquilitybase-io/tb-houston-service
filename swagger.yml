@@ -80,6 +80,16 @@ paths:
         - application
       summary: Read the entire list of applications
       description: Read the list of applications
+      parameters:
+        - in: query
+          name: status
+          type: string
+        - in: query
+          name: activatorId
+          type: integer
+        - in: query
+          name: environment
+          type: string
       responses:
         200:
           description: Successfully read application list operation
