@@ -13,6 +13,7 @@ from models import Application, Activator
 from models import Solution, SolutionSchema
 from models import ModelTools
 from extendedSchemas import ExtendedSolutionSchema
+from extendedSchemas import SolutionNamesOnlySchema
 import solution_extension
 from pprint import pformat
 
@@ -45,10 +46,10 @@ def read_all(active=None, namesonly=None):
         solutions_arr.append(solution_extension.build_solution(sol))
       app.logger.debug("solutions array:")
       app.logger.debug(pformat(solutions_arr))
+      # Serialize the data for the response
+      schema = ExtendedSolutionSchema(many=True)
+      data = schema.dump(solutions_arr)
 
-    # Serialize the data for the response
-    schema = ExtendedSolutionSchema(many=True)
-    data = schema.dump(solutions_arr)
     app.logger.debug("solutions data:")
     app.logger.debug(data)
     return data

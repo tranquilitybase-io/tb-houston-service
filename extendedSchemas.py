@@ -94,6 +94,13 @@ class ExtendedSolutionSchema(Schema):
     applications = fields.Nested(ExtendedApplicationSchema(many=True))
 
 
+class SolutionNamesOnlySchema(Schema):
+    __envelope__ = {"single": "solution", "many": "solutions"}
+
+    id = fields.Int()
+    name = fields.Str()
+
+
 class ExtendedGoogleSessionSchema(Schema):
     primaryGcpVpcSubnet = fields.Str()
     primaryRegion = fields.Str()
