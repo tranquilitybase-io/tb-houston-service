@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.0.19, for osx10.15 (x86_64)
 --
--- Host: localhost    Database: eagle_db
+-- Host: 0.0.0.0    Database: eagle_db
 -- ------------------------------------------------------
 -- Server version	5.7.29
 
@@ -48,7 +48,7 @@ CREATE TABLE `activator` (
   `resources` varchar(255) DEFAULT NULL,
   `status` varchar(255) DEFAULT NULL,
   `description` varchar(255) DEFAULT NULL,
-  `userId` int(11) DEFAULT NULL,
+  `accessRequestedBy` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=104 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -80,7 +80,6 @@ CREATE TABLE `application` (
   `description` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4;
-
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -306,7 +305,7 @@ CREATE TABLE `landingzonewan` (
   `vpn__subnetMode` varchar(45) DEFAULT NULL,
   `vpn__vpcName` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=59 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=58 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -488,4 +487,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-04-02  9:14:04
+-- Dump completed on 2020-04-02 12:48:35

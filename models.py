@@ -83,7 +83,7 @@ class Activator(db.Model):
     resources = db.Column(db.String(255))
     status = db.Column(db.String(255))
     description = db.Column(db.String(255))
-    userId = db.Column(db.Integer, db.ForeignKey('user.id'))
+    accessRequestedBy = db.Column(db.Integer, db.ForeignKey('user.id'))
 
 
 class ActivatorSchema(ma.ModelSchema):
@@ -455,3 +455,5 @@ class VPNOnPremiseSchema(ma.ModelSchema):
     class Meta:
         model = VPNOnPremiseVendor
         sqla_session = db.session
+
+

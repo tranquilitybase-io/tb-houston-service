@@ -16,12 +16,12 @@ from pprint import pformat
 def read_all():
     """
     This function responds to a request for /api/bgpRoutingMode
-    with the complete lists of BGPRoutingModes 
+    with the complete lists of bgpRoutingModes
 
-    :return:        json string of list of BGPRoutingModes 
+    :return:        json string of list of bgpRoutingModes
     """
 
-    # Create the list of BGPRoutingModes from our data
+    # Create the list of bgpRoutingModes from our data
     bgpRoutingMode = BGPRoutingMode.query.order_by(BGPRoutingMode.key).all()
     app.logger.debug(pformat(bgpRoutingMode))
     # Serialize the data for the response
@@ -30,16 +30,16 @@ def read_all():
     return data
 
 
-def read_one(key):
+def read_one(id):
     """
-    This function responds to a request for /api/bgpRoutingMode/{key}
-    with one matching bgpRoutingMode from BGPRoutingModes 
+    This function responds to a request for /api/bgproutingmode/{id}
+    with one matching bgpRoutingMode from bgpRoutingModes
 
-    :param application:   key of bgpRoutingMode to find
+    :param application:   id of bgpRoutingMode to find
     :return:              bgpRoutingMode matching key
     """
 
-    bgpRoutingMode = (BGPRoutingMode.query.filter(BGPRoutingMode.key == key).one_or_none())
+    bgpRoutingMode = (BGPRoutingMode.query.filter(BGPRoutingMode.id == id).one_or_none())
 
     if bgpRoutingMode is not None:
         # Serialize the data for the response
@@ -47,9 +47,7 @@ def read_one(key):
         data = bgpRoutingMode_schema.dump(bgpRoutingMode)
         return data
     else:
-        abort(
-            404, "BGPRoutingMode with key {key} not found".format(key=key)
-        )
+        abort(404, f"BGPRoutingMode with id {id} not found")
 
 
 def create(bgpRoutingMode):
@@ -57,35 +55,26 @@ def create(bgpRoutingMode):
     This function creates a new bgpRoutingMode in the bgpRoutingMode list
     based on the passed in bgpRoutingMode data
 
-    :param bgpRoutingMode: bgpRoutingMode to create in bgpRoutingMode structure
+    :param bgpRoutingMode:  bgpRoutingMode to create in bgpRoutingMode structure
     :return:        201 on success, 406 on bgpRoutingMode exists
     """
-    key = bgpRoutingMode.get("key", None)
-    value = bgpRoutingMode.get("value", None)
 
-    # Does the bgpRoutingMode exist already?
-    existing_bgpRoutingMode = (
-        BGPRoutingMode.query.filter(BGPRoutingMode.key == key).one_or_none()
-    )
+    # Remove id as it's created automatically
+    if 'id' in bgpRoutingMode:
+        del bgpRoutingMode['id']
 
-    if existing_bgpRoutingMode is None:
-        schema = BGPRoutingModeSchema()
-        new_bgpRoutingMode = schema.load(bgpRoutingMode, session=db.session)
-        db.session.add(new_bgpRoutingMode)
-        db.session.commit()
+    schema = BGPRoutingModeSchema()
+    new_bgpRoutingMode = schema.load(bgpRoutingMode, session=db.session)
+    db.session.add(new_bgpRoutingMode)
+    db.session.commit()
 
-        # Serialize and return the newly created deployment
-        # in the response
-        data = schema.dump(new_bgpRoutingMode)
-
-        return data, 201
-
-    # Otherwise, it already exists, that's an error
-    else:
-        abort(406, f"BGPRoutingMode already exists")
+    # Serialize and return the newly created deployment
+    # in the response
+    data = schema.dump(new_bgpRoutingMode)
+    return data, 201
 
 
-def update(key, bgpRoutingMode):
+def update(id, bgpRoutingMode):
     """
     This function updates an existing bgpRoutingMode in the bgpRoutingMode list
 
@@ -96,12 +85,12 @@ def update(key, bgpRoutingMode):
 
     app.logger.debug(pformat(bgpRoutingMode))
 
-    if bgpRoutingMode["key"] != key:
+    if bgpRoutingMode["id"] != id:
            abort(400, f"Key mismatch in path and body")
-
+           
     # Does the bgpRoutingMode exist in bgpRoutingMode list?
     existing_bgpRoutingMode = BGPRoutingMode.query.filter(
-            BGPRoutingMode.key == key
+            BGPRoutingMode.id == id 
     ).one_or_none()
 
     # Does bgpRoutingMode exist?
@@ -109,7 +98,8 @@ def update(key, bgpRoutingMode):
     if existing_bgpRoutingMode is not None:
         schema = BGPRoutingModeSchema()
         update_bgpRoutingMode = schema.load(bgpRoutingMode, session=db.session)
-        update_bgpRoutingMode.key = bgpRoutingMode['key']
+        update_bgpRoutingMode.key = bgpRoutingMode.get('key', '')
+        update_bgpRoutingMode.value = bgpRoutingMode.get('value', '')
 
         db.session.merge(update_bgpRoutingMode)
         db.session.commit()
@@ -123,25 +113,25 @@ def update(key, bgpRoutingMode):
         abort(404, f"BGPRoutingMode not found")
 
 
-def delete(key):
+def delete(id):
     """
-    This function deletes a BGPRoutingMode from the BGPRoutingMode list
+    This function deletes a bgpRoutingMode from the bgpRoutingModes list
 
-    :param key: key of the BGPRoutingMode to delete
+    :param key: key of the bgpRoutingMode to delete
     :return:    200 on successful delete, 404 if not found
     """
     # Does the bgpRoutingMode to delete exist?
-    existing_bgpRoutingMode = BGPRoutingMode.query.filter(BGPRoutingMode.key == key).one_or_none()
+    existing_bgpRoutingMode = BGPRoutingMode.query.filter(BGPRoutingMode.id == id).one_or_none()
 
     # if found?
     if existing_bgpRoutingMode is not None:
         db.session.delete(existing_bgpRoutingMode)
         db.session.commit()
 
-        return make_response(f"BGPRoutingMode {key} successfully deleted", 200)
+        return make_response(f"BGPRoutingMode {id} successfully deleted", 200)
 
     # Otherwise, nope, bgpRoutingMode to delete not found
     else:
-        abort(404, f"BGPRoutingMode {key} not found")
+        abort(404, f"BGPRoutingMode {id} not found")
 
 
