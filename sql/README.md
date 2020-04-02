@@ -8,3 +8,6 @@ docker run --name mysql57 \
     -e MYSQL_ROOT_PASSWORD=my-secret-pw \
     -e MYSQL_DATABASE=eagle_db \
     -d gcr.io/tranquility-base-images/tb-houston-service:mysql57
+
+# Dump the database
+mysqldump eagle_db --column-statistics=false -u eagle-user -p > eagle_db_dump.tmp
