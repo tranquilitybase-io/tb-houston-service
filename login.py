@@ -17,7 +17,6 @@ from extendedSchemas import ExtendedUserSchema
 def check_credentials(login_details):
     """
     This function responds to a request for /api/login
-
     :return:        json string of user details
     """
 

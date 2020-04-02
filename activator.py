@@ -79,9 +79,11 @@ def create(activator):
         Activator.query.filter(Activator.id == id).one_or_none()
     )
 
+
     if existing_activator is None:
         schema = ActivatorSchema()
         new_activator = schema.load(activator, session=db.session)
+        new_activator.lastUpdated = ModelTools.get_utc_timestamp()
         db.session.add(new_activator)
         db.session.commit()
 
@@ -119,8 +121,9 @@ def update(id, activator):
         schema = ActivatorSchema()
         update_activator = schema.load(activator, session=db.session)
         update_activator.id = activator['id']
-        update_activator.name = activator['name']
-        update_activator.envs = activator['envs']
+        update_activator.name = activator.get('name', '')
+        update_activator.envs = activator.get('envs', '')
+        new_activator.lastUpdated = ModelTools.get_utc_timestamp()
 
         db.session.merge(update_activator)
         db.session.commit()
@@ -161,17 +164,15 @@ def delete(id):
 def setActivatorStatus(activator):
     " update the activator status"
 
-    print(pformat(activator))
-    app.logger.info(activator)
+    app.logger.info(pformat(activator))
     # Does the activator to delete exist?
     existing_activator = Activator.query.filter(Activator.id == activator['id']).one_or_none()
 
     # if found?
     if existing_activator is not None:
-        if 'status' in activator:
-            existing_activator.status = activator['status']
-        if 'accessRequestedBy' in activator:
-            existing_activator.userId = activator['accessRequestedBy']
+        existing_activator.status = activator.get('status', existing_activator.status)
+        existing_activator.accessRequestedBy = activator.get('accessRequestedBy', existing_activator.accessRequestedBy)
+        existing_activator.lastUpdated = ModelTools.get_utc_timestamp()
 
         db.session.merge(existing_activator)
         db.session.commit()
