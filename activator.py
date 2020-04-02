@@ -163,8 +163,7 @@ def delete(id):
 def setActivatorStatus(activator):
     " update the activator status"
 
-    print(pformat(activator))
-    app.logger.info(activator)
+    app.logger.info(pformat(activator))
     # Does the activator to delete exist?
     existing_activator = Activator.query.filter(Activator.id == activator['id']).one_or_none()
 
