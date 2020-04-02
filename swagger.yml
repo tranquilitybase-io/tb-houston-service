@@ -1960,7 +1960,7 @@ paths:
             $ref: '#/definitions/BGPRoutingMode' 
       responses:
         201:
-          description: Successfully created an businessUnit
+          description: Successfully created an bgpRoutingMode
 
 
   /keyValues/bgproutingmode/{id}:
@@ -2018,6 +2018,94 @@ paths:
           description: Successfully deleted a bgproutingmode
 
 
+  /keyValues/subnetmode/:
+    get:
+      operationId: subnetMode.read_all
+      tags:
+        - subnetmode
+      summary: Read the entire list of SubnetModes
+      description: Read the list of SubnetModes
+      responses:
+        200:
+          description: Successfully read SubnetModes list operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/SubnetMode' 
+
+    post:
+      operationId: subnetMode.create
+      tags:
+        - subnetmode
+      summary: Create an subnetMode and add it to the subnetMode list
+      description: Create a new subnetMode in the subnetMode list
+      parameters:
+        - name: subnetMode
+          in: body
+          description: subnetMode to create
+          required: true
+          schema:
+            $ref: '#/definitions/SubnetMode' 
+      responses:
+        201:
+          description: Successfully created an subnetMode
+
+
+  /keyValues/subnetmode/{id}:
+    get:
+      operationId: subnetMode.read_one
+      tags:
+        - subnetmode
+      summary: Read one subnetmode from the list
+      description: Read one subnetmode from the list
+      parameters:
+        - name: id
+          in: path
+          description: id of the subnetMode to get from the list
+          type: integer
+          required: true
+      responses:
+        200:
+          description: Successfully read a subnetMode from the list
+          schema:
+            $ref: '#/definitions/SubnetMode' 
+
+    put:
+      operationId: subnetMode.update
+      tags:
+        - subnetmode
+      summary: Update an subnetMode in the list
+      description: Update an subnetMode in the list
+      parameters:
+        - name: id
+          in: path
+          description: id of the subnetMode to update
+          type: integer 
+          required: true
+        - name: subnetMode
+          in: body
+          schema:
+            $ref: '#/definitions/BGPRoutingMode' 
+      responses:
+        200:
+          description: Successfully updated a subnetmode
+
+    delete:
+      operationId: subnetMode.delete
+      tags:
+        - subnetmode
+      summary: Delete an subnetmode from the list
+      description: Delete a subnetmode
+      parameters:
+        - name: id
+          in: path
+          type: integer
+          required: true
+      responses:
+        200:
+          description: Successfully deleted a subnetmode
+
+
 definitions:
 
   Team:
@@ -2034,6 +2122,19 @@ definitions:
         description: value
 
   BGPRoutingMode:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: id
+      key:
+        type: string
+        description: key
+      value:
+        type: string
+        description: value
+
+  SubnetMode:
     type: object
     properties:
       id:
