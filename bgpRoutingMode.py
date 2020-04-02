@@ -85,7 +85,7 @@ def update(id, bgpRoutingMode):
 
     app.logger.debug(pformat(bgpRoutingMode))
 
-    if bgpRoutingMode["id"] != id:
+    if bgpRoutingMode.get("id", id) != id:
            abort(400, f"Key mismatch in path and body")
            
     # Does the bgpRoutingMode exist in bgpRoutingMode list?
@@ -98,6 +98,7 @@ def update(id, bgpRoutingMode):
     if existing_bgpRoutingMode is not None:
         schema = BGPRoutingModeSchema()
         update_bgpRoutingMode = schema.load(bgpRoutingMode, session=db.session)
+        update_bgpRoutingMode.id = id
         update_bgpRoutingMode.key = bgpRoutingMode.get('key', '')
         update_bgpRoutingMode.value = bgpRoutingMode.get('value', '')
 
