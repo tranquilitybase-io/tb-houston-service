@@ -9,7 +9,8 @@ def build_application(app):
         'name': app.name,
         'env': app.env,
         'status': app.status,
-        'description': app.description
+        'description': app.description,
+        'lastUpdated': app.lastUpdated
     }
     acts = Activator.query.filter(Activator.id == app.activatorId).all()
     act_dict = {}

@@ -10,6 +10,7 @@ from datetime import datetime
 from flask import make_response, abort
 from config import db, app
 from models import Application, ApplicationSchema
+from models import ModelTools
 from pprint import pformat
 from pprint import pprint
 
@@ -76,6 +77,7 @@ def create(application):
     
     schema = ApplicationSchema()
     new_application = schema.load(application, session=db.session)
+    new_application.lastUpdated = ModelTools.get_utc_timestamp()
     db.session.add(new_application)
     db.session.commit()
 
@@ -105,15 +107,24 @@ def update(id, application):
 
     # Does application exist?
     if existing_application is not None:
-        schema = ApplicationSchema()
-        update_application = schema.load(application, session=db.session)
-        update_application.id = id
+        existing_application.lastUpdated = ModelTools.get_utc_timestamp()
+        existing_application.id = id
+        existing_application.solutionId = application.get('solutionId', existing_application.solutionId)
+        existing_application.activatorId = application.get('activatorId', existing_application.activatorId)
+        existing_application.name = application.get('name', existing_application.name)
+        existing_application.env = application.get('env', existing_application.env)
+        existing_application.status = application.get('status', existing_application.status)
+        existing_application.description = application.get('description', existing_application.description)
+        existing_application.lastUpdated = ModelTools.get_utc_timestamp()
 
-        db.session.merge(update_application)
+        #updated_application = schema.load(existing_application, session=db.session)
+
+        db.session.merge(existing_application)
         db.session.commit()
 
         # return the updated application in the response
-        data = schema.dump(update_application)
+        schema = ApplicationSchema()
+        data = schema.dump(existing_application)
         app.logger.debug("application data:")
         app.logger.debug(pformat(data))
         return data, 200

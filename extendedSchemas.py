@@ -71,6 +71,7 @@ class ExtendedApplicationSchema(Schema):
     env = fields.Str()
     status = fields.Str()
     description = fields.Str()
+    lastUpdated = fields.Str()
     activator = fields.Nested(ExtendedActivatorSchema(many=False))
 
 

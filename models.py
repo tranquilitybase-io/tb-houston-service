@@ -184,6 +184,7 @@ class Application(db.Model):
     env = db.Column(db.String(64))
     status = db.Column(db.String(64))
     description = db.Column(db.String(255))
+    lastUpdated = db.Column(db.String(255))
 
 class ApplicationSchema(ma.ModelSchema):
     def __init__(self, **kwargs):
