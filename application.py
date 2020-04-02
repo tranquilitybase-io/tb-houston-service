@@ -13,7 +13,7 @@ from models import Application, ApplicationSchema
 from pprint import pformat
 
 
-def read_all():
+def read_all(status=None, activatorId=None, environment=None):
     """
     This function responds to a request for /api/applications
     with the complete lists of applications
@@ -21,8 +21,12 @@ def read_all():
     :return:        json string of list of applications
     """
 
-    # Create the list of people from our data
-    applications = Application.query.all()
+    # Create the list of applications from our data
+    applications = Application.query \
+      .filter(status == None or Application.status == status)  \
+      .filter(activatorId == None or Application.activatorId == activatorId ) \
+      .filter(environment == None or Application.env == environment) \
+      .all()
     # Serialize the data for the response
     application_schema = ApplicationSchema(many=True)
     data = application_schema.dump(applications)
