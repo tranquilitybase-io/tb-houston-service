@@ -20,7 +20,7 @@ import activator_extension
 from pprint import pformat
 
 
-def read_all():
+def read_all(category=None, status=None, environment=None, platform=None, type=None, source=None, sensitivity=None):
     """
     This function responds to a request for /api/activators
     with the complete lists of activators
@@ -29,7 +29,15 @@ def read_all():
     """
 
     # Create the list of activators from our data
-    activators = Activator.query.order_by(Activator.id).all()
+    activators = Activator.query.filter(
+      (category==None or Activator.category==category),
+      (status==None or Activator.status==status),
+      (environment==None or Activator.envs.like("%\"{}\"%".format(environment))),
+      (platform==None or Activator.platforms.like("%\"{}\"%".format(platform))),
+      (type==None or Activator.type==type),
+      (source==None or Activator.sourceControl.like("%\"{}\"%".format(source))),
+      (sensitivity==None or Activator.sensitivity==sensitivity)
+    ).order_by(Activator.id).all()
     activators_arr = []
     for act in activators:
         activators_arr.append(activator_extension.build_activator(act))

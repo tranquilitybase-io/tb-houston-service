@@ -107,26 +107,13 @@ def update(id, application):
 
     # Does application exist?
     if existing_application is not None:
-        existing_application.lastUpdated = ModelTools.get_utc_timestamp()
-        existing_application.id = id
-        existing_application.solutionId = application.get('solutionId', existing_application.solutionId)
-        existing_application.activatorId = application.get('activatorId', existing_application.activatorId)
-        existing_application.name = application.get('name', existing_application.name)
-        existing_application.env = application.get('env', existing_application.env)
-        existing_application.status = application.get('status', existing_application.status)
-        existing_application.description = application.get('description', existing_application.description)
-        existing_application.lastUpdated = ModelTools.get_utc_timestamp()
-
-        #updated_application = schema.load(existing_application, session=db.session)
-
-        db.session.merge(existing_application)
+        application['lastUpdated'] = ModelTools.get_utc_timestamp()
+        Application.query.filter(Application.id == id).update(application)
         db.session.commit()
 
         # return the updated application in the response
         schema = ApplicationSchema()
         data = schema.dump(existing_application)
-        app.logger.debug("application data:")
-        app.logger.debug(pformat(data))
         return data, 200
 
     # otherwise, nope, application doesn't exist, so that's an error

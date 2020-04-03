@@ -96,17 +96,12 @@ def update(id, bgpRoutingMode):
     # Does bgpRoutingMode exist?
 
     if existing_bgpRoutingMode is not None:
-        schema = BGPRoutingModeSchema()
-        update_bgpRoutingMode = schema.load(bgpRoutingMode, session=db.session)
-        update_bgpRoutingMode.id = id
-        update_bgpRoutingMode.key = bgpRoutingMode.get('key', '')
-        update_bgpRoutingMode.value = bgpRoutingMode.get('value', '')
-
-        db.session.merge(update_bgpRoutingMode)
+        BGPRoutingMode.query.filter(BGPRoutingMode.id == id).update(bgpRoutingMode)
         db.session.commit()
 
         # return the updted bgpRoutingMode in the response
-        data = schema.dump(update_bgpRoutingMode)
+        schema = BGPRoutingModeSchema()
+        data = schema.dump(existing_bgpRoutingMode)
         return data, 200
 
     # otherwise, nope, deployment doesn't exist, so that's an error
