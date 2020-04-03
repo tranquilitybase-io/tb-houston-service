@@ -2,6 +2,9 @@ from models import User
 from extendedSchemas import ExtendedUserSchema
 
 def build_user(id):
+    if id == None:
+        return None
+
     existing_user = (
         User.query.filter(User.id == id).one_or_none()
     )
