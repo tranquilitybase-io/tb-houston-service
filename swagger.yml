@@ -20,6 +20,293 @@ produces:
 
 basePath: /api
 
+definitions:
+  Activator:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: id
+      name:
+        type: string
+        description: name
+      type:
+        type: string
+        description: type
+      available:
+        type: boolean
+        description: available
+      sensitivity:
+        type: string
+        description: sensitivity
+      category:
+        type: string
+        description: category
+      envs:
+        type: array
+        description: envs
+        items:
+          properties:
+            env:
+              type: string
+              description: env
+      platforms:
+        type: array
+        description: platforms
+        items:
+          properties:
+            platform:
+              type: string
+              description: platform
+      lastUpdated:
+        # type: datetime
+        type: string
+        description: lastUpdated
+      userCapacity:
+        type: integer 
+        description: userCapacity
+      serverCapacity:
+        type: integer
+        description: serverCapacity
+      regions:
+        type: string
+        description: regions 
+        items:
+          properties:
+            region:
+              type: string
+              description: region
+      hosting:
+        type: string
+        description: hosting
+        items:
+          properties:
+            host:
+              type: string
+              description: host
+      apiManagement:
+        type: string
+        description: apiManagement
+        items:
+          properties:
+            api:
+              type: string
+              description: api
+      ci:
+        type: string
+        description: ci
+        items:
+          properties:
+            aci:
+              type: string
+              description: aci
+      cd:
+        type: string
+        description: cd
+        items:
+          properties:
+            acd:
+              type: string
+              description: acd
+      sourceControl:
+        type: string
+        description: sourceControl
+        items:
+          properties:
+            sc:
+              type: string
+              description: sc
+      businessUnit:
+        type: string
+        description: businessUnit
+      technologyOwner:
+        type: string
+        description: technologyOwner
+      technologyOwnerEmail:
+        type: string
+        description: technologyOwnerEmail
+      billing:
+        type: string
+        description: billing
+      activator:
+        type: string
+        description: activator
+      resources:
+        type: string
+        description: resources
+        items:
+          properties:
+            ipaddress:
+              type: string
+              description: ipaddress
+            name:
+              type: string
+              description: name
+      status:
+        type: string
+        description: status
+      description:
+        type: string
+        description: description
+      accessRequestedBy:
+        type: string
+        description: accessRequestedBy
+      source:
+        type: string
+        description: source
+      activatorLink:
+        type: string
+        description: activatorLink
+
+  Application:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: id
+      solutionId:
+        type: integer
+        description: solutionId
+      activatorId:
+        type: integer
+        description: activatorId
+      name:
+        type: string
+        description: application
+      env:
+        type: string
+        description: env
+      status:
+        type: string
+        description: status
+      description:
+        type: string
+        description: notes
+
+  Team:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: id
+      key:
+        type: string
+        description: key
+      value:
+        type: string
+        description: value
+
+  BGPRoutingMode:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: id
+      key:
+        type: string
+        description: key
+      value:
+        type: string
+        description: value
+
+  SubnetMode:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: id
+      key:
+        type: string
+        description: key
+      value:
+        type: string
+        description: value
+
+  VPNOnPremiseVendor:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: id
+      key:
+        type: string
+        description: key
+      value:
+        type: string
+        description: value
+
+  LandingZoneWAN:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: id
+      googleSession:
+        type: object
+        properties:
+          primaryGcpVpcSubnet:
+            type: string
+          primaryRegion:
+            type: string
+          primarySubnetName:
+            type: string
+          secondaryGcpVpcSubnet:
+            type: string
+          secondaryRegion:
+            type: string
+          secondarySubnetName:
+            type: string
+      onPremiseSession:
+        type: object
+        properties:
+          primaryBgpPeer:
+            type: string
+          primaryPeerIp:
+            type: string
+          primaryPeerIpSubnet:
+            type: string
+          primarySharedSecret:
+            type: string
+          primaryVpnTunnel:
+            type: string
+          secondaryBgpPeer:
+            type: string
+          secondaryPeerIp:
+            type: string
+          secondaryPeerIpSubnet:
+            type: string
+          secondarySharedSecret:
+            type: string
+          secondaryVpnTunnel:
+            type: string
+          vendor:
+            type: string
+      vpn: 
+        type: object
+        properties:
+          bgpInterfaceNetLength:
+            type: string
+          bgpRoutingMode:
+            type: string
+          cloudRouterName:
+            type: string
+          description:
+            type: string
+          externalVpnGateway:
+            type: string
+          googleASN: 
+            type: integer
+          haVpnGateway:
+            type: string
+          peerASN:
+            type: integer
+          projectName:
+            type: string
+          subnetMode:
+            type: string
+          vpcName:
+            type: string
+
 
 # Paths supported by the server application
 paths:
@@ -1085,74 +1372,7 @@ paths:
           schema:
             type: array
             items:
-              properties:
-                id:
-                  type: integer
-                  description: id
-                name:
-                  type: string
-                  description: name
-                type:
-                  type: string
-                  description: type
-                available:
-                  type: boolean
-                  description: available
-                sensitivity:
-                  type: string
-                  description: sensitivity
-                category:
-                  type: string
-                  description: category
-                envs:
-                  type: array
-                  description: envs
-                platforms:
-                  type: string
-                  description: platforms
-                lastUpdated:
-                  # type: datetime
-                  type: string
-                  description: lastUpdated
-                userCapacity:
-                  type: integer 
-                  description: userCapacity
-                serverCapacity:
-                  type: integer
-                  description: serverCapacity
-                regions:
-                  type: string
-                  description: regions 
-                hosting:
-                  type: string
-                  description: hosting
-                apiManagement:
-                  type: string
-                  description: apiManagement
-                ci:
-                  type: string
-                  description: ci
-                cd:
-                  type: string
-                  description: cd
-                sourceControl:
-                  type: string
-                  description: sourceControl
-                businessUnit:
-                  type: string
-                  description: businessUnit
-                technologyOwner:
-                  type: string
-                  description: technologyOwner
-                technologyOwnerEmail:
-                  type: string
-                  description: technologyOwnerEmail
-                billing:
-                  type: string
-                  description: billing
-                activator:
-                  type: string
-                  description: activator
+              $ref: '#/definitions/Activator'
 
   /activator/:
     post:
@@ -1167,71 +1387,7 @@ paths:
           description: activator to create
           required: true
           schema:
-            type: object
-            properties:
-              name:
-                type: string
-                description: name
-              type:
-                type: string
-                description: type
-              available:
-                type: boolean
-                description: available
-              sensitivity:
-                type: string
-                description: sensitivity
-              category:
-                type: string
-                description: category
-              envs:
-                type: array
-                description: envs
-              platforms:
-                type: array
-                description: platforms
-              lastUpdated:
-                type: string
-                description: lastUpdated
-              userCapacity:
-                type: integer
-                description: userCapacity
-              serverCapacity:
-                type: integer
-                description: serverCapacity
-              regions:
-                type: array
-                description: regions 
-              hosting:
-                type: array
-                description: hosting
-              apiManagement:
-                type: array
-                description: apiManagement
-              ci:
-                type: array
-                description: ci
-              cd:
-                type: array
-                description: cd
-              sourceControl:
-                type: array
-                description: sourceControl
-              businessUnit:
-                type: string
-                description: businessUnit
-              technologyOwner:
-                type: string
-                description: technologyOwner
-              technologyOwnerEmail:
-                type: string
-                description: technologyOwnerEmail
-              billing:
-                type: string
-                description: billing
-              resources:
-                type: array
-                description: resources
+            $ref: '#/definitions/Activator'
       responses:
         201:
           description: Successfully created an activator 
@@ -1253,55 +1409,7 @@ paths:
         200:
           description: Successfully read an activator from the list
           schema:
-            type: object
-            properties:
-              id:
-                type: string
-              name:
-                type: string
-              type:
-                type: string
-              status:
-                type: string
-              sensitivity:
-                type: string
-              category:
-                type: string
-              envs:
-                type: string
-              platforms:
-                type: string
-              update:
-                type: string
-              userCapacity:
-                type: string
-              serverCapacity:
-                type: string
-              regions:
-                type: string
-              hosting:
-                type: array
-              apiManagement:
-                type: string
-              ci:
-                type: string
-              cd:
-                type: string
-              sourceControl:
-                type: string
-              businessUnity:
-                type: string
-              technologyOwner:
-                type: string
-              technologyOwnerEmail:
-                type: string
-              billing:
-                type: string
-              activator:
-                type: string
-              description:
-                type: string
-              
+            $ref: '#/definitions/Activator'
 
     put:
       operationId: activator.update
@@ -1318,74 +1426,7 @@ paths:
         - name: activator
           in: body
           schema:
-            type: object
-            properties:
-              name:
-                type: string
-                description: name
-              type:
-                type: string
-                description: type
-              available:
-                type: boolean
-                description: available
-              sensitivity:
-                type: string
-                description: sensitivity
-              category:
-                type: string
-                description: category
-              envs:
-                type: array
-                description: envs
-              platforms:
-                type: array
-                description: platforms
-              lastUpdated:
-                type: string
-                description: lastUpdated
-              userCapacity:
-                type: integer
-                description: userCapacity
-              serverCapacity:
-                type: integer
-                description: serverCapacity
-              regions:
-                type: array
-                description: regions 
-              hosting:
-                type: array
-                description: hosting
-              apiManagement:
-                type: array
-                description: apiManagement
-              ci:
-                type: array
-                description: ci
-              cd:
-                type: array
-                description: cd
-              sourceControl:
-                type: array
-                description: sourceControl
-              businessUnit:
-                type: string
-                description: businessUnit
-              technologyOwner:
-                type: string
-                description: technologyOwner
-              technologyOwnerEmail:
-                type: string
-                description: technologyOwnerEmail
-              billing:
-                type: string
-                description: billing
-              update:
-                type: string
-                description: update
-              resources:
-                type: array
-                description: resources
+            $ref: '#/definitions/Activator' 
       responses:
         200:
           description: Successfully updated an activator
@@ -1436,7 +1477,23 @@ paths:
                 type: integer
               status: 
                 type: string
-                
+
+  /activatorcategories/:
+    get:
+      operationId: activator.categories
+      tags:
+        - activator
+      summary: Read the entire list of activator categories
+      description: Read the list of activator categories
+      responses:
+        200:
+          description: Successfully retrieved a list of activator categories
+          schema:
+            type: array
+            items:
+              properties:
+                category: 
+                  type: string
 
 
   /landingzoneprogressitems/:
@@ -2147,154 +2204,3 @@ paths:
         200:
           description: Successfully deleted a vpnOnPremiseVendor
 
-
-definitions:
-
-  Application:
-    type: object
-    properties:
-      id:
-        type: integer
-        description: id
-      solutionId:
-        type: integer
-        description: solutionId
-      activatorId:
-        type: integer
-        description: activatorId
-      name:
-        type: string
-        description: application
-      env:
-        type: string
-        description: env
-      status:
-        type: string
-        description: status
-      description:
-        type: string
-        description: notes
-
-  Team:
-    type: object
-    properties:
-      id:
-        type: integer
-        description: id
-      key:
-        type: string
-        description: key
-      value:
-        type: string
-        description: value
-
-  BGPRoutingMode:
-    type: object
-    properties:
-      id:
-        type: integer
-        description: id
-      key:
-        type: string
-        description: key
-      value:
-        type: string
-        description: value
-
-  SubnetMode:
-    type: object
-    properties:
-      id:
-        type: integer
-        description: id
-      key:
-        type: string
-        description: key
-      value:
-        type: string
-        description: value
-
-  VPNOnPremiseVendor:
-    type: object
-    properties:
-      id:
-        type: integer
-        description: id
-      key:
-        type: string
-        description: key
-      value:
-        type: string
-        description: value
-
-  LandingZoneWAN:
-    type: object
-    properties:
-      id:
-        type: integer
-        description: id
-      googleSession:
-        type: object
-        properties:
-          primaryGcpVpcSubnet:
-            type: string
-          primaryRegion:
-            type: string
-          primarySubnetName:
-            type: string
-          secondaryGcpVpcSubnet:
-            type: string
-          secondaryRegion:
-            type: string
-          secondarySubnetName:
-            type: string
-      onPremiseSession:
-        type: object
-        properties:
-          primaryBgpPeer:
-            type: string
-          primaryPeerIp:
-            type: string
-          primaryPeerIpSubnet:
-            type: string
-          primarySharedSecret:
-            type: string
-          primaryVpnTunnel:
-            type: string
-          secondaryBgpPeer:
-            type: string
-          secondaryPeerIp:
-            type: string
-          secondaryPeerIpSubnet:
-            type: string
-          secondarySharedSecret:
-            type: string
-          secondaryVpnTunnel:
-            type: string
-          vendor:
-            type: string
-      vpn: 
-        type: object
-        properties:
-          bgpInterfaceNetLength:
-            type: string
-          bgpRoutingMode:
-            type: string
-          cloudRouterName:
-            type: string
-          description:
-            type: string
-          externalVpnGateway:
-            type: string
-          googleASN: 
-            type: integer
-          haVpnGateway:
-            type: string
-          peerASN:
-            type: integer
-          projectName:
-            type: string
-          subnetMode:
-            type: string
-          vpcName:
-            type: string

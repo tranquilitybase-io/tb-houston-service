@@ -84,6 +84,8 @@ class Activator(db.Model):
     status = db.Column(db.String(255))
     description = db.Column(db.String(255))
     accessRequestedBy = db.Column(db.Integer, db.ForeignKey('user.id'))
+    source = db.Column(db.String(100))
+    activatorLink = db.Column(db.String(255))
 
 
 class ActivatorSchema(ma.ModelSchema):
