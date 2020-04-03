@@ -17,10 +17,11 @@ from extendedSchemas import ExtendedActivatorSchema
 from extendedSchemas import ExtendedUserSchema
 import user_extension
 import activator_extension
+import json
 from pprint import pformat
 
 
-def read_all():
+def read_all(category=None, status=None, environment=None, platform=None, type=None, source=None, sensitivity=None):
     """
     This function responds to a request for /api/activators
     with the complete lists of activators
@@ -29,7 +30,15 @@ def read_all():
     """
 
     # Create the list of activators from our data
-    activators = Activator.query.order_by(Activator.id).all()
+    activators = Activator.query.filter(
+      (category==None or Activator.category==category),
+      (status==None or Activator.status==status),
+      (environment==None or Activator.envs.like("%\"{}\"%".format(environment))),
+      (platform==None or Activator.platforms.like("%\"{}\"%".format(platform))),
+      (type==None or Activator.type==type),
+      (source==None or Activator.sourceControl.like("%\"{}\"%".format(source))),
+      (sensitivity==None or Activator.sensitivity==sensitivity)
+    ).order_by(Activator.id).all()
     activators_arr = []
     for act in activators:
         activators_arr.append(activator_extension.build_activator(act))
@@ -113,49 +122,33 @@ def update(id, activator):
     app.logger.debug("activator")
     app.logger.debug(pformat(activator))
 
+    if 'id' in activator and activator['id'] != id:
+      abort(400, f"Key mismatch in path and body")
+
     # Does the activators exist in activators list?
     existing_activator = Activator.query.filter(Activator.id == id).one_or_none()
 
     # Does activator exist?
 
     if existing_activator is not None:
-        schema = ActivatorSchema()
-        update_activator = schema.load(activator, session=db.session)
-        update_activator.id = activator.get('id', existing_activator.id)
-        update_activator.name = activator.get('name', existing_activator.name)
-        update_activator.type = activator.get('type', existing_activator.type)
-        update_activator.available = activator.get('available', existing_activator.available)
-        update_activator.sensitivity = activator.get('sensitivity', existing_activator.sensitivity)
-        update_activator.category = activator.get('category', existing_activator.category)
-        update_activator.envs = activator.get('envs', existing_activator.envs)
-        update_activator.platforms = activator.get('platforms', existing_activator.platforms)
-        update_activator.userCapacity = activator.get('userCapacity', existing_activator.userCapacity)
-        update_activator.serverCapacity = activator.get('serverCapacity', existing_activator.serverCapacity)
-        update_activator.regions = activator.get('regions', existing_activator.regions)
-        update_activator.hosting = activator.get('hosting', existing_activator.hosting)
-        update_activator.apiManagement = activator.get('apiManagement', existing_activator.apiManagement)
-        update_activator.ci = activator.get('ci', existing_activator.ci)
-        update_activator.cd = activator.get('cd', existing_activator.cd)
-        update_activator.sourceControl = activator.get('sourceControl', existing_activator.sourceControl)
-        update_activator.businessUnit = activator.get('businessUnit', existing_activator.businessUnit)
-        update_activator.technologyOwner = activator.get('technologyOwner', existing_activator.technologyOwner)
-        update_activator.technologyOwnerEmail = activator.get('technologyOwnerEmail', existing_activator.technologyOwnerEmail)
-        update_activator.billing = activator.get('billing', existing_activator.billing)
-        update_activator.activator = activator.get('activator', existing_activator.activator)
-        update_activator.status = activator.get('status', existing_activator.status)
-        update_activator.description = activator.get('description', existing_activator.description)
-        update_activator.accessRequestedBy = activator.get('accessRequestedBy', existing_activator.accessRequestedBy)
-        update_activator.lastUpdated = ModelTools.get_utc_timestamp()
-
-        db.session.merge(update_activator)
+        activator['lastUpdated'] = ModelTools.get_utc_timestamp()
+        activator['ci'] = json.dumps(activator.get('ci', existing_activator.ci))
+        activator['cd'] = json.dumps(activator.get('cd', existing_activator.cd))
+        activator['resources'] = json.dumps(activator.get('resources', existing_activator.resources))
+        activator['hosting'] = json.dumps(activator.get('hosting', existing_activator.hosting))
+        activator['envs'] = json.dumps(activator.get('envs', existing_activator.envs))
+        activator['sourceControl'] = json.dumps(activator.get('sourceControl', existing_activator.sourceControl))
+        activator['regions'] = json.dumps(activator.get('regions', existing_activator.regions))
+        activator['apiManagement'] = json.dumps(activator.get('apiManagement', existing_activator.apiManagement))
+        activator['platforms'] = json.dumps(activator.get('platforms', existing_activator.platforms))
+        Activator.query.filter(Activator.id == id).update(activator)
         db.session.commit()
-
         # return the updated activator in the response
-        data = schema.dump(update_activator)
+        schema = ActivatorSchema()
+        data = schema.dump(existing_activator)
         app.logger.debug("activator data:")
         app.logger.debug(pformat(data))
         return data, 200
-
     # otherwise, nope, deployment doesn't exist, so that's an error
     else:
         abort(404, f"Activator id {id} not found")

@@ -96,28 +96,7 @@ paths:
           schema:
             type: array
             items:
-              properties:
-                id:
-                  type: integer
-                  description: id
-                solutionId:
-                  type: integer
-                  description: solutionId
-                activatorId:
-                  type: integer
-                  description: activatorId
-                name:
-                  type: string
-                  description: application
-                env:
-                  type: string
-                  description: env
-                status:
-                  type: string
-                  description: status
-                description:
-                  type: string
-                  description: notes
+              $ref: '#/definitions/Application' 
 
   /application/:
     post:
@@ -132,26 +111,7 @@ paths:
           description: The application to create
           required: true
           schema:
-            type: object
-            properties:
-              solutionId:
-                type: integer
-                description: solutionId
-              activatorId:
-                type: integer
-                description: activatorId
-              name:
-                type: string
-                description: name
-              env:
-                type: string
-                description: env
-              status:
-                type: string
-                description: status
-              description:
-                type: string
-                description: description
+            $ref: '#/definitions/Application' 
       responses:
         201:
           description: Successfully created an application 
@@ -174,22 +134,7 @@ paths:
         200:
           description: Successfully read an application from the list
           schema:
-            type: object
-            properties:
-              id:
-                type: integer
-              solutionId:
-                type: integer
-              activatorId:
-                type: integer
-              name:
-                type: string
-              env:
-                type: string
-              status:
-                type: string
-              description:
-                type: string
+            $ref: '#/definitions/Application' 
 
     put:
       operationId: application.update
@@ -206,20 +151,7 @@ paths:
         - name: application
           in: body
           schema:
-            type: object
-            properties:
-              solutionId:
-                type: integer
-              activatorId:
-                type: integer
-              name:
-                type: string
-              env:
-                type: string
-              status:
-                type: string
-              description:
-                type: string
+            $ref: '#/definitions/Application' 
       responses:
         200:
           description: Successfully updated an application
@@ -1125,6 +1057,28 @@ paths:
         - activator
       summary: Read the entire list of activators
       description: Read the list of activators
+      parameters:
+        - in: query
+          name: category
+          type: string
+        - in: query
+          name: status
+          type: string
+        - in: query
+          name: environment
+          type: string
+        - in: query
+          name: platform
+          type: string
+        - in: query
+          name: type
+          type: string
+        - in: query
+          name: source
+          type: string
+        - in: query
+          name: sensitivity
+          type: string
       responses:
         200:
           description: Successfully ran activator list operation
@@ -2195,6 +2149,31 @@ paths:
 
 
 definitions:
+
+  Application:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: id
+      solutionId:
+        type: integer
+        description: solutionId
+      activatorId:
+        type: integer
+        description: activatorId
+      name:
+        type: string
+        description: application
+      env:
+        type: string
+        description: env
+      status:
+        type: string
+        description: status
+      description:
+        type: string
+        description: notes
 
   Team:
     type: object

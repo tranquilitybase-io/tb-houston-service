@@ -39,7 +39,7 @@ def read_one(id):
     :return:              subnetMode matching key
     """
 
-    subnetMode = (SubnetMode.query.filter(SubnetMode.id == id).one_or_none())
+    subnetMode = SubnetMode.query.filter(SubnetMode.id == id).one_or_none()
 
     if subnetMode is not None:
         # Serialize the data for the response
@@ -85,34 +85,20 @@ def update(id, subnetMode):
 
     app.logger.debug(pformat(subnetMode))
 
-    if subnetMode.get("id", id) != id:
+    if 'id' in subnetMode and subnetMode['id'] != id:
            abort(400, f"Key mismatch in path and body")
-           
-    # Does the subnetMode exist in subnetMode list?
-    existing_subnetMode = SubnetMode.query.filter(
-            SubnetMode.id == id 
-    ).one_or_none()
 
-    # Does subnetMode exist?
+    existing_subnetMode = SubnetMode.query.filter(SubnetMode.id == id).one_or_none()
 
     if existing_subnetMode is not None:
-        schema = SubnetModeSchema()
-        update_subnetMode = schema.load(subnetMode, session=db.session)
-        update_subnetMode.id = id
-        update_subnetMode.key = subnetMode.get('key', '')
-        update_subnetMode.value = subnetMode.get('value', '')
-
-        db.session.merge(update_subnetMode)
-        db.session.commit()
-
-        # return the updted subnetMode in the response
-        data = schema.dump(update_subnetMode)
-        return data, 200
-
-    # otherwise, nope, deployment doesn't exist, so that's an error
+      SubnetMode.query.filter(SubnetMode.id == id).update(subnetMode)
+      db.session.commit()
+      schema = SubnetModeSchema()
+      data = schema.dump(existing_subnetMode)
+      return data, 200
     else:
-        abort(404, f"SubnetMode not found")
-
+      abort(404, f"SubnetMode {id} not found")
+      
 
 def delete(id):
     """

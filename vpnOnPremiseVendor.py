@@ -96,22 +96,15 @@ def update(id, vpnOnPremiseVendor):
     # Does vpnOnPremiseVendor exist?
 
     if existing_vpnOnPremiseVendor is not None:
-        schema = VPNOnPremiseVendorSchema()
-        update_vpnOnPremiseVendor = schema.load(vpnOnPremiseVendor, session=db.session)
-        update_vpnOnPremiseVendor.id = id
-        update_vpnOnPremiseVendor.key = vpnOnPremiseVendor.get('key', '')
-        update_vpnOnPremiseVendor.value = vpnOnPremiseVendor.get('value', '')
-
-        db.session.merge(update_vpnOnPremiseVendor)
+        VPNOnPremiseVendor.query.filter(VPNOnPremiseVendor.id == id).update(vpnOnPremiseVendor)
         db.session.commit()
 
-        # return the updted vpnOnPremiseVendor in the response
-        data = schema.dump(update_vpnOnPremiseVendor)
+        # return the updated vpnOnPremiseVendor in the response
+        schema = VPNOnPremiseVendorSchema()
+        data = schema.dump(existing_vpnOnPremiseVendor)
         return data, 200
-
-    # otherwise, nope, deployment doesn't exist, so that's an error
     else:
-        abort(404, f"VPNOnPremiseVendor not found")
+        abort(404, f"VPNOnPremiseVendor {id} not found")
 
 
 def delete(id):
