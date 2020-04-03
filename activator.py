@@ -11,6 +11,7 @@ from flask import make_response, abort
 from config import db, app
 from models import User
 from models import Activator
+from models import ActivatorSchema
 from models import ModelTools
 from extendedSchemas import ExtendedActivatorSchema
 from extendedSchemas import ExtendedUserSchema
@@ -120,10 +121,31 @@ def update(id, activator):
     if existing_activator is not None:
         schema = ActivatorSchema()
         update_activator = schema.load(activator, session=db.session)
-        update_activator.id = activator['id']
-        update_activator.name = activator.get('name', '')
-        update_activator.envs = activator.get('envs', '')
-        new_activator.lastUpdated = ModelTools.get_utc_timestamp()
+        update_activator.id = activator.get('id', existing_activator.id)
+        update_activator.name = activator.get('name', existing_activator.name)
+        update_activator.type = activator.get('type', existing_activator.type)
+        update_activator.available = activator.get('available', existing_activator.available)
+        update_activator.sensitivity = activator.get('sensitivity', existing_activator.sensitivity)
+        update_activator.category = activator.get('category', existing_activator.category)
+        update_activator.envs = activator.get('envs', existing_activator.envs)
+        update_activator.platforms = activator.get('platforms', existing_activator.platforms)
+        update_activator.userCapacity = activator.get('userCapacity', existing_activator.userCapacity)
+        update_activator.serverCapacity = activator.get('serverCapacity', existing_activator.serverCapacity)
+        update_activator.regions = activator.get('regions', existing_activator.regions)
+        update_activator.hosting = activator.get('hosting', existing_activator.hosting)
+        update_activator.apiManagement = activator.get('apiManagement', existing_activator.apiManagement)
+        update_activator.ci = activator.get('ci', existing_activator.ci)
+        update_activator.cd = activator.get('cd', existing_activator.cd)
+        update_activator.sourceControl = activator.get('sourceControl', existing_activator.sourceControl)
+        update_activator.businessUnit = activator.get('businessUnit', existing_activator.businessUnit)
+        update_activator.technologyOwner = activator.get('technologyOwner', existing_activator.technologyOwner)
+        update_activator.technologyOwnerEmail = activator.get('technologyOwnerEmail', existing_activator.technologyOwnerEmail)
+        update_activator.billing = activator.get('billing', existing_activator.billing)
+        update_activator.activator = activator.get('activator', existing_activator.activator)
+        update_activator.status = activator.get('status', existing_activator.status)
+        update_activator.description = activator.get('description', existing_activator.description)
+        update_activator.accessRequestedBy = activator.get('accessRequestedBy', existing_activator.accessRequestedBy)
+        update_activator.lastUpdated = ModelTools.get_utc_timestamp()
 
         db.session.merge(update_activator)
         db.session.commit()

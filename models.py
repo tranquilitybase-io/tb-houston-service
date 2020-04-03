@@ -449,7 +449,7 @@ class VPNOnPremiseVendor(db.Model):
     value = db.Column(db.String)
 
 
-class VPNOnPremiseSchema(ma.ModelSchema):
+class VPNOnPremiseVendorSchema(ma.ModelSchema):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 

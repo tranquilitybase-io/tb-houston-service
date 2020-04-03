@@ -2085,7 +2085,7 @@ paths:
         - name: subnetMode
           in: body
           schema:
-            $ref: '#/definitions/BGPRoutingMode' 
+            $ref: '#/definitions/SubnetMode' 
       responses:
         200:
           description: Successfully updated a subnetmode
@@ -2104,6 +2104,94 @@ paths:
       responses:
         200:
           description: Successfully deleted a subnetmode
+
+
+  /keyValues/vpnonpremisevendor/:
+    get:
+      operationId: vpnOnPremiseVendor.read_all
+      tags:
+        - vpnonpremisevendor
+      summary: Read the entire list of vpnOnPremiseVendors
+      description: Read the list of vpnOnPremiseVendors
+      responses:
+        200:
+          description: Successfully read vpnOnPremiseVendor list operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/VPNOnPremiseVendor' 
+
+    post:
+      operationId: vpnOnPremiseVendor.create
+      tags:
+        - vpnonpremisevendor
+      summary: Create an vpnOnPremiseVendor and add it to the vpnOnPremiseVendor list
+      description: Create a new vpnOnPremiseVendor in the vpnOnPremiseVendor list
+      parameters:
+        - name: vpnOnPremiseVendor
+          in: body
+          description: vpnOnPremiseVendor to create
+          required: true
+          schema:
+            $ref: '#/definitions/VPNOnPremiseVendor' 
+      responses:
+        201:
+          description: Successfully created an VPNOnPremiseVendor
+
+
+  /keyValues/vpnonpremisevendor/{id}:
+    get:
+      operationId: vpnOnPremiseVendor.read_one
+      tags:
+        - vpnonpremisevendor
+      summary: Read one vpnOnPremiseVendor from the list
+      description: Read one vpnOnPremiseVendor from the list
+      parameters:
+        - name: id
+          in: path
+          description: id of the vpnOnPremiseVendor to get from the list
+          type: integer
+          required: true
+      responses:
+        200:
+          description: Successfully read a vpnOnPremiseVendor from the list
+          schema:
+            $ref: '#/definitions/VPNOnPremiseVendor' 
+
+    put:
+      operationId: vpnOnPremiseVendor.update
+      tags:
+        - vpnonpremisevendor  
+      summary: Update an vpnOnPremiseVendor in the list
+      description: Update an vpnOnPremiseVendor in the list
+      parameters:
+        - name: id
+          in: path
+          description: id of the vpnOnPremiseVendor to update
+          type: integer 
+          required: true
+        - name: vpnOnPremiseVendor
+          in: body
+          schema:
+            $ref: '#/definitions/VPNOnPremiseVendor' 
+      responses:
+        200:
+          description: Successfully updated a vpnOnPremiseVendor
+
+    delete:
+      operationId: vpnOnPremiseVendor.delete
+      tags:
+        - vpnonpremisevendor
+      summary: Delete an VPNOnPremiseVendor from the list
+      description: Delete a vpnOnPremiseVendor
+      parameters:
+        - name: id
+          in: path
+          type: integer
+          required: true
+      responses:
+        200:
+          description: Successfully deleted a vpnOnPremiseVendor
 
 
 definitions:
@@ -2135,6 +2223,19 @@ definitions:
         description: value
 
   SubnetMode:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: id
+      key:
+        type: string
+        description: key
+      value:
+        type: string
+        description: value
+
+  VPNOnPremiseVendor:
     type: object
     properties:
       id:
