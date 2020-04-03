@@ -62,6 +62,8 @@ class ExtendedActivatorSchema(Schema):
     status = fields.Str()
     description = fields.Str()
     accessRequestedBy = fields.Nested(ExtendedUserSchema(many=False))
+    source = fields.Str()
+    activatorLink = fields.Str()
 
 
 class ExtendedApplicationSchema(Schema):
@@ -145,3 +147,8 @@ class ExtendedLandingZoneWANSchema(Schema):
     googleSession = fields.Nested(ExtendedGoogleSessionSchema(many=False))
     onPremiseSession = fields.Nested(ExtendedOnPremiseSessionSchema(many=False))
     vpn = fields.Nested(ExtendedVPNSchema(many=False))
+
+
+class ExtendedActivatorCategorySchema(Schema):
+    __envelope__ = {"single": "activatorCategory", "many": "activatorCategories"}
+    category = fields.Str()

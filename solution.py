@@ -36,7 +36,6 @@ def read_all(active=None, namesonly=None):
     else:
       solutions = Solution.query.filter(Solution.active == active).order_by(Solution.id).all()
 
-
     if namesonly == True:
       # Serialize the data for the response
       schema = SolutionNamesOnlySchema(many=True)

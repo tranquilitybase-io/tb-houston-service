@@ -15,6 +15,7 @@ from models import ActivatorSchema
 from models import ModelTools
 from extendedSchemas import ExtendedActivatorSchema
 from extendedSchemas import ExtendedUserSchema
+from extendedSchemas import ExtendedActivatorCategorySchema
 import user_extension
 import activator_extension
 import json
@@ -201,3 +202,21 @@ def setActivatorStatus(activator):
     else:
         id = activator['id']
         abort(404, f"Activator id {id} not found")
+
+
+def categories():
+    """
+    :return:        distinct list of activator categories
+    """
+
+    sql = "select category from activator group by category"
+    rs = db.session.execute(sql)
+    categories_arr = []
+    for row in rs:
+        categories_arr.append({ "category": row['category'] })
+
+    print(pformat(categories_arr))
+    schema = ExtendedActivatorCategorySchema(many=True)
+    data = schema.dump(categories_arr)
+    print(pformat(data))
+    return data, 200 

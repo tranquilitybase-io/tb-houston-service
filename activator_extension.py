@@ -29,7 +29,10 @@ def build_activator(act):
         'activator': act.activator,
         'resources': ModelTools.load_json_array(act.resources),
         'status': act.status,
-        'description': act.description
+        'description': act.description,
+        'accessRequestedBy': act.accessRequestedBy,
+        'source': act.source,
+        'activatorLink': act.activatorLink
     }
     act_dict['accessRequestedBy'] = user_extension.build_user(act.accessRequestedBy)
 
