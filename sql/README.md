@@ -2,6 +2,10 @@
 docker build -t gcr.io/tranquility-base-images/tb-houston-service:mysql57 .
 docker push gcr.io/tranquility-base-images/tb-houston-service:mysql57
 
+# Build a container image for landingzone using the Dockerfile
+docker build -t gcr.io/tranquility-base-images/tb-houston-mysql57:landingzone .
+docker push gcr.io/tranquility-base-images/tb-houston-mysql57:landingzone
+
 # run the docker image
 docker run --name mysql57 \
     -p 3306:3306 \
@@ -11,5 +15,8 @@ docker run --name mysql57 \
     -e MYSQL_DATABASE=eagle_db \
     -d gcr.io/tranquility-base-images/tb-houston-service:mysql57
 
-# Dump the database
-mysqldump eagle_db --column-statistics=false -u eagle-user -p > eagle_db_dump.tmp
+# Dump the database schema only
+mysqldump eagle_db --column-statistics=false --no-data -u eagle-user -p > eagle_db_schema.tmp
+
+# Dump the database data only
+mysqldump eagle_db --column-statistics=false --no-create-info -u eagle-user -p > eagle_db_data.tmp

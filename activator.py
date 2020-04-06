@@ -22,7 +22,7 @@ import json
 from pprint import pformat
 
 
-def read_all(category=None, status=None, environment=None, platform=None, type=None, source=None, sensitivity=None):
+def read_all(category=None, status=None, environment=None, platform=None, type=None, source=None, sensitivity=None, page=None, page_size=None):
     """
     This function responds to a request for /api/activators
     with the complete lists of activators
@@ -31,7 +31,7 @@ def read_all(category=None, status=None, environment=None, platform=None, type=N
     """
 
     # Create the list of activators from our data
-    activators = Activator.query.filter(
+    activator_filter = Activator.query.order_by(Activator.id).filter(
       (category==None or Activator.category==category),
       (status==None or Activator.status==status),
       (environment==None or Activator.envs.like("%\"{}\"%".format(environment))),
@@ -39,7 +39,13 @@ def read_all(category=None, status=None, environment=None, platform=None, type=N
       (type==None or Activator.type==type),
       (source==None or Activator.sourceControl.like("%\"{}\"%".format(source))),
       (sensitivity==None or Activator.sensitivity==sensitivity)
-    ).order_by(Activator.id).all()
+    )
+
+    if (page==None or page_size==None): 
+      activators = activator_filter.all()
+    else:
+      activators = activator_filter.limit(page_size).offset(page * page_size).all()
+
     activators_arr = []
     for act in activators:
         activators_arr.append(activator_extension.build_activator(act))

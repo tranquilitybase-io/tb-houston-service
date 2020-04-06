@@ -19,7 +19,7 @@ from pprint import pformat
 from pprint import pprint
 
 
-def read_all(active=None, namesonly=None):
+def read_all(active=None, namesonly=None, page=None, page_size=None):
     """
     This function responds to a request for /api/solutions
     with the complete lists of solutions
@@ -32,9 +32,15 @@ def read_all(active=None, namesonly=None):
 
     # Create the list of solutions from our data
     if active == None:
-      solutions = Solution.query.order_by(Solution.id).all()
+      solution_filter = Solution.query.order_by(Solution.id)
     else:
-      solutions = Solution.query.filter(Solution.active == active).order_by(Solution.id).all()
+      solution_filter = Solution.query.filter(Solution.active == active).order_by(Solution.id)
+
+    # do limit and offset last
+    if (page==None or page_size==None):
+      solutions = solution_filter.all()
+    else:
+      solutions = solution_filter.limit(page_size).offset(page * page_size)
 
     if namesonly == True:
       # Serialize the data for the response

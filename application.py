@@ -15,7 +15,7 @@ from pprint import pformat
 from pprint import pprint
 
 
-def read_all(status=None, activatorId=None, environment=None):
+def read_all(status=None, activatorId=None, environment=None, page=None, page_size=None):
     """
     This function responds to a request for /api/applications
     with the complete lists of applications
@@ -24,11 +24,16 @@ def read_all(status=None, activatorId=None, environment=None):
     """
 
     # Create the list of applications from our data
-    applications = Application.query \
-      .filter(status == None or Application.status == status)  \
-      .filter(activatorId == None or Application.activatorId == activatorId ) \
-      .filter(environment == None or Application.env == environment) \
-      .all()
+    application_filter = Application.query.filter( 
+      (status == None or Application.status == status),
+      (activatorId == None or Application.activatorId == activatorId),
+      (environment == None or Application.env == environment)) 
+
+    if (page==None or page_size==None):
+      applications = application_filter.all()
+    else:
+      applications = application_filter.limit(page_size).offset(page * page_size).all()
+
     # Serialize the data for the response
     application_schema = ApplicationSchema(many=True)
     data = application_schema.dump(applications)
