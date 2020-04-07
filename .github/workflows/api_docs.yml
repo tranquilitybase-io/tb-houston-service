@@ -40,3 +40,8 @@ jobs:
       run: |
         pip install pytest
         #pytest tests/
+    - name: Install redoc-cli
+      run: |
+        npm install redoc-cli
+        npx redoc-cli bundle openapi/houston_service.yml --title "Houston Service REST API"
+

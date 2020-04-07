@@ -1762,7 +1762,6 @@ components:
       description: bgpRoutingMode to create
       required: true
 
-    vpnOnPremiseVendor.vpnOnPremiseVendorDetails:
     subnetMode.subnetModeDetails:
       content:
         application/json:
