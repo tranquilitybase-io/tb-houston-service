@@ -16,6 +16,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+      with:
+        repository: tranquilitybase-io/tb-houston-service
+        path: tb-houston-service
     - name: Set up Python 3.6
       uses: actions/setup-python@v1
       with:
@@ -23,6 +26,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
+        cd tb-houston-service
         pip install -r sql/requirements.txt
     - name: Lint with flake8
       run: |
