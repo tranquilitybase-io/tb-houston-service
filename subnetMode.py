@@ -50,7 +50,7 @@ def read_one(id):
         abort(404, f"SubnetMode with id {id} not found")
 
 
-def create(subnetMode):
+def create(subnetModeDetails):
     """
     This function creates a new subnetMode in the subnetMode list
     based on the passed in subnetMode data
@@ -60,11 +60,11 @@ def create(subnetMode):
     """
 
     # Remove id as it's created automatically
-    if 'id' in subnetMode:
-        del subnetMode['id']
+    if 'id' in subnetModeDetails:
+        del subnetModeDetails['id']
 
     schema = SubnetModeSchema()
-    new_subnetMode = schema.load(subnetMode, session=db.session)
+    new_subnetMode = schema.load(subnetModeDetails, session=db.session)
     db.session.add(new_subnetMode)
     db.session.commit()
 
@@ -74,7 +74,7 @@ def create(subnetMode):
     return data, 201
 
 
-def update(id, subnetMode):
+def update(id, subnetModeDetails):
     """
     This function updates an existing subnetMode in the subnetMode list
 
@@ -83,15 +83,15 @@ def update(id, subnetMode):
     :return:       updated subnetMode
     """
 
-    app.logger.debug(pformat(subnetMode))
+    app.logger.debug(pformat(subnetModeDetails))
 
-    if 'id' in subnetMode and subnetMode['id'] != id:
+    if 'id' in subnetModeDetails and subnetModeDetails['id'] != id:
            abort(400, f"Key mismatch in path and body")
 
     existing_subnetMode = SubnetMode.query.filter(SubnetMode.id == id).one_or_none()
 
     if existing_subnetMode is not None:
-      SubnetMode.query.filter(SubnetMode.id == id).update(subnetMode)
+      SubnetMode.query.filter(SubnetMode.id == id).update(subnetModeDetails)
       db.session.commit()
       schema = SubnetModeSchema()
       data = schema.dump(existing_subnetMode)

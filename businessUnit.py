@@ -54,7 +54,7 @@ def read_one(key):
         )
 
 
-def create(businessUnit):
+def create(businessUnitDetails):
     """
     This function creates a new businessUnit in the businessUnit list
     based on the passed in businessUnit data
@@ -62,8 +62,8 @@ def create(businessUnit):
     :param businessUnit: businessUnit to create in businessUnit structure
     :return:        201 on success, 406 on businessUnit exists
     """
-    key = businessUnit.get("key", None)
-    value = businessUnit.get("value", None)
+    key = businessUnitDetails.get("key", None)
+    value = businessUnitDetails.get("value", None)
 
     # Does the cd exist already?
     existing_businessUnit = (
@@ -72,7 +72,7 @@ def create(businessUnit):
 
     if existing_businessUnit is None:
         schema = BusinessUnitSchema()
-        new_businessUnit = schema.load(businessUnit, session=db.session)
+        new_businessUnit = schema.load(businessUnitDetails, session=db.session)
         db.session.add(new_businessUnit)
         db.session.commit()
 
@@ -87,7 +87,7 @@ def create(businessUnit):
         abort(406, f"BusinessUnit already exists")
 
 
-def update(key, businessUnit):
+def update(key, businessUnitDetails):
     """
     This function updates an existing businessUnit in the businessUnit list
 
@@ -96,7 +96,7 @@ def update(key, businessUnit):
     :return:       updated businessUnit
     """
 
-    if businessUnit["key"] != key:
+    if businessUnitDetails["key"] != key:
            abort(400, f"Key mismatch in path and body")
 
     # Does the businessUnit exist in businessUnit list?
@@ -109,7 +109,7 @@ def update(key, businessUnit):
     if existing_businessUnit is not None:
 
         schema = BusinessUnitSchema()
-        update_businessUnit = schema.load(businessUnit, session=db.session)
+        update_businessUnit = schema.load(businessUnitDetails, session=db.session)
         update_businessUnit.key = existing_businessUnit.key
 
         db.session.merge(update_businessUnit)

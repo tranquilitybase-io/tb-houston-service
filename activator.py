@@ -22,7 +22,7 @@ import json
 from pprint import pformat
 
 
-def read_all(category=None, status=None, environment=None, platform=None, type=None, source=None, sensitivity=None, page=None, page_size=None):
+def read_all(category=None, status=None, environment=None, platform=None, type=None, source=None, sensitivity=None, page=None, page_size=None, sort=None):
     """
     This function responds to a request for /api/activators
     with the complete lists of activators
@@ -31,7 +31,29 @@ def read_all(category=None, status=None, environment=None, platform=None, type=N
     """
 
     # Create the list of activators from our data
-    activator_filter = Activator.query.order_by(Activator.id).filter(
+
+    # pre-process sort instructions
+    if (sort==None):
+        activator_query = Activator.query.order_by(Activator.id)
+    else:
+        try:
+            sort_inst = [ si.split(":") for si in sort ]
+            orderby_arr = []
+            for si in sort_inst:
+                si1 = si[0]
+                if len(si) > 1:
+                    si2 = si[1]
+                else:
+                    si2 = "asc"
+                orderby = "Activator.{0}.{1}()".format(si1.strip(), si2.strip())
+                orderby_arr.append(eval(orderby))
+            #print("orderby: {}".format(orderby_arr))
+            activator_query = Activator.query.order_by(*orderby_arr)
+        except Exception as e:
+            print(e)
+            activator_query = Activator.query.order_by(Activator.id)
+
+    activator_query = activator_query.filter(
       (category==None or Activator.category==category),
       (status==None or Activator.status==status),
       (environment==None or Activator.envs.like("%\"{}\"%".format(environment))),
@@ -42,9 +64,9 @@ def read_all(category=None, status=None, environment=None, platform=None, type=N
     )
 
     if (page==None or page_size==None): 
-      activators = activator_filter.all()
+      activators = activator_query.all()
     else:
-      activators = activator_filter.limit(page_size).offset(page * page_size).all()
+      activators = activator_query.limit(page_size).offset(page * page_size).all()
 
     activators_arr = []
     for act in activators:
@@ -81,7 +103,7 @@ def read_one(id):
         )
 
 
-def create(activator):
+def create(activatorDetails):
     """
     This function creates a new activator in the activator list
     based on the passed in activator data
@@ -89,32 +111,25 @@ def create(activator):
     :param activator:  activator to create in activator list
     :return:        201 on success, 406 on activator exists
     """
-    id = activator.get("id", None)
 
-    # Does the activators exist already?
-    existing_activator = (
-        Activator.query.filter(Activator.id == id).one_or_none()
-    )
+    # Remove id as it's created automatically
+    if 'id' in activatorDetails:
+        del activatorDetails['id']
 
+    schema = ActivatorSchema()
+    new_activator = schema.load(activatorDetails, session=db.session)
+    new_activator.lastUpdated = ModelTools.get_utc_timestamp()
+    new_activator.accessRequestedBy = activatorDetails.get('accessRequestedBy', 0)
+    db.session.add(new_activator)
+    db.session.commit()
 
-    if existing_activator is None:
-        schema = ActivatorSchema()
-        new_activator = schema.load(activator, session=db.session)
-        new_activator.lastUpdated = ModelTools.get_utc_timestamp()
-        db.session.add(new_activator)
-        db.session.commit()
-
-        # Serialize and return the newly created deployment
-        # in the response
-        data = schema.dump(new_activator)
-        return data, 201
-
-    # Otherwise, it already exists, that's an error
-    else:
-        abort(406, f"Activator id {id} already exists")
+    # Serialize and return the newly created deployment
+    # in the response
+    data = schema.dump(new_activator)
+    return data, 201
 
 
-def update(id, activator):
+def update(id, activatorDetails):
     """
     This function updates an existing activator in the activators list
 
@@ -127,9 +142,9 @@ def update(id, activator):
     app.logger.debug("id")
     app.logger.debug(id)
     app.logger.debug("activator")
-    app.logger.debug(pformat(activator))
+    app.logger.debug(pformat(activatorDetails))
 
-    if 'id' in activator and activator['id'] != id:
+    if 'id' in activatorDetails and activatorDetails['id'] != id:
       abort(400, f"Key mismatch in path and body")
 
     # Does the activators exist in activators list?
@@ -138,20 +153,21 @@ def update(id, activator):
     # Does activator exist?
 
     if existing_activator is not None:
-        activator['lastUpdated'] = ModelTools.get_utc_timestamp()
-        activator['ci'] = json.dumps(activator.get('ci', existing_activator.ci))
-        activator['cd'] = json.dumps(activator.get('cd', existing_activator.cd))
-        activator['resources'] = json.dumps(activator.get('resources', existing_activator.resources))
-        activator['hosting'] = json.dumps(activator.get('hosting', existing_activator.hosting))
-        activator['envs'] = json.dumps(activator.get('envs', existing_activator.envs))
-        activator['sourceControl'] = json.dumps(activator.get('sourceControl', existing_activator.sourceControl))
-        activator['regions'] = json.dumps(activator.get('regions', existing_activator.regions))
-        activator['apiManagement'] = json.dumps(activator.get('apiManagement', existing_activator.apiManagement))
-        activator['platforms'] = json.dumps(activator.get('platforms', existing_activator.platforms))
-        Activator.query.filter(Activator.id == id).update(activator)
+        schema = ActivatorSchema()
+        activatorDetails['lastUpdated'] = ModelTools.get_utc_timestamp()
+        activatorDetails['accessRequestedBy'] = activatorDetails.get('accessRequestedBy', existing_activator.accessRequestedBy)
+        activatorDetails["ci"] = json.dumps(activatorDetails.get("ci", existing_activator.ci))
+        activatorDetails["cd"] = json.dumps(activatorDetails.get("cd", existing_activator.cd))
+        activatorDetails["resources"] = json.dumps(activatorDetails.get("resources", existing_activator.resources))
+        activatorDetails["hosting"] = json.dumps(activatorDetails.get("hosting", existing_activator.hosting))
+        activatorDetails["envs"] = json.dumps(activatorDetails.get("envs", existing_activator.envs))
+        activatorDetails["sourceControl"] = json.dumps(activatorDetails.get("sourceControl", existing_activator.sourceControl))
+        activatorDetails["regions"] = json.dumps(activatorDetails.get("regions", existing_activator.regions))
+        activatorDetails["apiManagement"] = json.dumps(activatorDetails.get("apiManagement", existing_activator.apiManagement))
+        activatorDetails["platforms"] = json.dumps(activatorDetails.get("platforms", existing_activator.platforms))
+        Activator.query.filter(Activator.id == id).update(activatorDetails)
         db.session.commit()
         # return the updated activator in the response
-        schema = ActivatorSchema()
         data = schema.dump(existing_activator)
         app.logger.debug("activator data:")
         app.logger.debug(pformat(data))

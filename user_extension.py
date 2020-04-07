@@ -2,8 +2,8 @@ from models import User
 from extendedSchemas import ExtendedUserSchema
 
 def build_user(id):
-    if id == None:
-        return None
+    if id == None or id == 0:
+        return 0
 
     existing_user = (
         User.query.filter(User.id == id).one_or_none()
@@ -14,4 +14,4 @@ def build_user(id):
         data = user_schema.dump(existing_user)
         return data
 
-    return None
+    return 0

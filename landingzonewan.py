@@ -66,7 +66,7 @@ def read_one(id):
         )
 
 
-def create(landingZoneWAN):
+def create(landingZoneWANDetails):
     """
     This function creates a new landingZoneWAN in the landingZoneWAN structure
     based on the passed in landingZoneWAN data
@@ -76,11 +76,11 @@ def create(landingZoneWAN):
     """
 
     # we don't need the id, the is generated automatically on the database
-    if ('id' in landingZoneWAN):
-      del landingZoneWAN["id"]
+    if ('id' in landingZoneWANDetails):
+      del landingZoneWANDetails["id"]
 
     # flatten the python object into a python dictionary
-    flattened_landingZoneWAN = flatten(landingZoneWAN, delimiter)
+    flattened_landingZoneWAN = flatten(landingZoneWANDetails, delimiter)
     schema = LandingZoneWANSchema(many=False)
     new_landingZoneWAN = schema.load(flattened_landingZoneWAN, session=db.session)
     # Save python object to the database
@@ -96,7 +96,7 @@ def create(landingZoneWAN):
     return data, 201
 
 
-def update(id, landingZoneWAN):
+def update(id, landingZoneWANDetails):
     """
     This function updates an existing landingZoneWAN in the landingZoneWAN list
 
@@ -106,15 +106,15 @@ def update(id, landingZoneWAN):
     """
 
     app.logger.debug("landingZoneWAN: ")
-    app.logger.debug(pformat(landingZoneWAN))
+    app.logger.debug(pformat(landingZoneWANDetails))
 
-    if landingZoneWAN['id'] != id:
+    if landingZoneWANDetails['id'] != id:
         abort(400, f"Key mismatch in path and body")
 
     # Does the landingZoneWAN exist in landingZoneWANs?
     existing_landingZoneWAN = LandingZoneWAN.query.filter(LandingZoneWAN.id == id).one_or_none()
 
-    flattened_landingZoneWAN = flatten(landingZoneWAN, delimiter)
+    flattened_landingZoneWAN = flatten(landingZoneWANDetails, delimiter)
 
     # Does landingZoneWAN exist?
     if existing_landingZoneWAN is not None:
