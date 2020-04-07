@@ -109,7 +109,7 @@ def update(id, landingZoneProgressItemDetails):
     app.logger.debug(id)
     app.logger.debug(landingZoneProgressItemDetails["id"])
 
-    if landingZoneProgressItem["id"] != id:
+    if landingZoneProgressItemDetails["id"] != id:
       abort(400, f"Key mismatch in path and body")
 
     # Does the landingZoneProgressItem exist in landingZoneProgressItems?
