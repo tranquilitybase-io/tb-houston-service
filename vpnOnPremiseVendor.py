@@ -50,7 +50,7 @@ def read_one(id):
         abort(404, f"VPNOnPremiseVendor with id {id} not found")
 
 
-def create(vpnOnPremiseVendor):
+def create(vpnOnPremiseVendorDetails):
     """
     This function creates a new vpnOnPremiseVendor in the vpnOnPremiseVendor list
     based on the passed in vpnOnPremiseVendor data
@@ -60,11 +60,11 @@ def create(vpnOnPremiseVendor):
     """
 
     # Remove id as it's created automatically
-    if 'id' in vpnOnPremiseVendor:
-        del vpnOnPremiseVendor['id']
+    if 'id' in vpnOnPremiseVendorDetails:
+        del vpnOnPremiseVendorDetails['id']
 
     schema = VPNOnPremiseVendorSchema()
-    new_vpnOnPremiseVendor = schema.load(vpnOnPremiseVendor, session=db.session)
+    new_vpnOnPremiseVendor = schema.load(vpnOnPremiseVendorDetails, session=db.session)
     db.session.add(new_vpnOnPremiseVendor)
     db.session.commit()
 
@@ -74,7 +74,7 @@ def create(vpnOnPremiseVendor):
     return data, 201
 
 
-def update(id, vpnOnPremiseVendor):
+def update(id, vpnOnPremiseVendorDetails):
     """
     This function updates an existing vpnOnPremiseVendor in the vpnOnPremiseVendor list
 
@@ -83,9 +83,9 @@ def update(id, vpnOnPremiseVendor):
     :return:       updated vpnOnPremiseVendor
     """
 
-    app.logger.debug(pformat(vpnOnPremiseVendor))
+    app.logger.debug(pformat(vpnOnPremiseVendorDetails))
 
-    if vpnOnPremiseVendor.get("id", id) != id:
+    if vpnOnPremiseVendorDetails.get("id", id) != id:
            abort(400, f"Key mismatch in path and body")
            
     # Does the vpnOnPremiseVendor exist in vpnOnPremiseVendor list?
@@ -96,7 +96,7 @@ def update(id, vpnOnPremiseVendor):
     # Does vpnOnPremiseVendor exist?
 
     if existing_vpnOnPremiseVendor is not None:
-        VPNOnPremiseVendor.query.filter(VPNOnPremiseVendor.id == id).update(vpnOnPremiseVendor)
+        VPNOnPremiseVendor.query.filter(VPNOnPremiseVendor.id == id).update(vpnOnPremiseVendorDetails)
         db.session.commit()
 
         # return the updated vpnOnPremiseVendor in the response

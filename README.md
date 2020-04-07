@@ -2,6 +2,10 @@
 docker build -t gcr.io/tranquility-base-images/tb-houston-service:alpha .
 docker push gcr.io/tranquility-base-images/tb-houston-service:alpha
 
+# Experiment build
+docker build -t gcr.io/tranquility-base-images/tb-houston-service:experimental .
+docker push gcr.io/tranquility-base-images/tb-houston-service:experimental :
+
 # list existing containers and remove them
 docker container list -a 
 docker container rm xxxxxxx

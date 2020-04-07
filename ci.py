@@ -52,7 +52,7 @@ def read_one(key):
         )
 
 
-def create(ci):
+def create(ciDetails):
     """
     This function creates a new ci in the ci list
     based on the passed in ci data
@@ -60,8 +60,8 @@ def create(ci):
     :param ci: ci to create in ci structure
     :return:        201 on success, 406 on ci exists
     """
-    key = ci.get("key", None)
-    value = ci.get("value", None)
+    key = ciDetails.get("key", None)
+    value = ciDetails.get("value", None)
 
     # Does the ci exist already?
     existing_ci = (
@@ -70,7 +70,7 @@ def create(ci):
 
     if existing_ci is None:
         schema = CISchema()
-        new_ci = schema.load(ci, session=db.session)
+        new_ci = schema.load(ciDetails, session=db.session)
         db.session.add(new_ci)
         db.session.commit()
 
@@ -85,7 +85,7 @@ def create(ci):
         abort(406, f"CI already exists")
 
 
-def update(key, ci):
+def update(key, ciDetails):
     """
     This function updates an existing ci in the ci list
 
@@ -94,9 +94,9 @@ def update(key, ci):
     :return:       updated ci
     """
 
-    app.logger.debug(pformat(ci))
+    app.logger.debug(pformat(ciDetails))
 
-    if ci["key"] != key:
+    if ciDetails["key"] != key:
            abort(400, f"Key mismatch in path and body")
 
     # Does the ci exist in ci list?
@@ -108,8 +108,8 @@ def update(key, ci):
 
     if existing_ci is not None:
         schema = CISchema()
-        update_ci = schema.load(ci, session=db.session)
-        update_ci.key = ci['key']
+        update_ci = schema.load(ciDetails, session=db.session)
+        update_ci.key = ciDetails['key']
 
         db.session.merge(update_ci)
         db.session.commit()

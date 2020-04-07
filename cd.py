@@ -52,7 +52,7 @@ def read_one(key):
         )
 
 
-def create(cd):
+def create(cdDetails):
     """
     This function creates a new cd in the cd list
     based on the passed in cd data
@@ -60,8 +60,8 @@ def create(cd):
     :param cd: cd to create in cd structure
     :return:        201 on success, 406 on cd exists
     """
-    key = cd.get("key", None)
-    value = cd.get("value", None)
+    key = cdDetails.get("key", None)
+    value = cdDetails.get("value", None)
 
     # Does the cd exist already?
     existing_cd = (
@@ -70,7 +70,7 @@ def create(cd):
 
     if existing_cd is None:
         schema = CDSchema()
-        new_cd = schema.load(cd, session=db.session)
+        new_cd = schema.load(cdDetails, session=db.session)
         db.session.add(new_cd)
         db.session.commit()
 
@@ -85,7 +85,7 @@ def create(cd):
         abort(406, f"CD already exists")
 
 
-def update(key, cd):
+def update(key, cdDetails):
     """
     This function updates an existing cd in the cd list
 
@@ -94,9 +94,9 @@ def update(key, cd):
     :return:       updated cd
     """
 
-    app.logger.debug(pformat(cd))
+    app.logger.debug(pformat(cdDetails))
 
-    if cd["key"] != key:
+    if cdDetails["key"] != key:
            abort(400, f"Key mismatch in path and body")    
 
     # Does the cd exist in cd list?
@@ -108,8 +108,8 @@ def update(key, cd):
 
     if existing_cd is not None:
         schema = CDSchema()
-        update_cd = schema.load(cd, session=db.session)
-        update_cd.key = cd['key']
+        update_cd = schema.load(cdDetails, session=db.session)
+        update_cd.key = cdDetails['key']
 
         db.session.merge(update_cd)
         db.session.commit()

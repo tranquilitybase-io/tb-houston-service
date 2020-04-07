@@ -52,7 +52,7 @@ def read_one(key):
         )
 
 
-def create(environment):
+def create(environmentDetails):
     """
     This function creates a new environment in the environment list
     based on the passed in environment data
@@ -60,8 +60,8 @@ def create(environment):
     :param environment:  environment to create in environment structure
     :return:        201 on success, 406 on environment exists
     """
-    key = environment.get("key", None)
-    value = environment.get("value", None)
+    key = environmentDetails.get("key", None)
+    value = environmentDetails.get("value", None)
 
     # Does the environment exist already?
     existing_environment = (
@@ -70,7 +70,7 @@ def create(environment):
 
     if existing_environment is None:
         schema = EnvironmentSchema()
-        new_environment = schema.load(environment, session=db.session)
+        new_environment = schema.load(environmentDetails, session=db.session)
         db.session.add(new_environment)
         db.session.commit()
 
@@ -85,7 +85,7 @@ def create(environment):
         abort(406, f"Environment already exists")
 
 
-def update(key, environment):
+def update(key, environmentDetails):
     """
     This function updates an existing environment in the environment list
 
@@ -94,9 +94,9 @@ def update(key, environment):
     :return:       updated environment
     """
 
-    app.logger.debug(pformat(environment))
+    app.logger.debug(pformat(environmentDetails))
 
-    if environment["key"] != key:
+    if environmentDetails["key"] != key:
            abort(400, f"Key mismatch in path and body")
            
     # Does the environment exist in environment list?
@@ -108,8 +108,8 @@ def update(key, environment):
 
     if existing_environment is not None:
         schema = EnvironmentSchema()
-        update_environment = schema.load(environment, session=db.session)
-        update_environment.key = environment['key']
+        update_environment = schema.load(environmentDetails, session=db.session)
+        update_environment.key = environmentDetails['key']
 
         db.session.merge(update_environment)
         db.session.commit()

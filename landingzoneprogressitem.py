@@ -67,7 +67,7 @@ def read_one(id):
         )
 
 
-def create(landingZoneProgressItem):
+def create(landingZoneProgressItemDetails):
     """
     This function creates a new landingZoneProgressItem in the landingZoneProgressItem structure
     based on the passed in landingZoneProgressItem data
@@ -77,11 +77,11 @@ def create(landingZoneProgressItem):
     """
   
     # we don't need the id, the is generated automatically on the database
-    if ('id' in landingZoneProgressItem):
-      del landingZoneProgressItem["id"]
+    if ('id' in landingZoneProgressItemDetails):
+      del landingZoneProgressItemDetails["id"]
 
     schema = LandingZoneProgressItemSchema()
-    new_landingZoneProgressItem = schema.load(landingZoneProgressItem, session=db.session)
+    new_landingZoneProgressItem = schema.load(landingZoneProgressItemDetails, session=db.session)
     db.session.add(new_landingZoneProgressItem)
     db.session.commit()
 
@@ -94,7 +94,7 @@ def create(landingZoneProgressItem):
     return data, 201
 
 
-def update(id, landingZoneProgressItem):
+def update(id, landingZoneProgressItemDetails):
     """
     This function updates an existing landingZoneProgressItem in the landingZoneProgressItem list
 
@@ -104,10 +104,10 @@ def update(id, landingZoneProgressItem):
     """
 
     app.logger.debug("landingZoneProgressItem: ")
-    app.logger.debug(pformat(landingZoneProgressItem))
+    app.logger.debug(pformat(landingZoneProgressItemDetails))
 
     app.logger.debug(id)
-    app.logger.debug(landingZoneProgressItem["id"])
+    app.logger.debug(landingZoneProgressItemDetails["id"])
 
     if landingZoneProgressItem["id"] != id:
       abort(400, f"Key mismatch in path and body")
@@ -118,7 +118,7 @@ def update(id, landingZoneProgressItem):
     # Does landingZoneProgressItem exist?
     if existing_landingZoneProgressItem is not None:
         schema = LandingZoneProgressItemSchema()
-        update_landingZoneProgressItem = schema.load(landingZoneProgressItem, session=db.session)
+        update_landingZoneProgressItem = schema.load(landingZoneProgressItemDetails, session=db.session)
         update_landingZoneProgressItem.id = id
 
         db.session.merge(update_landingZoneProgressItem)
