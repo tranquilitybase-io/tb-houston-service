@@ -43,5 +43,4 @@ jobs:
     - name: Install redoc-cli
       run: |
         npm install redoc-cli
-        npx redoc-cli bundle openapi/houston_service.yml --title "Houston Service REST API"
-
+        npx redoc-cli bundle ${GITHUB_WORKSPACE}/tb-houston-service/openapi/houston_service.yml --title "Houston Service REST API"
