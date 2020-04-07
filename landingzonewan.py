@@ -118,7 +118,7 @@ def update(id, landingZoneWANDetails):
 
     # Does landingZoneWAN exist?
     if existing_landingZoneWAN is not None:
-        flattened_landingZoneWAN = flatten(flatten(landingZoneWAN, delimiter))
+        flattened_landingZoneWAN = flatten(flatten(landingZoneWANDetails, delimiter))
         existing_landingZoneWAN.googleSession__primaryGcpVpcSubnet = flattened_landingZoneWAN.get('googleSession__primaryGcpVpcSubnet', '')
         existing_landingZoneWAN.googleSession__primaryRegion = flattened_landingZoneWAN.get('googleSession__primaryRegion', '')
         existing_landingZoneWAN.googleSession__primarySubnetName = flattened_landingZoneWAN.get('googleSession__primarySubnetName', '')

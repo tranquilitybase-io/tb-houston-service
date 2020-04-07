@@ -133,7 +133,7 @@ def update(id, applicationDetails):
 
     # Does application exist?
     if existing_application is not None:
-        application['lastUpdated'] = ModelTools.get_utc_timestamp()
+        applicationDetails['lastUpdated'] = ModelTools.get_utc_timestamp()
         Application.query.filter(Application.id == id).update(applicationDetails)
         db.session.commit()
 

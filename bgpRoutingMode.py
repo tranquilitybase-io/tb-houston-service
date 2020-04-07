@@ -65,7 +65,7 @@ def create(bgpRoutingModeDetails):
 
     schema = BGPRoutingModeSchema()
     new_bgpRoutingMode = schema.load(bgpRoutingModeDetails, session=db.session)
-    db.session.add(new_bgpRoutingModeDetails)
+    db.session.add(new_bgpRoutingMode)
     db.session.commit()
 
     # Serialize and return the newly created deployment
