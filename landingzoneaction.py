@@ -56,7 +56,7 @@ def read_one(id):
         )
 
 
-def create(landingZoneAction):
+def create(landingZoneActionDetails):
     """
     This function creates a new landingZoneAction in the landingZoneAction structure
     based on the passed in landingZoneAction data
@@ -66,11 +66,11 @@ def create(landingZoneAction):
     """
 
     # we don't need the id, the is generated automatically on the database
-    if ('id' in landingZoneAction):
-      del landingZoneAction["id"]
+    if ('id' in landingZoneActionDetails):
+      del landingZoneActionDetails["id"]
 
     schema = LandingZoneActionSchema()
-    new_landingZoneAction = schema.load(landingZoneAction, session=db.session)
+    new_landingZoneAction = schema.load(landingZoneActionDetails, session=db.session)
     db.session.add(new_landingZoneAction)
     db.session.commit()
 
@@ -83,7 +83,7 @@ def create(landingZoneAction):
     return data, 201
 
 
-def update(id, landingZoneAction):
+def update(id, landingZoneActionDetails):
     """
     This function updates an existing landingZoneAction in the landingZoneAction list
 
@@ -93,9 +93,9 @@ def update(id, landingZoneAction):
     """
 
     app.logger.debug("landingZoneAction: ")
-    app.logger.debug(pformat(landingZoneAction))
+    app.logger.debug(pformat(landingZoneActionDetails))
 
-    if landingZoneAction["id"] != id:
+    if landingZoneActionDetails["id"] != id:
       abort(400, f"Key mismatch in path and body")
 
     # Does the landingZoneAction exist in landingZoneActions?
@@ -104,7 +104,7 @@ def update(id, landingZoneAction):
     # Does landingZoneAction exist?
     if existing_landingZoneAction is not None:
         schema = LandingZoneActionSchema()
-        update_landingZoneAction = schema.load(landingZoneAction, session=db.session)
+        update_landingZoneAction = schema.load(landingZoneActionDetails, session=db.session)
         update_landingZoneAction.id = id
 
         db.session.merge(update_landingZoneAction)

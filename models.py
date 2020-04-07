@@ -83,7 +83,8 @@ class Activator(db.Model):
     resources = db.Column(db.String(255))
     status = db.Column(db.String(255))
     description = db.Column(db.String(255))
-    accessRequestedBy = db.Column(db.Integer, db.ForeignKey('user.id'))
+    #accessRequestedBy = db.Column(db.Integer, db.ForeignKey('user.id'))
+    accessRequestedBy = db.Column(db.Integer)
     source = db.Column(db.String(100))
     activatorLink = db.Column(db.String(255))
 
@@ -95,6 +96,8 @@ class ActivatorSchema(ma.ModelSchema):
     class Meta:
         model = Activator
         sqla_session = db.session
+
+    accessRequestedBy = fields.Int()
 
     @pre_load
     def serialize_arrays(self, in_data, **kwargs):

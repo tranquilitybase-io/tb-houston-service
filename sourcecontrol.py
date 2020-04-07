@@ -53,7 +53,7 @@ def read_one(key):
         )
 
 
-def create(sourceControl):
+def create(sourceControlDetails):
     """
     This function creates a new sourceControl in the sourceControl list
     based on the passed in sourceControl data
@@ -61,8 +61,8 @@ def create(sourceControl):
     :param sourceControl:  sourceControl to create in sourceControl structure
     :return:        201 on success, 406 on sourceControl exists
     """
-    key = sourceControl.get("key", None)
-    value = sourceControl.get("value", None)
+    key = sourceControlDetails.get("key", None)
+    value = sourceControlDetails.get("value", None)
 
     # Does the sourceControl exist already?
     existing_sourceControl = (
@@ -71,7 +71,7 @@ def create(sourceControl):
 
     if existing_sourceControl is None:
         schema = SourceControlSchema()
-        new_sourceControl = schema.load(sourceControl, session=db.session)
+        new_sourceControl = schema.load(sourceControlDetails, session=db.session)
         db.session.add(new_sourceControl)
         db.session.commit()
 
@@ -86,7 +86,7 @@ def create(sourceControl):
         abort(406, f"SourceControl already exists")
 
 
-def update(key, sourceControl):
+def update(key, sourceControlDetails):
     """
     This function updates an existing sourceControl in the sourceControl list
 
@@ -95,9 +95,9 @@ def update(key, sourceControl):
     :return:       updated sourceControl
     """
 
-    app.logger.debug(pformat(sourceControl))
+    app.logger.debug(pformat(sourceControlDetails))
 
-    if sourceControl["key"] != key:
+    if sourceControlDetails["key"] != key:
            abort(400, f"Key mismatch in path and body")    
 
     # Does the sourceControl exist in sourceControl list?
@@ -109,8 +109,8 @@ def update(key, sourceControl):
 
     if existing_sourceControl is not None:
         schema = SourceControlSchema()
-        update_sourceControl = schema.load(sourceControl, session=db.session)
-        update_sourceControl.key = sourceControl['key']
+        update_sourceControl = schema.load(sourceControlDetails, session=db.session)
+        update_sourceControl.key = sourceControlDetails['key']
 
         db.session.merge(update_sourceControl)
         db.session.commit()

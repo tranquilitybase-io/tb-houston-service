@@ -49,7 +49,7 @@ def read_one(key):
         )
 
 
-def create(team):
+def create(teamDetails):
     """
     This function creates a new team in the team list
     based on the passed in team data
@@ -57,8 +57,8 @@ def create(team):
     :param team:  team to create in team structure
     :return:        201 on success, 406 on team exists
     """
-    key = team.get("key", None)
-    value = team.get("value", None)
+    key = teamDetails.get("key", None)
+    value = teamDetails.get("value", None)
 
     # Does the team exist already?
     existing_team = (
@@ -67,7 +67,7 @@ def create(team):
 
     if existing_team is None:
         schema = TeamSchema()
-        new_team = schema.load(team, session=db.session)
+        new_team = schema.load(teamDetails, session=db.session)
         db.session.add(new_team)
         db.session.commit()
 
@@ -82,7 +82,7 @@ def create(team):
         abort(406, f"Deployment already exists")
 
 
-def update(key, team):
+def update(key, teamDetails):
     """
     This function updates an existing team in the team list
 
@@ -91,9 +91,9 @@ def update(key, team):
     :return:       updated team
     """
 
-    app.logger.debug(pformat(team))
+    app.logger.debug(pformat(teamDetails))
 
-    if team["key"] != key:
+    if teamDetails["key"] != key:
            abort(400, f"Key mismatch in path and body")
 
     # Does the team exist in team list?
@@ -105,8 +105,8 @@ def update(key, team):
 
     if existing_team is not None:
         schema = TeamSchema()
-        update_team = schema.load(team, session=db.session)
-        update_team.key = team['key']
+        update_team = schema.load(teamDetails, session=db.session)
+        update_team.key = teamDetails['key']
 
         db.session.merge(update_team)
         db.session.commit()

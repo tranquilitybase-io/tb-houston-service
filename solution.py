@@ -19,7 +19,7 @@ from pprint import pformat
 from pprint import pprint
 
 
-def read_all(active=None, namesonly=None, page=None, page_size=None):
+def read_all(active=None, namesonly=None, page=None, page_size=None, sort=None):
     """
     This function responds to a request for /api/solutions
     with the complete lists of solutions
@@ -30,17 +30,36 @@ def read_all(active=None, namesonly=None, page=None, page_size=None):
     app.logger.debug("solution.read_all")
     app.logger.debug(f"Active: {active}, namesonly: {namesonly}")
 
-    # Create the list of solutions from our data
-    if active == None:
-      solution_filter = Solution.query.order_by(Solution.id)
+    # pre-process sort instructions
+    if (sort==None):
+        solution_query = Solution.query.order_by(Solution.id)
     else:
-      solution_filter = Solution.query.filter(Solution.active == active).order_by(Solution.id)
+        try:
+            sort_inst = [ si.split(":") for si in sort ]
+            orderby_arr = []
+            for si in sort_inst:
+                si1 = si[0]
+                if len(si) > 1:
+                    si2 = si[1]
+                else:
+                    si2 = "asc"
+                orderby = "Solution.{0}.{1}()".format(si1.strip(), si2.strip())
+                orderby_arr.append(eval(orderby))
+            #print("orderby: {}".format(orderby_arr))
+            solution_query = Solution.query.order_by(*orderby_arr)
+        except Exception as e:
+            print(e)
+            solution_query = Solution.query.order_by(Solution.id)
+
+    # Create the list of solutions from our data
+    if active != None:
+      solution_query = solution_query.filter(Solution.active == active)
 
     # do limit and offset last
     if (page==None or page_size==None):
-      solutions = solution_filter.all()
+      solutions = solution_query.all()
     else:
-      solutions = solution_filter.limit(page_size).offset(page * page_size)
+      solutions = solution_query.limit(page_size).offset(page * page_size)
 
     if namesonly == True:
       # Serialize the data for the response
@@ -84,7 +103,7 @@ def read_one(id):
         )
 
 
-def create(solution):
+def create(solutionDetails):
     """
     This function creates a new solution in the solutions list
     based on the passed in solutions data
@@ -94,36 +113,36 @@ def create(solution):
     """
 
     app.logger.debug("Before")
-    app.logger.debug(pformat(solution))
+    app.logger.debug(pformat(solutionDetails))
 
     lastUpdated = ModelTools.get_utc_timestamp()
 
     # Defaults
-    if (solution.get('active') == None):
-      solution['active'] = True
+    if (solutionDetails.get('active') == None):
+      solutionDetails['active'] = True
 
-    if (solution.get('favourite') == None):
-      solution['favourite'] = True
+    if (solutionDetails.get('favourite') == None):
+      solutionDetails['favourite'] = True
 
-    if (solution.get('teams') == None):
-      solution['teams'] = 0
+    if (solutionDetails.get('teams') == None):
+      solutionDetails['teams'] = 0
 
     # Remove applications because Solutions don't have 
     # any applications when they are first created
-    if ('applications' in solution):
-      del solution['applications']
+    if ('applications' in solutionDetails):
+      del solutionDetails['applications']
 
     # we don't need the id, the is generated automatically on the database
-    if ('id' in solution):
-      del solution["id"]
+    if ('id' in solutionDetails):
+      del solutionDetails["id"]
 
-    solution['lastUpdated'] = ModelTools.get_utc_timestamp()
+    solutionDetails['lastUpdated'] = ModelTools.get_utc_timestamp()
       
     app.logger.debug("After")
-    app.logger.debug(pformat(solution))
+    app.logger.debug(pformat(solutionDetails))
 
     schema = SolutionSchema()
-    new_solution = schema.load(solution, session=db.session)
+    new_solution = schema.load(solutionDetails, session=db.session)
     db.session.add(new_solution)
     db.session.commit()
 
@@ -133,7 +152,7 @@ def create(solution):
     return data, 201
 
 
-def update(id, solution):
+def update(id, solutionDetails):
     """
     This function updates an existing solutions in the solutions list
 
@@ -142,7 +161,7 @@ def update(id, solution):
     :return:       updated solutions
     """
 
-    app.logger.debug(solution)
+    app.logger.debug(solutionDetails)
 
     # Does the solutions exist in solutions list?
     existing_solution = Solution.query.filter(
@@ -153,8 +172,8 @@ def update(id, solution):
 
     if existing_solution is not None:
         schema = SolutionSchema()
-        update_solution = schema.load(solution, session=db.session)
-        update_solution.key = solution['id']
+        update_solution = schema.load(solutionDetails, session=db.session)
+        update_solution.key = solutionDetails['id']
         update_solution.lastUpdated = ModelTools.get_utc_timestamp()
 
         db.session.merge(update_solution)

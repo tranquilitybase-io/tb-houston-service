@@ -3,6 +3,7 @@ info:
   description: TranquilityBase Houston Backend REST API Service
   version: 2.0.0
   title: TB Houston Service
+
 paths:
   /login:
     post:
@@ -12,16 +13,7 @@ paths:
       summary: login
       description: login
       requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                username:
-                  type: string
-                password:
-                  type: string
-        required: true
+        $ref: "#/components/requestBodies/login.loginDetails"
       responses:
         "201":
           description: Login Successful
@@ -52,6 +44,7 @@ paths:
       responses:
         "200":
           description: Successful
+
   /applications/:
     get:
       operationId: application.read_all
@@ -80,6 +73,13 @@ paths:
           name: page_size
           schema:
             type: integer
+        - in: query 
+          name: sort
+          schema:
+            type: array
+            items:
+              type: string
+          explode: true
       responses:
         "200":
           description: Successfully read application list operation
@@ -89,6 +89,7 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Application"
+
   /application/:
     post:
       operationId: application.create
@@ -97,15 +98,12 @@ paths:
       summary: Create an application and add it to the applications list
       description: Create a new application in the applications list
       requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Application"
-        description: The application to create
+        $ref: "#/components/requestBodies/application.applicationDetails"
         required: true
       responses:
         "201":
           description: Successfully created an application
+
   "/application/{id}":
     get:
       operationId: application.read_one
@@ -127,6 +125,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Application"
+
     put:
       operationId: application.update
       tags:
@@ -141,10 +140,7 @@ paths:
           schema:
             type: integer
       requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Application"
+        $ref: "#/components/requestBodies/application.applicationDetails"
       responses:
         "200":
           description: Successfully updated an application
@@ -163,6 +159,7 @@ paths:
       responses:
         "200":
           description: Successfully deleted an application
+
   "/application_meta/{activatorId}":
     get:
       operationId: application_meta.read_one
@@ -218,22 +215,11 @@ paths:
       summary: Create a team and add it to the team list
       description: Create a new team in the team list
       requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                key:
-                  type: string
-                  description: key
-                value:
-                  type: string
-                  description: value
-        description: Team to create
-        required: true
+        $ref: '#/components/requestBodies/team.teamDetails'
       responses:
         "201":
           description: Successfully created a team
+
   "/keyValues/team/{key}":
     get:
       operationId: team.read_one
@@ -274,10 +260,11 @@ paths:
           schema:
             type: string
       requestBody:
-        $ref: "#/components/requestBodies/team.updateTeam"
+        $ref: "#/components/requestBodies/team.teamDetails"
       responses:
         "200":
           description: Successfully updated a team
+
     delete:
       operationId: team.delete
       tags:
@@ -293,6 +280,7 @@ paths:
       responses:
         "200":
           description: Successfully deleted a team
+
   /keyValues/environment/:
     get:
       operationId: environment.read_all
@@ -322,22 +310,11 @@ paths:
       summary: Create an environment and add it to the environment list
       description: Create a new environment in the environment list
       requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                key:
-                  type: string
-                  description: key
-                value:
-                  type: string
-                  description: value
-        description: Environment to create
-        required: true
+        $ref: '#/components/requestBodies/environment.environmentDetails'
       responses:
         "201":
           description: Successfully created an environment
+
   "/keyValues/environment/{key}":
     get:
       operationId: environment.read_one
@@ -378,7 +355,7 @@ paths:
           schema:
             type: string
       requestBody:
-        $ref: "#/components/requestBodies/team.updateTeam"
+        $ref: "#/components/requestBodies/environment.environmentDetails"
       responses:
         "200":
           description: Successfully updated an environment
@@ -426,19 +403,7 @@ paths:
       summary: Create an ci and add it to the ci list
       description: Create a new ci in the ci list
       requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                key:
-                  type: string
-                  description: key
-                value:
-                  type: string
-                  description: value
-        description: CI to create
-        required: true
+        $ref: '#/components/requestBodies/ci.ciDetails'
       responses:
         "201":
           description: Successfully created an ci
@@ -482,7 +447,7 @@ paths:
           schema:
             type: string
       requestBody:
-        $ref: "#/components/requestBodies/team.updateTeam"
+        $ref: "#/components/requestBodies/ci.ciDetails"
       responses:
         "200":
           description: Successfully updated an CI
@@ -530,19 +495,7 @@ paths:
       summary: Create an cd and add it to the cd list
       description: Create a new cd in the cd list
       requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                key:
-                  type: string
-                  description: key
-                value:
-                  type: string
-                  description: value
-        description: CD to create
-        required: true
+        $ref: '#/components/requestBodies/cd.cdDetails'
       responses:
         "201":
           description: Successfully created an cd
@@ -586,7 +539,7 @@ paths:
           schema:
             type: string
       requestBody:
-        $ref: "#/components/requestBodies/team.updateTeam"
+        $ref: "#/components/requestBodies/cd.cdDetails"
       responses:
         "200":
           description: Successfully updated an CD
@@ -634,19 +587,7 @@ paths:
       summary: Create an sourcecontrol and add it to the sourcecontrol list
       description: Create a new sourecontrol in the sourcecontrol list
       requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                key:
-                  type: string
-                  description: key
-                value:
-                  type: string
-                  description: value
-        description: sourcecontrol to create
-        required: true
+        $ref: '#/components/requestBodies/sourceControl.sourceControlDetails'
       responses:
         "201":
           description: Successfully created a sourcecontrol
@@ -690,7 +631,7 @@ paths:
           schema:
             type: string
       requestBody:
-        $ref: "#/components/requestBodies/team.updateTeam"
+        $ref: "#/components/requestBodies/sourceControl.sourceControlDetails"
       responses:
         "200":
           description: Successfully updated an sourcecontrol
@@ -709,6 +650,7 @@ paths:
       responses:
         "200":
           description: Successfully deleted a sourcecontrol
+
   /keyValues/businessUnit/:
     get:
       operationId: businessUnit.read_all
@@ -731,6 +673,7 @@ paths:
                     value:
                       type: string
                       description: value
+
     post:
       operationId: businessUnit.create
       tags:
@@ -738,18 +681,7 @@ paths:
       summary: Create an businessUnit and add it to the businessUnit list
       description: Create a new businessUnit in the businessUnit list
       requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                key:
-                  type: string
-                  description: key
-                value:
-                  type: string
-                  description: value
-        description: BusinessUnit to create
+        $ref: "#/components/requestBodies/businessUnit.businessUnitDetails"
         required: true
       responses:
         "201":
@@ -794,7 +726,7 @@ paths:
           schema:
             type: string
       requestBody:
-        $ref: "#/components/requestBodies/team.updateTeam"
+        $ref: "#/components/requestBodies/businessUnit.businessUnitDetails"
       responses:
         "200":
           description: Successfully updated an BusinessUnit
@@ -838,6 +770,13 @@ paths:
           name: page_size
           schema:
             type: integer
+        - in: query 
+          name: sort
+          schema:
+            type: array
+            items:
+              type: string
+          explode: true
       responses:
         "200":
           description: Successfully read solutions list operation
@@ -846,47 +785,8 @@ paths:
               schema:
                 type: array
                 items:
-                  properties:
-                    solutionId:
-                      type: integer
-                      description: solutionId
-                    name:
-                      type: string
-                      description: name
-                    description:
-                      type: string
-                      description: description
-                    businessUnit:
-                      type: string
-                      description: businessUnit
-                    costCentre:
-                      type: string
-                      description: costCentre
-                    ci:
-                      type: string
-                      description: ci
-                    cd:
-                      type: string
-                      description: cd
-                    sourceControl:
-                      type: string
-                      description: sourceControl
-                    environments:
-                      type: array
-                      description: environments
-                      items: {}
-                    active:
-                      type: boolean
-                      description: active
-                    favourite:
-                      type: boolean
-                      description: favourite
-                    teams:
-                      type: integer
-                      description: teams
-                    lastUpdated:
-                      type: string
-                      description: lastUpdated
+                  $ref: "#/components/schemas/Solution"
+
   /solution/:
     post:
       operationId: solution.create
@@ -895,53 +795,12 @@ paths:
       summary: Create a solution and add it to the solutions list
       description: Create a new solution in the solutions list
       requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  description: name
-                description:
-                  type: string
-                  description: description
-                businessUnit:
-                  type: string
-                  description: businessUnit
-                costCentre:
-                  type: string
-                  description: costCentre
-                ci:
-                  type: string
-                  description: ci
-                cd:
-                  type: string
-                  description: cd
-                sourceControl:
-                  type: string
-                  description: sourceControl
-                environments:
-                  type: array
-                  description: environment
-                  items: {}
-                active:
-                  type: boolean
-                  description: active
-                favourite:
-                  type: boolean
-                  description: favourite
-                teams:
-                  type: integer
-                  description: teams
-                lastUpdated:
-                  type: string
-                  description: lastUpdated
+        $ref: "#/components/requestBodies/solution.solutionDetails"
         description: solution to create
-        required: true
       responses:
         "201":
           description: Successfully created a solution
+
   "/solution/{id}":
     get:
       operationId: solution.read_one
@@ -964,47 +823,8 @@ paths:
               schema:
                 type: array
                 items:
-                  properties:
-                    solutionId:
-                      type: integer
-                      description: solutionId
-                    name:
-                      type: string
-                      description: name
-                    description:
-                      type: string
-                      description: description
-                    businessUnit:
-                      type: string
-                      description: businessUnit
-                    costCentre:
-                      type: string
-                      description: costCentre
-                    ci:
-                      type: string
-                      description: ci
-                    cd:
-                      type: string
-                      description: cd
-                    sourceControl:
-                      type: string
-                      description: sourceControl
-                    environments:
-                      type: array
-                      description: environments
-                      items: {}
-                    active:
-                      type: boolean
-                      description: active
-                    favourite:
-                      type: boolean
-                      description: favourite
-                    teams:
-                      type: integer
-                      description: teams
-                    lastUpdated:
-                      type: string
-                      description: lastUpdated
+                  $ref: "#/components/schemas/Solution"
+
     delete:
       operationId: solution.delete
       tags:
@@ -1065,6 +885,13 @@ paths:
           name: page_size
           schema:
             type: integer 
+        - in: query
+          name: sort
+          schema:
+            type: array
+            items:
+              type: string
+          explode: true
       responses:
         "200":
           description: Successfully ran activator list operation
@@ -1074,6 +901,7 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Activator"
+
   /activator/:
     post:
       operationId: activator.create
@@ -1082,15 +910,11 @@ paths:
       summary: Create an activator and add it to the activator list
       description: Create a new activator in the activator list
       requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Activator"
-        description: activator to create
-        required: true
+        $ref: "#/components/requestBodies/activator.activatorDetails"
       responses:
         "201":
           description: Successfully created an activator
+
   "/activator/{id}":
     get:
       operationId: activator.read_one
@@ -1126,13 +950,11 @@ paths:
           schema:
             type: integer
       requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Activator"
+        $ref: "#/components/requestBodies/activator.activatorDetails"
       responses:
         "200":
           description: Successfully updated an activator
+
     delete:
       operationId: activator.delete
       tags:
@@ -1148,6 +970,7 @@ paths:
       responses:
         "200":
           description: Successfully deleted an activator
+
   /setactivatorstatus/:
     post:
       operationId: activator.setActivatorStatus
@@ -1156,18 +979,7 @@ paths:
       summary: set activator status
       description: set activator status
       requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                id:
-                  type: integer
-                status:
-                  type: string
-                accessRequestedBy:
-                  type: integer
-        required: true
+        $ref: "#/components/requestBodies/activator.setActivatorStatusDetails"
       responses:
         "200":
           description: Successfully updated an activator
@@ -1180,6 +992,7 @@ paths:
                     type: integer
                   status:
                     type: string
+
   /activatorcategories/:
     get:
       operationId: activator.categories
@@ -1198,6 +1011,7 @@ paths:
                   properties:
                     category:
                       type: string
+
   /landingzoneprogressitems/:
     get:
       operationId: landingzoneprogressitem.read_all
@@ -1213,16 +1027,8 @@ paths:
               schema:
                 type: array
                 items:
-                  properties:
-                    id:
-                      type: integer
-                      description: id
-                    label:
-                      type: string
-                      description: label
-                    completed:
-                      type: boolean
-                      description: completed
+                  $ref: "#/components/schemas/LandingZoneProgressItem"
+
   /landingzoneprogressitem/:
     post:
       operationId: landingzoneprogressitem.create
@@ -1233,6 +1039,7 @@ paths:
       description: Create a new new landingzoneprogressitem in the landingzoneprogressitem
         list
       requestBody:
+        x-body-name: landingzoneprogressitem
         content:
           application/json:
             schema:
@@ -1263,6 +1070,7 @@ paths:
                   completed:
                     type: boolean
                     description: completed
+                    
   "/landingzoneprogressitem/{id}":
     get:
       operationId: landingzoneprogressitem.read_one
@@ -1333,6 +1141,7 @@ paths:
                     type: string
                   completed:
                     type: boolean
+
     delete:
       operationId: landingzoneprogressitem.delete
       tags:
@@ -1348,6 +1157,7 @@ paths:
       responses:
         "200":
           description: Successfully deleted a landingzoneprogressitem
+
   /landingzoneactions/:
     get:
       operationId: landingzoneaction.read_all
@@ -1385,6 +1195,7 @@ paths:
                     routerLink:
                       type: string
                       description: routerLink
+
   /landingzoneaction/:
     post:
       operationId: landingzoneaction.create
@@ -1393,6 +1204,7 @@ paths:
       summary: Create a landingzoneaction and add it to the landingzoneaction list
       description: Create a new new landingzoneaction in the landingzoneaction list
       requestBody:
+        x-body-name: landingzoneaction
         content:
           application/json:
             schema:
@@ -1426,28 +1238,8 @@ paths:
               schema:
                 type: array
                 items:
-                  properties:
-                    id:
-                      type: integer
-                      description: id
-                    title:
-                      type: string
-                      description: title
-                    categoryName:
-                      type: string
-                      description: categoryName
-                    categoryClass:
-                      type: string
-                      description: categoryClass
-                    completionRate:
-                      type: integer
-                      description: completionRate
-                    locked:
-                      type: boolean
-                      description: locked
-                    routerLink:
-                      type: string
-                      description: routerLink
+                  $ref: "#/components/schemas/LandingZoneAction"
+
   "/landingzoneaction/{id}":
     get:
       operationId: landingzoneaction.read_one
@@ -1468,22 +1260,8 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                  title:
-                    type: string
-                  categoryName:
-                    type: string
-                  categoryClass:
-                    type: string
-                  completionRate:
-                    type: integer
-                  locked:
-                    type: boolean
-                  routerLink:
-                    type: string
+                $ref: "#/components/schemas/LandingZoneAction"
+
     put:
       operationId: landingzoneaction.update
       tags:
@@ -1498,62 +1276,15 @@ paths:
           schema:
             type: integer
       requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                id:
-                  type: integer
-                  description: id
-                title:
-                  type: string
-                  description: title
-                categoryName:
-                  type: string
-                  description: categoryName
-                categoryClass:
-                  type: string
-                  description: categoryClass
-                completionRate:
-                  type: integer
-                  description: completionRate
-                locked:
-                  type: boolean
-                  description: locked
-                routerLink:
-                  type: string
-                  description: routerLink
+        $ref: "#/components/requestBodies/landingZoneAction.landingZoneActionDetails"
       responses:
         "200":
           description: Successfully updated a landingzoneaction
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  properties:
-                    id:
-                      type: integer
-                      description: id
-                    title:
-                      type: string
-                      description: title
-                    categoryName:
-                      type: string
-                      description: categoryName
-                    categoryClass:
-                      type: string
-                      description: categoryClass
-                    completionRate:
-                      type: integer
-                      description: completionRate
-                    locked:
-                      type: boolean
-                      description: locked
-                    routerLink:
-                      type: string
-                      description: routerLink
+                $ref: "#/components/schemas/LandingZoneAction"
+
     delete:
       operationId: landingzoneaction.delete
       tags:
@@ -1569,6 +1300,7 @@ paths:
       responses:
         "200":
           description: Successfully deleted a landingzoneaction
+
   /landingzonewans/:
     get:
       operationId: landingzonewan.read_all
@@ -1585,23 +1317,20 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/LandingZoneWAN"
+
   /landingzonewan/:
     post:
       operationId: landingzonewan.create
       tags:
         - landingzonewan
       summary: Create a landingzonewan and add it to the landingzonewan list
-      description: Create a new new landingzoneaction in the landingzonewan list
+      description: Create a new new landingzonewan in the landingzonewan list
       requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/LandingZoneWAN"
-        description: landingzonewan to create
-        required: true
+        $ref: "#/components/requestBodies/landingZoneWAN.landingZoneWANDetails"
       responses:
         "201":
           description: Successfully created a landingzonewan
+
   "/landingzonewan/{id}":
     get:
       operationId: landingzonewan.read_one
@@ -1623,6 +1352,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/LandingZoneWAN"
+
     put:
       operationId: landingzonewan.update
       tags:
@@ -1644,6 +1374,7 @@ paths:
       responses:
         "200":
           description: Successfully updated a landingzonewan
+
     delete:
       operationId: landingzonewan.delete
       tags:
@@ -1659,6 +1390,7 @@ paths:
       responses:
         "200":
           description: Successfully deleted a landingzonewan
+
   /keyValues/bgproutingmode/:
     get:
       operationId: bgpRoutingMode.read_all
@@ -1675,6 +1407,7 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/BGPRoutingMode"
+
     post:
       operationId: bgpRoutingMode.create
       tags:
@@ -1682,15 +1415,11 @@ paths:
       summary: Create an BGPRoutingMode and add it to the BGPRoutingMode list
       description: Create a new BGPRoutingMode in the BGPRoutingMode list
       requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/BGPRoutingMode"
-        description: BGPRoutingMode to create
-        required: true
+        $ref: "#/components/requestBodies/bgpRoutingMode.bgpRoutingModeDetails"
       responses:
         "201":
           description: Successfully created an bgpRoutingMode
+
   "/keyValues/bgproutingmode/{id}":
     get:
       operationId: bgpRoutingMode.read_one
@@ -1712,6 +1441,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/BGPRoutingMode"
+
     put:
       operationId: bgpRoutingMode.update
       tags:
@@ -1733,6 +1463,7 @@ paths:
       responses:
         "200":
           description: Successfully updated a bgproutingmode
+
     delete:
       operationId: bgpRoutingMode.delete
       tags:
@@ -1748,6 +1479,7 @@ paths:
       responses:
         "200":
           description: Successfully deleted a bgproutingmode
+
   /keyValues/subnetmode/:
     get:
       operationId: subnetMode.read_all
@@ -1764,6 +1496,7 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/SubnetMode"
+
     post:
       operationId: subnetMode.create
       tags:
@@ -1774,12 +1507,14 @@ paths:
         content:
           application/json:
             schema:
+              x-body-name: subnetmode
               $ref: "#/components/schemas/SubnetMode"
         description: subnetMode to create
         required: true
       responses:
         "201":
           description: Successfully created an subnetMode
+
   "/keyValues/subnetmode/{id}":
     get:
       operationId: subnetMode.read_one
@@ -1801,6 +1536,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SubnetMode"
+
     put:
       operationId: subnetMode.update
       tags:
@@ -1815,13 +1551,11 @@ paths:
           schema:
             type: integer
       requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/SubnetMode"
+        $ref: "#/components/requestBodies/subnetMode.subnetModeDetails"
       responses:
         "200":
           description: Successfully updated a subnetmode
+
     delete:
       operationId: subnetMode.delete
       tags:
@@ -1837,6 +1571,7 @@ paths:
       responses:
         "200":
           description: Successfully deleted a subnetmode
+
   /keyValues/vpnonpremisevendor/:
     get:
       operationId: vpnOnPremiseVendor.read_all
@@ -1853,6 +1588,7 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/VPNOnPremiseVendor"
+
     post:
       operationId: vpnOnPremiseVendor.create
       tags:
@@ -1860,15 +1596,13 @@ paths:
       summary: Create an vpnOnPremiseVendor and add it to the vpnOnPremiseVendor list
       description: Create a new vpnOnPremiseVendor in the vpnOnPremiseVendor list
       requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/VPNOnPremiseVendor"
+        $ref: "#/components/requestBodies/vpnOnPremiseVendor.vpnOnPremiseVendorDetails"
         description: vpnOnPremiseVendor to create
         required: true
       responses:
         "201":
           description: Successfully created an VPNOnPremiseVendor
+
   "/keyValues/vpnonpremisevendor/{id}":
     get:
       operationId: vpnOnPremiseVendor.read_one
@@ -1890,6 +1624,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/VPNOnPremiseVendor"
+
     put:
       operationId: vpnOnPremiseVendor.update
       tags:
@@ -1904,13 +1639,11 @@ paths:
           schema:
             type: integer
       requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/VPNOnPremiseVendor"
+        $ref: "#/components/requestBodies/vpnOnPremiseVendor.vpnOnPremiseVendorDetails"
       responses:
         "200":
           description: Successfully updated a vpnOnPremiseVendor
+
     delete:
       operationId: vpnOnPremiseVendor.delete
       tags:
@@ -1926,20 +1659,201 @@ paths:
       responses:
         "200":
           description: Successfully deleted a vpnOnPremiseVendor
+
 servers:
   - url: /api
+
 components:
+
   requestBodies:
-    team.updateTeam:
+    application.applicationDetails:
       content:
         application/json:
           schema:
+            x-body-name: applicationDetails
+            $ref: "#/components/schemas/Application"
+      description: The application to create
+      required: true
+
+    activator.activatorDetails:
+      content:
+        application/json:
+          schema:
+            x-body-name: activatorDetails
+            $ref: "#/components/schemas/Activator"
+      description: activator to create
+      required: true
+
+    activator.setActivatorStatusDetails:
+      content:
+        application/json:
+          schema:
+            x-body-name: activatorDetails
             type: object
             properties:
-              key:
+              id:
+                type: integer
+              status:
                 type: string
-              value:
+              accessRequestedBy:
+                type: integer
+      required: true
+
+    businessUnit.businessUnitDetails:
+      content:
+        application/json:
+          schema:
+            x-body-name: businessUnitDetails
+            $ref: "#/components/schemas/BusinessUnit"
+      description: BusinessUnit to create
+      required: true
+
+    ci.ciDetails:
+      content:
+        application/json:
+          schema:
+            x-body-name: ciDetails
+            $ref: "#/components/schemas/CI"
+      description: CI to create
+      required: true
+
+    cd.cdDetails:
+      content:
+        application/json:
+          schema:
+            x-body-name: cdDetails
+            $ref: "#/components/schemas/CI"
+      description: CD to create
+      required: true
+      
+    sourceControl.sourceControlDetails:
+      content:
+        application/json:
+          schema:
+            x-body-name: sourceControlDetails
+            $ref: "#/components/schemas/SourceControl"
+      description: SourceControl to create
+      required: true
+      
+    landingZoneAction.landingZoneActionDetails:
+      content:
+        application/json:
+          schema:
+            x-body-name: landingZoneActionDetails
+            $ref: "#/components/schemas/LandingZoneAction"
+      description: landingzoneaction to create
+      required: true
+
+    landingZoneWAN.landingZoneWANDetails:
+      content:
+        application/json:
+          schema:
+            x-body-name: landingZoneWanDetails
+            $ref: "#/components/schemas/LandingZoneWAN"
+      description: landingzonewan to create
+      required: true
+
+    bgpRoutingMode.bgpRoutingModeDetails:
+      content:
+        application/json:
+          schema:
+            x-body-name: bgpRoutingModeDetails
+            $ref: "#/components/schemas/BGPRoutingMode"
+      description: bgpRoutingMode to create
+      required: true
+
+    vpnOnPremiseVendor.vpnOnPremiseVendorDetails:
+    subnetMode.subnetModeDetails:
+      content:
+        application/json:
+          schema:
+            x-body-name: subnetModeDetails
+            $ref: "#/components/schemas/SubnetMode"
+      description: subnetMode to create
+      required: true
+
+    vpnOnPremiseVendor.vpnOnPremiseVendorDetails:
+      content:
+        application/json:
+          schema:
+            x-body-name: vpnOnPremiseVendorDetails
+            $ref: "#/components/schemas/VPNOnPremiseVendor"
+      description: vpnOnPremiseVendor to create
+      required: true
+
+    team.teamDetails:
+      content:
+        application/json:
+          schema:
+            x-body-name: teamDetails
+            $ref: "#/components/schemas/Team"
+      description: teamDetails to create
+      required: true
+
+    environment.environmentDetails:
+      content:
+        application/json:
+          schema:
+            x-body-name: environmentDetails
+            $ref: "#/components/schemas/Environment"
+      description: environment to create
+      required: true
+
+    login.loginDetails:
+      content:
+        application/json:
+          schema:
+            x-body-name: login_details
+            $ref: "#/components/schemas/User"
+      description: login details
+      required: true
+
+    solution.solutionDetails:
+      content:
+        application/json:
+          schema:
+            x-body-name: solutionDetails
+            type: object
+            properties:
+              name:
                 type: string
+                description: name
+              description:
+                type: string
+                description: description
+              businessUnit:
+                type: string
+                description: businessUnit
+              costCentre:
+                type: string
+                description: costCentre
+              ci:
+                type: string
+                description: ci
+              cd:
+                type: string
+                description: cd
+              sourceControl:
+                type: string
+                description: sourceControl
+              environments:
+                type: array
+                description: environment
+                items: {}
+              active:
+                type: boolean
+                description: active
+              favourite:
+                type: boolean
+                description: favourite
+              teams:
+                type: integer
+                description: teams
+              lastUpdated:
+                type: string
+                description: lastUpdated
+      required: true
+
   schemas:
     Activator:
       type: object
@@ -1988,7 +1902,7 @@ components:
           type: integer
           description: serverCapacity
         regions:
-          type: string
+          type: array
           description: regions
           items:
             properties:
@@ -1996,7 +1910,7 @@ components:
                 type: string
                 description: region
         hosting:
-          type: string
+          type: array
           description: hosting
           items:
             properties:
@@ -2004,7 +1918,7 @@ components:
                 type: string
                 description: host
         apiManagement:
-          type: string
+          type: array
           description: apiManagement
           items:
             properties:
@@ -2012,7 +1926,7 @@ components:
                 type: string
                 description: api
         ci:
-          type: string
+          type: array
           description: ci
           items:
             properties:
@@ -2020,7 +1934,7 @@ components:
                 type: string
                 description: aci
         cd:
-          type: string
+          type: array
           description: cd
           items:
             properties:
@@ -2028,7 +1942,7 @@ components:
                 type: string
                 description: acd
         sourceControl:
-          type: string
+          type: array
           description: sourceControl
           items:
             properties:
@@ -2051,7 +1965,7 @@ components:
           type: string
           description: activator
         resources:
-          type: string
+          type: array
           description: resources
           items:
             properties:
@@ -2068,7 +1982,7 @@ components:
           type: string
           description: description
         accessRequestedBy:
-          type: string
+          type: integer
           description: accessRequestedBy
         source:
           type: string
@@ -2076,6 +1990,7 @@ components:
         activatorLink:
           type: string
           description: activatorLink
+
     Application:
       type: object
       properties:
@@ -2100,18 +2015,17 @@ components:
         description:
           type: string
           description: notes
+
     Team:
       type: object
       properties:
-        id:
-          type: integer
-          description: id
         key:
           type: string
           description: key
         value:
           type: string
           description: value
+
     BGPRoutingMode:
       type: object
       properties:
@@ -2124,6 +2038,95 @@ components:
         value:
           type: string
           description: value
+
+    BusinessUnit:
+      type: object
+      properties:
+        key:
+          type: string
+          description: key
+        value:
+          type: string
+          description: value
+
+    Environment:
+      type: object
+      properties:
+        key:
+          type: string
+          description: key
+        value:
+          type: string
+          description: value
+
+    LandingZoneAction:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: id
+        title:
+          type: string
+          description: title
+        categoryName:
+          type: string
+          description: categoryName
+        categoryClass:
+          type: string
+          description: categoryClass
+        completionRate:
+          type: integer
+          description: completionRate
+        locked:
+          type: boolean
+          description: locked
+        routerLink:
+          type: string
+          description: routerLink
+
+    LandingZoneProgressItem:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: id
+        label:
+          type: string
+          description: label
+        completed:
+          type: boolean
+          description: completed
+
+    CI:
+      type: object
+      properties:
+        key:
+          type: string
+          description: key
+        value:
+          type: string
+          description: value
+
+    CD:
+      type: object
+      properties:
+        key:
+          type: string
+          description: key
+        value:
+          type: string
+          description: value
+
+    SourceControl:
+      type: object
+      properties:
+        key:
+          type: string
+          description: key
+        value:
+          type: string
+          description: value
+
     SubnetMode:
       type: object
       properties:
@@ -2136,6 +2139,7 @@ components:
         value:
           type: string
           description: value
+
     VPNOnPremiseVendor:
       type: object
       properties:
@@ -2148,6 +2152,7 @@ components:
         value:
           type: string
           description: value
+
     LandingZoneWAN:
       type: object
       properties:
@@ -2219,3 +2224,70 @@ components:
               type: string
             vpcName:
               type: string
+
+    Solution:
+      type: object
+      properties:
+        solutionId:
+          type: integer
+          description: solutionId
+        name:
+          type: string
+          description: name
+        description:
+          type: string
+          description: description
+        businessUnit:
+          type: string
+          description: businessUnit
+        costCentre:
+          type: string
+          description: costCentre
+        ci:
+          type: string
+          description: ci
+        cd:
+          type: string
+          description: cd
+        sourceControl:
+          type: string
+          description: sourceControl
+        environments:
+          type: array
+          description: environments
+          items: {}
+        active:
+          type: boolean
+          description: active
+        favourite:
+          type: boolean
+          description: favourite
+        teams:
+          type: integer
+          description: teams
+        lastUpdated:
+          type: string
+          description: lastUpdated
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          description: id
+        email:
+          type: string
+          description: email
+        firstName:
+          type: string
+          description: firstName
+        lastName:
+          type: string
+          description: lastName
+        password:
+          type: string
+          description: password
+        isAdmin:
+          type: boolean
+          description: isAdmin
+
