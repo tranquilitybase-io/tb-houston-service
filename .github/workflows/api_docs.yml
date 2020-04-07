@@ -25,6 +25,7 @@ jobs:
         python-version: 3.6
     - name: Install dependencies
       run: |
+        env
         python -m pip install --upgrade pip
         cd tb-houston-service
         pip install -r sql/requirements.txt
