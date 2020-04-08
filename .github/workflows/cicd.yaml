@@ -30,7 +30,6 @@ jobs:
         python -m pip install --upgrade pip
         env
         cd ${GITHUB_WORKSPACE}/tb-houston-service
-        pwd
         ls -alrt
         pip install -r requirements.txt
     - name: Lint with flake8
@@ -50,6 +49,7 @@ jobs:
         npm install redoc-cli
         #npx redoc-cli bundle ${GITHUB_WORKSPACE}/tb-houston-service/openapi/houston_service.yml --title "Houston Service REST API"
         npx redoc-cli bundle openapi/houston_service.yml --title "Houston Service REST API"
+        ls -alrt 
     - name: Git add, commit and Push changes
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
