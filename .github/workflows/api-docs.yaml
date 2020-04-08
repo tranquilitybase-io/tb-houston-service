@@ -24,6 +24,7 @@ jobs:
     - name: Install redoc-cli and generate API documentation
       run: |
         echo ${GITHUB_HEAD_REF}
+        git fetch
         git checkout ${GITHUB_HEAD_REF}
         npm install redoc-cli
         git config user.email action@github.com
