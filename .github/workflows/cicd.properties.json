@@ -1,0 +1,4 @@
+{
+	"name": "cicd",
+	"descripton": "Perform pylint and pytest, create api documentation and add the static HTML documentation file to the Push/PR."
+}
