@@ -27,12 +27,12 @@ jobs:
         git fetch
         git checkout ${GITHUB_HEAD_REF}
         npm install redoc-cli
+        npx redoc-cli bundle openapi/houston_service.yml --title "Houston Service REST API"
         git config user.email action@github.com
         git config user.name "Github Action"
-        npx redoc-cli bundle openapi/houston_service.yml --title "Houston Service REST API"
         git commit -m "Add automatically generated redoc HTML documentation" -a
-        ls -alrt 
-        find .
+        ls -alrt redoc-static.html
+        git commit -m "Add automatically generated redoc HTML documentation" -a
     - name: Push changes
       uses: ad-m/github-push-action@master
       with:
