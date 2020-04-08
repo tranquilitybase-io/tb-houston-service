@@ -22,20 +22,16 @@ jobs:
         repository: tranquilitybase-io/tb-houston-service
         path: tb-houston-service
     - name: Install redoc-cli and generate API documentation
-      run: |
-        ls -alrt 
-        cd tb-houston-service
-        npm install redoc-cli
-        npx redoc-cli bundle openapi/houston_service.yml --title "Houston Service REST API"
-    - name: Git add, commit and Push changes
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
+        npm install redoc-cli
         cd tb-houston-service
         git config user.email action@github.com
         git config user.name "Github Action"
         git fetch
         git checkout ${GITHUB_HEAD_REF}
+        npx redoc-cli bundle openapi/houston_service.yml --title "Houston Service REST API"
         ls -alrt  redoc-static.html
         git add redoc-static.html
         git commit -m "Add automatically generated redoc HTML documentation"
