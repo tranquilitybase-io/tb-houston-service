@@ -199,17 +199,17 @@ def delete(id):
         abort(404, f"Activator id {id} not found")
 
 
-def setActivatorStatus(activator):
+def setActivatorStatus(activatorDetails):
     " update the activator status"
 
-    app.logger.info(pformat(activator))
+    app.logger.info(pformat(activatorDetails))
     # Does the activator to delete exist?
-    existing_activator = Activator.query.filter(Activator.id == activator['id']).one_or_none()
+    existing_activator = Activator.query.filter(Activator.id == activatorDetails['id']).one_or_none()
 
     # if found?
     if existing_activator is not None:
-        existing_activator.status = activator.get('status', existing_activator.status)
-        existing_activator.accessRequestedBy = activator.get('accessRequestedBy', existing_activator.accessRequestedBy)
+        existing_activator.status = activatorDetails.get('status', existing_activator.status)
+        existing_activator.accessRequestedBy = activatorDetails.get('accessRequestedBy', existing_activator.accessRequestedBy)
         existing_activator.lastUpdated = ModelTools.get_utc_timestamp()
 
         db.session.merge(existing_activator)
@@ -222,7 +222,7 @@ def setActivatorStatus(activator):
 
     # Otherwise, nope, activator to update was not found
     else:
-        id = activator['id']
+        id = activatorDetails['id']
         abort(404, f"Activator id {id} not found")
 
 

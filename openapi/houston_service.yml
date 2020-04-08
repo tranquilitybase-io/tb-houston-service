@@ -1,6 +1,13 @@
 openapi: 3.0.0
 info:
-  description: TranquilityBase Houston Backend REST API Service
+  description: | 
+    TranquilityBase Houston Backend REST API Service.
+    The Houston Service is the name of the backend service for the Eagle Console.
+    There is more information about the Houston Service here.
+    https://github.com/tranquilitybase-io/tb-houston-service/wiki.
+    There is more information about the Eagle Console here.
+    https://github.com/tranquilitybase-io/tb-eagle-console/wiki
+
   version: 2.0.0
   title: TB Houston Service
 
@@ -10,13 +17,13 @@ paths:
       operationId: login.check_credentials
       tags:
         - login
-      summary: login
-      description: login
+      summary: login credentials check
+      description: This endpoint is used to check login credentials.
       requestBody:
         $ref: "#/components/requestBodies/login.loginDetails"
       responses:
         "201":
-          description: Login Successful
+          description: The login was successful
           content:
             application/json:
               schema:
@@ -24,26 +31,26 @@ paths:
                 properties:
                   id:
                     type: string
-                    description: email address
+                    description: The email address
                   firstName:
                     type: string
-                    description: first name
+                    description: The user's first name
                   lastName:
                     type: string
-                    description: last name
+                    description: The user's last name
                   isAdmin:
                     type: boolean
-                    description: is admin?
+                    description: is the user an admin user?
   /health:
     get:
       operationId: health.check
       tags:
         - health
-      summary: health check
-      description: health check
+      summary: The Houston Service general health check.
+      description: Return the health of the Houston service.
       responses:
         "200":
-          description: Successful
+          description: Successfully returned the health of the Houston Service.
 
   /applications/:
     get:
