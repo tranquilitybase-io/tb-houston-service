@@ -54,5 +54,6 @@ jobs:
         cd ${GITHUB_WORKSPACE}/tb-houston-service
         git config user.email action@github.com
         git config user.name "Github Action"
+        git checkout ${GITHUB_HEAD_REF}
         git commit -a -m "Add automatically generated redoc HTML documentation"
         git push
