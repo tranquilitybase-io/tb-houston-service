@@ -21,7 +21,6 @@ jobs:
       with:
         repository: tranquilitybase-io/tb-houston-service
         path: tb-houston-service
-        ref: "${GITHUB_HEAD_REF}"
     - name: Install redoc-cli and generate API documentation
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
