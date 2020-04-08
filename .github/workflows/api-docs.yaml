@@ -32,6 +32,7 @@ jobs:
         npx redoc-cli bundle openapi/houston_service.yml --title "Houston Service REST API"
         sleep 5
         ls -alrt  redoc-static.html
+        git branch
         git add redoc-static.html
         git commit -m "Add automatically generated redoc HTML documentation"
         git push
