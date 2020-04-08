@@ -2,6 +2,10 @@
 docker build -t gcr.io/tranquility-base-images/tb-houston-service:mysql57 .
 docker push gcr.io/tranquility-base-images/tb-houston-service:mysql57
 
+# Build a container image for experimental using the Dockerfile
+docker build -t gcr.io/tranquility-base-images/tb-houston-mysql57:experimental .
+docker push gcr.io/tranquility-base-images/tb-houston-mysql57:experimental
+
 # Build a container image for landingzone using the Dockerfile
 docker build -t gcr.io/tranquility-base-images/tb-houston-mysql57:landingzone .
 docker push gcr.io/tranquility-base-images/tb-houston-mysql57:landingzone
