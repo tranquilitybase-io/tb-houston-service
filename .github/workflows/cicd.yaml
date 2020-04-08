@@ -51,6 +51,7 @@ jobs:
       with: 
         github_token: ${{ secrets.GITHUB_TOKEN }}
     - name: Git add, commit and Push changes
+      run: |
         cd ${GITHUB_WORKSPACE}/tb-houston-service
         git config user.email action@github.com
         git config user.name "Github Action"
