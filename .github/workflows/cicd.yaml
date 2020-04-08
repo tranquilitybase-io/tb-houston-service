@@ -48,6 +48,7 @@ jobs:
     - name: Install redoc-cli and generate API documentation
       run: |
         ls -alrt 
+        cd tb-houston-service
         npm install redoc-cli
         ls -alrt 
         #npx redoc-cli bundle ${GITHUB_WORKSPACE}/tb-houston-service/openapi/houston_service.yml --title "Houston Service REST API"
@@ -56,7 +57,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        #cd ${GITHUB_WORKSPACE}/tb-houston-service
+        cd tb-houston-service
         git config user.email action@github.com
         git config user.name "Github Action"
         git checkout ${GITHUB_HEAD_REF}
