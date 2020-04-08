@@ -23,8 +23,9 @@ jobs:
         path: .
     - name: Install redoc-cli and generate API documentation
       run: |
+        echo ${GITHUB_HEAD_REF}
+        git switch -c ${GITHUB_HEAD_REF}
         npm install redoc-cli
-        git switch -c master
         git config user.email action@github.com
         git config user.name "Github Action"
         npx redoc-cli bundle openapi/houston_service.yml --title "Houston Service REST API"
