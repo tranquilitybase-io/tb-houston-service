@@ -30,6 +30,8 @@ jobs:
         python -m pip install --upgrade pip
         env
         cd ${GITHUB_WORKSPACE}/tb-houston-service
+        pwd
+        ls -alrt
         pip install -r requirements.txt
     - name: Lint with flake8
       run: |
