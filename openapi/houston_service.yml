@@ -1060,20 +1060,7 @@ paths:
       description: Create a new new landingzoneprogressitem in the landingzoneprogressitem
         list
       requestBody:
-        x-body-name: landingzoneprogressitem
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                label:
-                  type: string
-                  description: label
-                completed:
-                  type: boolean
-                  description: completed
-        description: landingzoneprogressitem to create
-        required: true
+        $ref: '#/components/requestBodies/landingZoneProgressItem.landingZoneProgressItemDetails'
       responses:
         "200":
           description: Successfully created a landingzoneprogressitem
@@ -1134,20 +1121,7 @@ paths:
           schema:
             type: integer
       requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                id:
-                  type: integer
-                  description: id
-                label:
-                  type: string
-                  description: label
-                completed:
-                  type: boolean
-                  description: completed
+        $ref: '#/components/requestBodies/landingZoneProgressItem.landingZoneProgressItemDetails'
       responses:
         "200":
           description: Successfully updated an landingzoneprogressitem
@@ -1225,32 +1199,7 @@ paths:
       summary: Create a landingzoneaction and add it to the landingzoneaction list
       description: Create a new new landingzoneaction in the landingzoneaction list
       requestBody:
-        x-body-name: landingzoneaction
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                title:
-                  type: string
-                  description: title
-                categoryName:
-                  type: string
-                  description: categoryName
-                categoryClass:
-                  type: string
-                  description: categoryClass
-                completionRate:
-                  type: integer
-                  description: completionRate
-                locked:
-                  type: boolean
-                  description: locked
-                routerLink:
-                  type: string
-                  description: routerLink
-        description: landingzoneaction to create
-        required: true
+        $ref: "#/components/requestBodies/landingZoneAction.landingZoneActionDetails"
       responses:
         "200":
           description: Successfully created a landingzoneaction
@@ -1388,10 +1337,7 @@ paths:
           schema:
             type: integer
       requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/LandingZoneWAN"
+        $ref: "#/components/requestBodies/landingZoneWAN.landingZoneWANDetails"
       responses:
         "200":
           description: Successfully updated a landingzonewan
@@ -1477,10 +1423,7 @@ paths:
           schema:
             type: integer
       requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/BGPRoutingMode"
+        $ref: "#/components/requestBodies/bgpRoutingMode.bgpRoutingModeDetails"
       responses:
         "200":
           description: Successfully updated a bgproutingmode
@@ -1525,13 +1468,7 @@ paths:
       summary: Create an subnetMode and add it to the subnetMode list
       description: Create a new subnetMode in the subnetMode list
       requestBody:
-        content:
-          application/json:
-            schema:
-              x-body-name: subnetmode
-              $ref: "#/components/schemas/SubnetMode"
-        description: subnetMode to create
-        required: true
+        $ref: "#/components/requestBodies/subnetMode.subnetModeDetails"
       responses:
         "201":
           description: Successfully created an subnetMode
@@ -1763,6 +1700,15 @@ components:
             x-body-name: landingZoneActionDetails
             $ref: "#/components/schemas/LandingZoneAction"
       description: landingzoneaction to create
+      required: true
+
+    landingZoneProgressItem.landingZoneProgressItemDetails:
+      content:
+        application/json:
+          schema:
+            x-body-name: landingZoneProgressItemDetails
+            $ref: "#/components/schemas/LandingZoneProgressItem"
+      description: landingzonewan to create
       required: true
 
     landingZoneWAN.landingZoneWANDetails:

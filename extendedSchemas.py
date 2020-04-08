@@ -92,7 +92,7 @@ class ExtendedSolutionSchema(Schema):
     environments = fields.List(fields.Str())
     active = fields.Boolean()
     favourite = fields.Boolean()
-    teams = fields.Str()
+    teams = fields.Int()
     lastUpdated = fields.Str()
     applications = fields.Nested(ExtendedApplicationSchema(many=True))
 
