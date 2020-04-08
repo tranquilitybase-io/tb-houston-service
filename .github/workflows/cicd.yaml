@@ -47,14 +47,12 @@ jobs:
       run: |
         npm install redoc-cli
         npx redoc-cli bundle ${GITHUB_WORKSPACE}/tb-houston-service/openapi/houston_service.yml --title "Houston Service REST API"
-        cd ${GITHUB_WORKSPACE}/tb-houston-service
-        git config user.email karwoo.tang@gft.com
-        git config user.name karwootang-gft
-        git branch
-        git add redoc-static.html
-        git commit -m "Add automatically generated redoc HTML documentation"
-    - name: Push changes
-        git push
+    - name: Git add, commit and Push changes
       uses: ad-m/github-push-action@master
       with: 
         github_token: ${{ secrets.GITHUB_TOKEN }}
+        cd ${GITHUB_WORKSPACE}/tb-houston-service
+        git config user.email action@github.com
+        git config user.name "Github Action"
+        git commit -a -m "Add automatically generated redoc HTML documentation"
+        git push
