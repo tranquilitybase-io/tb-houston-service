@@ -3,7 +3,7 @@
 #
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
 
-name: Python application
+name: Houston Service - CICD Workflow
 
 on:
   push:
@@ -42,26 +42,6 @@ jobs:
     - name: Test with pytest
       run: |
         pip install pytest
+        cd tests
         # No tests at the moment
         #pytest tests/
-        ls -alrt 
-    - name: Install redoc-cli and generate API documentation
-      run: |
-        ls -alrt 
-        cd tb-houston-service
-        npm install redoc-cli
-        #npx redoc-cli bundle ${GITHUB_WORKSPACE}/tb-houston-service/openapi/houston_service.yml --title "Houston Service REST API"
-        npx redoc-cli bundle openapi/houston_service.yml --title "Houston Service REST API"
-    - name: Git add, commit and Push changes
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        cd tb-houston-service
-        git config user.email action@github.com
-        git config user.name "Github Action"
-        git fetch
-        git checkout ${GITHUB_HEAD_REF}
-        ls -alrt  redoc-static.html
-        git add redoc-static.html
-        git commit -m "Add automatically generated redoc HTML documentation"
-        git push
