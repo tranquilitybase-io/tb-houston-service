@@ -44,12 +44,14 @@ jobs:
         pip install pytest
         # No tests at the moment
         #pytest tests/
+        ls -alrt 
     - name: Install redoc-cli and generate API documentation
       run: |
+        ls -alrt 
         npm install redoc-cli
+        ls -alrt 
         #npx redoc-cli bundle ${GITHUB_WORKSPACE}/tb-houston-service/openapi/houston_service.yml --title "Houston Service REST API"
         npx redoc-cli bundle openapi/houston_service.yml --title "Houston Service REST API"
-        ls -alrt 
     - name: Git add, commit and Push changes
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
