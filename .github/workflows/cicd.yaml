@@ -47,10 +47,10 @@ jobs:
       run: |
         npm install redoc-cli
         npx redoc-cli bundle ${GITHUB_WORKSPACE}/tb-houston-service/openapi/houston_service.yml --title "Houston Service REST API"
-    - name: Git add, commit and Push changes
-      uses: ad-m/github-push-action@master
+    - uses: ad-m/github-push-action@master
       with: 
         github_token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Git add, commit and Push changes
         cd ${GITHUB_WORKSPACE}/tb-houston-service
         git config user.email action@github.com
         git config user.name "Github Action"
