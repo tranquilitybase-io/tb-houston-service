@@ -164,7 +164,7 @@ paths:
     get:
       operationId: application_meta.read_one
       tags:
-        - application_meta
+        - application
       summary: Read application_meta
       description: Read application_meta
       parameters:
@@ -176,7 +176,7 @@ paths:
             type: integer
       responses:
         "200":
-          description: Successfully read activatorId
+          description: Successfully read application metadata
           content:
             application/json:
               schema:
@@ -186,6 +186,27 @@ paths:
                     type: string
                   length:
                     type: integer
+
+  "/activator_meta/":
+    get:
+      operationId: activator_meta.read_one
+      tags:
+        - activator
+      summary: Read activator_meta
+      description: Read activator_meta
+      responses:
+        "200":
+          description: Successfully read activator metadata
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  key:
+                    type: string
+                  length:
+                    type: integer
+
   /keyValues/team/:
     get:
       operationId: team.read_all
@@ -1748,7 +1769,7 @@ components:
       content:
         application/json:
           schema:
-            x-body-name: landingZoneWanDetails
+            x-body-name: landingZoneWANDetails
             $ref: "#/components/schemas/LandingZoneWAN"
       description: landingzonewan to create
       required: true

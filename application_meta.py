@@ -16,6 +16,5 @@ def read_one(activatorId):
     """
 
     acount = Application.query.filter(Application.activatorId == activatorId).count()
-    data = { 'length': acount }
-    return data
-
+    data = { 'count': acount }
+    return data, 200
