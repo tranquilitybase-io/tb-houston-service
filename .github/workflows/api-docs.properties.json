@@ -1,0 +1,4 @@
+{
+	"name": "api-docs",
+	"descripton": "Create api documentation and add the static HTML documentation file to the Push/PR."
+}
