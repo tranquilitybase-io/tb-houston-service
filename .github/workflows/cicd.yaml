@@ -50,6 +50,7 @@ jobs:
         cd ${GITHUB_WORKSPACE}/tb-houston-service
         git config user.email karwoo.tang@gft.com
         git config user.name karwootang-gft
+        git branch
         git add redoc-static.html
         git commit -m "Add automatically generated redoc HTML documentation"
         git push
