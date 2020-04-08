@@ -50,7 +50,6 @@ jobs:
         ls -alrt 
         cd tb-houston-service
         npm install redoc-cli
-        ls -alrt 
         #npx redoc-cli bundle ${GITHUB_WORKSPACE}/tb-houston-service/openapi/houston_service.yml --title "Houston Service REST API"
         npx redoc-cli bundle openapi/houston_service.yml --title "Houston Service REST API"
     - name: Git add, commit and Push changes
@@ -62,6 +61,7 @@ jobs:
         git config user.name "Github Action"
         git fetch
         git checkout ${GITHUB_HEAD_REF}
+        ls -alrt  redoc-static.html
         git add redoc-static.html
         git commit -m "Add automatically generated redoc HTML documentation"
         git push
