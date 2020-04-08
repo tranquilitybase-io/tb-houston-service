@@ -48,6 +48,8 @@ jobs:
         npm install redoc-cli
         npx redoc-cli bundle ${GITHUB_WORKSPACE}/tb-houston-service/openapi/houston_service.yml --title "Houston Service REST API"
         cd ${GITHUB_WORKSPACE}/tb-houston-service
+        git config --global user.email karwoo.tang@gft.com
+        git config --global user.email karwootang-gft
         git add redoc-static.html
         git commit -m "Add automatically generated redoc HTML documentation"
         git push
