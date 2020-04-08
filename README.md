@@ -4,7 +4,7 @@ docker push gcr.io/tranquility-base-images/tb-houston-service:alpha
 
 # Experiment build
 docker build -t gcr.io/tranquility-base-images/tb-houston-service:experimental .
-docker push gcr.io/tranquility-base-images/tb-houston-service:experimental :
+docker push gcr.io/tranquility-base-images/tb-houston-service:experimental
 
 # list existing containers and remove them
 docker container list -a 
@@ -20,6 +20,9 @@ gcloud auth configure-docker
 
 # Run the stack (houston-service + mysql57)
 docker-compose -f stack.yml up
+
+# Run the experimental stack (houston-service + mysql57)
+docker-compose -f experimental_houston_service.yml up
 
 # run the docker image
 docker run -p 3000:3000 gcr.io/tranquility-base-images/tb-houston-service:alpha
