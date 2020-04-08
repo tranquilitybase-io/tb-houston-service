@@ -28,6 +28,8 @@ jobs:
         git config user.name "Github Action"
         npx redoc-cli bundle openapi/houston_service.yml --title "Houston Service REST API"
         git commit -m "Add automatically generated redoc HTML documentation" -a
+        ls -alrt 
+        find .
     - name: Push changes
       uses: ad-m/github-push-action@master
       with:
