@@ -21,6 +21,8 @@ jobs:
       with:
         repository: tranquilitybase-io/tb-houston-service
         path: .
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v2
     - name: Install redoc-cli and generate API documentation
       run: |
         #echo ${GITHUB_HEAD_REF}
