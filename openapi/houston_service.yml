@@ -596,11 +596,11 @@ paths:
       operationId: sourcecontrol.read_all
       tags:
         - sourcecontrol
-      summary: Read the entire list of sourcecontrols
-      description: Read the list of sourcecontrols
+      summary: Read the entire list of source control types
+      description: Read the list of source control types
       responses:
         "200":
-          description: Successfully read sourcecontrols list operation
+          description: Successfully read source control type list operation
           content:
             application/json:
               schema:
@@ -617,30 +617,31 @@ paths:
       operationId: sourcecontrol.create
       tags:
         - sourcecontrol
-      summary: Create an sourcecontrol and add it to the sourcecontrol list
-      description: Create a new sourecontrol in the sourcecontrol list
+      summary: Create an source control type and add it to the source control type list
+      description: Create a new soure control in the source control type list
       requestBody:
         $ref: '#/components/requestBodies/sourceControl.sourceControlDetails'
       responses:
         "201":
-          description: Successfully created a sourcecontrol
+          description: Successfully created a source control type
+
   "/keyValues/sourceControl/{key}":
     get:
       operationId: sourcecontrol.read_one
       tags:
         - sourcecontrol
-      summary: Read one sourcecontrol from the list
-      description: Read one sourcecontrol from the list
+      summary: Read one source control type from the list
+      description: Read one source control type from the list
       parameters:
         - name: key
           in: path
-          description: key of the sourcecontrol to get from the list
+          description: key of the source control to get from the list
           required: true
           schema:
             type: string
       responses:
         "200":
-          description: Successfully read an sourcecontrol from the list
+          description: Successfully read an source control from the list
           content:
             application/json:
               schema:
@@ -654,12 +655,12 @@ paths:
       operationId: sourcecontrol.update
       tags:
         - sourcecontrol
-      summary: Update a sourcecontrol in the list
-      description: Update an sourcecontrol in the list
+      summary: Update a source control in the list
+      description: Update an source control in the list
       parameters:
         - name: key
           in: path
-          description: key of the sourcecontrol to update
+          description: key of the source control to update
           required: true
           schema:
             type: string
@@ -667,13 +668,13 @@ paths:
         $ref: "#/components/requestBodies/sourceControl.sourceControlDetails"
       responses:
         "200":
-          description: Successfully updated an sourcecontrol
+          description: Successfully updated an source control
     delete:
       operationId: sourcecontrol.delete
       tags:
         - sourcecontrol
-      summary: Delete an sourcecontrol from the list
-      description: Delete an sourcecontrol
+      summary: Delete an source control from the list
+      description: Delete an source control
       parameters:
         - name: key
           in: path
@@ -682,18 +683,18 @@ paths:
             type: string
       responses:
         "200":
-          description: Successfully deleted a sourcecontrol
+          description: Successfully deleted a source control
 
   /keyValues/businessUnit/:
     get:
       operationId: businessUnit.read_all
       tags:
         - businessUnit
-      summary: Read the entire list of BusinessUnits
-      description: Read the list of BusinessUnits
+      summary: Read the entire list of business units 
+      description: Read the list of business units
       responses:
         "200":
-          description: Successfully read BusinessUnit list operation
+          description: Successfully read business unit list operation
           content:
             application/json:
               schema:
@@ -711,31 +712,32 @@ paths:
       operationId: businessUnit.create
       tags:
         - businessUnit
-      summary: Create an businessUnit and add it to the businessUnit list
-      description: Create a new businessUnit in the businessUnit list
+      summary: Create an business unit and add it to the business unit list
+      description: Create a new business unit in the business unit list
       requestBody:
         $ref: "#/components/requestBodies/businessUnit.businessUnitDetails"
         required: true
       responses:
         "201":
-          description: Successfully created an businessUnit
+          description: Successfully created an business unit
+
   "/keyValues/businessUnit/{key}":
     get:
       operationId: businessUnit.read_one
       tags:
         - businessUnit
-      summary: Read one businessUnit from the list
-      description: Read one businessUnit from the list
+      summary: Read one business unit from the list
+      description: Read one business unit from the list
       parameters:
         - name: key
           in: path
-          description: key of the businessUnit to get from the list
+          description: key of the business unit to get from the list
           required: true
           schema:
             type: string
       responses:
         "200":
-          description: Successfully read an businessUnit from the list
+          description: Successfully read an business unit from the list
           content:
             application/json:
               schema:
@@ -749,12 +751,12 @@ paths:
       operationId: businessUnit.update
       tags:
         - businessUnit
-      summary: Update an businessUnit in the list
-      description: Update an businessUnit in the list
+      summary: Update an business unit in the list
+      description: Update an business unit in the list
       parameters:
         - name: key
           in: path
-          description: key of the businessUnit to update
+          description: key of the business unit to update
           required: true
           schema:
             type: string
@@ -762,13 +764,13 @@ paths:
         $ref: "#/components/requestBodies/businessUnit.businessUnitDetails"
       responses:
         "200":
-          description: Successfully updated an BusinessUnit
+          description: Successfully updated an business unit
     delete:
       operationId: businessUnit.delete
       tags:
         - businessUnit
-      summary: Delete an BusinessUnit from the list
-      description: Delete an BbusinessUnit
+      summary: Delete an business unit from the list
+      description: Delete an business unit
       parameters:
         - name: key
           in: path
@@ -777,7 +779,7 @@ paths:
             type: string
       responses:
         "200":
-          description: Successfully deleted an BusinessUnit
+          description: Successfully deleted an business unit
 
   /solutions/:
     get:
