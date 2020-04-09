@@ -25,7 +25,8 @@ jobs:
       run: |
         #echo ${GITHUB_HEAD_REF}
         git fetch
-        git checkout ${GITHUB_HEAD_REF}
+        #git checkout ${GITHUB_HEAD_REF}
+        git checkout master
         git pull
         npm install redoc-cli
         npx redoc-cli bundle openapi/houston_service.yml --title "Houston Service REST API"
