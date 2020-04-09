@@ -21,8 +21,6 @@ jobs:
       with:
         repository: tranquilitybase-io/tb-houston-service
         path: .
-    - name: Setup tmate session
-      uses: mxschmitt/action-tmate@v2
     - name: Install redoc-cli and generate API documentation
       run: |
         #echo ${GITHUB_HEAD_REF}
@@ -37,9 +35,13 @@ jobs:
         #git checkout -b ${GITHUB_HEAD_REF}
         git add redoc-static.html
         ls -alrt redoc-static.html
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v2    
+    - name: Commit changes
         git commit -m "Add automatically generated redoc HTML documentation"
     - name: Push changes
       uses: ad-m/github-push-action@master
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
+    
 
