@@ -1050,11 +1050,11 @@ paths:
       operationId: landingzoneprogressitem.read_all
       tags:
         - landingzoneprogressitem
-      summary: Read the entire list of landingzoneprogressitems
-      description: Read the list of landingzoneprogressitems
+      summary: Read the entire list of landing zone progress items
+      description: Read the list of landing zone progress items
       responses:
         "200":
-          description: Successfully ran landingzoneprogressitem list operation
+          description: Successfully ran landing zone progress item list operation
           content:
             application/json:
               schema:
@@ -1067,15 +1067,14 @@ paths:
       operationId: landingzoneprogressitem.create
       tags:
         - landingzoneprogressitem
-      summary: Create a landingzoneprogressitem and add it to the
-        landingzoneprogressitem list
-      description: Create a new new landingzoneprogressitem in the landingzoneprogressitem
+      summary: Create a landing zone progress item and add it to the landing zone progress item list
+      description: Create a new new landing zone progress item in the landing zone progress item
         list
       requestBody:
         $ref: '#/components/requestBodies/landingZoneProgressItem.landingZoneProgressItemDetails'
       responses:
         "200":
-          description: Successfully created a landingzoneprogressitem
+          description: Successfully created a landing zone progress item
           content:
             application/json:
               schema:
@@ -1096,18 +1095,18 @@ paths:
       operationId: landingzoneprogressitem.read_one
       tags:
         - landingzoneprogressitem
-      summary: Read one landingzoneprogressitem from the list
-      description: Read one landingzoneprogressitem from the list
+      summary: Read one landing zone progress item from the list
+      description: Read one landing zone progress item from the list
       parameters:
         - name: id
           in: path
-          description: key of the landingzoneprogressitem to get from the list
+          description: key of the landing zone progress item to get from the list
           required: true
           schema:
             type: integer
       responses:
         "200":
-          description: Successfully read an landingzoneprogressitem from the list
+          description: Successfully read an landing zone progress item from the list
           content:
             application/json:
               schema:
@@ -1123,12 +1122,12 @@ paths:
       operationId: landingzoneprogressitem.update
       tags:
         - landingzoneprogressitem
-      summary: Update an landingzoneprogressitem in the list
-      description: Update an landingzoneprogressitem in the list
+      summary: Update an landing zone progress item in the list
+      description: Update an landing zone progress item in the list
       parameters:
         - name: id
           in: path
-          description: key of the landingzoneprogressitem to update
+          description: key of the landing zone progress item to update
           required: true
           schema:
             type: integer
@@ -1136,7 +1135,7 @@ paths:
         $ref: '#/components/requestBodies/landingZoneProgressItem.landingZoneProgressItemDetails'
       responses:
         "200":
-          description: Successfully updated an landingzoneprogressitem
+          description: Successfully updated an landing zone progress item
           content:
             application/json:
               schema:
@@ -1153,8 +1152,8 @@ paths:
       operationId: landingzoneprogressitem.delete
       tags:
         - landingzoneprogressitem
-      summary: Delete a landingzoneprogressitem from the list
-      description: Delete a landingzoneprogressitem
+      summary: Delete a landing zone progress item from the list
+      description: Delete a landing zone progress item
       parameters:
         - name: id
           in: path
@@ -1163,18 +1162,18 @@ paths:
             type: string
       responses:
         "200":
-          description: Successfully deleted a landingzoneprogressitem
+          description: Successfully deleted a landing zone progress item
 
   /landingzoneactions/:
     get:
       operationId: landingzoneaction.read_all
       tags:
         - landingzoneaction
-      summary: Read the entire list of landingzoneactions
-      description: Read the list of landingzoneactions
+      summary: Read the entire list of landing zone actions
+      description: Read the list of landing zone actions
       responses:
         "200":
-          description: Successfully ran landingzoneaction list operation
+          description: Successfully ran landing zone action list operation
           content:
             application/json:
               schema:
@@ -1208,13 +1207,13 @@ paths:
       operationId: landingzoneaction.create
       tags:
         - landingzoneaction
-      summary: Create a landingzoneaction and add it to the landingzoneaction list
-      description: Create a new new landingzoneaction in the landingzoneaction list
+      summary: Create a landing zone action and add it to the landing zone action list
+      description: Create a new new landing zone action in the landing zone action list
       requestBody:
         $ref: "#/components/requestBodies/landingZoneAction.landingZoneActionDetails"
       responses:
         "200":
-          description: Successfully created a landingzoneaction
+          description: Successfully created a landing zone action
           content:
             application/json:
               schema:
@@ -1227,18 +1226,18 @@ paths:
       operationId: landingzoneaction.read_one
       tags:
         - landingzoneaction
-      summary: Read one landingzoneaction from the list
-      description: Read one landingzoneaction from the list
+      summary: Read one landing zone action from the list
+      description: Read one landing zone action from the list
       parameters:
         - name: id
           in: path
-          description: key of the landingzoneaction to get from the list
+          description: key of the landing zone action to get from the list
           required: true
           schema:
             type: integer
       responses:
         "200":
-          description: Successfully read an landingzoneaction from the list
+          description: Successfully read an landing zone action from the list
           content:
             application/json:
               schema:
@@ -1248,12 +1247,12 @@ paths:
       operationId: landingzoneaction.update
       tags:
         - landingzoneaction
-      summary: Update an landingzoneaction in the list
-      description: Update an landingzoneaction in the list
+      summary: Update an landing zone action in the list
+      description: Update an landing zone action in the list
       parameters:
         - name: id
           in: path
-          description: key of the landingzoneaction to update
+          description: key of the landing zone action to update
           required: true
           schema:
             type: integer
@@ -1261,7 +1260,7 @@ paths:
         $ref: "#/components/requestBodies/landingZoneAction.landingZoneActionDetails"
       responses:
         "200":
-          description: Successfully updated a landingzoneaction
+          description: Successfully updated a landing zone action
           content:
             application/json:
               schema:
@@ -1271,8 +1270,8 @@ paths:
       operationId: landingzoneaction.delete
       tags:
         - landingzoneaction
-      summary: Delete a landingzoneaction from the list
-      description: Delete a landingzoneaction
+      summary: Delete a landing zone action from the list
+      description: Delete a landing zone action
       parameters:
         - name: id
           in: path
@@ -1281,18 +1280,18 @@ paths:
             type: string
       responses:
         "200":
-          description: Successfully deleted a landingzoneaction
+          description: Successfully deleted a landing zone action
 
   /landingzonewans/:
     get:
       operationId: landingzonewan.read_all
       tags:
         - landingzonewan
-      summary: Read the entire list of landingzonewans
-      description: Read the list of landingzonewans
+      summary: Read the entire list of landing zone WANs
+      description: Read the list of landing zone WANs
       responses:
         "200":
-          description: Successfully ran landingzonewan list operation
+          description: Successfully ran landing zone WAN list operation
           content:
             application/json:
               schema:
@@ -1305,31 +1304,31 @@ paths:
       operationId: landingzonewan.create
       tags:
         - landingzonewan
-      summary: Create a landingzonewan and add it to the landingzonewan list
-      description: Create a new new landingzonewan in the landingzonewan list
+      summary: Create a landingzonewan and add it to the landing zone WAN list
+      description: Create a new new landingzonewan in the landing zone WAN list
       requestBody:
         $ref: "#/components/requestBodies/landingZoneWAN.landingZoneWANDetails"
       responses:
         "201":
-          description: Successfully created a landingzonewan
+          description: Successfully created a landing zone WAN
 
   "/landingzonewan/{id}":
     get:
       operationId: landingzonewan.read_one
       tags:
         - landingzonewan
-      summary: Read one landingzonewan from the list
-      description: Read one landingzonewan from the list
+      summary: Read one landing zone WAN from the list
+      description: Read one landing zone WAN from the list
       parameters:
         - name: id
           in: path
-          description: key of the landingzonewan to get from the list
+          description: key of the landing zone WAN to get from the list
           required: true
           schema:
             type: integer
       responses:
         "200":
-          description: Successfully read an landingzonewan from the list
+          description: Successfully read an landing zone WAN from the list
           content:
             application/json:
               schema:
@@ -1339,12 +1338,12 @@ paths:
       operationId: landingzonewan.update
       tags:
         - landingzonewan
-      summary: Update an landingzonewan in the list
-      description: Update an landingzonewan in the list
+      summary: Update an landing zone WAN in the list
+      description: Update an landing zone WAN in the list
       parameters:
         - name: id
           in: path
-          description: key of the landingzonewan to update
+          description: key of the landing zone WAN to update
           required: true
           schema:
             type: integer
@@ -1352,14 +1351,14 @@ paths:
         $ref: "#/components/requestBodies/landingZoneWAN.landingZoneWANDetails"
       responses:
         "200":
-          description: Successfully updated a landingzonewan
+          description: Successfully updated a landing zone WAN
 
     delete:
       operationId: landingzonewan.delete
       tags:
         - landingzonewan
-      summary: Delete a landingzonewan from the list
-      description: Delete a landingzonewan
+      summary: Delete a landing zone WAN from the list
+      description: Delete a landing zone WAN
       parameters:
         - name: id
           in: path
@@ -1368,7 +1367,7 @@ paths:
             type: string
       responses:
         "200":
-          description: Successfully deleted a landingzonewan
+          description: Successfully deleted a landing zone WAN
 
   /keyValues/bgproutingmode/:
     get:
