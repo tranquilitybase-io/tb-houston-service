@@ -520,30 +520,30 @@ paths:
       operationId: cd.create
       tags:
         - cd
-      summary: Create an cd and add it to the cd list
-      description: Create a new cd in the cd list
+      summary: Create a continuous deployment and add it to the continuous deployment list
+      description: Create a new continuous deployment in the continuous deployment list
       requestBody:
         $ref: '#/components/requestBodies/cd.cdDetails'
       responses:
         "201":
-          description: Successfully created an cd
+          description: Successfully created an continuous deployment
   "/keyValues/cd/{key}":
     get:
       operationId: cd.read_one
       tags:
         - cd
-      summary: Read one cd from the list
-      description: Read one cd from the list
+      summary: Read one continuous deployment from the list
+      description: Read one continuous deployment from the list
       parameters:
         - name: key
           in: path
-          description: key of the cd to get from the list
+          description: key of the continuous deployment to get from the list
           required: true
           schema:
             type: string
       responses:
         "200":
-          description: Successfully read an cd from the list
+          description: Successfully read an continuous deployment from the list
           content:
             application/json:
               schema:
@@ -570,13 +570,13 @@ paths:
         $ref: "#/components/requestBodies/cd.cdDetails"
       responses:
         "200":
-          description: Successfully updated an CD
+          description: Successfully updated a continuous deployment 
     delete:
       operationId: cd.delete
       tags:
         - cd
-      summary: Delete an CD from the list
-      description: Delete an CD
+      summary: Delete a continuous deployment from the list
+      description: Delete a continuous deployment
       parameters:
         - name: key
           in: path
@@ -585,7 +585,8 @@ paths:
             type: string
       responses:
         "200":
-          description: Successfully deleted an CD
+          description: Successfully deleted a continuous deployment
+
   /keyValues/sourceControl/:
     get:
       operationId: sourcecontrol.read_all
