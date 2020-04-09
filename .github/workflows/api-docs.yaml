@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@master
       with:
         repository: tranquilitybase-io/tb-houston-service
         path: .
@@ -29,11 +29,10 @@ jobs:
         npx redoc-cli bundle openapi/houston_service.yml --title "Houston Service REST API"
         git config user.email action@github.com
         git config user.name "Github Action"
-        git checkout -b ${GITHUB_HEAD_REF}
+        #git checkout -b ${GITHUB_HEAD_REF}
         git add redoc-static.html
         ls -alrt redoc-static.html
         git commit -m "Add automatically generated redoc HTML documentation"
-        ls -alrt redoc-static.html
     - name: Push changes
       uses: ad-m/github-push-action@master
       with:
