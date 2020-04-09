@@ -34,9 +34,7 @@ jobs:
         git config user.name "Github Action"
         #git checkout -b ${GITHUB_HEAD_REF}
         git add redoc-static.html
-        ls -alrt redoc-static.html
-    - name: Setup tmate session
-      uses: mxschmitt/action-tmate@v2    
+        ls -alrt redoc-static.html    
     - name: Commit changes
         git commit -m "Add automatically generated redoc HTML documentation"
     - name: Push changes
