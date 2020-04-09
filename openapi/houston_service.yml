@@ -1830,7 +1830,7 @@ components:
                 description: teams
               lastUpdated:
                 type: string
-                description: lastUpdated
+                description: "UTC/CUT last updated datetime stamp see: https://github.com/tranquilitybase-io/tb-houston-service/wiki/UTC-Timestamp"
       required: true
 
   schemas:
@@ -1873,7 +1873,7 @@ components:
                 description: platform
         lastUpdated:
           type: string
-          description: lastUpdated
+          description: "UTC/CUT last updated datetime stamp see: https://github.com/tranquilitybase-io/tb-houston-service/wiki/UTC-Timestamp"
         userCapacity:
           type: integer
           description: userCapacity
@@ -2246,7 +2246,7 @@ components:
           description: teams
         lastUpdated:
           type: string
-          description: lastUpdated
+          description: "UTC/CUT last updated datetime stamp see: https://github.com/tranquilitybase-io/tb-houston-service/wiki/UTC-Timestamp"
 
     User:
       type: object
@@ -2259,14 +2259,14 @@ components:
           description: email
         firstName:
           type: string
-          description: firstName
+          description: The user's first name
         lastName:
           type: string
-          description: lastName
+          description: The user's last name
         password:
           type: string
-          description: password
+          description: Encrypted password
         isAdmin:
           type: boolean
-          description: isAdmin
+          description: Is the user an administrator?
 
