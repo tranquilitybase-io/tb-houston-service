@@ -24,7 +24,8 @@ jobs:
     - name: Install redoc-cli and generate API documentation
       run: |
         #echo ${GITHUB_HEAD_REF}
-        #git fetch
+        git fetch
+        git checkout ${GITHUB_HEAD_REF}
         git pull
         npm install redoc-cli
         npx redoc-cli bundle openapi/houston_service.yml --title "Houston Service REST API"
