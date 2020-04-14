@@ -5,9 +5,7 @@
 name: Houston Service - API documentation workflow
 
 on:
-  push:
-      - '*'
-      - '!master'
+  push: [*, !master]
 jobs:
   build:
 
