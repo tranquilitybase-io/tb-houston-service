@@ -1,6 +1,7 @@
 # This workflow will install redoc-cli
 # and generate the static openapi html file.
 # The file is added, commited and pushed to the current branch.
+#
 
 name: Houston Service - API documentation workflow
 
