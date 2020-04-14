@@ -18,7 +18,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
       with:
-        repository: tranquilitybase-io/tb-houston-service
+        repository: karwootang-gft/tb-houston-service
         path: .
     - name: Install redoc-cli and generate API documentation
       shell: bash
