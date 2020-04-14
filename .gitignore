@@ -132,6 +132,3 @@ dmypy.json
 /.idea/
 .idea/
 .iml
-
-# Github Actions folder
-.github
