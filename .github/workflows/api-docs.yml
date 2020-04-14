@@ -5,10 +5,7 @@
 name: Houston Service - API documentation workflow
 
 on:
-  push: 
-    branches:
-      - '*'
-      - '!master'
+  push
 
 jobs:
   build:
@@ -20,6 +17,7 @@ jobs:
       with:
         repository: tranquilitybase-io/tb-houston-service
         path: .
+        fetch-depth: 0
     - name: Install redoc-cli and generate API documentation
       shell: bash
       run: |
