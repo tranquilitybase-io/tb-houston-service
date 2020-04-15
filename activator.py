@@ -9,7 +9,6 @@ from datetime import datetime
 # 3rd party modules
 from flask import make_response, abort
 from config import db, app
-from models import User
 from models import Activator
 from models import ActivatorSchema
 from models import ModelTools
@@ -46,6 +45,8 @@ def read_all(category=None, status=None, environment=None, platform=None, type=N
                 else:
                     si2 = "asc"
                 orderby = "Activator.{0}.{1}()".format(si1.strip(), si2.strip())
+                # orderby is trusted input so is fine to use in this case,
+                # don't use ast.literal_eval as you will get Malformed String ValueError
                 orderby_arr.append(eval(orderby))
             #print("orderby: {}".format(orderby_arr))
             activator_query = Activator.query.order_by(*orderby_arr)
