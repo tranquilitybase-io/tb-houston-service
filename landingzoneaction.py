@@ -120,7 +120,7 @@ def update(id, landingZoneActionDetails):
 
 def delete(id):
     """
-    Deletes an landingZoneAction from the landingZoneAction list
+    Deletes an landingZoneAction from the landingZoneAction list.
 
     :param id: id of the landingZoneAction to delete
     :return:             200 on successful delete, 404 if not found

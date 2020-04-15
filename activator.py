@@ -228,7 +228,7 @@ def setActivatorStatus(activatorDetails):
 
 def categories():
     """
-    :return:        distinct list of activator categories
+    :return:        distinct list of activator categories.
     """
 
     sql = "select category from activator group by category"

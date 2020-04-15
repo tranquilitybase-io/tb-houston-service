@@ -61,7 +61,6 @@ def create(environmentDetails):
     :return:        201 on success, 406 on environment exists
     """
     key = environmentDetails.get("key", None)
-    value = environmentDetails.get("value", None)
 
     # Does the environment exist already?
     existing_environment = (
