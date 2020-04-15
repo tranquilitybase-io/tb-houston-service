@@ -1,13 +1,12 @@
+#!/bin/bash
 LOGLEVEL=debug
 NUMBER_OF_WORKERS=5
 PORT=3000
-DB_SERVER_IP=localhost
 
 if [ ! -z "${1}" ]; then
 	PORT=${1}
 fi
 echo "Using port: ${PORT}"
-FLASK_RUN_PORT=${PORT}
 
 echo "SQLALCHEMY_DATABASE_URI: ${SQLALCHEMY_DATABASE_URI}"
 
