@@ -9,7 +9,6 @@ from datetime import datetime
 # 3rd party modules
 from flask import make_response, abort
 from config import db, app
-from models import User
 from models import Activator
 from models import ActivatorSchema
 from models import ModelTools

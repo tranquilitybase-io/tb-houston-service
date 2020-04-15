@@ -1,5 +1,6 @@
 """
-This is the deployments module and supports all the ReST actions for the
+deployments module 
+supports all the ReST actions for the
 team collection
 """
 

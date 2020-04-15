@@ -6,7 +6,6 @@ Health check: Very basic health check, can extend in future
 from flask import make_response, abort
 from config import db, app
 from pprint import pformat
-import json
 from extendedSchemas import HealthSchema
 
 
