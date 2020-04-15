@@ -1,14 +1,14 @@
 import json
 import sys
 
-input = []
+inp = []
 
 line = sys.stdin.readline()
-while (line): 
-    input.append(line)
+while (line):
+    inp.append(line)
     line = sys.stdin.readline()
 
-lines = "".join(input)
+lines = "".join(inp)
 lines.rstrip()
 
 oj = json.loads(lines)

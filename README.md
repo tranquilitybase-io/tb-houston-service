@@ -29,5 +29,5 @@ docker-compose -f experimental_houston_service.yml up
 docker run -p 3000:3000 gcr.io/tranquility-base-images/tb-houston-service:alpha
 
 ## References
-https://cloud.google.com/sql/docs/mysql/connect-kubernetes-engine
-https://cloud.google.com/sql/docs/mysql/configure-private-ip
+<https://cloud.google.com/sql/docs/mysql/connect-kubernetes-engine>
+<https://cloud.google.com/sql/docs/mysql/configure-private-ip>
