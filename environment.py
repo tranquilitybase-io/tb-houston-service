@@ -61,7 +61,6 @@ def create(environmentDetails):
     :return:        201 on success, 406 on environment exists
     """
     key = environmentDetails.get("key", None)
-    value = environmentDetails.get("value", None)
 
     # Does the environment exist already?
     existing_environment = (
@@ -125,7 +124,7 @@ def update(key, environmentDetails):
 
 def delete(key):
     """
-    This function deletes a environment from the environments list
+    Deletes an environment from the environments list.
 
     :param key: key of the environment to delete
     :return:    200 on successful delete, 404 if not found

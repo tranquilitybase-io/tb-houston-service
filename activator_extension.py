@@ -1,6 +1,5 @@
 from models import ModelTools
 import user_extension
-from extendedSchemas import ExtendedUserSchema
 
 
 def build_activator(act):

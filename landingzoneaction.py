@@ -1,10 +1,7 @@
 """
-This is the landingZoneAction module and supports all the ReST actions for the
+The landingZoneAction module and supports all the ReST actions for the
 landingZoneAction collection
 """
-
-# System modules
-from datetime import datetime
 
 # 3rd party modules
 from flask import make_response, abort
@@ -15,7 +12,7 @@ from pprint import pformat
 
 def read_all():
     """
-    This function responds to a request for /api/landingZoneActions
+    Responds to a request for /api/landingZoneActions
     with the complete lists of landingZoneActions
 
     :return:        json string of list of landingZoneActions
@@ -34,7 +31,7 @@ def read_all():
 
 def read_one(id):
     """
-    This function responds to a request for /api/landingzoneaction/{id}
+    Responds to a request for /api/landingzoneaction/{id}
     with one matching landingZoneAction from landingZoneActions
 
     :param landingZoneAction:   id of the landingZoneAction to find
@@ -58,7 +55,7 @@ def read_one(id):
 
 def create(landingZoneActionDetails):
     """
-    This function creates a new landingZoneAction in the landingZoneAction structure
+    Creates a new landingZoneAction in the landingZoneAction structure
     based on the passed in landingZoneAction data
 
     :param landingZoneAction:  landingZoneAction to create in landingZoneAction list
@@ -85,7 +82,7 @@ def create(landingZoneActionDetails):
 
 def update(id, landingZoneActionDetails):
     """
-    This function updates an existing landingZoneAction in the landingZoneAction list
+    Updates an existing landingZoneAction in the landingZoneAction list
 
     :param id: id of the landingZoneAction to update in the landingZoneAction list
     :param landingZoneAction:   landingZoneAction to update
@@ -123,7 +120,7 @@ def update(id, landingZoneActionDetails):
 
 def delete(id):
     """
-    This function deletes an landingZoneAction from the landingZoneAction list
+    Deletes an landingZoneAction from the landingZoneAction list.
 
     :param id: id of the landingZoneAction to delete
     :return:             200 on successful delete, 404 if not found

@@ -15,7 +15,6 @@ from models import ModelTools
 from extendedSchemas import ExtendedActivatorSchema
 from extendedSchemas import ExtendedUserSchema
 from extendedSchemas import ExtendedActivatorCategorySchema
-import user_extension
 import activator_extension
 import json
 from pprint import pformat
@@ -201,7 +200,7 @@ def delete(id):
 
 
 def setActivatorStatus(activatorDetails):
-    " update the activator status"
+    "Update the activator status."
 
     app.logger.info(pformat(activatorDetails))
     # Does the activator to delete exist?
@@ -229,7 +228,7 @@ def setActivatorStatus(activatorDetails):
 
 def categories():
     """
-    :return:        distinct list of activator categories
+    :return:        distinct list of activator categories.
     """
 
     sql = "select category from activator group by category"

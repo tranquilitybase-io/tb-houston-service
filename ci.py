@@ -58,7 +58,6 @@ def create(ciDetails):
     :return:        201 on success, 406 on ci exists
     """
     key = ciDetails.get("key", None)
-    value = ciDetails.get("value", None)
 
     # Does the ci exist already?
     existing_ci = (

@@ -1,4 +1,3 @@
-from models import Application
 from models import Activator
 import activator_extension
 

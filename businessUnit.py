@@ -127,7 +127,7 @@ def update(key, businessUnitDetails):
 
 def delete(key):
     """
-    This function deletes a BusinessUnit from the BusinessUnit list
+    Deletes a BusinessUnit from the BusinessUnit list.
 
     :param key: key of the BusinessUnit to delete
     :return:    200 on successful delete, 404 if not found
