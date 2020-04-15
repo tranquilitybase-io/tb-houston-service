@@ -10,7 +10,6 @@ from datetime import datetime
 from flask import make_response, abort
 from config import db, app
 from models import SourceControl, SourceControlSchema
-from models import ModelTools
 from pprint import pformat
 
 
@@ -98,7 +97,7 @@ def update(key, sourceControlDetails):
     app.logger.debug(pformat(sourceControlDetails))
 
     if sourceControlDetails["key"] != key:
-           abort(400, f"Key mismatch in path and body")    
+           abort(400, f"Key mismatch in path and body")
 
     # Does the sourceControl exist in sourceControl list?
     existing_sourceControl = SourceControl.query.filter(

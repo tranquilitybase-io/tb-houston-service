@@ -42,7 +42,7 @@ def read_all(status=None, activatorId=None, environment=None, page=None, page_si
             print(e)
             application_query = Application.query.order_by(Application.id)
 
-    application_query = application_query.filter( 
+    application_query = application_query.filter(
       (status == None or Application.status == status),
       (activatorId == None or Application.activatorId == activatorId),
       (environment == None or Application.env == environment)) 
@@ -97,7 +97,7 @@ def create(applicationDetails):
     """
 
     pprint(applicationDetails)
-    
+
     schema = ApplicationSchema()
     new_application = schema.load(applicationDetails, session=db.session)
     new_application.lastUpdated = ModelTools.get_utc_timestamp()

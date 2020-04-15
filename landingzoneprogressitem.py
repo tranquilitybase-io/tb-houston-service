@@ -3,9 +3,6 @@ This is the landingZoneProgressItem module and supports all the ReST actions for
 landingZoneProgressItem collection
 """
 
-# System modules
-from datetime import datetime
-
 # 3rd party modules
 from flask import make_response, abort
 from config import db, app
@@ -17,11 +14,10 @@ def apply_state_transition(lz_progress_items):
     # If all action locked status are False, set WAN action locked status to True
     # labels: WAN, VPN, Interconnect, Peering, DNS, Directory Services, Internet, SSO, Logging, Billing, Security Centre, Example
     #if (lz_progress_items['label'] == "WAN" and lz_progress_items[':
-    # TODO 
+    # TODO
 
     return lz_progress_items
 
-    
 
 def read_all():
     """
@@ -75,7 +71,7 @@ def create(landingZoneProgressItemDetails):
     :param landingZoneProgressItem:  landingZoneProgressItem to create in landingZoneProgressItem list
     :return:             201 on success, 406 on landingZoneProgressItem exists
     """
-  
+
     # we don't need the id, the is generated automatically on the database
     if ('id' in landingZoneProgressItemDetails):
       del landingZoneProgressItemDetails["id"]

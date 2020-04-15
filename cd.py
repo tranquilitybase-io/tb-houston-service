@@ -12,10 +12,10 @@ from pprint import pformat
 
 def read_all():
     """
-    This function responds to a request for /api/cd
-    with the complete lists of CDs 
+    Responds to a request for /api/cd
+    with the complete lists of CDs
 
-    :return:        json string of list of CDs 
+    :return:        json string of list of CDs
     """
 
     # Create the list of CDs from our data
@@ -58,7 +58,6 @@ def create(cdDetails):
     :return:        201 on success, 406 on cd exists
     """
     key = cdDetails.get("key", None)
-    value = cdDetails.get("value", None)
 
     # Does the cd exist already?
     existing_cd = (
@@ -94,7 +93,7 @@ def update(key, cdDetails):
     app.logger.debug(pformat(cdDetails))
 
     if cdDetails["key"] != key:
-           abort(400, f"Key mismatch in path and body")    
+           abort(400, f"Key mismatch in path and body")
 
     # Does the cd exist in cd list?
     existing_cd = CD.query.filter(

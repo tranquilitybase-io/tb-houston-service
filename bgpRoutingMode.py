@@ -3,9 +3,6 @@ This is the deployments module and supports all the ReST actions for the
 bgpRoutingMode collection
 """
 
-# System modules
-from datetime import datetime
-
 # 3rd party modules
 from flask import make_response, abort
 from config import db, app
@@ -87,10 +84,10 @@ def update(id, bgpRoutingModeDetails):
 
     if bgpRoutingModeDetails.get("id", id) != id:
            abort(400, f"Key mismatch in path and body")
-           
+
     # Does the bgpRoutingMode exist in bgpRoutingMode list?
     existing_bgpRoutingMode = BGPRoutingMode.query.filter(
-            BGPRoutingMode.id == id 
+            BGPRoutingMode.id == id
     ).one_or_none()
 
     # Does bgpRoutingMode exist?

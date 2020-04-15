@@ -3,9 +3,6 @@ This is the deployments module and supports all the ReST actions for the
 environment collection
 """
 
-# System modules
-from datetime import datetime
-
 # 3rd party modules
 from flask import make_response, abort
 from config import db, app
@@ -97,7 +94,7 @@ def update(key, environmentDetails):
 
     if environmentDetails["key"] != key:
            abort(400, f"Key mismatch in path and body")
-           
+ 
     # Does the environment exist in environment list?
     existing_environment = Environment.query.filter(
             Environment.key == key
