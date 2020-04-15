@@ -4,25 +4,15 @@
 set -x
 # exit when a command fails
 
-response=`curl -f -X POST "http://35.224.102.253:5000/api/login" \
+response=$(curl -f -X POST "http://0.0.0.0:3000/api/login" \
 --header "Accept: text/plain" -H "Content-Type: application/json; charset=utf-8" \
 --data-binary @- << EOF
 { \
    "username": "admin@your.company", \
    "password": "pass1"
  }
-EOF`
-echo $response
-
-response=`curl -f -X POST "http://0.0.0.0:3000/api/login" \
---header "Accept: text/plain" -H "Content-Type: application/json; charset=utf-8" \
---data-binary @- << EOF
-{ \
-   "username": "admin@your.company", \
-   "password": "pass1"
- }
-EOF`
-echo $response
+EOF)
+echo "$response"
 
 
 
