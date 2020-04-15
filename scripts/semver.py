@@ -44,9 +44,9 @@ def get_version(release_type_):
 		with open("version.json", "r") as fh:
 			version = json.load(fh)
 	except FileNotFoundError:
-		print("Version file not found, starting from v1.0.0!")
+		#print("Version file not found, starting from v1.0.0!")
 		version = json.loads(default_version_data)
-		print(version)
+		#print(version)
 	except IOError:
 		print("IO error, don't know how to deal with this!")
 		exit(1)
