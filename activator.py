@@ -20,6 +20,7 @@ import user_extension
 import activator_extension
 import json
 from pprint import pformat
+import ast
 
 
 def read_all(category=None, status=None, environment=None, platform=None, type=None, source=None, sensitivity=None, page=None, page_size=None, sort=None):
@@ -46,6 +47,8 @@ def read_all(category=None, status=None, environment=None, platform=None, type=N
                 else:
                     si2 = "asc"
                 orderby = "Activator.{0}.{1}()".format(si1.strip(), si2.strip())
+                # orderby is trusted input so is fine to use in this case,
+                # don't use ast.literal_eval as you will get Malformed String ValueError
                 orderby_arr.append(eval(orderby))
             #print("orderby: {}".format(orderby_arr))
             activator_query = Activator.query.order_by(*orderby_arr)
