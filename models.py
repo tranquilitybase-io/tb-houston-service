@@ -28,7 +28,7 @@ class ModelTools():
     def load_json_array(s):
         try:
             return json.loads(s)
-        except Exception as e:
+        except Exception:
             return []
 
     @staticmethod
@@ -175,7 +175,7 @@ class ActivatorSchema(ma.ModelSchema):
             app.logger.warning(e)
         try:
             out_data["platforms"] = json.loads(out_data["platforms"])
-        except Exception as e: 
+        except Exception as e:
             app.logger.warning(e)
         return out_data
 

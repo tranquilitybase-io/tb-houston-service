@@ -59,7 +59,7 @@ def read_all(category=None, status=None, environment=None, platform=None, type=N
       (sensitivity==None or Activator.sensitivity==sensitivity)
     )
 
-    if (page==None or page_size==None): 
+    if (page==None or page_size==None):
       activators = activator_query.all()
     else:
       activators = activator_query.limit(page_size).offset(page * page_size).all()
@@ -218,8 +218,8 @@ def setActivatorStatus(activatorDetails):
 
     # Otherwise, nope, activator to update was not found
     else:
-        id = activatorDetails['id']
-        abort(404, f"Activator id {id} not found")
+        actid = activatorDetails['id']
+        abort(404, f"Activator id {actid} not found")
 
 
 def categories():
@@ -237,4 +237,4 @@ def categories():
     schema = ExtendedActivatorCategorySchema(many=True)
     data = schema.dump(categories_arr)
     print(pformat(data))
-    return data, 200 
+    return data, 200

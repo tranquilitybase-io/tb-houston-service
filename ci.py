@@ -30,7 +30,7 @@ def read_all():
 def read_one(key):
     """
     This function responds to a request for /api/ci/{key}
-    with one matching ci from CIs 
+    with one matching ci from CIs
 
     :param application:   key of ci to find
     :return:              ci matching key

@@ -95,7 +95,7 @@ def update(id, subnetModeDetails):
       return data, 200
     else:
       abort(404, f"SubnetMode {id} not found")
-      
+
 
 def delete(id):
     """

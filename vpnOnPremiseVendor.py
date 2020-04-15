@@ -84,10 +84,10 @@ def update(id, vpnOnPremiseVendorDetails):
 
     if vpnOnPremiseVendorDetails.get("id", id) != id:
            abort(400, f"Key mismatch in path and body")
-           
+
     # Does the vpnOnPremiseVendor exist in vpnOnPremiseVendor list?
     existing_vpnOnPremiseVendor = VPNOnPremiseVendor.query.filter(
-            VPNOnPremiseVendor.id == id 
+            VPNOnPremiseVendor.id == id
     ).one_or_none()
 
     # Does vpnOnPremiseVendor exist?

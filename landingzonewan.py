@@ -3,11 +3,8 @@ This is the landingZoneWAN module and supports all the ReST actions for the
 landingZoneWAN collection
 """
 
-# System modules
-from datetime import datetime
-
 # 3rd party modules
-from flask import make_response, abort, jsonify
+from flask import make_response, abort
 from config import db, app
 from models import LandingZoneWAN, LandingZoneWANSchema
 from extendedSchemas import ExtendedLandingZoneWANSchema
@@ -15,7 +12,6 @@ from extendedSchemas import IdSchema
 from pprint import pformat
 from pprint import pprint
 from flatten_json import flatten, unflatten
-import json
 
 delimiter = '__'
 
