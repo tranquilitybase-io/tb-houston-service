@@ -45,7 +45,7 @@ jobs:
     - name: Test with pytest
       run: |
         pip install pytest
-        cd ${GITHUB_WORKSPACE}/tb-houston-service/tests
+        #cd ${GITHUB_WORKSPACE}/tests
         # No tests at the moment
         #pytest tests/
     - name: run semver, store in step variable version
