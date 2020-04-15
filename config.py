@@ -1,7 +1,6 @@
 import os
 import sys
 import connexion
-import pymysql
 import logging
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
