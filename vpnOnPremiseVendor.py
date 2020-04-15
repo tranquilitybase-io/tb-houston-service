@@ -3,9 +3,6 @@ This is the deployments module and supports all the ReST actions for the
 vpnOnPremiseVendor collection
 """
 
-# System modules
-from datetime import datetime
-
 # 3rd party modules
 from flask import make_response, abort
 from config import db, app

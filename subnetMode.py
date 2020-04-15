@@ -1,5 +1,5 @@
 """
-This is the deployments module and supports all the ReST actions for the
+Deployments module, supports all the ReST actions for the
 subnetMode collection
 """
 
@@ -15,7 +15,7 @@ from pprint import pformat
 
 def read_all():
     """
-    This function responds to a request for /api/subnetMode
+    Responds to a request for /api/subnetMode
     with the complete lists of subnetModes
 
     :return:        json string of list of subnetModes
@@ -32,7 +32,7 @@ def read_all():
 
 def read_one(id):
     """
-    This function responds to a request for /api/subnetmode/{id}
+    Responds to a request for /api/subnetmode/{id}
     with one matching subnetMode from subnetModes
 
     :param application:   id of subnetMode to find
@@ -52,7 +52,7 @@ def read_one(id):
 
 def create(subnetModeDetails):
     """
-    This function creates a new subnetMode in the subnetMode list
+    Creates a new subnetMode in the subnetMode list
     based on the passed in subnetMode data
 
     :param subnetMode:  subnetMode to create in subnetMode structure
@@ -76,7 +76,7 @@ def create(subnetModeDetails):
 
 def update(id, subnetModeDetails):
     """
-    This function updates an existing subnetMode in the subnetMode list
+    Updates an existing subnetMode in the subnetMode list
 
     :param key:    key of the subnetMode to update in the subnetMode list
     :param subnetMode:   subnetMode to update
@@ -102,7 +102,7 @@ def update(id, subnetModeDetails):
 
 def delete(id):
     """
-    This function deletes a subnetMode from the subnetModes list
+    Deletes a subnetMode from the subnetModes list
 
     :param key: key of the subnetMode to delete
     :return:    200 on successful delete, 404 if not found
