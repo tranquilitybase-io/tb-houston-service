@@ -20,7 +20,6 @@ import user_extension
 import activator_extension
 import json
 from pprint import pformat
-import ast
 
 
 def read_all(category=None, status=None, environment=None, platform=None, type=None, source=None, sensitivity=None, page=None, page_size=None, sort=None):
