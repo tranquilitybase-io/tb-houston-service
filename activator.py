@@ -200,7 +200,7 @@ def delete(id):
 
 
 def setActivatorStatus(activatorDetails):
-    "Update the activator status"
+    "Update the activator status."
 
     app.logger.info(pformat(activatorDetails))
     # Does the activator to delete exist?
