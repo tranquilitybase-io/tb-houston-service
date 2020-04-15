@@ -106,7 +106,7 @@ def update(id, vpnOnPremiseVendorDetails):
 
 def delete(id):
     """
-    This function deletes a vpnOnPremiseVendor from the vpnOnPremiseVendors list
+    Deletes a vpnOnPremiseVendor from the vpnOnPremiseVendors list.
 
     :param key: key of the vpnOnPremiseVendor to delete
     :return:    200 on successful delete, 404 if not found

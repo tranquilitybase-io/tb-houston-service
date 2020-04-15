@@ -3,9 +3,6 @@ Deployments module, supports all the ReST actions for the
 subnetMode collection
 """
 
-# System modules
-from datetime import datetime
-
 # 3rd party modules
 from flask import make_response, abort
 from config import db, app

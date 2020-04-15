@@ -3,9 +3,6 @@ This is the deployments module and supports all the ReST actions for the
 solutions collection
 """
 
-# System modules
-from datetime import datetime
-
 # 3rd party modules
 from flask import make_response, abort
 from config import db, app
@@ -15,7 +12,6 @@ from extendedSchemas import ExtendedSolutionSchema
 from extendedSchemas import SolutionNamesOnlySchema
 import solution_extension
 from pprint import pformat
-from pprint import pprint
 
 
 def read_all(active=None, namesonly=None, page=None, page_size=None, sort=None):
@@ -114,8 +110,6 @@ def create(solutionDetails):
     app.logger.debug("Before")
     app.logger.debug(pformat(solutionDetails))
 
-    lastUpdated = ModelTools.get_utc_timestamp()
-
     # Defaults
     if (solutionDetails.get('active') == None):
       solutionDetails['active'] = True
@@ -126,7 +120,7 @@ def create(solutionDetails):
     if (solutionDetails.get('teams') == None):
       solutionDetails['teams'] = 0
 
-    # Remove applications because Solutions don't have 
+    # Remove applications because Solutions don't have
     # any applications when they are first created
     if ('applications' in solutionDetails):
       del solutionDetails['applications']
@@ -136,7 +130,7 @@ def create(solutionDetails):
       del solutionDetails["id"]
 
     solutionDetails['lastUpdated'] = ModelTools.get_utc_timestamp()
-      
+
     app.logger.debug("After")
     app.logger.debug(pformat(solutionDetails))
 
@@ -153,7 +147,7 @@ def create(solutionDetails):
 
 def update(id, solutionDetails):
     """
-    This function updates an existing solutions in the solutions list
+    Updates an existing solutions in the solutions list.
 
     :param key:    key of the solutions to update in the solutions list
     :param solutions:   solutions to update

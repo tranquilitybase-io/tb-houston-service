@@ -8,7 +8,6 @@ if [ ! -z "${1}" ]; then
 	PORT=${1}
 fi
 echo "Using port: ${PORT}"
-FLASK_RUN_PORT=${PORT}
 echo "Using DB server IP: ${DB_SERVER_IP}"
 echo "SH SQLALCHEMY_DATABASE_URI: ${SQLALCHEMY_DATABASE_URI}"
 
