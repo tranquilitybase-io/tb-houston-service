@@ -59,7 +59,7 @@ def read_one(oid):
         return data
     else:
         abort(
-            404, "LandingZoneProgressItem with id {oid} not found".format(id=oid)
+            404, f"LandingZoneProgressItem with id {oid} not found".format(id=oid)
         )
 
 

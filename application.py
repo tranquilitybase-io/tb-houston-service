@@ -13,7 +13,7 @@ from pprint import pprint
 import json
 
 
-def read_all(status=None, activatorId=None, environment=None, 
+def read_all(status=None, activatorId=None, environment=None,
         page=None, page_size=None, sort=None):
     """
     This function responds to a request for /api/applications
@@ -85,7 +85,7 @@ def read_one(oid):
         return data
     else:
         abort(
-            404, "Application with id {oid} not found".format(id=oid)
+            404, f"Application with id {oid} not found".format(id=oid)
         )
 
 

@@ -16,8 +16,8 @@ import json
 from pprint import pformat
 
 
-def read_all(category=None, status=None, environment=None, 
-        platform=None, type=None, source=None, 
+def read_all(category=None, status=None, environment=None,
+        platform=None, type=None, source=None,
         sensitivity=None, page=None, page_size=None, sort=None):
     """
     This function responds to a request for /api/activators
@@ -97,7 +97,7 @@ def read_one(oid):
         return data
     else:
         abort(
-            404, "Activator with id {oid} not found".format(id=oid)
+            404, f"Activator with id {oid} not found".format(id=oid)
         )
 
 

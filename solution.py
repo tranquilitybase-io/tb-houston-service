@@ -94,7 +94,7 @@ def read_one(oid):
         return data
     else:
         abort(
-            404, "Solution with id {oid} not found".format(id=oid)
+            404, f"Solution with id {oid} not found".format(id=oid)
         )
 
 
