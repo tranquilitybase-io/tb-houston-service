@@ -6,13 +6,12 @@
 name: Houston Service - CICD Workflow
 
 on:
-  push
+  push:
+    branches-ignore: [ master ]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - name: Extract current branch name
       shell: bash
@@ -68,6 +67,8 @@ jobs:
         git config user.name "git.action"
         git add version.json
         git commit -m "Add version.json"
+        git commit -m "Add version.json"
+        git tag -a "internal-v${{ steps.get_version.outputs.version }}" -m "semver tagging ${{ steps.get_version_outputs.version }}"
     - name: Push changes
       uses: ad-m/github-push-action@master
       with:
