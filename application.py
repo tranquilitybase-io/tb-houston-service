@@ -10,6 +10,7 @@ from models import Application, ApplicationSchema
 from models import ModelTools
 from pprint import pformat
 from pprint import pprint
+import json
 
 
 def read_all(status=None, activatorId=None, environment=None, 
@@ -132,7 +133,7 @@ def update(oid, applicationDetails):
     # Does application exist?
     if existing_application is not None:
         applicationDetails['lastUpdated'] = ModelTools.get_utc_timestamp()
-        applicationDetails["resources"] = json.dumps(applicationDetails.get("resources", existing_activator.resources))
+        applicationDetails["resources"] = json.dumps(applicationDetails.get("resources", existing_application.resources))
         Application.query.filter(Application.id == oid).update(applicationDetails)
         db.session.commit()
 
