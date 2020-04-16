@@ -12,7 +12,8 @@ from pprint import pformat
 from pprint import pprint
 
 
-def read_all(status=None, activatorId=None, environment=None, page=None, page_size=None, sort=None):
+def read_all(status=None, activatorId=None, environment=None, 
+        page=None, page_size=None, sort=None):
     """
     This function responds to a request for /api/applications
     with the complete lists of applications
@@ -60,16 +61,16 @@ def read_all(status=None, activatorId=None, environment=None, page=None, page_si
     return data
 
 
-def read_one(id):
+def read_one(oid):
     """
-    This function responds to a request for /api/application/{id}
+    This function responds to a request for /api/application/{oid}
     with one matching application from applications
 
     :param application:   id of the application to find
     :return:              application matching the id
     """
 
-    application = (Application.query.filter(Application.id == id).one_or_none())
+    application = (Application.query.filter(Application.id == oid).one_or_none())
 
     app.logger.debug("application data:")
     app.logger.debug(pformat(application))
@@ -83,7 +84,7 @@ def read_one(id):
         return data
     else:
         abort(
-            404, "Application with id {id} not found".format(id=id)
+            404, "Application with id {oid} not found".format(id=oid)
         )
 
 
@@ -113,7 +114,7 @@ def create(applicationDetails):
     return data, 201
 
 
-def update(id, applicationDetails):
+def update(oid, applicationDetails):
     """
     This function updates an existing application in the application list
 
@@ -126,12 +127,13 @@ def update(id, applicationDetails):
     app.logger.debug(pformat(applicationDetails))
 
     # Does the application exist in applications?
-    existing_application = Application.query.filter(Application.id == id).one_or_none()
+    existing_application = Application.query.filter(Application.id == oid).one_or_none()
 
     # Does application exist?
     if existing_application is not None:
         applicationDetails['lastUpdated'] = ModelTools.get_utc_timestamp()
-        Application.query.filter(Application.id == id).update(applicationDetails)
+        applicationDetails["resources"] = json.dumps(applicationDetails.get("resources", existing_activator.resources))
+        Application.query.filter(Application.id == oid).update(applicationDetails)
         db.session.commit()
 
         # return the updated application in the response
@@ -144,7 +146,7 @@ def update(id, applicationDetails):
         abort(404, f"Application not found")
 
 
-def delete(id):
+def delete(oid):
     """
     This function deletes an application from the application list
 
@@ -152,17 +154,17 @@ def delete(id):
     :return:             200 on successful delete, 404 if not found
     """
     # Does the application to delete exist?
-    existing_application = Application.query.filter(Application.id == id).one_or_none()
+    existing_application = Application.query.filter(Application.id == oid).one_or_none()
 
     # if found?
     if existing_application is not None:
         db.session.delete(existing_application)
         db.session.commit()
 
-        return make_response(f"Application id {id} successfully deleted", 200)
+        return make_response(f"Application id {oid} successfully deleted", 200)
 
     # Otherwise, nope, application to delete not found
     else:
-        abort(404, f"Application id {id} not found")
+        abort(404, f"Application id {oid} not found")
 
 

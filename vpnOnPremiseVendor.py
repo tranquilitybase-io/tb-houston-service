@@ -27,16 +27,16 @@ def read_all():
     return data
 
 
-def read_one(id):
+def read_one(oid):
     """
-    This function responds to a request for /api/subnetmode/{id}
+    This function responds to a request for /api/subnetmode/{oid}
     with one matching vpnOnPremiseVendor from vpnOnPremiseVendors
 
     :param application:   id of vpnOnPremiseVendor to find
     :return:              vpnOnPremiseVendor matching key
     """
 
-    vpnOnPremiseVendor = (VPNOnPremiseVendor.query.filter(VPNOnPremiseVendor.id == id).one_or_none())
+    vpnOnPremiseVendor = (VPNOnPremiseVendor.query.filter(VPNOnPremiseVendor.id == oid).one_or_none())
 
     if vpnOnPremiseVendor is not None:
         # Serialize the data for the response
@@ -44,7 +44,7 @@ def read_one(id):
         data = vpnOnPremiseVendor_schema.dump(vpnOnPremiseVendor)
         return data
     else:
-        abort(404, f"VPNOnPremiseVendor with id {id} not found")
+        abort(404, f"VPNOnPremiseVendor with id {oid} not found")
 
 
 def create(vpnOnPremiseVendorDetails):
@@ -71,7 +71,7 @@ def create(vpnOnPremiseVendorDetails):
     return data, 201
 
 
-def update(id, vpnOnPremiseVendorDetails):
+def update(oid, vpnOnPremiseVendorDetails):
     """
     This function updates an existing vpnOnPremiseVendor in the vpnOnPremiseVendor list
 
@@ -82,18 +82,18 @@ def update(id, vpnOnPremiseVendorDetails):
 
     app.logger.debug(pformat(vpnOnPremiseVendorDetails))
 
-    if vpnOnPremiseVendorDetails.get("id", id) != id:
+    if vpnOnPremiseVendorDetails.get("id", oid) != oid:
            abort(400, f"Key mismatch in path and body")
 
     # Does the vpnOnPremiseVendor exist in vpnOnPremiseVendor list?
     existing_vpnOnPremiseVendor = VPNOnPremiseVendor.query.filter(
-            VPNOnPremiseVendor.id == id
+            VPNOnPremiseVendor.id == oid
     ).one_or_none()
 
     # Does vpnOnPremiseVendor exist?
 
     if existing_vpnOnPremiseVendor is not None:
-        VPNOnPremiseVendor.query.filter(VPNOnPremiseVendor.id == id).update(vpnOnPremiseVendorDetails)
+        VPNOnPremiseVendor.query.filter(VPNOnPremiseVendor.id == oid).update(vpnOnPremiseVendorDetails)
         db.session.commit()
 
         # return the updated vpnOnPremiseVendor in the response
@@ -101,10 +101,10 @@ def update(id, vpnOnPremiseVendorDetails):
         data = schema.dump(existing_vpnOnPremiseVendor)
         return data, 200
     else:
-        abort(404, f"VPNOnPremiseVendor {id} not found")
+        abort(404, f"VPNOnPremiseVendor {oid} not found")
 
 
-def delete(id):
+def delete(oid):
     """
     Deletes a vpnOnPremiseVendor from the vpnOnPremiseVendors list.
 
@@ -112,17 +112,17 @@ def delete(id):
     :return:    200 on successful delete, 404 if not found
     """
     # Does the vpnOnPremiseVendor to delete exist?
-    existing_vpnOnPremiseVendor = VPNOnPremiseVendor.query.filter(VPNOnPremiseVendor.id == id).one_or_none()
+    existing_vpnOnPremiseVendor = VPNOnPremiseVendor.query.filter(VPNOnPremiseVendor.id == oid).one_or_none()
 
     # if found?
     if existing_vpnOnPremiseVendor is not None:
         db.session.delete(existing_vpnOnPremiseVendor)
         db.session.commit()
 
-        return make_response(f"VPNOnPremiseVendor {id} successfully deleted", 200)
+        return make_response(f"VPNOnPremiseVendor {oid} successfully deleted", 200)
 
     # Otherwise, nope, vpnOnPremiseVendor to delete not found
     else:
-        abort(404, f"VPNOnPremiseVendor {id} not found")
+        abort(404, f"VPNOnPremiseVendor {oid} not found")
 
 

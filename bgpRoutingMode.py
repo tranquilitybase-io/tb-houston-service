@@ -27,16 +27,16 @@ def read_all():
     return data
 
 
-def read_one(id):
+def read_one(oid):
     """
-    This function responds to a request for /api/bgproutingmode/{id}
+    This function responds to a request for /api/bgproutingmode/{oid}
     with one matching bgpRoutingMode from bgpRoutingModes
 
-    :param application:   id of bgpRoutingMode to find
+    :param application:   oid of bgpRoutingMode to find
     :return:              bgpRoutingMode matching key
     """
 
-    bgpRoutingMode = (BGPRoutingMode.query.filter(BGPRoutingMode.id == id).one_or_none())
+    bgpRoutingMode = (BGPRoutingMode.query.filter(BGPRoutingMode.id == oid).one_or_none())
 
     if bgpRoutingMode is not None:
         # Serialize the data for the response
@@ -44,7 +44,7 @@ def read_one(id):
         data = bgpRoutingMode_schema.dump(bgpRoutingMode)
         return data
     else:
-        abort(404, f"BGPRoutingMode with id {id} not found")
+        abort(404, f"BGPRoutingMode with id {oid} not found")
 
 
 def create(bgpRoutingModeDetails):
@@ -71,7 +71,7 @@ def create(bgpRoutingModeDetails):
     return data, 201
 
 
-def update(id, bgpRoutingModeDetails):
+def update(oid, bgpRoutingModeDetails):
     """
     This function updates an existing bgpRoutingMode in the bgpRoutingMode list
 
@@ -82,18 +82,18 @@ def update(id, bgpRoutingModeDetails):
 
     app.logger.debug(pformat(bgpRoutingModeDetails))
 
-    if bgpRoutingModeDetails.get("id", id) != id:
+    if bgpRoutingModeDetails.get("id", oid) != oid:
            abort(400, f"Key mismatch in path and body")
 
     # Does the bgpRoutingMode exist in bgpRoutingMode list?
     existing_bgpRoutingMode = BGPRoutingMode.query.filter(
-            BGPRoutingMode.id == id
+            BGPRoutingMode.id == oid
     ).one_or_none()
 
     # Does bgpRoutingMode exist?
 
     if existing_bgpRoutingMode is not None:
-        BGPRoutingMode.query.filter(BGPRoutingMode.id == id).update(bgpRoutingModeDetails)
+        BGPRoutingMode.query.filter(BGPRoutingMode.id == oid).update(bgpRoutingModeDetails)
         db.session.commit()
 
         # return the updted bgpRoutingMode in the response
@@ -106,7 +106,7 @@ def update(id, bgpRoutingModeDetails):
         abort(404, f"BGPRoutingMode not found")
 
 
-def delete(id):
+def delete(oid):
     """
     This function deletes a bgpRoutingMode from the bgpRoutingModes list
 
@@ -114,17 +114,17 @@ def delete(id):
     :return:    200 on successful delete, 404 if not found
     """
     # Does the bgpRoutingMode to delete exist?
-    existing_bgpRoutingMode = BGPRoutingMode.query.filter(BGPRoutingMode.id == id).one_or_none()
+    existing_bgpRoutingMode = BGPRoutingMode.query.filter(BGPRoutingMode.id == oid).one_or_none()
 
     # if found?
     if existing_bgpRoutingMode is not None:
         db.session.delete(existing_bgpRoutingMode)
         db.session.commit()
 
-        return make_response(f"BGPRoutingMode {id} successfully deleted", 200)
+        return make_response(f"BGPRoutingMode {oid} successfully deleted", 200)
 
     # Otherwise, nope, bgpRoutingMode to delete not found
     else:
-        abort(404, f"BGPRoutingMode {id} not found")
+        abort(404, f"BGPRoutingMode {oid} not found")
 
 

@@ -75,16 +75,16 @@ def read_all(active=None, namesonly=None, page=None, page_size=None, sort=None):
     return data
 
 
-def read_one(id):
+def read_one(oid):
     """
-    This function responds to a request for /api/solution/{id}
+    This function responds to a request for /api/solution/{oid}
     with one matching solution from solutions
 
     :param application:   id of solution to find
     :return:              solution matching id
     """
 
-    sol = (Solution.query.filter(Solution.id == id).one_or_none())
+    sol = (Solution.query.filter(Solution.id == oid).one_or_none())
 
     if sol is not None:
         solution = solution_extension.build_solution(sol)
@@ -94,7 +94,7 @@ def read_one(id):
         return data
     else:
         abort(
-            404, "Solution with id {id} not found".format(id=id)
+            404, "Solution with id {oid} not found".format(id=oid)
         )
 
 
@@ -145,7 +145,7 @@ def create(solutionDetails):
     return data, 201
 
 
-def update(id, solutionDetails):
+def update(oid, solutionDetails):
     """
     Updates an existing solutions in the solutions list.
 
@@ -158,7 +158,7 @@ def update(id, solutionDetails):
 
     # Does the solutions exist in solutions list?
     existing_solution = Solution.query.filter(
-            Solution.id == id
+            Solution.id == oid
     ).one_or_none()
 
     # Does solutions exist?
@@ -181,7 +181,7 @@ def update(id, solutionDetails):
         abort(404, f"Solution not found")
 
 
-def delete(id):
+def delete(oid):
     """
     This function deletes a solution from the solutions list
 
@@ -189,17 +189,17 @@ def delete(id):
     :return:    200 on successful delete, 404 if not found
     """
     # Does the solution to delete exist?
-    existing_solution = Solution.query.filter(Solution.id == id).one_or_none()
+    existing_solution = Solution.query.filter(Solution.id == oid).one_or_none()
 
     # if found?
     if existing_solution is not None:
         db.session.delete(existing_solution)
         db.session.commit()
 
-        return make_response(f"Solution {id} successfully deleted", 200)
+        return make_response(f"Solution {oid} successfully deleted", 200)
 
     # Otherwise, nope, solution to delete not found
     else:
-        abort(404, f"Solution {id} not found")
+        abort(404, f"Solution {oid} not found")
 
 
