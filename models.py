@@ -80,7 +80,6 @@ class Activator(db.Model):
     technologyOwnerEmail  = db.Column(db.String(255))
     billing = db.Column(db.String(255))
     activator = db.Column(db.String(255))
-    resources = db.Column(db.String(255))
     status = db.Column(db.String(255))
     description = db.Column(db.String(255))
     #accessRequestedBy = db.Column(db.Integer, db.ForeignKey('user.id'))
@@ -179,6 +178,7 @@ class ActivatorSchema(ma.ModelSchema):
             app.logger.warning(e)
         return out_data
 
+
 # Application
 class Application(db.Model):
     __tablename__ = "application"
@@ -190,6 +190,8 @@ class Application(db.Model):
     status = db.Column(db.String(64))
     description = db.Column(db.String(255))
     lastUpdated = db.Column(db.String(255))
+    resources = db.Column(db.String(255))
+
 
 class ApplicationSchema(ma.ModelSchema):
     def __init__(self, **kwargs):
@@ -201,6 +203,22 @@ class ApplicationSchema(ma.ModelSchema):
 
     solutionId = fields.Int()
     activatorId = fields.Int()
+
+    @pre_load
+    def serialize_arrays(self, in_data, **kwargs):
+        try:
+            in_data["resources"] = json.dumps(in_data["resources"])
+        except Exception as e:
+            app.logger.warning(e)
+        return in_data
+
+    @post_dump
+    def deserialize_arrays(self, out_data, many, **kwargs):
+        try:
+            out_data["resources"] = json.loads(out_data["resources"])
+        except Exception as e:
+            app.logger.warning(e)
+        return out_data
 
 
 # Solutions
