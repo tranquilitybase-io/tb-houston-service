@@ -1,0 +1,223 @@
+{
+  "active": true,
+  "applications": [
+    {
+      "activator": {
+        "accessRequestedBy": null,
+        "activator": "Single Region Kubernetes",
+        "activatorLink": "",
+        "apiManagement": [
+          "ApiGee"
+        ],
+        "available": true,
+        "billing": "Monthly: Eagle tier 3",
+        "businessUnit": "FICC Business Unit",
+        "category": "Web application",
+        "cd": [
+          "Codeship",
+          "Option"
+        ],
+        "ci": [
+          "Jenkins",
+          "Travis"
+        ],
+        "description": "Some very long description that I did not want to copy. Some very long description that I did not want to copy. Some very long description that I did not want to copy",
+        "envs": [
+          "POC",
+          "DEV"
+        ],
+        "hosting": [
+          "Appengine"
+        ],
+        "id": 1,
+        "lastUpdated": "2020-04-07 16:12:49",
+        "name": "CMS Web App",
+        "platforms": [
+          "GCP"
+        ],
+        "regions": [
+          "UK",
+          "DB"
+        ],
+        "resources": [
+          {
+            "ipAddress": "40.123.45.236",
+            "name": "GKE Cluster"
+          },
+          {
+            "ipAddress": "40.123.45.236",
+            "name": "Cloud SQL"
+          }
+        ],
+        "sensitivity": "Public",
+        "serverCapacity": 1200,
+        "source": "open",
+        "sourceControl": [
+          "JIRA",
+          "Option"
+        ],
+        "status": "Available",
+        "technologyOwner": "Sanjeev Gupta",
+        "technologyOwnerEmail": "s.gupta@company.name",
+        "type": "Tier 3",
+        "userCapacity": 1000
+      },
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et do",
+      "env": "DEV",
+      "lastUpdated": "2020-04-02 00:00:00",
+      "name": "Placeholder",
+      "status": "Active"
+    },
+    {
+      "activator": {
+        "accessRequestedBy": null,
+        "activator": "Multi Region Kubernetes",
+        "activatorLink": "",
+        "apiManagement": [
+          "ApiGee"
+        ],
+        "available": true,
+        "billing": "Monthly: Eagle tier 1",
+        "businessUnit": "M&A Business Unit",
+        "category": "Micro-services",
+        "cd": [
+          "Codeship",
+          "Option"
+        ],
+        "ci": [
+          "Jenkins",
+          "Travis"
+        ],
+        "description": "Some very long description that I did not want to copy. Some very long description that I did not want to copy. Some very long description that I did not want to copy",
+        "envs": [
+          "POC",
+          "AWS",
+          "Other",
+          "Fancy"
+        ],
+        "hosting": [
+          "Appengine"
+        ],
+        "id": 2,
+        "lastUpdated": "2020-01-09 15:59:10",
+        "name": "Multi region kubernetes",
+        "platforms": [
+          "GCP"
+        ],
+        "regions": [
+          "UK",
+          "DB"
+        ],
+        "resources": [
+          {
+            "ipAddress": "40.123.45.236",
+            "name": "GKE Cluster"
+          },
+          {
+            "ipAddress": "40.123.45.236",
+            "name": "Cloud SQL"
+          }
+        ],
+        "sensitivity": "Restricted",
+        "serverCapacity": 2000,
+        "source": "open",
+        "sourceControl": [
+          "JIRA",
+          "Option"
+        ],
+        "status": "Available",
+        "technologyOwner": "Nathanael Stoltenberg",
+        "technologyOwnerEmail": "Nathanael.Stoltenberg@yahoo.com",
+        "type": "Tier 1",
+        "userCapacity": 1300
+      },
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et do",
+      "env": "POC",
+      "lastUpdated": "2020-04-02 00:00:00",
+      "name": "Other App",
+      "status": "Active"
+    },
+    {
+      "activator": {
+        "accessRequestedBy": null,
+        "activator": "Multi Region Kubernetes",
+        "activatorLink": "",
+        "apiManagement": [
+          "ApiGee"
+        ],
+        "available": true,
+        "billing": "Monthly: Eagle tier 1",
+        "businessUnit": "M&A Business Unit",
+        "category": "Micro-services",
+        "cd": [
+          "Codeship",
+          "Option"
+        ],
+        "ci": [
+          "Jenkins",
+          "Travis"
+        ],
+        "description": "Some very long description that I did not want to copy. Some very long description that I did not want to copy. Some very long description that I did not want to copy",
+        "envs": [
+          "POC",
+          "AWS",
+          "Other",
+          "Fancy"
+        ],
+        "hosting": [
+          "Appengine"
+        ],
+        "id": 2,
+        "lastUpdated": "2020-01-09 15:59:10",
+        "name": "Multi region kubernetes",
+        "platforms": [
+          "GCP"
+        ],
+        "regions": [
+          "UK",
+          "DB"
+        ],
+        "resources": [
+          {
+            "ipAddress": "40.123.45.236",
+            "name": "GKE Cluster"
+          },
+          {
+            "ipAddress": "40.123.45.236",
+            "name": "Cloud SQL"
+          }
+        ],
+        "sensitivity": "Restricted",
+        "serverCapacity": 2000,
+        "source": "open",
+        "sourceControl": [
+          "JIRA",
+          "Option"
+        ],
+        "status": "Available",
+        "technologyOwner": "Nathanael Stoltenberg",
+        "technologyOwnerEmail": "Nathanael.Stoltenberg@yahoo.com",
+        "type": "Tier 1",
+        "userCapacity": 1300
+      },
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et do",
+      "env": "POC",
+      "lastUpdated": "2020-04-03 09:23:37",
+      "name": "My First App",
+      "status": "Active"
+    }
+  ],
+  "cd": "Spinnaker",
+  "ci": "Jenkins CI",
+  "costCentre": "XXX-123-456-YYY",
+  "description": "Solution for internal users to be able to process settlement for FX transactions",
+  "environments": [
+    "Development"
+  ],
+  "favourite": true,
+  "id": 1,
+  "lastUpdated": "2020-03-08 23:07:00",
+  "name": "Risk Engine",
+  "sourceControl": "GitHub",
+  "teams": 2
+}
