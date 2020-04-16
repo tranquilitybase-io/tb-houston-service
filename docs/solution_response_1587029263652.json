@@ -39,16 +39,6 @@
           "UK",
           "DB"
         ],
-        "resources": [
-          {
-            "ipAddress": "40.123.45.236",
-            "name": "GKE Cluster"
-          },
-          {
-            "ipAddress": "40.123.45.236",
-            "name": "Cloud SQL"
-          }
-        ],
         "sensitivity": "Public",
         "serverCapacity": 1200,
         "source": "open",
@@ -62,6 +52,16 @@
         "type": "Tier 3",
         "userCapacity": 1000
       },
+      "resources": [
+        {
+          "ipAddress": "40.123.45.236",
+          "name": "GKE Cluster"
+        },
+        {
+          "ipAddress": "40.123.45.236",
+          "name": "Cloud SQL"
+        }
+      ],      
       "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et do",
       "env": "DEV",
       "lastUpdated": "2020-04-02 00:00:00",
@@ -108,16 +108,6 @@
           "UK",
           "DB"
         ],
-        "resources": [
-          {
-            "ipAddress": "40.123.45.236",
-            "name": "GKE Cluster"
-          },
-          {
-            "ipAddress": "40.123.45.236",
-            "name": "Cloud SQL"
-          }
-        ],
         "sensitivity": "Restricted",
         "serverCapacity": 2000,
         "source": "open",
@@ -131,6 +121,16 @@
         "type": "Tier 1",
         "userCapacity": 1300
       },
+      "resources": [
+        {
+          "ipAddress": "40.123.45.236",
+          "name": "GKE Cluster"
+        },
+        {
+          "ipAddress": "40.123.45.236",
+          "name": "Cloud SQL"
+        }
+      ],      
       "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et do",
       "env": "POC",
       "lastUpdated": "2020-04-02 00:00:00",
@@ -177,16 +177,6 @@
           "UK",
           "DB"
         ],
-        "resources": [
-          {
-            "ipAddress": "40.123.45.236",
-            "name": "GKE Cluster"
-          },
-          {
-            "ipAddress": "40.123.45.236",
-            "name": "Cloud SQL"
-          }
-        ],
         "sensitivity": "Restricted",
         "serverCapacity": 2000,
         "source": "open",
@@ -200,6 +190,16 @@
         "type": "Tier 1",
         "userCapacity": 1300
       },
+      "resources": [
+        {
+          "ipAddress": "40.123.45.236",
+          "name": "GKE Cluster"
+        },
+        {
+          "ipAddress": "40.123.45.236",
+          "name": "Cloud SQL"
+        }
+      ],      
       "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et do",
       "env": "POC",
       "lastUpdated": "2020-04-03 09:23:37",
