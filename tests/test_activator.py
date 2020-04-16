@@ -123,7 +123,6 @@ def set_activator_status(id):
     payload= {'accessRequestedBy': 0, 'id': id, 'status': 'Locked' }
     resp = requests.post(url, headers=headers , data= json.dumps(payload,indent=4))
     resp_json = resp.json()
-    print(resp_json)
     #Validate response body for updated values
     assert resp.status_code == 200
     assert resp_json['id'] == id
@@ -182,6 +181,7 @@ def get_categories():
     resp = requests.get(url, headers=headers)  
     #Validate response
     assert resp.status_code == 200
+
 
 
 
