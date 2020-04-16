@@ -27,7 +27,7 @@ def read_all():
     return data
 
 
-def read_one(snId):
+def read_one(oid):
     """
     Responds to a request for /api/subnetmode/{oid}
     with one matching subnetMode from subnetModes
@@ -36,7 +36,7 @@ def read_one(snId):
     :return:              subnetMode matching key
     """
 
-    subnetMode = SubnetMode.query.filter(SubnetMode.id == snId).one_or_none()
+    subnetMode = SubnetMode.query.filter(SubnetMode.id == oid).one_or_none()
 
     if subnetMode is not None:
         # Serialize the data for the response
@@ -44,7 +44,7 @@ def read_one(snId):
         data = subnetMode_schema.dump(subnetMode)
         return data
     else:
-        abort(404, f"SubnetMode with id {snId} not found")
+        abort(404, f"SubnetMode with id {oid} not found")
 
 
 def create(subnetModeDetails):
@@ -71,7 +71,7 @@ def create(subnetModeDetails):
     return data, 201
 
 
-def update(snId, subnetModeDetails):
+def update(oid, subnetModeDetails):
     """
     Updates an existing subnetMode in the subnetMode list
 
@@ -82,13 +82,13 @@ def update(snId, subnetModeDetails):
 
     app.logger.debug(pformat(subnetModeDetails))
 
-    if 'id' in subnetModeDetails and subnetModeDetails['id'] != snId:
+    if 'id' in subnetModeDetails and subnetModeDetails['id'] != oid:
            abort(400, f"Key mismatch in path and body")
 
-    existing_subnetMode = SubnetMode.query.filter(SubnetMode.id == snId).one_or_none()
+    existing_subnetMode = SubnetMode.query.filter(SubnetMode.id == oid).one_or_none()
 
     if existing_subnetMode is not None:
-      SubnetMode.query.filter(SubnetMode.id == snId).update(subnetModeDetails)
+      SubnetMode.query.filter(SubnetMode.id == oid).update(subnetModeDetails)
       db.session.commit()
       schema = SubnetModeSchema()
       data = schema.dump(existing_subnetMode)
@@ -97,7 +97,7 @@ def update(snId, subnetModeDetails):
       abort(404, f"SubnetMode {oid} not found")
 
 
-def delete(snId):
+def delete(oid):
     """
     Deletes a subnetMode from the subnetModes list
 
@@ -105,17 +105,17 @@ def delete(snId):
     :return:    200 on successful delete, 404 if not found
     """
     # Does the subnetMode to delete exist?
-    existing_subnetMode = SubnetMode.query.filter(SubnetMode.id == snId).one_or_none()
+    existing_subnetMode = SubnetMode.query.filter(SubnetMode.id == oid).one_or_none()
 
     # if found?
     if existing_subnetMode is not None:
         db.session.delete(existing_subnetMode)
         db.session.commit()
 
-        return make_response(f"SubnetMode {snId} successfully deleted", 200)
+        return make_response(f"SubnetMode {oid} successfully deleted", 200)
 
     # Otherwise, nope, subnetMode to delete not found
     else:
-        abort(404, f"SubnetMode {snId} not found")
+        abort(404, f"SubnetMode {oid} not found")
 
 
