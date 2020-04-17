@@ -9,9 +9,13 @@ from config import db, app
 from models import Solution, SolutionSchema
 from models import ModelTools
 from extendedSchemas import ExtendedSolutionSchema
+from extendedSchemas import SolutionDeploymentSchema
 from extendedSchemas import SolutionNamesOnlySchema
 import solution_extension
 from pprint import pformat
+import requests
+import os
+import json
 
 
 def read_all(active=None, namesonly=None, page=None, page_size=None, sort=None):
@@ -43,7 +47,7 @@ def read_all(active=None, namesonly=None, page=None, page_size=None, sort=None):
             #print("orderby: {}".format(orderby_arr))
             solution_query = Solution.query.order_by(*orderby_arr)
         except Exception as e:
-            print(e)
+            print(pformat(e))
             solution_query = Solution.query.order_by(Solution.id)
 
     # Create the list of solutions from our data
@@ -203,3 +207,84 @@ def delete(oid):
         abort(404, f"Solution {oid} not found")
 
 
+def deployment_read_all():
+    """
+    This function responds to a request for /api/solutiondeployments
+    with the complete lists of deployed solutions
+
+    :return:        json string of list of deployed solutions
+                    id and deployed fields
+    """
+
+    app.logger.debug("solution.deployment_read_all")
+
+    solutions = Solution.query.all()
+    schema = SolutionDeploymentSchema(many=True)
+    data = schema.dump(solutions)
+
+    app.logger.debug("solutions data:")
+    app.logger.debug(data)
+    return data
+
+
+def deployment_create(solutionDeploymentDetails):
+    """
+    This function queries a solution forwards the request to the DaC
+
+    :param solution:  id
+    :return:        201 on success, 406 if solution doesn't exist
+    """
+
+    app.logger.debug(pformat(solutionDeploymentDetails))
+    oid = solutionDeploymentDetails['id'];
+    sol_json_payload = read_one(oid)
+    send_deployment_request_to_the_dac(sol_json_payload)
+
+
+def deployment_update(oid, solutionDeploymentDetails):
+    """
+    Updates an existing solutions in the solutions list with the deployed status.
+
+    :param key:    id of the solution
+    :param solutionDetails:   solution details to update
+    :return:       updated solution
+    """
+
+    app.logger.debug(solutionDeploymentDetails)
+
+    # Does the solutions exist in solutions list?
+    existing_solution = Solution.query.filter(
+            Solution.id == oid
+    ).one_or_none()
+
+    # Does solutions exist?
+
+    if existing_solution is not None:
+        schema = SolutionSchema()
+        update_solution = schema.load(solutionDeploymentDetails, session=db.session)
+        update_solution.key = solutionDeploymentDetails['id']
+        update_solution.lastUpdated = ModelTools.get_utc_timestamp()
+        update_solution.deployed = solutionDeploymentDetails['deployed']
+
+        db.session.merge(update_solution)
+        db.session.commit()
+
+        # return the updted solutions in the response
+        data = schema.dump(update_solution)
+        return data, 200
+
+    # otherwise, nope, deployment doesn't exist, so that's an error
+    else:
+        abort(404, f"Solution {oid} not found")
+
+
+def send_deployment_request_to_the_dac(sol_json_payload):
+
+    url = "http://" + os.environ['GCP_DAC_URL'] + "/api/solution/"
+
+    print(f"url: {url}")
+    print(f"data: {sol_json_payload}")
+    headers = { 'Content-Type': "application/json" }
+    response = requests.post(url, data=json.dumps(sol_json_payload), headers=headers)
+    print(pformat(response))
+    return response

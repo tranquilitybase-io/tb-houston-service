@@ -8,7 +8,7 @@ info:
     There is more information about the Eagle Console here.
     https://github.com/tranquilitybase-io/tb-eagle-console/wiki
 
-  version: 2.0.5
+  version: 2.0.6
   title: TB Houston Service
   termsOfService: "https://github.com/tranquilitybase-io/tb-houston-service/wiki/Terms-of-service"
   license:
@@ -894,6 +894,57 @@ paths:
       responses:
         "200":
           description: Successfully deleted a solution
+
+  /solutiondeployments/:
+    get:
+      operationId: solution.deployment_read_all
+      tags:
+        - solution
+      summary: Read the entire list of deployed solutions
+      description: Read the list of deployed solutions
+      responses:
+        "200":
+          description: Successfully read solutions list operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SolutionDeployment"
+
+  /solutiondeployment/:
+    post:
+      operationId: solution.deployment_create
+      tags:
+        - solution
+      summary: receive solution id from the Eagle Console and then post the complete Solution to the DaC
+      description: receive solution id from the Eagle Console and then post the complete Solution to the DaC
+      requestBody:
+        $ref: "#/components/requestBodies/solution.solutionDeploymentDetails"
+        description: solution deployment contains the solution id
+      responses:
+        "201":
+          description: Successfully created a Solution Deployment
+
+  "/solutiondeployment/{oid}":
+    put:
+      operationId: solution.deployment_update
+      tags:
+        - solution
+      summary: Update a solution in the list with the deployed state
+      description: Update a solution in the list with the deployed state
+      parameters:
+        - name: oid
+          in: path
+          description: key of the solution to update
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        $ref: "#/components/requestBodies/solution.solutionDeploymentDetails"
+      responses:
+        "200":
+          description: Successfully updated a solution
 
   /activators/:
     get:
@@ -1805,55 +1856,30 @@ components:
             $ref: "#/components/schemas/User"
       description: login details
       required: true
-
+      
     solution.solutionDetails:
       content:
         application/json:
           schema:
             x-body-name: solutionDetails
+            $ref: "#/components/schemas/Solution"
+      description: solution to create
+      required: true
+
+    solution.solutionDeploymentDetails:
+      content:
+        application/json:
+          schema:
+            x-body-name: solutionDeploymentDetails
             type: object
             properties:
-              name:
-                type: string
-                description: name
-              description:
-                type: string
-                description: description
-              businessUnit:
-                type: string
-                description: businessUnit
-              costCentre:
-                type: string
-                description: costCentre
-              ci:
-                type: string
-                description: ci
-              cd:
-                type: string
-                description: cd
-              sourceControl:
-                type: string
-                description: sourceControl
-              environments:
-                type: array
-                description: environments
-                items:
-                  properties:
-                    environment:
-                      type: string
-                      description: environment
-              active:
-                type: boolean
-                description: active
-              favourite:
-                type: boolean
-                description: favourite
-              teams:
+              id:
                 type: integer
-                description: teams
-              lastUpdated:
-                type: string
-                description: "UTC/CUT last updated datetime stamp see: https://github.com/tranquilitybase-io/tb-houston-service/wiki/UTC-Timestamp"
+                description: The id of the solution that is being deployed
+              deployed:
+                type: boolean
+                description: The state of the deployment
+      description: the solution id to deploy
       required: true
 
   schemas:
@@ -2257,7 +2283,11 @@ components:
         environments:
           type: array
           description: environments
-          items: {}
+          items:
+            properties:
+              environment:
+                type: string
+                description: environment
         active:
           type: boolean
           description: active
@@ -2270,6 +2300,16 @@ components:
         lastUpdated:
           type: string
           description: "UTC/CUT last updated datetime stamp see: https://github.com/tranquilitybase-io/tb-houston-service/wiki/UTC-Timestamp"
+
+    SolutionDeployment:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The solution id
+        deployed:
+          type: boolean
+          description: Has the solution been deployed?
 
     User:
       type: object
