@@ -11,7 +11,7 @@ headers = {'Content-Type': 'application/json' }
 
 key = 'test/' 
            
-def testPost():
+def test_post():
     #Test POST Then GET
     # Body
     payload = {'key': 'test', 'value': 'test-value'}
@@ -35,7 +35,7 @@ def testPost():
     assert resp_headers['content-type'] == 'application/json'
 
 
-def testPut():
+def test_put():
     # Test Update Then get new value
     newpayload = {'key': 'test', 'value': 'new-test-value'}
     resp = requests.put(url+'test', headers=headers, data=json.dumps(newpayload,indent=4))
@@ -53,7 +53,7 @@ def testPut():
     assert resp_json['value'] == 'new-test-value'
 
   
-def testDelete():
+def test_delete():
     #Test Delete Then GET
     resp = requests.delete(url+'test', headers=headers) 
     assert resp.status_code == 200
@@ -61,6 +61,6 @@ def testDelete():
     resp_json = resp.json()
     assert resp.status_code == 404
 
-def testGetAll():
+def test_get_all():
     resp = requests.get(url, headers=headers)  
     assert resp.status_code == 200
