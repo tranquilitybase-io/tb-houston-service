@@ -16,6 +16,8 @@ def test_vpnonpremisevendor():
     put(id)
     #Testing DELETE request
     delete(id)
+    #Testing DELETE Request Error
+    delete_error(id)
     #Testing GETALL request
     get_all()
     
@@ -74,9 +76,22 @@ def delete(id):
     assert resp.status_code == 404
 
 
+
+def delete_error(id):
+    resp = requests.delete(url+id, headers=headers) 
+    resp_json = resp.json()
+    resp_headers = resp.headers
+    assert resp.status_code == 404
+    assert resp_json['detail'] == 'VPNOnPremiseVendor '+str(id)+' not found'
+    assert resp_headers['content-type'] == 'application/problem+json'
+
+
+
+
 def get_all():
     resp = requests.get(url, headers=headers)  
     assert resp.status_code == 200
+    
 
 
 
