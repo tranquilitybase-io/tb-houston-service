@@ -10,8 +10,7 @@ id = 0
 
 def test_bpgroutingmode():
     #Testing POST request
-    resp_json = post()
-    id = resp_json['id']
+    id = post()
     #Testing PUT request
     put(id)
     #Testing DELETE request
@@ -32,10 +31,10 @@ def post():
     
     # Validate response headers and body contents, e.g. status code.
     resp_json = resp.json()
-    id = resp_json['id']
+    id = str(resp_json['id'])
     assert resp.status_code == 201
 
-    resp = requests.get(url+ str(id), headers=headers) 
+    resp = requests.get(url+ id, headers=headers) 
     resp_json = resp.json()
     resp_headers = resp.headers
     
@@ -44,19 +43,19 @@ def post():
     assert resp_json['key'] == 'Local'
     assert resp_json['value'] == 'Local'
     assert resp_headers['content-type'] == 'application/json'
-    return resp_json
+    return id
 
 
 def put(id):
     # Test Update Then get new value
-    newpayload  =  { 'id': id, 'key': 'new-key', 'value': 'new-value' }
-    resp = requests.put(url+str(id), headers=headers, data=json.dumps(newpayload,indent=4))
+    newpayload  =  { 'id': int(id), 'key': 'new-key', 'value': 'new-value' }
+    resp = requests.put(url+id, headers=headers, data=json.dumps(newpayload,indent=4))
    
     #Validate update/Put response 
     assert resp.status_code == 200
 
     #Get Request to get updated values
-    resp = requests.get(url+str(id), headers=headers) 
+    resp = requests.get(url+id, headers=headers) 
     resp_json = resp.json()
     id = resp_json['id']
 
@@ -69,10 +68,13 @@ def put(id):
 
 def delete(id):
     #Test Delete Then GET
-    resp = requests.delete(url+str(id), headers=headers) 
+    resp = requests.delete(url+id, headers=headers) 
+    #Validate Delete response
     assert resp.status_code == 200
-
-    resp = requests.get(url+str(id), headers=headers) 
+    
+    #Then GET request to check the item has been actully deleted
+    resp = requests.get(url+id, headers=headers) 
+    #Validate Get response
     resp_json = resp.json()
     assert resp.status_code == 404
 
@@ -80,6 +82,7 @@ def delete(id):
 def get_all():
     url = 'http://localhost:3000/api/keyValues/bgproutingmode/'
     resp = requests.get(url, headers=headers)  
+    #Validate Get All response
     assert resp.status_code == 200
 
 

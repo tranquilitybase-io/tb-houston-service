@@ -59,7 +59,7 @@ def test_delete():
     assert resp.status_code == 200
 
 def test_delete_error():
-    #Test Delete Then GET
+    #Test Delete for an non existing item
     resp = requests.delete(url+'test', headers=headers) 
     assert resp.status_code == 404
 
