@@ -35,6 +35,8 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
+        ls -alrt ${GITHUB_WORKSPACE}
+        ls -alrt ${GITHUB_WORKSPACE}/tests
         pip install -r ${GITHUB_WORKSPACE}/tests/requirements.txt
     - name: Lint with flake8
       run: |
