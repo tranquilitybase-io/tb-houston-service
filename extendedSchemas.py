@@ -104,6 +104,13 @@ class SolutionNamesOnlySchema(Schema):
     name = fields.Str()
 
 
+class SolutionDeploymentSchema(Schema):
+    __envelope__ = {"single": "solutiondeployment", "many": "solutiondeployments"}
+
+    id = fields.Int()
+    deployed = fields.Boolean()
+
+
 class ExtendedGoogleSessionSchema(Schema):
     primaryGcpVpcSubnet = fields.Str()
     primaryRegion = fields.Str()

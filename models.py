@@ -237,6 +237,7 @@ class Solution(db.Model):
     favourite = db.Column(db.Boolean())
     teams = db.Column(db.Integer())
     lastUpdated = db.Column(db.String(255))
+    deployed = db.Column(db.Boolean())
 
     applications = db.relationship('Application')
 
