@@ -22,8 +22,8 @@ docker image rm xxxxxx
 ## Authorize Docker command line interface
 gcloud auth configure-docker
 
-## Run the stack (houston-service + mysql57)
-docker-compose -f stack.yml up
+## Run the alpha stack (houston-service + mysql57)
+docker-compose -f alpha_stack.yml up
 
 ## Run the experimental stack (houston-service + mysql57)
 docker-compose -f experimental_houston_service.yml up
