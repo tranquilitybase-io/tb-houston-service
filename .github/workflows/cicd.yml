@@ -126,3 +126,9 @@ jobs:
         branch: ${{ steps.extract_branch.outputs.branch }}
         force: true
         github_token: ${{ secrets.GITHUB_TOKEN }}                      
+    - name: Tag Images
+      run: |
+        docker tag gcr.io/eagle-console-resources/tb-houston-mysql57:ci "gcr.io/eagle-console-resources/tb-houston-mysql57:internal-v${{ steps.get_version.outputs.version }}"
+        docker push "gcr.io/eagle-console-resources/tb-houston-mysql57:internal-v${{ steps.get_version.outputs.version }}"
+        docker tag gcr.io/eagle-console-resources/tb-houston-service:ci "gcr.io/eagle-console-resources/tb-houston-service:internal-v${{ steps.get_version.outputs.version }}"
+        docker push "gcr.io/eagle-console-resources/tb-houston-service:internal-v${{ steps.get_version.outputs.version }}"
