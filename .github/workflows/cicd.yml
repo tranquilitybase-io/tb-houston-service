@@ -11,6 +11,7 @@ on:
 
 jobs:
   build:
+    ### Continuous Integration
     runs-on: ubuntu-latest
     steps:
     - name: Extract current branch name
@@ -23,7 +24,8 @@ jobs:
         echo Branch name: ${{ steps.extract_branch.outputs.branch }}      
     - uses: actions/checkout@v2
       with:
-        repository: tranquilitybase-io/tb-houston-service
+        #repository: tranquilitybase-io/tb-houston-service
+        repository: karwootang-gft/tb-houston-service
         path: .
         fetch-depth: 0
     - name: Set up Python 3.6
@@ -33,7 +35,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -r requirements.txt
+        pip install -r ${GITHUB_WORKSPACE}/tests/requirements.txt
     - name: Lint with flake8
       run: |
         pip install flake8
@@ -41,12 +43,63 @@ jobs:
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+    - name: Docker Login
+      uses: azure/docker-login@v1
+      with:
+        login-server:  https://gcr.io
+        username: '_json_key'
+        password: ${{ secrets.GCP_SA_KEY }}
+
+    - name: Build MYSQL CI Image 
+      shell: bash
+      run: |
+        cd ${GITHUB_WORKSPACE}/sql
+        #docker build -t gcr.io/tranquility-base-images/tb-houston-mysql57:ci .
+        #docker push gcr.io/tranquility-base-images/tb-houston-mysql57:ci
+        docker build -t gcr.io/eagle-console-resources/tb-houston-mysql57:ci .
+        docker push gcr.io/eagle-console-resources/tb-houston-mysql57:ci
+
+    - name: Build Houston Service Image
+      shell: bash
+      run: |
+        cd ${GITHUB_WORKSPACE}
+        #docker build -t gcr.io/tranquility-base-images/tb-houston-service:ci .
+        #docker push gcr.io/tranquility-base-images/tb-houston-service:ci
+        docker build -t gcr.io/eagle-console-resources/tb-houston-service:ci .
+        docker push gcr.io/eagle-console-resources/tb-houston-service:ci
+
+    - name: Start Docker Compose
+      shell: bash
+      run: |
+        docker-compose -f houston_ci.yml up > houston_ci.log 2>&1 &
+
+    - name: Give Services time to initialize (abort if elapsed time is greater than 10 minutes)
+      shell: bash
+      run: |
+        start_epoch="$(date -u +%s)"
+        elapsed_seconds=0
+        until [ $(docker-compose -f houston_ci.yml ps | grep Up | wc -l) -eq 2 ] || [ $elapsed_seconds -ge 600 ]
+        do
+          sleep 30
+          docker-compose -f houston_ci.yml ps
+          current_epoch="$(date -u +%s)"
+          elapsed_seconds="$(($current_epoch-$start_epoch))"
+          echo "Elapsed seconds: ${elapsed_seconds}"
+        done
+
+    # Be careful, if services are given sufficient time to initialize the tests will fail.
     - name: Test with pytest
       run: |
         pip install pytest
-        #cd ${GITHUB_WORKSPACE}/tests
-        # No tests at the moment
-        #pytest tests/
+        HOUSTON_SERVICE_URL="localhost:3000" pytest --rootdir tests
+
+    - name: Stop Docker Compose
+      shell: bash
+      run: |
+        docker-compose -f houston_ci.yml down 
+
+    ### Continuous Deployment
     - name: run semver, store in step variable version
       shell: bash
       run: |
