@@ -24,9 +24,13 @@ gcloud auth configure-docker
 
 ## Run the alpha stack (houston-service + mysql57)
 docker-compose -f alpha_stack.yml up
+docker-compose -f alpha_stack.yml down
+docker-compose -f alpha_stack.yml pull
 
 ## Run the experimental stack (houston-service + mysql57)
-docker-compose -f experimental_houston_service.yml up
+docker-compose -f experimental_stack.yml up
+docker-compose -f experimental_stack.yml down
+docker-compose -f experimental_stack.yml pull
 
 ## run the docker image
 docker run -p 3000:3000 gcr.io/tranquility-base-images/tb-houston-service:alpha
