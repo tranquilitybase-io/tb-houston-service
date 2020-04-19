@@ -34,7 +34,8 @@ jobs:
         chmod 777 redoc-static.html
         # check if file changed
         if ! git diff --no-ext-diff --quiet --exit-code redoc-static.html; then
-          git add redoc-static.html
+          mv redoc-static.html docs/index.html
+          git add docs/index.html
           git commit -m "Add automatically generated openapi static HTML documentation"
         fi
     - name: Extract current branch name
