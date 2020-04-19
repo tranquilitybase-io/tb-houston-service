@@ -1,6 +1,5 @@
 from models import ModelTools
 import user_extension
-from extendedSchemas import ExtendedUserSchema
 
 
 def build_activator(act):
@@ -27,7 +26,6 @@ def build_activator(act):
         'technologyOwnerEmail': act.technologyOwnerEmail,
         'billing': act.billing,
         'activator': act.activator,
-        'resources': ModelTools.load_json_array(act.resources),
         'status': act.status,
         'description': act.description,
         'accessRequestedBy': act.accessRequestedBy,

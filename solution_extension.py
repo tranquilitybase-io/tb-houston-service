@@ -1,6 +1,5 @@
 from models import ModelTools
 from models import Application
-from models import Activator
 import application_extension
 
 

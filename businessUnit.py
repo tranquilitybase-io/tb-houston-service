@@ -3,9 +3,6 @@ This is the deployments module and supports all the ReST actions for the
 businessunit collection
 """
 
-# System modules
-from datetime import datetime
-
 # 3rd party modules
 from flask import make_response, abort
 from config import db, app
@@ -15,10 +12,10 @@ from pprint import pformat
 
 def read_all():
     """
-    This function responds to a request for /api/businessunit
-    with the complete lists of BusinessUnits 
+    Responds to a request for /api/businessunit
+    with the complete lists of BusinessUnits
 
-    :return:        json string of list of BusinessUnits 
+    :return:        json string of list of BusinessUnits
     """
 
     # Create the list of BusinessUnits from our data
@@ -63,7 +60,6 @@ def create(businessUnitDetails):
     :return:        201 on success, 406 on businessUnit exists
     """
     key = businessUnitDetails.get("key", None)
-    value = businessUnitDetails.get("value", None)
 
     # Does the cd exist already?
     existing_businessUnit = (
@@ -127,7 +123,7 @@ def update(key, businessUnitDetails):
 
 def delete(key):
     """
-    This function deletes a BusinessUnit from the BusinessUnit list
+    Deletes a BusinessUnit from the BusinessUnit list.
 
     :param key: key of the BusinessUnit to delete
     :return:    200 on successful delete, 404 if not found

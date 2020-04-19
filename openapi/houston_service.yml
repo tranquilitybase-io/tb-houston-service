@@ -8,7 +8,7 @@ info:
     There is more information about the Eagle Console here.
     https://github.com/tranquilitybase-io/tb-eagle-console/wiki
 
-  version: 2.0.4
+  version: 2.0.6
   title: TB Houston Service
   termsOfService: "https://github.com/tranquilitybase-io/tb-houston-service/wiki/Terms-of-service"
   license:
@@ -115,7 +115,7 @@ paths:
         "201":
           description: Successfully created an application
 
-  "/application/{id}":
+  "/application/{oid}":
     get:
       operationId: application.read_one
       tags:
@@ -123,7 +123,7 @@ paths:
       summary: Read one application from the list
       description: Read one application from the list
       parameters:
-        - name: id
+        - name: oid
           in: path
           description: id of the application to get from the list
           required: true
@@ -144,7 +144,7 @@ paths:
       summary: Update an application in the list
       description: Update an application in the list
       parameters:
-        - name: id
+        - name: oid
           in: path
           description: id of the application to update
           required: true
@@ -162,7 +162,7 @@ paths:
       summary: Delete a application from the list
       description: Delete a application
       parameters:
-        - name: id
+        - name: oid
           in: path
           required: true
           schema:
@@ -836,7 +836,7 @@ paths:
         "201":
           description: Successfully created a solution
 
-  "/solution/{id}":
+  "/solution/{oid}":
     get:
       operationId: solution.read_one
       tags:
@@ -844,7 +844,7 @@ paths:
       summary: Read a single solution
       description: Read a single solution
       parameters:
-        - name: id
+        - name: oid
           in: path
           description: the id of the solution
           required: true
@@ -860,6 +860,25 @@ paths:
                 items:
                   $ref: "#/components/schemas/Solution"
 
+    put:
+      operationId: solution.update
+      tags:
+        - solution
+      summary: Update a solution in the list
+      description: Update an solution in the list
+      parameters:
+        - name: oid
+          in: path
+          description: key of the solution to update
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        $ref: "#/components/requestBodies/solution.solutionDetails"
+      responses:
+        "200":
+          description: Successfully updated a solution
+
     delete:
       operationId: solution.delete
       tags:
@@ -867,7 +886,7 @@ paths:
       summary: Delete a solution from the list
       description: Delete a solution
       parameters:
-        - name: id
+        - name: oid
           in: path
           required: true
           schema:
@@ -875,6 +894,57 @@ paths:
       responses:
         "200":
           description: Successfully deleted a solution
+
+  /solutiondeployments/:
+    get:
+      operationId: solution.deployment_read_all
+      tags:
+        - solution
+      summary: Read the entire list of deployed solutions
+      description: Read the list of deployed solutions
+      responses:
+        "200":
+          description: Successfully read solutions list operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SolutionDeployment"
+
+  /solutiondeployment/:
+    post:
+      operationId: solution.deployment_create
+      tags:
+        - solution
+      summary: receive solution id from the Eagle Console and then post the complete Solution to the DaC
+      description: receive solution id from the Eagle Console and then post the complete Solution to the DaC
+      requestBody:
+        $ref: "#/components/requestBodies/solution.solutionDeploymentDetails"
+        description: solution deployment contains the solution id
+      responses:
+        "201":
+          description: Successfully created a Solution Deployment
+
+  "/solutiondeployment/{oid}":
+    put:
+      operationId: solution.deployment_update
+      tags:
+        - solution
+      summary: Update a solution in the list with the deployed state
+      description: Update a solution in the list with the deployed state
+      parameters:
+        - name: oid
+          in: path
+          description: key of the solution to update
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        $ref: "#/components/requestBodies/solution.solutionDeploymentDetails"
+      responses:
+        "200":
+          description: Successfully updated a solution
 
   /activators/:
     get:
@@ -950,7 +1020,7 @@ paths:
         "201":
           description: Successfully created an activator
 
-  "/activator/{id}":
+  "/activator/{oid}":
     get:
       operationId: activator.read_one
       tags:
@@ -958,7 +1028,7 @@ paths:
       summary: Read one activator from the list
       description: Read one activator from the list
       parameters:
-        - name: id
+        - name: oid
           in: path
           description: key of the activator to get from the list
           required: true
@@ -978,7 +1048,7 @@ paths:
       summary: Update an activator in the list
       description: Update an activator in the list
       parameters:
-        - name: id
+        - name: oid
           in: path
           description: key of the activator to update
           required: true
@@ -997,11 +1067,11 @@ paths:
       summary: Delete an activator from the list
       description: Delete an activator
       parameters:
-        - name: id
+        - name: oid
           in: path
           required: true
           schema:
-            type: string
+            type: integer
       responses:
         "200":
           description: Successfully deleted an activator
@@ -1084,7 +1154,7 @@ paths:
                 properties:
                   id:
                     type: integer
-                    description: id
+                    description: id the primary key of the object
                   label:
                     type: string
                     description: label
@@ -1092,7 +1162,7 @@ paths:
                     type: boolean
                     description: completed
                     
-  "/landingzoneprogressitem/{id}":
+  "/landingzoneprogressitem/{oid}":
     get:
       operationId: landingzoneprogressitem.read_one
       tags:
@@ -1100,7 +1170,7 @@ paths:
       summary: Read one landing zone progress item from the list
       description: Read one landing zone progress item from the list
       parameters:
-        - name: id
+        - name: oid
           in: path
           description: key of the landing zone progress item to get from the list
           required: true
@@ -1127,7 +1197,7 @@ paths:
       summary: Update an landing zone progress item in the list
       description: Update an landing zone progress item in the list
       parameters:
-        - name: id
+        - name: oid
           in: path
           description: key of the landing zone progress item to update
           required: true
@@ -1157,7 +1227,7 @@ paths:
       summary: Delete a landing zone progress item from the list
       description: Delete a landing zone progress item
       parameters:
-        - name: id
+        - name: oid
           in: path
           required: true
           schema:
@@ -1223,7 +1293,7 @@ paths:
                 items:
                   $ref: "#/components/schemas/LandingZoneAction"
 
-  "/landingzoneaction/{id}":
+  "/landingzoneaction/{oid}":
     get:
       operationId: landingzoneaction.read_one
       tags:
@@ -1231,7 +1301,7 @@ paths:
       summary: Read one landing zone action from the list
       description: Read one landing zone action from the list
       parameters:
-        - name: id
+        - name: oid
           in: path
           description: key of the landing zone action to get from the list
           required: true
@@ -1252,7 +1322,7 @@ paths:
       summary: Update an landing zone action in the list
       description: Update an landing zone action in the list
       parameters:
-        - name: id
+        - name: oid
           in: path
           description: key of the landing zone action to update
           required: true
@@ -1275,7 +1345,7 @@ paths:
       summary: Delete a landing zone action from the list
       description: Delete a landing zone action
       parameters:
-        - name: id
+        - name: oid
           in: path
           required: true
           schema:
@@ -1314,7 +1384,7 @@ paths:
         "201":
           description: Successfully created a landing zone WAN
 
-  "/landingzonewan/{id}":
+  "/landingzonewan/{oid}":
     get:
       operationId: landingzonewan.read_one
       tags:
@@ -1322,7 +1392,7 @@ paths:
       summary: Read one landing zone WAN from the list
       description: Read one landing zone WAN from the list
       parameters:
-        - name: id
+        - name: oid
           in: path
           description: key of the landing zone WAN to get from the list
           required: true
@@ -1343,7 +1413,7 @@ paths:
       summary: Update an landing zone WAN in the list
       description: Update an landing zone WAN in the list
       parameters:
-        - name: id
+        - name: oid
           in: path
           description: key of the landing zone WAN to update
           required: true
@@ -1362,7 +1432,7 @@ paths:
       summary: Delete a landing zone WAN from the list
       description: Delete a landing zone WAN
       parameters:
-        - name: id
+        - name: oid
           in: path
           required: true
           schema:
@@ -1400,7 +1470,7 @@ paths:
         "201":
           description: Successfully created an bgpRoutingMode
 
-  "/keyValues/bgproutingmode/{id}":
+  "/keyValues/bgproutingmode/{oid}":
     get:
       operationId: bgpRoutingMode.read_one
       tags:
@@ -1408,7 +1478,7 @@ paths:
       summary: Read one bgproutingmode from the list
       description: Read one bgproutingmode from the list
       parameters:
-        - name: id
+        - name: oid
           in: path
           description: id of the bgpRoutingMode to get from the list
           required: true
@@ -1429,7 +1499,7 @@ paths:
       summary: Update an bgpRoutingMode in the list
       description: Update an bgpRoutingMode in the list
       parameters:
-        - name: id
+        - name: oid
           in: path
           description: id of the bgpRoutingMode to update
           required: true
@@ -1448,7 +1518,7 @@ paths:
       summary: Delete an bgproutingmode from the list
       description: Delete a bgproutingmode
       parameters:
-        - name: id
+        - name: oid
           in: path
           required: true
           schema:
@@ -1486,7 +1556,7 @@ paths:
         "201":
           description: Successfully created an subnetMode
 
-  "/keyValues/subnetmode/{id}":
+  "/keyValues/subnetmode/{oid}":
     get:
       operationId: subnetMode.read_one
       tags:
@@ -1494,7 +1564,7 @@ paths:
       summary: Read one subnetmode from the list
       description: Read one subnetmode from the list
       parameters:
-        - name: id
+        - name: oid
           in: path
           description: id of the subnetMode to get from the list
           required: true
@@ -1515,7 +1585,7 @@ paths:
       summary: Update an subnetMode in the list
       description: Update an subnetMode in the list
       parameters:
-        - name: id
+        - name: oid
           in: path
           description: id of the subnetMode to update
           required: true
@@ -1534,7 +1604,7 @@ paths:
       summary: Delete an subnetmode from the list
       description: Delete a subnetmode
       parameters:
-        - name: id
+        - name: oid
           in: path
           required: true
           schema:
@@ -1574,7 +1644,7 @@ paths:
         "201":
           description: Successfully created an VPNOnPremiseVendor
 
-  "/keyValues/vpnonpremisevendor/{id}":
+  "/keyValues/vpnonpremisevendor/{oid}":
     get:
       operationId: vpnOnPremiseVendor.read_one
       tags:
@@ -1582,7 +1652,7 @@ paths:
       summary: Read one vpnOnPremiseVendor from the list
       description: Read one vpnOnPremiseVendor from the list
       parameters:
-        - name: id
+        - name: oid
           in: path
           description: id of the vpnOnPremiseVendor to get from the list
           required: true
@@ -1603,7 +1673,7 @@ paths:
       summary: Update an vpnOnPremiseVendor in the list
       description: Update an vpnOnPremiseVendor in the list
       parameters:
-        - name: id
+        - name: oid
           in: path
           description: id of the vpnOnPremiseVendor to update
           required: true
@@ -1622,7 +1692,7 @@ paths:
       summary: Delete an VPNOnPremiseVendor from the list
       description: Delete a vpnOnPremiseVendor
       parameters:
-        - name: id
+        - name: oid
           in: path
           required: true
           schema:
@@ -1786,51 +1856,30 @@ components:
             $ref: "#/components/schemas/User"
       description: login details
       required: true
-
+      
     solution.solutionDetails:
       content:
         application/json:
           schema:
             x-body-name: solutionDetails
+            $ref: "#/components/schemas/Solution"
+      description: solution to create
+      required: true
+
+    solution.solutionDeploymentDetails:
+      content:
+        application/json:
+          schema:
+            x-body-name: solutionDeploymentDetails
             type: object
             properties:
-              name:
-                type: string
-                description: name
-              description:
-                type: string
-                description: description
-              businessUnit:
-                type: string
-                description: businessUnit
-              costCentre:
-                type: string
-                description: costCentre
-              ci:
-                type: string
-                description: ci
-              cd:
-                type: string
-                description: cd
-              sourceControl:
-                type: string
-                description: sourceControl
-              environments:
-                type: array
-                description: environment
-                items: {}
-              active:
-                type: boolean
-                description: active
-              favourite:
-                type: boolean
-                description: favourite
-              teams:
+              id:
                 type: integer
-                description: teams
-              lastUpdated:
-                type: string
-                description: "UTC/CUT last updated datetime stamp see: https://github.com/tranquilitybase-io/tb-houston-service/wiki/UTC-Timestamp"
+                description: The id of the solution that is being deployed
+              deployed:
+                type: boolean
+                description: The state of the deployment
+      description: the solution id to deploy
       required: true
 
   schemas:
@@ -2234,7 +2283,11 @@ components:
         environments:
           type: array
           description: environments
-          items: {}
+          items:
+            properties:
+              environment:
+                type: string
+                description: environment
         active:
           type: boolean
           description: active
@@ -2247,6 +2300,16 @@ components:
         lastUpdated:
           type: string
           description: "UTC/CUT last updated datetime stamp see: https://github.com/tranquilitybase-io/tb-houston-service/wiki/UTC-Timestamp"
+
+    SolutionDeployment:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The solution id
+        deployed:
+          type: boolean
+          description: Has the solution been deployed?
 
     User:
       type: object

@@ -3,20 +3,19 @@ This is the deployments module and supports all the ReST actions for the
 solutions collection
 """
 
-# System modules
-from datetime import datetime
-
 # 3rd party modules
-from flask import make_response, abort, jsonify
+from flask import make_response, abort
 from config import db, app
-from models import Application, Activator
 from models import Solution, SolutionSchema
 from models import ModelTools
 from extendedSchemas import ExtendedSolutionSchema
+from extendedSchemas import SolutionDeploymentSchema
 from extendedSchemas import SolutionNamesOnlySchema
 import solution_extension
 from pprint import pformat
-from pprint import pprint
+import requests
+import os
+import json
 
 
 def read_all(active=None, namesonly=None, page=None, page_size=None, sort=None):
@@ -48,7 +47,7 @@ def read_all(active=None, namesonly=None, page=None, page_size=None, sort=None):
             #print("orderby: {}".format(orderby_arr))
             solution_query = Solution.query.order_by(*orderby_arr)
         except Exception as e:
-            print(e)
+            print(pformat(e))
             solution_query = Solution.query.order_by(Solution.id)
 
     # Create the list of solutions from our data
@@ -80,16 +79,16 @@ def read_all(active=None, namesonly=None, page=None, page_size=None, sort=None):
     return data
 
 
-def read_one(id):
+def read_one(oid):
     """
-    This function responds to a request for /api/solution/{id}
+    This function responds to a request for /api/solution/{oid}
     with one matching solution from solutions
 
     :param application:   id of solution to find
     :return:              solution matching id
     """
 
-    sol = (Solution.query.filter(Solution.id == id).one_or_none())
+    sol = (Solution.query.filter(Solution.id == oid).one_or_none())
 
     if sol is not None:
         solution = solution_extension.build_solution(sol)
@@ -99,7 +98,7 @@ def read_one(id):
         return data
     else:
         abort(
-            404, "Solution with id {id} not found".format(id=id)
+            404, f"Solution with id {oid} not found".format(id=oid)
         )
 
 
@@ -115,8 +114,6 @@ def create(solutionDetails):
     app.logger.debug("Before")
     app.logger.debug(pformat(solutionDetails))
 
-    lastUpdated = ModelTools.get_utc_timestamp()
-
     # Defaults
     if (solutionDetails.get('active') == None):
       solutionDetails['active'] = True
@@ -127,7 +124,7 @@ def create(solutionDetails):
     if (solutionDetails.get('teams') == None):
       solutionDetails['teams'] = 0
 
-    # Remove applications because Solutions don't have 
+    # Remove applications because Solutions don't have
     # any applications when they are first created
     if ('applications' in solutionDetails):
       del solutionDetails['applications']
@@ -137,7 +134,7 @@ def create(solutionDetails):
       del solutionDetails["id"]
 
     solutionDetails['lastUpdated'] = ModelTools.get_utc_timestamp()
-      
+
     app.logger.debug("After")
     app.logger.debug(pformat(solutionDetails))
 
@@ -152,9 +149,9 @@ def create(solutionDetails):
     return data, 201
 
 
-def update(id, solutionDetails):
+def update(oid, solutionDetails):
     """
-    This function updates an existing solutions in the solutions list
+    Updates an existing solutions in the solutions list.
 
     :param key:    key of the solutions to update in the solutions list
     :param solutions:   solutions to update
@@ -165,7 +162,7 @@ def update(id, solutionDetails):
 
     # Does the solutions exist in solutions list?
     existing_solution = Solution.query.filter(
-            Solution.id == id
+            Solution.id == oid
     ).one_or_none()
 
     # Does solutions exist?
@@ -188,7 +185,7 @@ def update(id, solutionDetails):
         abort(404, f"Solution not found")
 
 
-def delete(id):
+def delete(oid):
     """
     This function deletes a solution from the solutions list
 
@@ -196,17 +193,98 @@ def delete(id):
     :return:    200 on successful delete, 404 if not found
     """
     # Does the solution to delete exist?
-    existing_solution = Solution.query.filter(Solution.id == id).one_or_none()
+    existing_solution = Solution.query.filter(Solution.id == oid).one_or_none()
 
     # if found?
     if existing_solution is not None:
         db.session.delete(existing_solution)
         db.session.commit()
 
-        return make_response(f"Solution {id} successfully deleted", 200)
+        return make_response(f"Solution {oid} successfully deleted", 200)
 
     # Otherwise, nope, solution to delete not found
     else:
-        abort(404, f"Solution {id} not found")
+        abort(404, f"Solution {oid} not found")
 
 
+def deployment_read_all():
+    """
+    This function responds to a request for /api/solutiondeployments
+    with the complete lists of deployed solutions
+
+    :return:        json string of list of deployed solutions
+                    id and deployed fields
+    """
+
+    app.logger.debug("solution.deployment_read_all")
+
+    solutions = Solution.query.all()
+    schema = SolutionDeploymentSchema(many=True)
+    data = schema.dump(solutions)
+
+    app.logger.debug("solutions data:")
+    app.logger.debug(data)
+    return data
+
+
+def deployment_create(solutionDeploymentDetails):
+    """
+    This function queries a solution forwards the request to the DaC
+
+    :param solution:  id
+    :return:        201 on success, 406 if solution doesn't exist
+    """
+
+    app.logger.debug(pformat(solutionDeploymentDetails))
+    oid = solutionDeploymentDetails['id'];
+    sol_json_payload = read_one(oid)
+    send_deployment_request_to_the_dac(sol_json_payload)
+
+
+def deployment_update(oid, solutionDeploymentDetails):
+    """
+    Updates an existing solutions in the solutions list with the deployed status.
+
+    :param key:    id of the solution
+    :param solutionDetails:   solution details to update
+    :return:       updated solution
+    """
+
+    app.logger.debug(solutionDeploymentDetails)
+
+    # Does the solutions exist in solutions list?
+    existing_solution = Solution.query.filter(
+            Solution.id == oid
+    ).one_or_none()
+
+    # Does solutions exist?
+
+    if existing_solution is not None:
+        schema = SolutionSchema()
+        update_solution = schema.load(solutionDeploymentDetails, session=db.session)
+        update_solution.key = solutionDeploymentDetails['id']
+        update_solution.lastUpdated = ModelTools.get_utc_timestamp()
+        update_solution.deployed = solutionDeploymentDetails['deployed']
+
+        db.session.merge(update_solution)
+        db.session.commit()
+
+        # return the updted solutions in the response
+        data = schema.dump(update_solution)
+        return data, 200
+
+    # otherwise, nope, deployment doesn't exist, so that's an error
+    else:
+        abort(404, f"Solution {oid} not found")
+
+
+def send_deployment_request_to_the_dac(sol_json_payload):
+
+    url = "http://" + os.environ['GCP_DAC_URL'] + "/api/solution/"
+
+    print(f"url: {url}")
+    print(f"data: {sol_json_payload}")
+    headers = { 'Content-Type': "application/json" }
+    response = requests.post(url, data=json.dumps(sol_json_payload), headers=headers)
+    print(pformat(response))
+    return response
