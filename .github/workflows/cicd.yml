@@ -87,7 +87,7 @@ jobs:
           echo "Elapsed seconds: ${elapsed_seconds}"
         done
 
-    # Be careful, if services are given sufficient time to initialize the tests will fail.
+    # Be careful, if services aren't given sufficient time to initialize the tests will fail.
     - name: Test with pytest
       run: |
         pip install pytest
