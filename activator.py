@@ -197,7 +197,10 @@ def delete(oid):
 
 
 def setActivatorStatus(activatorDetails):
-    "Update the activator status."
+    """
+    Update the activator status.
+    : return:      The activator that was changed
+    """
 
     app.logger.info(pformat(activatorDetails))
     # Does the activator to delete exist?
