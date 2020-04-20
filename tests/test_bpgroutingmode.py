@@ -9,6 +9,7 @@ headers = {'Content-Type': 'application/json' }
 id = 0
 
 def test_bpgroutingmode():
+    
     #Testing POST request
     id = post()
     #Testing PUT request
@@ -22,6 +23,7 @@ def test_bpgroutingmode():
     
 
 def post():
+
     #Test POST Then GET
     # Body
     payload  =  { 'id': 0, 'key': 'Local', 'value': 'Local' }
@@ -47,6 +49,7 @@ def post():
 
 
 def put(id):
+
     # Test Update Then get new value
     newpayload  =  { 'id': int(id), 'key': 'new-key', 'value': 'new-value' }
     resp = requests.put(url+id, headers=headers, data=json.dumps(newpayload,indent=4))
@@ -67,6 +70,7 @@ def put(id):
 
 
 def delete(id):
+
     #Test Delete Then GET
     resp = requests.delete(url+id, headers=headers) 
     #Validate Delete response
@@ -80,6 +84,7 @@ def delete(id):
 
 
 def get_all():
+
     url = 'http://localhost:3000/api/keyValues/bgproutingmode/'
     resp = requests.get(url, headers=headers)  
     #Validate Get All response

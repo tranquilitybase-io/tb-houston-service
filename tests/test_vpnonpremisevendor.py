@@ -9,6 +9,7 @@ headers = {'Content-Type': 'application/json' }
 id = 0
 
 def test_vpnonpremisevendor():
+
     #Testing POST request
     resp_json = post()
     id = str(resp_json['id'])
@@ -23,6 +24,7 @@ def test_vpnonpremisevendor():
     
 
 def post():
+
     #Test POST Then GET
     # Body
     payload  =  {'key': 'test' , 'value': 'test-value'}
@@ -49,7 +51,8 @@ def post():
 
 
 def put(id):
-    # Test Update Then get new value
+
+    # Test Update Then get updated value
     newpayload = {'key': 'test', 'value': 'new-test-value'}
     resp = requests.put(url+id, headers=headers, data=json.dumps(newpayload,indent=4))
    
@@ -67,33 +70,32 @@ def put(id):
 
 
 def delete(id):
-    #Test Delete Then GET
-    resp = requests.delete(url+id, headers=headers) 
-    assert resp.status_code == 200
 
+    # Delete Request
+    resp = requests.delete(url+id, headers=headers) 
+    #Validate Delete response
+    assert resp.status_code == 200
+    #Then Get request to check the item has been actully deleted
     resp = requests.get(url+id, headers=headers) 
+    #Validate Get response
     resp_json = resp.json()
     assert resp.status_code == 404
 
 
 
 def delete_error(id):
+
+    # Delete Request for a non existing item
     resp = requests.delete(url+id, headers=headers) 
     resp_json = resp.json()
     resp_headers = resp.headers
+    #Validate response ; expect Not found
     assert resp.status_code == 404
     assert resp_json['detail'] == 'VPNOnPremiseVendor '+str(id)+' not found'
     assert resp_headers['content-type'] == 'application/problem+json'
 
 
 def get_all():
+
     resp = requests.get(url, headers=headers)  
     assert resp.status_code == 200
-    
-
-
-
-
-
-
-

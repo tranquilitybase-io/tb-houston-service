@@ -1,7 +1,7 @@
 import requests
 import json
 
-def testHealth():
+def test_health():
 
     url = 'http://localhost:3000/api/health'
 
