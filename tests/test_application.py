@@ -4,7 +4,7 @@ import os
 
 
 HOUSTON_SERVICE_URL=os.environ['HOUSTON_SERVICE_URL']
-url = f"http://{HOUSTON_SERVICE_URL}/applications/"
+url = f"http://{HOUSTON_SERVICE_URL}/application/"
     
 # Additional headers.
 headers = {'Content-Type': 'application/json' } 
