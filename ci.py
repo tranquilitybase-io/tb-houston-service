@@ -3,9 +3,6 @@ This is the deployments module and supports all the ReST actions for the
 ci collection
 """
 
-# System modules
-from datetime import datetime
-
 # 3rd party modules
 from flask import make_response, abort
 from config import db, app
@@ -33,7 +30,7 @@ def read_all():
 def read_one(key):
     """
     This function responds to a request for /api/ci/{key}
-    with one matching ci from CIs 
+    with one matching ci from CIs
 
     :param application:   key of ci to find
     :return:              ci matching key
@@ -61,7 +58,6 @@ def create(ciDetails):
     :return:        201 on success, 406 on ci exists
     """
     key = ciDetails.get("key", None)
-    value = ciDetails.get("value", None)
 
     # Does the ci exist already?
     existing_ci = (

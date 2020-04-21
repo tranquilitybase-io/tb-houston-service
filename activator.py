@@ -3,26 +3,22 @@ This is the activator module and supports all the ReST actions for the
 activators collection
 """
 
-# System modules
-from datetime import datetime
-
 # 3rd party modules
 from flask import make_response, abort
 from config import db, app
-from models import User
 from models import Activator
 from models import ActivatorSchema
 from models import ModelTools
 from extendedSchemas import ExtendedActivatorSchema
-from extendedSchemas import ExtendedUserSchema
 from extendedSchemas import ExtendedActivatorCategorySchema
-import user_extension
 import activator_extension
 import json
 from pprint import pformat
 
 
-def read_all(category=None, status=None, environment=None, platform=None, type=None, source=None, sensitivity=None, page=None, page_size=None, sort=None):
+def read_all(category=None, status=None, environment=None,
+        platform=None, type=None, source=None,
+        sensitivity=None, page=None, page_size=None, sort=None):
     """
     This function responds to a request for /api/activators
     with the complete lists of activators
@@ -46,6 +42,8 @@ def read_all(category=None, status=None, environment=None, platform=None, type=N
                 else:
                     si2 = "asc"
                 orderby = "Activator.{0}.{1}()".format(si1.strip(), si2.strip())
+                # orderby is trusted input so is fine to use in this case,
+                # don't use ast.literal_eval as you will get Malformed String ValueError
                 orderby_arr.append(eval(orderby))
             #print("orderby: {}".format(orderby_arr))
             activator_query = Activator.query.order_by(*orderby_arr)
@@ -63,7 +61,7 @@ def read_all(category=None, status=None, environment=None, platform=None, type=N
       (sensitivity==None or Activator.sensitivity==sensitivity)
     )
 
-    if (page==None or page_size==None): 
+    if (page==None or page_size==None):
       activators = activator_query.all()
     else:
       activators = activator_query.limit(page_size).offset(page * page_size).all()
@@ -80,7 +78,7 @@ def read_all(category=None, status=None, environment=None, platform=None, type=N
     return data
 
 
-def read_one(id):
+def read_one(oid):
     """
     This function responds to a request for /api/activator/{key}
     with one matching activator from activatorss
@@ -89,7 +87,7 @@ def read_one(id):
     :return:              activator matching key
     """
 
-    act = (Activator.query.filter(Activator.id == id).one_or_none())
+    act = (Activator.query.filter(Activator.id == oid).one_or_none())
     activator = activator_extension.build_activator(act)
 
     if activator is not None:
@@ -99,7 +97,7 @@ def read_one(id):
         return data
     else:
         abort(
-            404, "Activator with id {id} not found".format(id=id)
+            404, f"Activator with id {oid} not found".format(id=oid)
         )
 
 
@@ -129,7 +127,7 @@ def create(activatorDetails):
     return data, 201
 
 
-def update(id, activatorDetails):
+def update(oid, activatorDetails):
     """
     This function updates an existing activator in the activators list
 
@@ -140,15 +138,15 @@ def update(id, activatorDetails):
 
     app.logger.debug("update")
     app.logger.debug("id")
-    app.logger.debug(id)
+    app.logger.debug(oid)
     app.logger.debug("activator")
     app.logger.debug(pformat(activatorDetails))
 
-    if 'id' in activatorDetails and activatorDetails['id'] != id:
+    if 'id' in activatorDetails and activatorDetails['id'] != oid:
       abort(400, f"Key mismatch in path and body")
 
     # Does the activators exist in activators list?
-    existing_activator = Activator.query.filter(Activator.id == id).one_or_none()
+    existing_activator = Activator.query.filter(Activator.id == oid).one_or_none()
 
     # Does activator exist?
 
@@ -158,14 +156,13 @@ def update(id, activatorDetails):
         activatorDetails['accessRequestedBy'] = activatorDetails.get('accessRequestedBy', existing_activator.accessRequestedBy)
         activatorDetails["ci"] = json.dumps(activatorDetails.get("ci", existing_activator.ci))
         activatorDetails["cd"] = json.dumps(activatorDetails.get("cd", existing_activator.cd))
-        activatorDetails["resources"] = json.dumps(activatorDetails.get("resources", existing_activator.resources))
         activatorDetails["hosting"] = json.dumps(activatorDetails.get("hosting", existing_activator.hosting))
         activatorDetails["envs"] = json.dumps(activatorDetails.get("envs", existing_activator.envs))
         activatorDetails["sourceControl"] = json.dumps(activatorDetails.get("sourceControl", existing_activator.sourceControl))
         activatorDetails["regions"] = json.dumps(activatorDetails.get("regions", existing_activator.regions))
         activatorDetails["apiManagement"] = json.dumps(activatorDetails.get("apiManagement", existing_activator.apiManagement))
         activatorDetails["platforms"] = json.dumps(activatorDetails.get("platforms", existing_activator.platforms))
-        Activator.query.filter(Activator.id == id).update(activatorDetails)
+        Activator.query.filter(Activator.id == oid).update(activatorDetails)
         db.session.commit()
         # return the updated activator in the response
         data = schema.dump(existing_activator)
@@ -174,10 +171,10 @@ def update(id, activatorDetails):
         return data, 200
     # otherwise, nope, deployment doesn't exist, so that's an error
     else:
-        abort(404, f"Activator id {id} not found")
+        abort(404, f"Activator id {oid} not found")
 
 
-def delete(id):
+def delete(oid):
     """
     This function deletes an activator from the activators list
 
@@ -185,22 +182,25 @@ def delete(id):
     :return:    200 on successful delete, 404 if not found
     """
     # Does the activator to delete exist?
-    existing_activator = Activator.query.filter(Activator.id == id).one_or_none()
+    existing_activator = Activator.query.filter(Activator.id == oid).one_or_none()
 
     # if found?
     if existing_activator is not None:
         db.session.delete(existing_activator)
         db.session.commit()
 
-        return make_response(f"Activator id {id} successfully deleted", 200)
+        return make_response(f"Activator id {oid} successfully deleted", 200)
 
     # Otherwise, nope, activator to delete not found
     else:
-        abort(404, f"Activator id {id} not found")
+        abort(404, f"Activator id {oid} not found")
 
 
 def setActivatorStatus(activatorDetails):
-    " update the activator status"
+    """
+    Update the activator status.
+    : return:      The activator that was changed
+    """
 
     app.logger.info(pformat(activatorDetails))
     # Does the activator to delete exist?
@@ -222,13 +222,13 @@ def setActivatorStatus(activatorDetails):
 
     # Otherwise, nope, activator to update was not found
     else:
-        id = activatorDetails['id']
-        abort(404, f"Activator id {id} not found")
+        actid = activatorDetails['id']
+        abort(404, f"Activator id {actid} not found")
 
 
 def categories():
     """
-    :return:        distinct list of activator categories
+    :return:        distinct list of activator categories.
     """
 
     sql = "select category from activator group by category"
@@ -241,4 +241,4 @@ def categories():
     schema = ExtendedActivatorCategorySchema(many=True)
     data = schema.dump(categories_arr)
     print(pformat(data))
-    return data, 200 
+    return data, 200

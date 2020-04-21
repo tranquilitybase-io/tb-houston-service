@@ -1,4 +1,4 @@
-from marshmallow import Schema, fields, pre_load, post_load, pre_dump, post_dump, pprint
+from marshmallow import Schema, fields, pre_load, post_load, pre_dump, post_dump
 #from flask import Flask
 
 #from flask_sqlalchemy import SQLAlchemy
@@ -103,7 +103,14 @@ class SolutionNamesOnlySchema(Schema):
     id = fields.Int()
     name = fields.Str()
 
-    
+
+class SolutionDeploymentSchema(Schema):
+    __envelope__ = {"single": "solutiondeployment", "many": "solutiondeployments"}
+
+    id = fields.Int()
+    deployed = fields.Boolean()
+
+
 class ExtendedGoogleSessionSchema(Schema):
     primaryGcpVpcSubnet = fields.Str()
     primaryRegion = fields.Str()

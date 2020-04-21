@@ -1,10 +1,7 @@
 """
-This is the landingZoneAction module and supports all the ReST actions for the
+The landingZoneAction module and supports all the ReST actions for the
 landingZoneAction collection
 """
-
-# System modules
-from datetime import datetime
 
 # 3rd party modules
 from flask import make_response, abort
@@ -15,7 +12,7 @@ from pprint import pformat
 
 def read_all():
     """
-    This function responds to a request for /api/landingZoneActions
+    Responds to a request for /api/landingZoneActions
     with the complete lists of landingZoneActions
 
     :return:        json string of list of landingZoneActions
@@ -32,16 +29,16 @@ def read_all():
     return data
 
 
-def read_one(id):
+def read_one(oid):
     """
-    This function responds to a request for /api/landingzoneaction/{id}
+    Responds to a request for /api/landingzoneaction/{oid}
     with one matching landingZoneAction from landingZoneActions
 
     :param landingZoneAction:   id of the landingZoneAction to find
     :return:              landingZoneAction matching the id
     """
 
-    landingZoneAction = (LandingZoneAction.query.filter(LandingZoneAction.id == id).one_or_none())
+    landingZoneAction = (LandingZoneAction.query.filter(LandingZoneAction.id == oid).one_or_none())
 
     if landingZoneAction is not None:
         # Serialize the data for the response
@@ -52,13 +49,13 @@ def read_one(id):
         return data
     else:
         abort(
-            404, "LandingZoneAction with id {id} not found".format(id=id)
+            404, "LandingZoneAction with id {oid} not found".format(id=oid)
         )
 
 
 def create(landingZoneActionDetails):
     """
-    This function creates a new landingZoneAction in the landingZoneAction structure
+    Creates a new landingZoneAction in the landingZoneAction structure
     based on the passed in landingZoneAction data
 
     :param landingZoneAction:  landingZoneAction to create in landingZoneAction list
@@ -83,9 +80,9 @@ def create(landingZoneActionDetails):
     return data, 201
 
 
-def update(id, landingZoneActionDetails):
+def update(oid, landingZoneActionDetails):
     """
-    This function updates an existing landingZoneAction in the landingZoneAction list
+    Updates an existing landingZoneAction in the landingZoneAction list
 
     :param id: id of the landingZoneAction to update in the landingZoneAction list
     :param landingZoneAction:   landingZoneAction to update
@@ -95,17 +92,17 @@ def update(id, landingZoneActionDetails):
     app.logger.debug("landingZoneAction: ")
     app.logger.debug(pformat(landingZoneActionDetails))
 
-    if landingZoneActionDetails["id"] != id:
+    if landingZoneActionDetails["id"] != oid:
       abort(400, f"Key mismatch in path and body")
 
     # Does the landingZoneAction exist in landingZoneActions?
-    existing_landingZoneAction = LandingZoneAction.query.filter(LandingZoneAction.id == id).one_or_none()
+    existing_landingZoneAction = LandingZoneAction.query.filter(LandingZoneAction.id == oid).one_or_none()
 
     # Does landingZoneAction exist?
     if existing_landingZoneAction is not None:
         schema = LandingZoneActionSchema()
         update_landingZoneAction = schema.load(landingZoneActionDetails, session=db.session)
-        update_landingZoneAction.id = id
+        update_landingZoneAction.id = oid
 
         db.session.merge(update_landingZoneAction)
         db.session.commit()
@@ -121,25 +118,25 @@ def update(id, landingZoneActionDetails):
         abort(404, f"LandingZoneAction not found")
 
 
-def delete(id):
+def delete(oid):
     """
-    This function deletes an landingZoneAction from the landingZoneAction list
+    Deletes an landingZoneAction from the landingZoneAction list.
 
     :param id: id of the landingZoneAction to delete
     :return:             200 on successful delete, 404 if not found
     """
     # Does the landingZoneAction to delete exist?
-    existing_landingZoneAction = LandingZoneAction.query.filter(LandingZoneAction.id == id).one_or_none()
+    existing_landingZoneAction = LandingZoneAction.query.filter(LandingZoneAction.id == oid).one_or_none()
 
     # if found?
     if existing_landingZoneAction is not None:
         db.session.delete(existing_landingZoneAction)
         db.session.commit()
 
-        return make_response(f"LandingZoneAction id {id} successfully deleted", 200)
+        return make_response(f"LandingZoneAction id {oid} successfully deleted", 200)
 
     # Otherwise, nope, landingZoneAction to delete not found
     else:
-        abort(404, f"LandingZoneAction id {id} not found")
+        abort(404, f"LandingZoneAction id {oid} not found")
 
 

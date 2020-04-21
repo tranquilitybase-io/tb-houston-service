@@ -130,6 +130,7 @@ def set_activator_status(id):
 
 
 def put(id):
+
     # Test Update Then get new value
     newpayload = {'activator': 'new-test-activator'}
     resp = requests.put(url+id, headers=headers, data=json.dumps(newpayload,indent=4))
@@ -148,6 +149,7 @@ def put(id):
 
 
 def delete(id):
+
     #Test Delete Then GET
     resp = requests.delete(url+id, headers=headers) 
     assert resp.status_code == 200
@@ -159,6 +161,7 @@ def delete(id):
 
 
 def get_all():
+    
     geturl = 'http://localhost:3000/api/activators/'
     resp = requests.get(geturl, headers=headers)  
     assert resp.status_code == 200

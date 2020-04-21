@@ -1,10 +1,7 @@
 """
-This is the deployments module and supports all the ReST actions for the
+Deployments module, supports all the ReST actions for the
 subnetMode collection
 """
-
-# System modules
-from datetime import datetime
 
 # 3rd party modules
 from flask import make_response, abort
@@ -15,7 +12,7 @@ from pprint import pformat
 
 def read_all():
     """
-    This function responds to a request for /api/subnetMode
+    Responds to a request for /api/subnetMode
     with the complete lists of subnetModes
 
     :return:        json string of list of subnetModes
@@ -30,16 +27,16 @@ def read_all():
     return data
 
 
-def read_one(id):
+def read_one(oid):
     """
-    This function responds to a request for /api/subnetmode/{id}
+    Responds to a request for /api/subnetmode/{oid}
     with one matching subnetMode from subnetModes
 
     :param application:   id of subnetMode to find
     :return:              subnetMode matching key
     """
 
-    subnetMode = SubnetMode.query.filter(SubnetMode.id == id).one_or_none()
+    subnetMode = SubnetMode.query.filter(SubnetMode.id == oid).one_or_none()
 
     if subnetMode is not None:
         # Serialize the data for the response
@@ -47,12 +44,12 @@ def read_one(id):
         data = subnetMode_schema.dump(subnetMode)
         return data
     else:
-        abort(404, f"SubnetMode with id {id} not found")
+        abort(404, f"SubnetMode with id {oid} not found")
 
 
 def create(subnetModeDetails):
     """
-    This function creates a new subnetMode in the subnetMode list
+    Creates a new subnetMode in the subnetMode list
     based on the passed in subnetMode data
 
     :param subnetMode:  subnetMode to create in subnetMode structure
@@ -74,9 +71,9 @@ def create(subnetModeDetails):
     return data, 201
 
 
-def update(id, subnetModeDetails):
+def update(oid, subnetModeDetails):
     """
-    This function updates an existing subnetMode in the subnetMode list
+    Updates an existing subnetMode in the subnetMode list
 
     :param key:    key of the subnetMode to update in the subnetMode list
     :param subnetMode:   subnetMode to update
@@ -85,40 +82,40 @@ def update(id, subnetModeDetails):
 
     app.logger.debug(pformat(subnetModeDetails))
 
-    if 'id' in subnetModeDetails and subnetModeDetails['id'] != id:
+    if 'id' in subnetModeDetails and subnetModeDetails['id'] != oid:
            abort(400, f"Key mismatch in path and body")
 
-    existing_subnetMode = SubnetMode.query.filter(SubnetMode.id == id).one_or_none()
+    existing_subnetMode = SubnetMode.query.filter(SubnetMode.id == oid).one_or_none()
 
     if existing_subnetMode is not None:
-      SubnetMode.query.filter(SubnetMode.id == id).update(subnetModeDetails)
+      SubnetMode.query.filter(SubnetMode.id == oid).update(subnetModeDetails)
       db.session.commit()
       schema = SubnetModeSchema()
       data = schema.dump(existing_subnetMode)
       return data, 200
     else:
-      abort(404, f"SubnetMode {id} not found")
-      
+      abort(404, f"SubnetMode {oid} not found")
 
-def delete(id):
+
+def delete(oid):
     """
-    This function deletes a subnetMode from the subnetModes list
+    Deletes a subnetMode from the subnetModes list
 
     :param key: key of the subnetMode to delete
     :return:    200 on successful delete, 404 if not found
     """
     # Does the subnetMode to delete exist?
-    existing_subnetMode = SubnetMode.query.filter(SubnetMode.id == id).one_or_none()
+    existing_subnetMode = SubnetMode.query.filter(SubnetMode.id == oid).one_or_none()
 
     # if found?
     if existing_subnetMode is not None:
         db.session.delete(existing_subnetMode)
         db.session.commit()
 
-        return make_response(f"SubnetMode {id} successfully deleted", 200)
+        return make_response(f"SubnetMode {oid} successfully deleted", 200)
 
     # Otherwise, nope, subnetMode to delete not found
     else:
-        abort(404, f"SubnetMode {id} not found")
+        abort(404, f"SubnetMode {oid} not found")
 
 

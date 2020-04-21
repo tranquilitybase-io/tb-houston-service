@@ -3,9 +3,6 @@ This is the deployments module and supports all the ReST actions for the
 environment collection
 """
 
-# System modules
-from datetime import datetime
-
 # 3rd party modules
 from flask import make_response, abort
 from config import db, app
@@ -61,7 +58,6 @@ def create(environmentDetails):
     :return:        201 on success, 406 on environment exists
     """
     key = environmentDetails.get("key", None)
-    value = environmentDetails.get("value", None)
 
     # Does the environment exist already?
     existing_environment = (
@@ -98,7 +94,7 @@ def update(key, environmentDetails):
 
     if environmentDetails["key"] != key:
            abort(400, f"Key mismatch in path and body")
-           
+ 
     # Does the environment exist in environment list?
     existing_environment = Environment.query.filter(
             Environment.key == key
@@ -125,7 +121,7 @@ def update(key, environmentDetails):
 
 def delete(key):
     """
-    This function deletes a environment from the environments list
+    Deletes an environment from the environments list.
 
     :param key: key of the environment to delete
     :return:    200 on successful delete, 404 if not found

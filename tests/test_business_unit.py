@@ -25,10 +25,10 @@ def test_post():
     assert resp_json['key'] == 'test'
     assert resp_json['value'] == 'test-value'
     
+    #Get Request to check Post has created item as expected   
     resp = requests.get(url+'test', headers=headers) 
     resp_json = resp.json()
     resp_headers = resp.headers
-    
     #Validate response 
     assert resp.status_code == 200
     assert resp_json['key'] == 'test'
@@ -65,6 +65,6 @@ def test_delete():
     assert resp.status_code == 404
 
 def test_get_all():
-    
+
     resp = requests.get(url, headers=headers)  
     assert resp.status_code == 200

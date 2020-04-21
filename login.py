@@ -1,13 +1,10 @@
 """
-This is the login module and supports all the ReST actions login 
+Login module - supports all the ReST actions login.
 """
 
-# System modules
-from datetime import datetime
-
 # 3rd party modules
-from flask import make_response, abort
-from config import db, app
+from flask import  abort
+from config import app
 from pprint import pformat
 from models import ModelTools
 from models import User
@@ -16,7 +13,7 @@ from extendedSchemas import ExtendedUserSchema
 
 def check_credentials(login_details):
     """
-    This function responds to a request for /api/login
+    Responds to a request for /api/login.
     :return:        json string of user details
     """
 

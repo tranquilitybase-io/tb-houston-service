@@ -1,5 +1,6 @@
 """
-This is the deployments module and supports all the ReST actions for the
+deployments module
+supports all the ReST actions for the
 team collection
 """
 
@@ -58,7 +59,6 @@ def create(teamDetails):
     :return:        201 on success, 406 on team exists
     """
     key = teamDetails.get("key", None)
-    value = teamDetails.get("value", None)
 
     # Does the team exist already?
     existing_team = (

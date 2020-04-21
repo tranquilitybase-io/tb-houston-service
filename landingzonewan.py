@@ -3,11 +3,8 @@ This is the landingZoneWAN module and supports all the ReST actions for the
 landingZoneWAN collection
 """
 
-# System modules
-from datetime import datetime
-
 # 3rd party modules
-from flask import make_response, abort, jsonify
+from flask import make_response, abort
 from config import db, app
 from models import LandingZoneWAN, LandingZoneWANSchema
 from extendedSchemas import ExtendedLandingZoneWANSchema
@@ -15,7 +12,6 @@ from extendedSchemas import IdSchema
 from pprint import pformat
 from pprint import pprint
 from flatten_json import flatten, unflatten
-import json
 
 delimiter = '__'
 
@@ -41,16 +37,16 @@ def read_all():
     return data
 
 
-def read_one(id):
+def read_one(oid):
     """
-    This function responds to a request for /api/landingZoneWAN/{id}
+    This function responds to a request for /api/landingZoneWAN/{oid}
     with one matching landingZoneWAN from landingZoneWANs
 
     :param landingZoneWAN:   id of the landingZoneWAN to find
     :return:              landingZoneWAN matching the id
     """
 
-    landingZoneWAN = (LandingZoneWAN.query.filter(LandingZoneWAN.id == id).one_or_none())
+    landingZoneWAN = (LandingZoneWAN.query.filter(LandingZoneWAN.id == oid).one_or_none())
 
     if landingZoneWAN is not None:
         # Serialize the data for the response
@@ -62,7 +58,7 @@ def read_one(id):
         return data
     else:
         abort(
-            404, "LandingZoneWAN with id {id} not found".format(id=id)
+            404, f"LandingZoneWAN with id {oid} not found".format(id=oid)
         )
 
 
@@ -96,7 +92,7 @@ def create(landingZoneWANDetails):
     return data, 201
 
 
-def update(id, landingZoneWANDetails):
+def update(oid, landingZoneWANDetails):
     """
     This function updates an existing landingZoneWAN in the landingZoneWAN list
 
@@ -108,11 +104,11 @@ def update(id, landingZoneWANDetails):
     app.logger.debug("landingZoneWAN: ")
     app.logger.debug(pformat(landingZoneWANDetails))
 
-    if landingZoneWANDetails['id'] != id:
+    if landingZoneWANDetails['id'] != oid:
         abort(400, f"Key mismatch in path and body")
 
     # Does the landingZoneWAN exist in landingZoneWANs?
-    existing_landingZoneWAN = LandingZoneWAN.query.filter(LandingZoneWAN.id == id).one_or_none()
+    existing_landingZoneWAN = LandingZoneWAN.query.filter(LandingZoneWAN.id == oid).one_or_none()
 
     flattened_landingZoneWAN = flatten(landingZoneWANDetails, delimiter)
 
@@ -170,7 +166,7 @@ def update(id, landingZoneWANDetails):
         abort(404, f"LandingZoneWAN not found")
 
 
-def delete(id):
+def delete(oid):
     """
     This function deletes an landingZoneWAN from the landingZoneWAN list
 
@@ -178,17 +174,17 @@ def delete(id):
     :return:             200 on successful delete, 404 if not found
     """
     # Does the landingZoneWAN to delete exist?
-    existing_landingZoneWAN = LandingZoneWAN.query.filter(LandingZoneWAN.id == id).one_or_none()
+    existing_landingZoneWAN = LandingZoneWAN.query.filter(LandingZoneWAN.id == oid).one_or_none()
 
     # if found?
     if existing_landingZoneWAN is not None:
         db.session.delete(existing_landingZoneWAN)
         db.session.commit()
 
-        return make_response(f"LandingZoneWAN id {id} successfully deleted", 200)
+        return make_response(f"LandingZoneWAN id {oid} successfully deleted", 200)
 
     # Otherwise, nope, landingZoneWAN to delete not found
     else:
-        abort(404, f"LandingZoneWAN id {id} not found")
+        abort(404, f"LandingZoneWAN id {oid} not found")
 
 

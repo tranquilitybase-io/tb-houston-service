@@ -9,7 +9,7 @@ headers = {'Content-Type': 'application/json' }
 id = 0
 
 def test_bpgroutingmode():
-    
+
     #Testing POST request
     id = post()
     #Testing PUT request
@@ -35,11 +35,11 @@ def post():
     resp_json = resp.json()
     id = str(resp_json['id'])
     assert resp.status_code == 201
-
+    
+    #Get Request to check Post has created item as expected
     resp = requests.get(url+ id, headers=headers) 
     resp_json = resp.json()
     resp_headers = resp.headers
-    
     #Validate response 
     assert resp.status_code == 200
     assert resp_json['key'] == 'Local'

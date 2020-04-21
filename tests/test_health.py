@@ -10,6 +10,3 @@ def test_health():
     # Validate Response
     assert resp.status_code == 200
     assert resp_json['status'] == 'Healthy'
-
-
-

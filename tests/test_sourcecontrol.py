@@ -12,7 +12,7 @@ headers = {'Content-Type': 'application/json' }
 key = 'test/' 
            
 def test_post():
-    
+
     #Test POST Then GET
     # Body
     payload = {'key': 'test', 'value': 'test-value'}
@@ -61,8 +61,9 @@ def test_delete():
 
 def test_delete_error():
 
-    #Test Delete Then GET
+    # Delete Request for a non existing item
     resp = requests.delete(url+'test', headers=headers) 
+    #Validate response ; expect Not found
     assert resp.status_code == 404
 
 

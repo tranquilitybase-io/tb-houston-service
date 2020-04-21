@@ -9,6 +9,7 @@ headers = {'Content-Type': 'application/json' }
 id = 0
 
 def test_vpnonpremisevendor():
+    
     #Testing POST request
     resp_json = post()
     id = str(resp_json['id'])
@@ -44,10 +45,10 @@ def post():
     id = resp_json['id']
     assert resp.status_code == 201
     
+    #Get Request to check Post has created item as expected
     resp = requests.get(url+ str(id), headers=headers) 
     resp_json = resp.json()
     resp_headers = resp.headers
-    
     #Validate GET response 
     assert resp.status_code == 200
     assert resp_json['categoryClass'] == 'test-folder-structure'   
@@ -83,13 +84,13 @@ def put(id):
     resp = requests.get(url+id, headers=headers) 
     resp_json = resp.json()
     id = resp_json['id']
-
     #Validate response body for updated values
     assert resp.status_code == 200
     assert resp_json['locked'] == True
 
 
 def delete(id):
+
     # Delete Request
     resp = requests.delete(url+id, headers=headers) 
     #Validate Delete response
@@ -103,6 +104,7 @@ def delete(id):
 
 
 def delete_error(id):
+
     # Delete Request for a non existing item
     resp = requests.delete(url+id, headers=headers) 
     resp_json = resp.json()
