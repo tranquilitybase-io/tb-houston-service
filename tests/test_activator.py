@@ -2,7 +2,8 @@ import requests
 import json
 
 
-url = 'http://localhost:3000/api/activator/'
+HOUSTON_SERVICE_URL=os.environ['HOUSTON_SERVICE_URL']
+url = f"http://{HOUSTON_SERVICE_URL}/api/activator/'
     
 # Additional headers.
 headers = {'Content-Type': 'application/json' } 
