@@ -12,13 +12,13 @@ id = 0
 def test_bpgroutingmode():
 
     #Testing POST request
-    id = post()
+    #id = post()
     #Testing PUT request
-    put(id)
+    #put(id)
     #Testing DELETE request
-    delete(id)
+    #delete(id)
     #Testing GETALL request
-    get_all()
+    #get_all()
     # Test GET Activator Meta
 
     
@@ -86,7 +86,7 @@ def delete(id):
 
 def get_all():
 
-    url = 'http://localhost:3000/api/keyValues/bgproutingmode/'
+    url = 'http://localhost:3000/api/applications/'
     resp = requests.get(url, headers=headers)  
     #Validate Get All response
     assert resp.status_code == 200
