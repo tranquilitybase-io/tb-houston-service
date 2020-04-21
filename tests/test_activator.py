@@ -3,7 +3,7 @@ import json
 
 
 HOUSTON_SERVICE_URL=os.environ['HOUSTON_SERVICE_URL']
-url = f"http://{HOUSTON_SERVICE_URL}/api/activator/'
+url = f"http://{HOUSTON_SERVICE_URL}/api/activator/"
     
 # Additional headers.
 headers = {'Content-Type': 'application/json' } 
