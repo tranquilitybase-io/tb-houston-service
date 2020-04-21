@@ -7,7 +7,7 @@ LOG_LEVEL = logging.INFO # DEBUG, INFO, WARNING, ERROR, CRITICAL
 url = 'http://localhost:3000/api/keyValues/environment/'
     
 # Additional headers.
-headers = {'Content-Type': 'application/json' } 
+headers = {'Content-Type': 'application/json'}
 
 key = 'test/' 
            
@@ -17,7 +17,7 @@ def test_post():
     # Body
     payload = {'key': 'test', 'value': 'test-value'}
     # convert dict to json by json.dumps() for body data. 
-    resp = requests.post(url, headers=headers, data=json.dumps(payload,indent=4))       
+    resp = requests.post(url, headers=headers, data=json.dumps(payload,indent=4))    
     
     # Validate response headers and body contents, e.g. status code.
     resp_json = resp.json()
