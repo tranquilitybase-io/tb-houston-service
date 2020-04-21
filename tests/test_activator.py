@@ -79,12 +79,6 @@ def post():
             'region': 'string'
             }
         ],
-        'resources': [
-            {
-            'ipaddress': 'string',
-            'name': 'string'
-            }
-        ],
         'sensitivity': 'string',
         'serverCapacity': 0,
         'source': 'string',
@@ -99,15 +93,18 @@ def post():
         'type': 'string',
         'userCapacity': 0
         }
-
+        
     # convert dict to json by json.dumps() for body data. 
     resp = requests.post(url, headers=headers, data=json.dumps(payload,indent=4))       
     
     # Validate response headers and body contents, e.g. status code.
     resp_json = resp.json()
-    id = resp_json['id']
+    print(resp_json)
     assert resp.status_code == 201
     assert resp_json['activator'] == 'test-activator'
+    id = resp_json['id']
+    print(id)
+    
 
     resp = requests.get(url+ str(id), headers=headers) 
     resp_json = resp.json()
