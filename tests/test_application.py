@@ -1,24 +1,26 @@
 import requests
 import json
+import os
+from pprint import pprint
 
 
 HOUSTON_SERVICE_URL=os.environ['HOUSTON_SERVICE_URL']
-url = f"http://{HOUSTON_SERVICE_URL}/applications/"
+url = f"http://{HOUSTON_SERVICE_URL}/api/application/"
     
 # Additional headers.
 headers = {'Content-Type': 'application/json' } 
 id = 0
 
-def test_bpgroutingmode():
+def test_application():
 
     #Testing POST request
-    #id = post()
+    id = post()
     #Testing PUT request
-    #put(id)
+    put(id)
     #Testing DELETE request
-    #delete(id)
+    delete(id)
     #Testing GETALL request
-    #get_all()
+    get_all()
     # Test GET Activator Meta
 
     
@@ -27,13 +29,14 @@ def post():
 
     #Test POST Then GET
     # Body
-    payload  =  { 'id': 0, 'key': 'Local', 'value': 'Local' }
+    payload  =  { "solutionId": 0, "activatorId": 0, "name": "test", "env": "DEV", "status": "Active", "description": "test", "resources": [] }
 
     # convert dict to json by json.dumps() for body data. 
     resp = requests.post(url, headers=headers, data=json.dumps(payload,indent=4))       
     
     # Validate response headers and body contents, e.g. status code.
     resp_json = resp.json()
+    pprint(resp_json)
     id = str(resp_json['id'])
     assert resp.status_code == 201
     
@@ -43,8 +46,10 @@ def post():
     resp_headers = resp.headers
     #Validate response 
     assert resp.status_code == 200
-    assert resp_json['key'] == 'Local'
-    assert resp_json['value'] == 'Local'
+    assert resp_json['name'] == 'test'
+    assert resp_json['env'] == 'DEV'
+    assert resp_json['status'] == 'Active'
+    assert resp_json['description'] == 'test'
     assert resp_headers['content-type'] == 'application/json'
     return id
 
@@ -52,7 +57,7 @@ def post():
 def put(id):
 
     # Test Update Then get new value
-    newpayload  =  { 'id': int(id), 'key': 'new-key', 'value': 'new-value' }
+    newpayload  =  { 'id': int(id), 'description': 'test put', 'status': 'Inactive' }
     resp = requests.put(url+id, headers=headers, data=json.dumps(newpayload,indent=4))
    
     #Validate update/Put response 
@@ -65,8 +70,8 @@ def put(id):
 
     #Validate response body for updated values
     assert resp.status_code == 200
-    assert resp_json['key'] == 'new-key'
-    assert resp_json['value'] == 'new-value'
+    assert resp_json['description'] == 'test put'
+    assert resp_json['status'] == 'Inactive'
 
 
 
