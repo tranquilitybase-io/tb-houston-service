@@ -21,7 +21,6 @@ services:
         SQLALCHEMY_ECHO: 'True'
         SQLALCHEMY_TRACK_MODIFICATIONS: 'True'
         GCP_DAC_URL: 'localhost:3100'
-        HOUSTON_SERVICE_URL: 'localhost:3000'
     depends_on:
         - mysql57
     ports:
