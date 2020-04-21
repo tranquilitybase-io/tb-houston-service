@@ -28,7 +28,7 @@ def post():
 
     #Test POST Then GET
     # Body
-    payload  =  { 'id': 0, 'key': 'Local', 'value': 'Local' }
+    payload  =  { "solutionId": 0, "activatorId": 0, "name": "test", "env": "DEV", "status": "Active", "description": "test" }
 
     # convert dict to json by json.dumps() for body data. 
     resp = requests.post(url, headers=headers, data=json.dumps(payload,indent=4))       
