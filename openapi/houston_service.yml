@@ -1992,17 +1992,6 @@ components:
         activator:
           type: string
           description: activator
-        resources:
-          type: array
-          description: resources
-          items:
-            properties:
-              ipaddress:
-                type: string
-                description: ipaddress
-              name:
-                type: string
-                description: name
         status:
           type: string
           description: status
@@ -2043,6 +2032,17 @@ components:
         description:
           type: string
           description: notes
+        resources:
+          type: array
+          description: resources
+          items:
+            properties:
+              ipaddress:
+                type: string
+                description: ipaddress
+              name:
+                type: string
+                description: name
 
     Team:
       type: object
