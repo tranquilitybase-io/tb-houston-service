@@ -9,16 +9,16 @@ url = f"http://{HOUSTON_SERVICE_URL}/applications/"
 headers = {'Content-Type': 'application/json' } 
 id = 0
 
-def test_bpgroutingmode():
+def test_application():
 
     #Testing POST request
-    #id = post()
+    id = post()
     #Testing PUT request
-    #put(id)
+    put(id)
     #Testing DELETE request
-    #delete(id)
+    delete(id)
     #Testing GETALL request
-    #get_all()
+    get_all()
     # Test GET Activator Meta
 
     
