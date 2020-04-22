@@ -16,6 +16,7 @@ from pprint import pformat
 import requests
 import os
 import json
+from sqlalchemy import literal_column
 
 
 def read_all(active=None, namesonly=None, page=None, page_size=None, sort=None):
@@ -43,9 +44,9 @@ def read_all(active=None, namesonly=None, page=None, page_size=None, sort=None):
                 else:
                     si2 = "asc"
                 orderby = "Solution.{0}.{1}()".format(si1.strip(), si2.strip())
-                orderby_arr.append(eval(orderby))
+                orderby_arr.append(f"{si1} {si2}")
             #print("orderby: {}".format(orderby_arr))
-            solution_query = Solution.query.order_by(*orderby_arr)
+            solution_query = Solution.query.order_by(literal_column(", ".join(orderby_arr)))
         except Exception as e:
             print(pformat(e))
             solution_query = Solution.query.order_by(Solution.id)

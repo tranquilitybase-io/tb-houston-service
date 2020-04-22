@@ -14,6 +14,7 @@ from extendedSchemas import ExtendedActivatorCategorySchema
 import activator_extension
 import json
 from pprint import pformat
+from sqlalchemy import literal_column
 
 
 def read_all(category=None, status=None, environment=None,
@@ -41,12 +42,9 @@ def read_all(category=None, status=None, environment=None,
                     si2 = si[1]
                 else:
                     si2 = "asc"
-                orderby = "Activator.{0}.{1}()".format(si1.strip(), si2.strip())
-                # orderby is trusted input so is fine to use in this case,
-                # don't use ast.literal_eval as you will get Malformed String ValueError
-                orderby_arr.append(eval(orderby))
+                orderby_arr.append(f"{si1} {si2}")
             #print("orderby: {}".format(orderby_arr))
-            activator_query = Activator.query.order_by(*orderby_arr)
+            activator_query = Activator.query.order_by(literal_column(", ".join(orderby_arr)))
         except Exception as e:
             print(e)
             activator_query = Activator.query.order_by(Activator.id)
