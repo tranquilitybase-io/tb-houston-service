@@ -11,6 +11,7 @@ from models import ModelTools
 from pprint import pformat
 from pprint import pprint
 import json
+from sqlalchemy import literal_column
 
 
 def read_all(status=None, activatorId=None, environment=None,
@@ -37,9 +38,9 @@ def read_all(status=None, activatorId=None, environment=None,
                 else:
                     si2 = "asc"
                 orderby = "Application.{0}.{1}()".format(si1.strip(), si2.strip())
-                orderby_arr.append(eval(orderby))
+                orderby_arr.append(f"{si1} {si2}")
             #print("orderby: {}".format(orderby_arr))
-            application_query = Application.query.order_by(*orderby_arr)
+            application_query = Application.query.order_by(literal_column(", ".join(orderby_arr)))
         except Exception as e:
             print(e)
             application_query = Application.query.order_by(Application.id)
