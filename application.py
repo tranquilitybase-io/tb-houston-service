@@ -37,7 +37,6 @@ def read_all(status=None, activatorId=None, environment=None,
                     si2 = si[1]
                 else:
                     si2 = "asc"
-                orderby = "Application.{0}.{1}()".format(si1.strip(), si2.strip())
                 orderby_arr.append(f"{si1} {si2}")
             #print("orderby: {}".format(orderby_arr))
             application_query = Application.query.order_by(literal_column(", ".join(orderby_arr)))
@@ -48,7 +47,7 @@ def read_all(status=None, activatorId=None, environment=None,
     application_query = application_query.filter(
       (status == None or Application.status == status),
       (activatorId == None or Application.activatorId == activatorId),
-      (environment == None or Application.env == environment)) 
+      (environment == None or Application.env == environment))
 
     if (page==None or page_size==None):
       applications = application_query.all()
@@ -150,7 +149,7 @@ def update(oid, applicationDetails):
 
 def delete(oid):
     """
-    This function deletes an application from the application list
+    Deletes an application from the application list
 
     :param id: id of the application to delete
     :return:             200 on successful delete, 404 if not found
