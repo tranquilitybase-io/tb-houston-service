@@ -43,7 +43,6 @@ def read_all(active=None, namesonly=None, page=None, page_size=None, sort=None):
                     si2 = si[1]
                 else:
                     si2 = "asc"
-                orderby = "Solution.{0}.{1}()".format(si1.strip(), si2.strip())
                 orderby_arr.append(f"{si1} {si2}")
             #print("orderby: {}".format(orderby_arr))
             solution_query = Solution.query.order_by(literal_column(", ".join(orderby_arr)))
