@@ -1,8 +1,10 @@
 import requests
 import json
+import os
 
 
-url = 'http://localhost:3000/api/landingzoneprogressitem/'
+HOUSTON_SERVICE_URL=os.environ['HOUSTON_SERVICE_URL']
+url = f"http://{HOUSTON_SERVICE_URL}/api/landingzoneprogressitem/"
     
 # Additional headers.
 headers = {'Content-Type': 'application/json' } 
@@ -95,7 +97,7 @@ def delete_error(id):
 
 def get_all():
     
-    url = 'http://localhost:3000/api/landingzoneprogressitems/'
+    url = f"http://{HOUSTON_SERVICE_URL}/api/landingzoneprogressitems/"
     resp = requests.get(url, headers=headers)  
     assert resp.status_code == 200
     

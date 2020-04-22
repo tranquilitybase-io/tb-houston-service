@@ -1,10 +1,12 @@
 import requests
 import json
 import logging
+import os
 
 LOG_LEVEL = logging.INFO # DEBUG, INFO, WARNING, ERROR, CRITICAL
 
-url = 'http://localhost:3000/api/keyValues/cd/'
+HOUSTON_SERVICE_URL=os.environ['HOUSTON_SERVICE_URL']
+url = f"http://{HOUSTON_SERVICE_URL}/api/keyValues/cd/"
     
 # Additional headers.
 headers = {'Content-Type': 'application/json' } 

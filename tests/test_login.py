@@ -1,9 +1,12 @@
 import requests
 import json
+import os
 
 def test_login():
 
-    url = 'http://localhost:3000/api/login'
+    
+    HOUSTON_SERVICE_URL=os.environ['HOUSTON_SERVICE_URL']
+    url = f"http://{HOUSTON_SERVICE_URL}/api/login"
 
     headers = {'Content-Type': 'application/json' } 
 

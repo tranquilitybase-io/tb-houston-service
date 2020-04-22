@@ -1,9 +1,11 @@
 import requests
 import json
+import os
 
 def test_health():
 
-    url = 'http://localhost:3000/api/health'
+    HOUSTON_SERVICE_URL=os.environ['HOUSTON_SERVICE_URL']
+    url = f"http://{HOUSTON_SERVICE_URL}/api/health"
 
     resp = requests.get(url) 
     resp_json = resp.json()

@@ -119,7 +119,7 @@ def post():
 
 def set_activator_status(id):
 
-    url = 'http://localhost:3000/api/setactivatorstatus/'
+    url = url = f"http://{HOUSTON_SERVICE_URL}/api/setactivatorstatus/"
     payload= {'accessRequestedBy': 0, 'id': id, 'status': 'Locked' }
     resp = requests.post(url, headers=headers , data= json.dumps(payload,indent=4))
     resp_json = resp.json()
@@ -162,14 +162,14 @@ def delete(id):
 
 def get_all():
     
-    geturl = 'http://localhost:3000/api/activators/'
+    geturl = f"http://{HOUSTON_SERVICE_URL}/api/activators/"
     resp = requests.get(geturl, headers=headers)  
     assert resp.status_code == 200
 
 
 def get_meta():
 
-    url = 'http://localhost:3000/api/activator_meta/'
+    url = f"http://{HOUSTON_SERVICE_URL}/api/activator_meta/"
     resp = requests.get(url, headers=headers)  
     resp_json = resp.json()
     count = resp_json['count']
@@ -180,7 +180,7 @@ def get_meta():
 
 def get_categories():
 
-    url = 'http://localhost:3000/api/activatorcategories/'
+    url = f"http://{HOUSTON_SERVICE_URL}/api/activatorcategories/"
     resp = requests.get(url, headers=headers)  
     #Validate response
     assert resp.status_code == 200

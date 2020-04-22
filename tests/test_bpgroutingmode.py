@@ -1,8 +1,9 @@
 import requests
 import json
+import os
 
-
-url = 'http://localhost:3000/api/keyValues/bgproutingmode/'
+HOUSTON_SERVICE_URL=os.environ['HOUSTON_SERVICE_URL']
+url = f"http://{HOUSTON_SERVICE_URL}/api/keyValues/bgproutingmode/"
     
 # Additional headers.
 headers = {'Content-Type': 'application/json' } 
@@ -85,7 +86,7 @@ def delete(id):
 
 def get_all():
 
-    url = 'http://localhost:3000/api/keyValues/bgproutingmode/'
+    url = f"http://{HOUSTON_SERVICE_URL}/api/keyValues/bgproutingmode/"
     resp = requests.get(url, headers=headers)  
     #Validate Get All response
     assert resp.status_code == 200
