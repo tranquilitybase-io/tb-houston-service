@@ -24,6 +24,14 @@ class HealthSchema(Schema):
     status = fields.Str()
 
 
+class ResourceSchema(Schema):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    ipaddress = fields.Str()
+    name = fields.Str()
+
+
 class ExtendedUserSchema(Schema):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -70,6 +78,7 @@ class ExtendedActivatorSchema(Schema):
 
 
 class ExtendedApplicationSchema(Schema):
+    id = fields.Int()
     solutionId = fields.Int()
     activatorId = fields.Int()
     name = fields.Str()
@@ -77,6 +86,7 @@ class ExtendedApplicationSchema(Schema):
     status = fields.Str()
     description = fields.Str()
     lastUpdated = fields.Str()
+    resources = fields.Nested(ResourceSchema(many=True))
     activator = fields.Nested(ExtendedActivatorSchema(many=False))
 
 
@@ -87,7 +97,7 @@ class ExtendedSolutionSchema(Schema):
     id = fields.Int()
     name = fields.Str()
     description = fields.Str()
-    buinessUnit = fields.Str()
+    businessUnit = fields.Str()
     costCentre = fields.Str()
     ci = fields.Str()
     cd = fields.Str()
