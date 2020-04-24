@@ -9,7 +9,6 @@ from config import db, app
 from models import Application, ApplicationSchema
 from models import ModelTools
 from pprint import pformat
-from pprint import pprint
 import json
 from sqlalchemy import literal_column
 
@@ -98,7 +97,11 @@ def create(applicationDetails):
     :return:             201 on success, 406 on application exists
     """
 
-    pprint(applicationDetails)
+    # Remove id as it's created automatically
+    if 'id' in applicationDetails:
+        del applicationDetails['id']
+
+    applicationDetails['resources'] = json.dumps(applicationDetails.get('resources') or [])
 
     schema = ApplicationSchema()
     new_application = schema.load(applicationDetails, session=db.session)

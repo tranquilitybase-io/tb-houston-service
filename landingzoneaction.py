@@ -48,9 +48,7 @@ def read_one(oid):
         app.logger.debug(pformat(data))
         return data
     else:
-        abort(
-            404, "LandingZoneAction with id {oid} not found".format(id=oid)
-        )
+        abort(404, f"LandingZoneAction with id {oid} not found")
 
 
 def create(landingZoneActionDetails):

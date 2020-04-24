@@ -1,5 +1,6 @@
 from models import ModelTools
 import user_extension
+import json
 
 
 def build_activator(act):
@@ -10,17 +11,17 @@ def build_activator(act):
         'available': act.available,
         'sensitivity': act.sensitivity,
         'category': act.category,
-        'envs': ModelTools.load_json_array(act.envs),
-        'platforms': ModelTools.load_json_array(act.platforms),
+        'envs': json.loads(act.envs or '[]'),
+        'platforms': json.loads(act.platforms or '[]'),
         'lastUpdated': ModelTools.datetime_as_string(act.lastUpdated),
         'userCapacity': act.userCapacity,
         'serverCapacity': act.serverCapacity,
-        'regions': ModelTools.load_json_array(act.regions),
-        'hosting': ModelTools.load_json_array(act.hosting),
-        'apiManagement': ModelTools.load_json_array(act.apiManagement),
-        'ci': ModelTools.load_json_array(act.ci),
-        'cd': ModelTools.load_json_array(act.cd),
-        'sourceControl': ModelTools.load_json_array(act.sourceControl),
+        'regions': json.loads(act.regions or '[]'),
+        'hosting': json.loads(act.hosting or '[]'),
+        'apiManagement': json.loads(act.apiManagement or '[]'),
+        'ci': json.loads(act.ci or '[]'),
+        'cd': json.loads(act.cd or '[]'),
+        'sourceControl': json.loads(act.sourceControl or '[]'),
         'businessUnit': act.businessUnit,
         'technologyOwner': act.technologyOwner,
         'technologyOwnerEmail': act.technologyOwnerEmail,

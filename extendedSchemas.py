@@ -25,11 +25,14 @@ class HealthSchema(Schema):
 
 
 class ExtendedUserSchema(Schema):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
     id = fields.Int()
     email = fields.Str()
     firstName = fields.Str()
     lastName = fields.Str()
-    isAdmin = fields.Boolean()
+    sAdmin = fields.Boolean()
 
 
 class ExtendedActivatorSchema(Schema):
@@ -109,6 +112,10 @@ class SolutionDeploymentSchema(Schema):
 
     id = fields.Int()
     deployed = fields.Boolean()
+    deploymentState = fields.Str()
+    errorId = fields.Str()
+    errorCode = fields.Str()
+    errorMessage = fields.Str()
 
 
 class ExtendedGoogleSessionSchema(Schema):
