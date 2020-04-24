@@ -11,6 +11,18 @@ url = f"http://{HOUSTON_SERVICE_URL}/api/application/"
 headers = {'Content-Type': 'application/json' } 
 id = 0
 
+def typestest(resp):
+    assert type(resp['activatorId']) is int
+    assert type(resp['description']) is str
+    assert type(resp['env']) is str
+    assert type(resp['id']) is int
+    assert type(resp['name']) is str
+    assert type(resp['resources']) is list
+    assert type(resp['solutionId']) is int
+    assert type(resp['status']) is str
+    pprint(resp)
+
+
 def test_application():
 
     #Testing POST request
@@ -29,14 +41,25 @@ def post():
 
     #Test POST Then GET
     # Body
-    payload  =  { "solutionId": 0, "activatorId": 0, "name": "test", "env": "DEV", "status": "Active", "description": "test", "resources": [] }
+    payload  =  {
+        "solutionId": 0,
+        "activatorId": 0,
+        "name": "test",
+        "env": "DEV",
+        "status": "Active",
+        "description": "test",
+        "resources": [
+            { "ipaddress": "string", "name": "string" },
+            { "ipaddress": "string", "name": "string" },
+            { "ipaddress": "string", "name": "string" }
+        ]
+    }
 
     # convert dict to json by json.dumps() for body data. 
     resp = requests.post(url, headers=headers, data=json.dumps(payload,indent=4))       
     
     # Validate response headers and body contents, e.g. status code.
     resp_json = resp.json()
-    pprint(resp_json)
     id = str(resp_json['id'])
     assert resp.status_code == 201
     
@@ -51,6 +74,7 @@ def post():
     assert resp_json['status'] == 'Active'
     assert resp_json['description'] == 'test'
     assert resp_headers['content-type'] == 'application/json'
+    typestest(resp_json)
     return id
 
 

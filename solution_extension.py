@@ -1,6 +1,7 @@
 from models import ModelTools
 from models import Application
 import application_extension
+import json
 
 
 def build_solution(sol):
@@ -13,7 +14,7 @@ def build_solution(sol):
     'ci': sol.ci,
     'cd': sol.cd,
     'sourceControl': sol.sourceControl,
-    'environments': ModelTools.load_json_array(sol.environments),
+    'environments': json.loads(sol.environments or '[]'),
     'active': sol.active,
     'favourite': sol.favourite,
     'teams': sol.teams,

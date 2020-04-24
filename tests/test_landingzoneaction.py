@@ -102,8 +102,7 @@ def delete(id):
     resp = requests.get(url+id, headers=headers) 
     #Validate Get response
     resp_json = resp.json()
-    # Todo expected response code 404 but receiving 500 Need to fix rest end point
-    assert resp.status_code == 500
+    assert resp.status_code == 404
 
 
 def delete_error(id):
