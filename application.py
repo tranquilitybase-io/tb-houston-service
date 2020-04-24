@@ -7,9 +7,9 @@ application collection
 from flask import make_response, abort
 from config import db, app
 from models import Application, ApplicationSchema
+from extendedSchemas import ExtendedApplicationSchema
 from models import ModelTools
 from pprint import pformat
-from pprint import pprint
 import json
 from sqlalchemy import literal_column
 
@@ -54,8 +54,12 @@ def read_all(status=None, activatorId=None, environment=None,
     else:
       applications = application_query.limit(page_size).offset(page * page_size).all()
 
+    # deserialize the resources json
+    for a in applications:
+        a.resources = json.loads(a.resources)
+
     # Serialize the data for the response
-    application_schema = ApplicationSchema(many=True)
+    application_schema = ExtendedApplicationSchema(many=True)
     data = application_schema.dump(applications)
     app.logger.debug("application data:")
     app.logger.debug(pformat(data))
@@ -78,7 +82,8 @@ def read_one(oid):
 
     if application is not None:
         # Serialize the data for the response
-        application_schema = ApplicationSchema()
+        application.resources = json.loads(application.resources)
+        application_schema = ExtendedApplicationSchema()
         data = application_schema.dump(application)
         app.logger.debug("application data:")
         app.logger.debug(pformat(data))
@@ -98,7 +103,11 @@ def create(applicationDetails):
     :return:             201 on success, 406 on application exists
     """
 
-    pprint(applicationDetails)
+    # Remove id as it's created automatically
+    if 'id' in applicationDetails:
+        del applicationDetails['id']
+
+    applicationDetails['resources'] = json.dumps(applicationDetails.get('resources') or [])
 
     schema = ApplicationSchema()
     new_application = schema.load(applicationDetails, session=db.session)
@@ -108,10 +117,11 @@ def create(applicationDetails):
 
     # Serialize and return the newly created application
     # in the response
+    new_application.resources = json.loads(new_application.resources)
+    schema = ExtendedApplicationSchema()
     data = schema.dump(new_application)
     app.logger.debug("application data:")
     app.logger.debug(pformat(data))
-
     return data, 201
 
 
@@ -137,14 +147,15 @@ def update(oid, applicationDetails):
         Application.query.filter(Application.id == oid).update(applicationDetails)
         db.session.commit()
 
+        applicationDetails['resources'] = json.loads(existing_application.resources)
         # return the updated application in the response
-        schema = ApplicationSchema()
-        data = schema.dump(existing_application)
+        schema = ExtendedApplicationSchema()
+        data = schema.dump(applicationDetails)
         return data, 200
 
     # otherwise, nope, application doesn't exist, so that's an error
     else:
-        abort(404, f"Application not found")
+        abort(404, f"Application {oid} not found")
 
 
 def delete(oid):
