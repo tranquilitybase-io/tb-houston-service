@@ -50,38 +50,34 @@ jobs:
         username: '_json_key'
         password: ${{ secrets.GCP_SA_KEY }}
 
-    - name: Build MYSQL CI Image 
+    - name: Build Houston MYSQL57 Image
       shell: bash
       run: |
-        cd ${GITHUB_WORKSPACE}/sql
-        #docker build -t gcr.io/tranquility-base-images/tb-houston-mysql57:ci .
-        #docker push gcr.io/tranquility-base-images/tb-houston-mysql57:ci
+        cd ${GITHUB_WORKSPACE}/tb-houston-service/sql
         docker build -t gcr.io/eagle-console-resources/tb-houston-mysql57:ci .
         docker push gcr.io/eagle-console-resources/tb-houston-mysql57:ci
 
     - name: Build Houston Service Image
       shell: bash
       run: |
-        cd ${GITHUB_WORKSPACE}
-        #docker build -t gcr.io/tranquility-base-images/tb-houston-service:ci .
-        #docker push gcr.io/tranquility-base-images/tb-houston-service:ci
+        cd ${GITHUB_WORKSPACE}/tb-houston-service
         docker build -t gcr.io/eagle-console-resources/tb-houston-service:ci .
         docker push gcr.io/eagle-console-resources/tb-houston-service:ci
 
     - name: Start Docker Compose
       shell: bash
       run: |
-        docker-compose -f houston_ci.yml up > houston_ci.log 2>&1 &
+        docker-compose -f docker_compose_cicd.yml up > docker_compose_cicd.log 2>&1 &
 
     - name: Give Services time to initialize (abort if elapsed time is greater than 10 minutes)
       shell: bash
       run: |
         start_epoch="$(date -u +%s)"
         elapsed_seconds=0
-        until [ $(docker-compose -f houston_ci.yml ps | grep Up | wc -l) -eq 2 ] || [ $elapsed_seconds -ge 600 ]
+        until [ $(docker-compose -f docker_compose_cicd.yml ps | grep Up | wc -l) -eq 3 ] || [ $elapsed_seconds -ge 600 ]
         do
           sleep 30
-          docker-compose -f houston_ci.yml ps
+          docker-compose -f docker_compose_cicd.yml ps
           current_epoch="$(date -u +%s)"
           elapsed_seconds="$(($current_epoch-$start_epoch))"
           echo "Elapsed seconds: ${elapsed_seconds}"
@@ -90,19 +86,20 @@ jobs:
     # Be careful, if services aren't given sufficient time to initialize the tests will fail.
     - name: Test with pytest
       run: |
+        cd ${GITHUB_WORKSPACE}/tb-houston-service
         pip install pytest
         HOUSTON_SERVICE_URL="localhost:3000" pytest --rootdir tests
 
     - name: Stop Docker Compose
       shell: bash
       run: |
-        docker-compose -f houston_ci.yml down 
+        docker-compose -f docker_compose_cicd.yml down 
 
     ### Continuous Deployment
     - name: run semver, store in step variable version
       shell: bash
       run: |
-        echo "##[set-output name=version;]$(python scripts/semver.py ${{ steps.extract_branch.outputs.branch }})"
+        echo "##[set-output name=version;]$(python ${GITHUB_WORKSPACE}/TranquilityBase/scripts/semver.py ${{ steps.extract_branch.outputs.branch }})"
       id: get_version
     - name: check if version variable is set
       shell: bash
@@ -128,7 +125,7 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}                      
     - name: Tag Images
       run: |
-        docker tag gcr.io/eagle-console-resources/tb-houston-mysql57:ci "gcr.io/eagle-console-resources/tb-houston-mysql57:internal-v${{ steps.get_version.outputs.version }}"
+        docker tag gcr.io/eagle-console-resources/tb-houston-mysql57:ci "gcr.io/eagle-console-resources/tb-houston-service:internal-v${{ steps.get_version.outputs.version }}"
         docker push "gcr.io/eagle-console-resources/tb-houston-mysql57:internal-v${{ steps.get_version.outputs.version }}"
         docker tag gcr.io/eagle-console-resources/tb-houston-service:ci "gcr.io/eagle-console-resources/tb-houston-service:internal-v${{ steps.get_version.outputs.version }}"
         docker push "gcr.io/eagle-console-resources/tb-houston-service:internal-v${{ steps.get_version.outputs.version }}"

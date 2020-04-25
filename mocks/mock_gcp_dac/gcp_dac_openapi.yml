@@ -1,0 +1,86 @@
+openapi: 3.0.0
+info:
+  description: TranquilityBase GCP DAC REST API Service
+  version: "1.1-oas3"
+  title: TB GCP DAC
+
+paths:
+  /health:
+    get:
+      operationId: gcpdac.health.check
+      tags:
+        - health
+      summary: health check
+      description: health check
+      responses:
+        '200':
+          description: Successful
+
+  /solution/:
+    post:
+      operationId: solution.create
+      tags:
+        - solution
+      summary: Create a solution
+      description: Create solution in more detail - TODO
+      responses:
+        '201':
+          description: Successfully created a solution
+      requestBody:
+        $ref: "#/components/requestBodies/solution.solutionDetails"
+
+servers:
+  - url: /api
+components:
+  requestBodies:
+    solution.solutionDetails:
+      content:
+        application/json:
+          schema:
+            x-body-name: solutionDetails
+            $ref: "#/components/schemas/Solution"
+  schemas:
+    Solution:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: the solution id
+        name:
+          type: string
+          description: name
+        description:
+          type: string
+          description: description
+        businessUnit:
+          type: string
+          description: businessUnit
+        costCentre:
+          type: string
+          description: costCentre
+        ci:
+          type: string
+          description: ci
+        cd:
+          type: string
+          description: cd
+        sourceControl:
+          type: string
+          description: sourceControl
+        environments:
+          type: array
+          description: environments
+          items:
+            type: string
+        active:
+          type: boolean
+          description: active
+        favourite:
+          type: boolean
+          description: favourite
+        teams:
+          type: integer
+          description: teams
+        lastUpdated:
+          type: string
+          description: "UTC/CUT last updated datetime stamp see: https://github.com/tranquilitybase-io/tb-houston-service/wiki/UTC-Timestamp"

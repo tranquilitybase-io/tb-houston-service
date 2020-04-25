@@ -382,6 +382,12 @@ CREATE TABLE `solutionresource` (
 -- Dumping data for table `solutionresource`
 --
 
+LOCK TABLES `solutionresource` WRITE;
+/*!40000 ALTER TABLE `solutionresource` DISABLE KEYS */;
+INSERT INTO `solutionresource` VALUES (1,0,'string','string'),(2,0,'string','string'),(3,0,'string','string'),(4,0,'string','string'),(5,0,'string','string'),(6,0,'string','string'),(7,0,'string','string'),(8,0,'string','string'),(9,0,'string','string');
+/*!40000 ALTER TABLE `solutionresource` ENABLE KEYS */;
+UNLOCK TABLES;
+
 --
 -- Table structure for table `sourcecontrol`
 --

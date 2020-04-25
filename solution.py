@@ -4,7 +4,7 @@ solutions collection
 """
 
 # 3rd party modules
-from flask import make_response, abort
+from flask import make_response, jsonify, abort
 from config import db, app
 from models import Solution, SolutionSchema
 from models import ModelTools
@@ -76,7 +76,7 @@ def read_all(active=None, namesonly=None, page=None, page_size=None, sort=None):
 
     app.logger.debug("solutions data:")
     app.logger.debug(data)
-    return data
+    return data, 200
 
 
 def read_one(oid):
@@ -95,7 +95,7 @@ def read_one(oid):
         # Serialize the data for the response
         solution_schema = ExtendedSolutionSchema()
         data = solution_schema.dump(solution)
-        return data
+        return data, 200
     else:
         abort(
             404, f"Solution with id {oid} not found".format(id=oid)
@@ -127,14 +127,14 @@ def create(solutionDetails):
     if (solutionDetails.get('deploymentState') == None):
       solutionDetails['deploymentState'] = ""
 
-    if (solutionDetails.get('errorId') == None):
-      solutionDetails['errorId'] = 0
+    if (solutionDetails.get('statusId') == None):
+      solutionDetails['statusId'] = 0
 
-    if (solutionDetails.get('errorCode') == None):
-      solutionDetails['errorCode'] = ""
+    if (solutionDetails.get('statusCode') == None):
+      solutionDetails['statusCode'] = ""
 
-    if (solutionDetails.get('errorMessage') == None):
-      solutionDetails['errorMessage'] = ""
+    if (solutionDetails.get('statusMessage') == None):
+      solutionDetails['statusMessage'] = ""
 
     # Remove applications because Solutions don't have
     # any applications when they are first created
@@ -250,7 +250,29 @@ def deployment_read_all():
 
     app.logger.debug("solutions data:")
     app.logger.debug(data)
-    return data
+    return data, 200
+
+
+def deployment_read_one(oid):
+    """
+    This function responds to a request for /api/solutiondeployment/{oid}
+    with one matching solution deployment from solutions
+
+    :param application:   id of solution to find
+    :return:              solution matching id
+    """
+
+    sol = (Solution.query.filter(Solution.id == oid).one_or_none())
+
+    if sol is not None:
+        # Serialize the data for the response
+        solution_schema = SolutionDeploymentSchema(many=False)
+        data = solution_schema.dump(sol)
+        return data, 200
+    else:
+        abort(
+            404, f"Solution with id {oid} not found".format(id=oid)
+        )
 
 
 def deployment_create(solutionDeploymentDetails):
@@ -264,7 +286,12 @@ def deployment_create(solutionDeploymentDetails):
     app.logger.debug(pformat(solutionDeploymentDetails))
     oid = solutionDeploymentDetails['id'];
     sol_json_payload = read_one(oid)
-    send_deployment_request_to_the_dac(sol_json_payload)
+    resp = sol_json_payload[0]
+    print(pformat(resp))
+    data = send_deployment_request_to_the_dac(resp)
+    resp_json = data.json()
+    print(pformat(resp_json))
+    return resp_json, 201
 
 
 def deployment_update(oid, solutionDeploymentDetails):
@@ -288,12 +315,13 @@ def deployment_update(oid, solutionDeploymentDetails):
     if existing_solution is not None:
         schema = SolutionSchema(many=False)
         update_solution = schema.load(solutionDeploymentDetails, session=db.session)
-        update_solution.key = solutionDeploymentDetails.get('id', oid)
+        update_solution.id = oid
         update_solution.lastUpdated = ModelTools.get_utc_timestamp()
         update_solution.deployed = solutionDeploymentDetails.get('deployed', update_solution.deployed)
         update_solution.deploymentState = solutionDeploymentDetails.get('deploymentState', update_solution.deploymentState)
-        update_solution.errorId = solutionDeploymentDetails.get('errorId', update_solution.errorId)
-        update_solution.errorMessage = solutionDeploymentDetails.get('errorMessage', update_solution.errorMessage)
+        update_solution.statusId = solutionDeploymentDetails.get('statusId', update_solution.statusId)
+        update_solution.statusCode = solutionDeploymentDetails.get('statusCode', update_solution.statusCode)
+        update_solution.statusMessage = solutionDeploymentDetails.get('statusMessage', update_solution.statusMessage)
 
         db.session.merge(update_solution)
         db.session.commit()
@@ -317,4 +345,5 @@ def send_deployment_request_to_the_dac(sol_json_payload):
     headers = { 'Content-Type': "application/json" }
     response = requests.post(url, data=json.dumps(sol_json_payload), headers=headers)
     print(pformat(response))
+    #resp_json = response.json()
     return response

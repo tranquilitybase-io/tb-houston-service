@@ -33,7 +33,8 @@ def test_application():
     delete(id)
     #Testing GETALL request
     get_all()
-    # Test GET Activator Meta
+    # Test post with no resources
+    id = post1()
 
     
 
@@ -53,6 +54,41 @@ def post():
             { "ipaddress": "string", "name": "string" },
             { "ipaddress": "string", "name": "string" }
         ]
+    }
+
+    # convert dict to json by json.dumps() for body data. 
+    resp = requests.post(url, headers=headers, data=json.dumps(payload,indent=4))       
+    
+    # Validate response headers and body contents, e.g. status code.
+    resp_json = resp.json()
+    id = str(resp_json['id'])
+    assert resp.status_code == 201
+    
+    #Get Request to check Post has created item as expected
+    resp = requests.get(url+ id, headers=headers) 
+    resp_json = resp.json()
+    resp_headers = resp.headers
+    #Validate response 
+    assert resp.status_code == 200
+    assert resp_json['name'] == 'test'
+    assert resp_json['env'] == 'DEV'
+    assert resp_json['status'] == 'Active'
+    assert resp_json['description'] == 'test'
+    assert resp_headers['content-type'] == 'application/json'
+    typestest(resp_json)
+    return id
+
+# test null resources
+def post1():
+    #Test POST Then GET
+    # Body
+    payload  =  {
+        "solutionId": 0,
+        "activatorId": 0,
+        "name": "test",
+        "env": "DEV",
+        "status": "Active",
+        "description": "test"
     }
 
     # convert dict to json by json.dumps() for body data. 

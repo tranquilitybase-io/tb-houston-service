@@ -133,9 +133,9 @@ class Solution(db.Model):
     lastUpdated = db.Column(db.String(255))
     deployed = db.Column(db.Boolean())
     deploymentState = db.Column(db.String(45))
-    errorId = db.Column(db.Integer())
-    errorCode = db.Column(db.String(45))
-    errorMessage = db.Column(db.String(255))
+    statusId = db.Column(db.Integer())
+    statusCode = db.Column(db.String(45))
+    statusMessage = db.Column(db.String(255))
 
     applications = db.relationship('Application')
 

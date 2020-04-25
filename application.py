@@ -107,7 +107,10 @@ def create(applicationDetails):
     if 'id' in applicationDetails:
         del applicationDetails['id']
 
-    applicationDetails['resources'] = json.dumps(applicationDetails.get('resources') or [])
+    # As discussed with Fabio, explicitly set resources to '[]' if not set
+    if not type(applicationDetails.get('resources')) is list:
+      applicationDetails['resources'] = []
+    applicationDetails['resources'] = json.dumps(applicationDetails.get('resources'))
 
     schema = ApplicationSchema()
     new_application = schema.load(applicationDetails, session=db.session)

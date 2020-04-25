@@ -123,9 +123,9 @@ class SolutionDeploymentSchema(Schema):
     id = fields.Int()
     deployed = fields.Boolean()
     deploymentState = fields.Str()
-    errorId = fields.Str()
-    errorCode = fields.Str()
-    errorMessage = fields.Str()
+    statusId = fields.Int()
+    statusCode = fields.Str()
+    statusMessage = fields.Str()
 
 
 class ExtendedGoogleSessionSchema(Schema):

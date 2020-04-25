@@ -928,16 +928,39 @@ paths:
           description: Successfully created a Solution Deployment
 
   "/solutiondeployment/{oid}":
+    get:
+      operationId: solution.deployment_read_one
+      tags:
+        - solution
+      summary: Read a solution deployment from the list 
+      description: Read solution deployment from the list
+      parameters:
+        - name: oid
+          in: path
+          description: id of the solution to update
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successfully updated a solution deployment
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SolutionDeployment"
+
     put:
       operationId: solution.deployment_update
       tags:
         - solution
-      summary: Update a solution in the list with the deployed state
-      description: Update a solution in the list with the deployed state
+      summary: Update a solution deployment in the list with the deployed state
+      description: Update a solution deployment in the list with the deployed state
       parameters:
         - name: oid
           in: path
-          description: key of the solution to update
+          description: id of the solution to update
           required: true
           schema:
             type: integer
@@ -945,7 +968,7 @@ paths:
         $ref: "#/components/requestBodies/solution.solutionDeploymentPutDetails"
       responses:
         "200":
-          description: Successfully updated a solution
+          description: Successfully updated a solution deployment
 
   /solutionresources/:
     get:
