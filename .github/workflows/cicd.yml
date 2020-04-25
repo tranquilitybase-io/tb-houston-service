@@ -25,7 +25,7 @@ jobs:
     - uses: actions/checkout@v2
       with:
         repository: tranquilitybase-io/tb-houston-service
-        path: .
+        path: tb-houston-service
         fetch-depth: 0
     - name: Set up Python 3.6
       uses: actions/setup-python@v1
@@ -67,11 +67,13 @@ jobs:
     - name: Start Docker Compose
       shell: bash
       run: |
+        cd ${GITHUB_WORKSPACE}/tb-houston-service
         docker-compose -f docker_compose_cicd.yml up > docker_compose_cicd.log 2>&1 &
 
     - name: Give Services time to initialize (abort if elapsed time is greater than 10 minutes)
       shell: bash
       run: |
+        cd ${GITHUB_WORKSPACE}/tb-houston-service
         start_epoch="$(date -u +%s)"
         elapsed_seconds=0
         until [ $(docker-compose -f docker_compose_cicd.yml ps | grep Up | wc -l) -eq 3 ] || [ $elapsed_seconds -ge 600 ]
@@ -93,6 +95,7 @@ jobs:
     - name: Stop Docker Compose
       shell: bash
       run: |
+        cd ${GITHUB_WORKSPACE}/tb-houston-service
         docker-compose -f docker_compose_cicd.yml down 
 
     ### Continuous Deployment
