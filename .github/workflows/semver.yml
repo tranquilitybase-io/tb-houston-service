@@ -67,6 +67,6 @@ jobs:
         branch: ${{ steps.extract_branch.outputs.branch }}
         #force: true
         github_token: ${{ secrets.GITHUB_TOKEN }}                      
-        directory: ${GITHUB_WORKSPACE}/tb-houston-service/
+        #directory: ${GITHUB_WORKSPACE}/tb-houston-service/
         # Workaround, variable is not being expanded
-        #directory: "/home/runner/work/tb-houston-service/tb-houston-service/tb-houston-service"
+        directory: "/home/runner/work/tb-houston-service/tb-houston-service/tb-houston-service"
