@@ -151,7 +151,7 @@ def delete(id):
 
 def get_all():
 
-    url = 'http://localhost:3000/api/applications/'
+    url = f"http://{HOUSTON_SERVICE_URL}/api/applications/"
     resp = requests.get(url, headers=headers)
     #Validate Get All response
     assert resp.status_code == 200
