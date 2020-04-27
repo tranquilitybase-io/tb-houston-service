@@ -9,7 +9,6 @@ url = f"http://{HOUSTON_SERVICE_URL}/api/activator/"
     
 # Additional headers.
 headers = {'Content-Type': 'application/json' }
-id = 0
 
 def typestest(resp):
     assert isinstance(resp['activator'], str)
@@ -39,13 +38,13 @@ def typestest(resp):
 def test_activators():
     #Testing POST request
     resp_json = post()
-    id = str(resp_json['id'])
+    oid = str(resp_json['id'])
     #Testing Set Activator Status
     set_activator_status(resp_json['id'])
     #Testing PUT request
-    put(id)
+    put(oid)
     #Testing DELETE request
-    delete(id)
+    delete(oid)
     #Testing GETALL request
     get_all()
     # Test GET Activator Meta
@@ -87,43 +86,43 @@ def post():
         'userCapacity': 999999999
         }
         
-    # convert dict to json by json.dumps() for body data. 
+    # convert dict to json by json.dumps() for body data.
     resp = requests.post(url, headers=headers, data=json.dumps(payload,indent=4))
     
     # Validate response headers and body contents, e.g. status code.
     resp_json = resp.json()
     assert resp.status_code == 201
     assert resp_json['activator'] == 'test-activator'
-    id = resp_json['id']
-    print(id)
+    oid = resp_json['id']
+    print(oid)
     
 
-    resp = requests.get(url+ str(id), headers=headers)
+    resp = requests.get(url+ str(oid), headers=headers)
     resp_json = resp.json()
     resp_headers = resp.headers
     
-    #Validate response 
+    #Validate response
     assert resp.status_code == 200
     assert resp_json['activator'] == 'test-activator'
     assert resp_headers['content-type'] == 'application/json'
-    assert type(resp_json['accessRequestedBy']) is type(None)
+    assert isinstance(resp_json['accessRequestedBy'], type(None))
     typestest(resp_json)
     return resp_json
 
 
-def set_activator_status(id):
+def set_activator_status(oid):
 
     url = url = f"http://{HOUSTON_SERVICE_URL}/api/setactivatorstatus/"
-    payload= {'accessRequestedBy': 0, 'id': id, 'status': 'Locked' }
+    payload= {'accessRequestedBy': 0, 'id': oid, 'status': 'Locked' }
     resp = requests.post(url, headers=headers , data= json.dumps(payload,indent=4))
     resp_json = resp.json()
     #Validate response body for updated values
     assert resp.status_code == 200
-    assert resp_json['id'] == id
+    assert resp_json['id'] == oid
     assert resp_json['status'] == 'Locked'
 
 
-def put(id):
+def put(oid):
 
     # Test Update Then get new value
     newpayload = {
@@ -154,15 +153,15 @@ def put(id):
         'type': 'best',
         'userCapacity': 10
     }
-    resp = requests.put(url+id, headers=headers, data=json.dumps(newpayload,indent=4))
+    resp = requests.put(url+oid, headers=headers, data=json.dumps(newpayload,indent=4))
    
-    #Validate update/Put response 
+    #Validate update/Put response
     assert resp.status_code == 200
 
     #Get Request to get updated values
-    resp = requests.get(url+id, headers=headers) 
+    resp = requests.get(url+oid, headers=headers) 
     resp_json = resp.json()
-    id = resp_json['id']
+    oid = resp_json['id']
 
     #Validate response body for updated values
     assert resp.status_code == 200
@@ -170,14 +169,14 @@ def put(id):
     typestest(resp_json)
 
 
-def delete(id):
+def delete(oid):
 
     #Test Delete Then GET
-    resp = requests.delete(url+id, headers=headers) 
+    resp = requests.delete(url+oid, headers=headers)
     assert resp.status_code == 200
 
-    resp = requests.get(url+id, headers=headers) 
-    resp_json = resp.json()
+    resp = requests.get(url+oid, headers=headers) 
+    #resp_json = resp.json()
     #Todo Ideally we should get 404 Need to check with Karwoo
     assert resp.status_code == 404
 
@@ -185,7 +184,7 @@ def delete(id):
 def get_all():
     
     geturl = f"http://{HOUSTON_SERVICE_URL}/api/activators/"
-    resp = requests.get(geturl, headers=headers)  
+    resp = requests.get(geturl, headers=headers)
     assert resp.status_code == 200
 
 
@@ -203,8 +202,7 @@ def get_meta():
 def get_categories():
 
     url = f"http://{HOUSTON_SERVICE_URL}/api/activatorcategories/"
-    resp = requests.get(url, headers=headers)  
+    resp = requests.get(url, headers=headers)
     pprint(resp.json())
     #Validate response
     assert resp.status_code == 200
-
