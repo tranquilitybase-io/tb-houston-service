@@ -133,7 +133,7 @@ def update(oid, landingZoneProgressItemDetails):
 
 def delete(oid):
     """
-    This function deletes an landingZoneProgressItem from the landingZoneProgressItem list
+    Deletes an landingZoneProgressItem from the landingZoneProgressItem list.
 
     :param id: id of the landingZoneProgressItem to delete
     :return:             200 on successful delete, 404 if not found

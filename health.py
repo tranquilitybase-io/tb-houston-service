@@ -8,7 +8,7 @@ from extendedSchemas import HealthSchema
 
 def check():
     """
-    :return:       200
+    :return:       200.
     """
 
     status = { "status": "Healthy" }
