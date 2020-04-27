@@ -1,0 +1,38 @@
+# This workflow will run semver_tag.sh and update the version tag.
+
+name: semver
+
+on:
+  push
+
+jobs:
+  initialize:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Extract current branch name
+      shell: bash
+      run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+      id: branch
+    - name: Echo Branch Name
+      shell: bash
+      run: |
+        echo Branch name: ${{ steps.branch.outputs.branch }}
+
+    - uses: actions/checkout@v2
+      with:
+        repository: tranquilitybase-io/tb-houston-service
+        path: actions
+        fetch-depth: 0
+  
+    - name: run semver
+      shell: bash
+      run: |
+        cd ${GITHUB_WORKSPACE}/actions
+        bash -x scripts/emver_tag.sh 
+      env: 
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SOURCE: actions
+        TAG_PREFIX: "internal-"
+        WITH_V: "true"
+        DEFAULT_BUMP: "patch"
