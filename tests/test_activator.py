@@ -59,30 +59,30 @@ def post():
     payload  =  {
         'accessRequestedBy': 0,
         'activator': 'test-activator',
-        'activatorLink': 'string',
-        'apiManagement': [ 'string', 'string1', 'string2', 'string3', 'string4', 'string5' ],
+        'activatorLink': 'test-post-',
+        'apiManagement': [ 'test-post-', 'test-post-1', 'test-post-2', 'test-post-3', 'test-post-4', 'test-post-5' ],
         'available': True,
-        'billing': 'string',
-        'businessUnit': 'string',
-        'category': 'string',
-        'cd': [ 'string1', 'string2', 'string3' ],
-        'ci': [ 'string1', 'string2' ],
-        'description': 'stringstringstringstringstringstringstringstring',
+        'billing': 'test-post-',
+        'businessUnit': 'test-post-',
+        'category': 'test-post-',
+        'cd': [ 'test-post-1', 'test-post-2', 'test-post-3' ],
+        'ci': [ 'test-post-1', 'test-post-2' ],
+        'description': 'test-post-test-post-test-post-test-post-test-post-test-post-test-post-test-post-',
         'envs': [ 'dev', 'prd', 'poc' ],
-        'hosting': [ 'string1', 'string2', 'string3', 'string4', 'string5' ],
+        'hosting': [ 'test-post-1', 'test-post-2', 'test-post-3', 'test-post-4', 'test-post-5' ],
         'id': 0,
-        'lastUpdated': 'string',
-        'name': 'string',
-        'platforms': [ 'string1', 'string2', 'string3', 'string4', 'string5', 'string6' ],
-        'regions': [ 'string1', 'string2', 'string3', 'string4', 'string5' ],
-        'sensitivity': 'string',
+        'lastUpdated': 'test-post-',
+        'name': 'test-post-',
+        'platforms': [ 'test-post-1', 'test-post-2', 'test-post-3', 'test-post-4', 'test-post-5', 'test-post-6' ],
+        'regions': [ 'test-post-1', 'test-post-2', 'test-post-3', 'test-post-4', 'test-post-5' ],
+        'sensitivity': 'test-post-',
         'serverCapacity': 999999999,
-        'source': 'string',
-        'sourceControl': [ 'string', 'string1' ],
+        'source': 'test-post-',
+        'sourceControl': [ 'test-post-', 'test-post-1' ],
         'status': 'Available',
-        'technologyOwner': 'string',
-        'technologyOwnerEmail': 'string',
-        'type': 'string',
+        'technologyOwner': 'test-post-',
+        'technologyOwnerEmail': 'test-post-',
+        'type': 'test-post-',
         'userCapacity': 999999999
         }
         
@@ -128,21 +128,21 @@ def put(oid):
     newpayload = {
         'activator': 'new-test-activator',
         'accessRequestedBy': 0,
-        'activatorLink': 'string',
-        'apiManagement': [ 'string6', 'string7', 'string8' ],
+        'activatorLink': 'test-put-',
+        'apiManagement': [ 'test-put-6', 'test-put-7', 'test-put-8' ],
         'available': False,
         'billing': 'billing',
         'businessUnit': 'businessUnit',
         'category': 'category',
-        'cd': [ 'string4', 'string5', 'string6' ],
-        'ci': [ 'string7', 'string8' ],
+        'cd': [ 'test-put-4', 'test-put-5', 'test-put-6' ],
+        'ci': [ 'test-put-7', 'test-put-8' ],
         'description': 'TheQuickBrownFoxJumpedOverTheLazyDogs',
         'envs': [ 'dev', 'Prd', 'Poc' ],
-        'hosting': [ 'string11', 'string22', 'string33', 'string44', 'string55' ],
+        'hosting': [ 'test-put-11', 'test-put-22', 'test-put-33', 'test-put-44', 'test-put-55' ],
         'lastUpdated': 'fredbloggs',
         'name': 'mynewactivatortest',
-        'platforms': [ 'string101', 'string102', 'string103', 'string104', 'string105', 'string106' ],
-        'regions': [ 'string101', 'string210', 'string310', 'string410', 'string510' ],
+        'platforms': [ 'test-put-101', 'test-put-102', 'test-put-103', 'test-put-104', 'test-put-105', 'test-put-106' ],
+        'regions': [ 'test-put-101', 'test-put-210', 'test-put-310', 'test-put-410', 'test-put-510' ],
         'sensitivity': 'confidential',
         'serverCapacity': 5,
         'source': 'original',
@@ -175,14 +175,14 @@ def delete(oid):
     resp = requests.delete(url+oid, headers=headers)
     assert resp.status_code == 200
 
-    resp = requests.get(url+oid, headers=headers) 
+    resp = requests.get(url+oid, headers=headers)
     #resp_json = resp.json()
     #Todo Ideally we should get 404 Need to check with Karwoo
     assert resp.status_code == 404
 
 
 def get_all():
-    
+
     geturl = f"http://{HOUSTON_SERVICE_URL}/api/activators/"
     resp = requests.get(geturl, headers=headers)
     assert resp.status_code == 200
@@ -191,7 +191,7 @@ def get_all():
 def get_meta():
 
     url = f"http://{HOUSTON_SERVICE_URL}/api/activator_meta/"
-    resp = requests.get(url, headers=headers)  
+    resp = requests.get(url, headers=headers)
     resp_json = resp.json()
     count = resp_json['count']
     #Validate response
