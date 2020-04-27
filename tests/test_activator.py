@@ -1,7 +1,6 @@
 import requests
 import json
 import os
-import pytest_lib
 from pprint import pprint
 
 
