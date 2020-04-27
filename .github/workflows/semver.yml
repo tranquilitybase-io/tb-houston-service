@@ -6,7 +6,7 @@ on:
   push
 
 jobs:
-  initialize:
+  semver:
     runs-on: ubuntu-latest
 
     steps:
