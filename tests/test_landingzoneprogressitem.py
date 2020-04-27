@@ -57,7 +57,7 @@ def put(oid):
     newpayload = { 'completed': False, 'id': int(oid), 'label': 'Testing-new-progress-item-post' }
   
     resp = requests.put(url+oid, headers=headers, data=json.dumps(newpayload,indent=4))
-   
+
     #Validate update/Put response
     assert resp.status_code == 200
 
