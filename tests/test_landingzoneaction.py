@@ -40,7 +40,7 @@ def post():
   }
   
     # convert dict to json by json.dumps() for body data.
-    resp = requests.post(url, headers=headers, data=json.dumps(payload,indent=4))       
+    resp = requests.post(url, headers=headers, data=json.dumps(payload,indent=4))
     
     # Validate response headers and body contents, e.g. status code.
     resp_json = resp.json()
@@ -53,7 +53,7 @@ def post():
     resp_headers = resp.headers
     #Validate GET response
     assert resp.status_code == 200
-    assert resp_json['categoryClass'] == 'test-folder-structure'   
+    assert resp_json['categoryClass'] == 'test-folder-structure'
     assert resp_json['categoryName'] == 'testCategory'
     assert resp_json['completionRate'] == 100
     assert resp_json['locked'] == False
@@ -83,7 +83,7 @@ def put(id):
     assert resp.status_code == 200
 
     #Get Request to get updated values
-    resp = requests.get(url+id, headers=headers) 
+    resp = requests.get(url+id, headers=headers)
     resp_json = resp.json()
     id = resp_json['id']
     #Validate response body for updated values
@@ -94,7 +94,7 @@ def put(id):
 def delete(id):
 
     # Delete Request
-    resp = requests.delete(url+id, headers=headers) 
+    resp = requests.delete(url+id, headers=headers)
     #Validate Delete response
     assert resp.status_code == 200
     
@@ -116,7 +116,7 @@ def delete_error(id):
 
 
 def get_all():
-    
+
     url = f"http://{HOUSTON_SERVICE_URL}/api/landingzoneactions/"
     resp = requests.get(url, headers=headers)
     assert resp.status_code == 200
