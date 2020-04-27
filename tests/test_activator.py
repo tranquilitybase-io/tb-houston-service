@@ -202,7 +202,7 @@ def get_meta():
 def get_categories():
 
     url = f"http://{HOUSTON_SERVICE_URL}/api/activatorcategories/"
-    resp = requests.get(url, headers=headers)  
+    resp = requests.get(url, headers=headers)
     pprint(resp.json())
     #Validate response
     assert resp.status_code == 200
