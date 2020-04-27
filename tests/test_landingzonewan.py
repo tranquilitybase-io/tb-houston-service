@@ -29,43 +29,43 @@ def post():
     #Test POST Then GET
     # Body
     payload  =   {
-        'googleSession': 
+        'googleSession':
             {
-            'primaryGcpVpcSubnet': 'test',
-            'primaryRegion': 'test',
-            'primarySubnetName': 'test',
-            'secondaryGcpVpcSubnet': 'test',
-            'secondaryRegion': 'test',
-            'secondarySubnetName': 'test'
+            'primaryGcpVpcSubnet': 'test-post',
+            'primaryRegion': 'test-post',
+            'primarySubnetName': 'test-post',
+            'secondaryGcpVpcSubnet': 'test-post',
+            'secondaryRegion': 'test-post',
+            'secondarySubnetName': 'test-post'
             },
         'id': 0,
-        'onPremiseSession': 
+        'onPremiseSession':
             {
-            'primaryBgpPeer': 'test',
-            'primaryPeerIp': 'test',
-            'primaryPeerIpSubnet': 'test',
-            'primarySharedSecret': 'test',
-            'primaryVpnTunnel': 'test',
-            'secondaryBgpPeer': 'test',
-            'secondaryPeerIp': 'test',
-            'secondaryPeerIpSubnet': 'test',
-            'secondarySharedSecret': 'test',
-            'secondaryVpnTunnel': 'test',
-            'vendor': 'test'
+            'primaryBgpPeer': 'test-post',
+            'primaryPeerIp': 'test-post',
+            'primaryPeerIpSubnet': 'test-post',
+            'primarySharedSecret': 'test-post',
+            'primaryVpnTunnel': 'test-post',
+            'secondaryBgpPeer': 'test-post',
+            'secondaryPeerIp': 'test-post',
+            'secondaryPeerIpSubnet': 'test-post',
+            'secondarySharedSecret': 'test-post',
+            'secondaryVpnTunnel': 'test-post',
+            'vendor': 'test-post'
             },
         'vpn': 
             {
-            'bgpInterfaceNetLength': 'test',
-            'bgpRoutingMode': 'test',
-            'cloudRouterName': 'test',
-            'description': 'test',
-            'externalVpnGateway': 'test',
+            'bgpInterfaceNetLength': 'test-post',
+            'bgpRoutingMode': 'test-post',
+            'cloudRouterName': 'test-post',
+            'description': 'test-post',
+            'externalVpnGateway': 'test-post',
             'googleASN': 0,
-            'haVpnGateway': 'test',
+            'haVpnGateway': 'test-post',
             'peerASN': 0,
-            'projectName': 'test',
-            'subnetMode': 'test',
-            'vpcName': 'test'
+            'projectName': 'test-post',
+            'subnetMode': 'test-post',
+            'vpcName': 'test-post'
             }
     }
   
@@ -83,9 +83,9 @@ def post():
     resp_headers = resp.headers
     #Validate GET response
     assert resp.status_code == 200
-    assert resp_json['googleSession']['primaryGcpVpcSubnet'] == 'test'
-    assert resp_json['onPremiseSession']['primaryBgpPeer'] == 'test'
-    assert resp_json['vpn']['bgpInterfaceNetLength'] == 'test'
+    assert resp_json['googleSession']['primaryGcpVpcSubnet'] == 'test-post'
+    assert resp_json['onPremiseSession']['primaryBgpPeer'] == 'test-post'
+    assert resp_json['vpn']['bgpInterfaceNetLength'] == 'test-post'
     assert resp_headers['content-type'] == 'application/json'
 
     return resp_json
@@ -97,41 +97,41 @@ def put(oid):
     newpayload = {
     'googleSession':
         {
-        'primaryGcpVpcSubnet': 'new-test',
-        'primaryRegion': 'test',
-        'primarySubnetName': 'test',
-        'secondaryGcpVpcSubnet': 'test',
-        'secondaryRegion': 'test',
-        'secondarySubnetName': 'test'
+        'primaryGcpVpcSubnet': 'new-test-put',
+        'primaryRegion': 'test-put',
+        'primarySubnetName': 'test-put',
+        'secondaryGcpVpcSubnet': 'test-put',
+        'secondaryRegion': 'test-put',
+        'secondarySubnetName': 'test-put'
         },
     'id': int(oid),
     'onPremiseSession':
         {
-        'primaryBgpPeer': 'new-test',
-        'primaryPeerIp': 'test',
-        'primaryPeerIpSubnet': 'test',
-        'primarySharedSecret': 'test',
-        'primaryVpnTunnel': 'test',
-        'secondaryBgpPeer': 'test',
-        'secondaryPeerIp': 'test',
-        'secondaryPeerIpSubnet': 'test',
-        'secondarySharedSecret': 'test',
-        'secondaryVpnTunnel': 'test',
-        'vendor': 'test'
+        'primaryBgpPeer': 'new-test-put',
+        'primaryPeerIp': 'test-put',
+        'primaryPeerIpSubnet': 'test-put',
+        'primarySharedSecret': 'test-put',
+        'primaryVpnTunnel': 'test-put',
+        'secondaryBgpPeer': 'test-put',
+        'secondaryPeerIp': 'test-put',
+        'secondaryPeerIpSubnet': 'test-put',
+        'secondarySharedSecret': 'test-put',
+        'secondaryVpnTunnel': 'test-put',
+        'vendor': 'test-put'
         },
     'vpn':
         {
-        'bgpInterfaceNetLength': 'new-test',
-        'bgpRoutingMode': 'test',
-        'cloudRouterName': 'test',
-        'description': 'test',
-        'externalVpnGateway': 'test',
+        'bgpInterfaceNetLength': 'new-test-put',
+        'bgpRoutingMode': 'test-put',
+        'cloudRouterName': 'test-put',
+        'description': 'test-put',
+        'externalVpnGateway': 'test-put',
         'googleASN': 0,
-        'haVpnGateway': 'test',
+        'haVpnGateway': 'test-put',
         'peerASN': 0,
-        'projectName': 'test',
-        'subnetMode': 'test',
-        'vpcName': 'test'
+        'projectName': 'test-put',
+        'subnetMode': 'test-put',
+        'vpcName': 'test-put'
         }
     }
   
@@ -141,20 +141,20 @@ def put(oid):
     assert resp.status_code == 200
 
     #Get Request to get updated values
-    resp = requests.get(url+oid, headers=headers) 
+    resp = requests.get(url+oid, headers=headers)
     resp_json = resp.json()
     oid = resp_json['id']
     #Validate response body for updated values
     assert resp.status_code == 200
-    assert resp_json['googleSession']['primaryGcpVpcSubnet'] == 'new-test'
-    assert resp_json['onPremiseSession']['primaryBgpPeer'] == 'new-test'
-    assert resp_json['vpn']['bgpInterfaceNetLength'] == 'new-test'
+    assert resp_json['googleSession']['primaryGcpVpcSubnet'] == 'new-test-put'
+    assert resp_json['onPremiseSession']['primaryBgpPeer'] == 'new-test-put'
+    assert resp_json['vpn']['bgpInterfaceNetLength'] == 'new-test-put'
     
 
 def delete(oid):
 
     # Delete Request
-    resp = requests.delete(url+oid, headers=headers) 
+    resp = requests.delete(url+oid, headers=headers)
     #Validate Delete response
     assert resp.status_code == 200
     
@@ -170,13 +170,13 @@ def delete_error(oid):
     # Delete Request for a non existing item
     resp = requests.delete(url+oid, headers=headers)
     #resp_json = resp.json()
-    resp_headers = resp.headers
+    #resp_headers = resp.headers
     #Validate response ; expect Not found
     assert resp.status_code == 404
 
 
 def get_all():
-    
+
     url = f"http://{HOUSTON_SERVICE_URL}/api/landingzonewans/"
     resp = requests.get(url, headers=headers)
     assert resp.status_code == 200
