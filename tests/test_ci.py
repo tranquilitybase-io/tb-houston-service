@@ -27,7 +27,7 @@ def test_post():
     assert resp_json['value'] == 'test-post-value'
     
     #Get Request to check Post has created item as expected
-    resp = requests.get(url+'test', headers=headers) 
+    resp = requests.get(url+'test', headers=headers)
     resp_json = resp.json()
     resp_headers = resp.headers
     #Validate response
@@ -42,7 +42,7 @@ def test_put():
     # Test Update Then get new value
     newpayload = {'key': 'test', 'value': 'new-test-value'}
     resp = requests.put(url+'test', headers=headers, data=json.dumps(newpayload,indent=4))
-   
+
     #Validate update/Put response
     assert resp.status_code == 200
 
