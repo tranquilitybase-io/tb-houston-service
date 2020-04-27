@@ -8,31 +8,31 @@ HOUSTON_SERVICE_URL=os.environ['HOUSTON_SERVICE_URL']
 url = f"http://{HOUSTON_SERVICE_URL}/api/activator/"
     
 # Additional headers.
-headers = {'Content-Type': 'application/json' } 
+headers = {'Content-Type': 'application/json' }
 id = 0
 
 def typestest(resp):
-    assert type(resp['activator']) is str
-    assert type(resp['activatorLink']) is str
-    assert type(resp['apiManagement']) is list
-    assert type(resp['available']) is bool
-    assert type(resp['billing']) is str
-    assert type(resp['category']) is str
-    assert type(resp['ci']) is list
-    assert type(resp['cd']) is list
-    assert type(resp['description']) is str
-    assert type(resp['envs']) is list
-    assert type(resp['platforms']) is list
-    assert type(resp['regions']) is list
-    assert type(resp['sensitivity']) is str
-    assert type(resp['serverCapacity']) is int
-    assert type(resp['source']) is str
-    assert type(resp['sourceControl']) is list
-    assert type(resp['status']) is str
-    assert type(resp['technologyOwner']) is str
-    assert type(resp['technologyOwnerEmail']) is str
-    assert type(resp['type']) is str
-    assert type(resp['userCapacity']) is int
+    assert isinstance(resp['activator'], str)
+    assert isinstance(resp['activatorLink'], str)
+    assert isinstance(resp['apiManagement'], list)
+    assert isinstance(resp['available'], bool)
+    assert isinstance(resp['billing'], str)
+    assert isinstance(resp['category'], str)
+    assert isinstance(resp['ci'], list)
+    assert isinstance(resp['cd'], list)
+    assert isinstance(resp['description'], str)
+    assert isinstance(resp['envs'], list)
+    assert isinstance(resp['platforms'], list)
+    assert isinstance(resp['regions'], list)
+    assert isinstance(resp['sensitivity'], str)
+    assert isinstance(resp['serverCapacity'], int)
+    assert isinstance(resp['source'], str)
+    assert isinstance(resp['sourceControl'], list)
+    assert isinstance(resp['status'], str)
+    assert isinstance(resp['technologyOwner'], str)
+    assert isinstance(resp['technologyOwnerEmail'], str)
+    assert isinstance(resp['type'], str)
+    assert isinstance(resp['userCapacity'], int)
     pprint(resp)
 
 
@@ -88,7 +88,7 @@ def post():
         }
         
     # convert dict to json by json.dumps() for body data. 
-    resp = requests.post(url, headers=headers, data=json.dumps(payload,indent=4))       
+    resp = requests.post(url, headers=headers, data=json.dumps(payload,indent=4))
     
     # Validate response headers and body contents, e.g. status code.
     resp_json = resp.json()
@@ -98,7 +98,7 @@ def post():
     print(id)
     
 
-    resp = requests.get(url+ str(id), headers=headers) 
+    resp = requests.get(url+ str(id), headers=headers)
     resp_json = resp.json()
     resp_headers = resp.headers
     
