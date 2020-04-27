@@ -19,7 +19,7 @@ def test_post():
     # Body
     payload = {'key': 'test', 'value': 'test-value'}
     # convert dict to json by json.dumps() for body data.
-    resp = requests.post(url, headers=headers, data=json.dumps(payload,indent=4))       
+    resp = requests.post(url, headers=headers, data=json.dumps(payload,indent=4))
     
     # Validate response headers and body contents, e.g. status code.
     resp_json = resp.json()
@@ -28,7 +28,7 @@ def test_post():
     assert resp_json['value'] == 'test-value'
     
     #Get Request to check Post has created item as expected
-    resp = requests.get(url+'test', headers=headers) 
+    resp = requests.get(url+'test', headers=headers)
     resp_json = resp.json()
     resp_headers = resp.headers
     #Validate response
