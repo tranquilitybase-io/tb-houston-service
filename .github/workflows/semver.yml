@@ -3,7 +3,7 @@
 name: semver
 
 on:
-  push
+  pull_request: [ master ]
 
 jobs:
   semver:
