@@ -44,13 +44,13 @@ def test_put():
     newpayload = {'key': 'test', 'value': 'new-test-value'}
     resp = requests.put(url+'test', headers=headers, data=json.dumps(newpayload,indent=4))
    
-    #Validate update/Put response 
+    #Validate update/Put response
     assert resp.status_code == 200
 
     #Get Request to get updated values
-    resp = requests.get(url+'test', headers=headers) 
+    resp = requests.get(url+'test', headers=headers)
     resp_json = resp.json()
-   
+
     #Validate response body for updated values
     assert resp.status_code == 200
     assert resp_json['key'] == 'test'
@@ -60,7 +60,7 @@ def test_put():
 def test_delete():
 
     #Test Delete Then GET
-    resp = requests.delete(url+'test', headers=headers) 
+    resp = requests.delete(url+'test', headers=headers)
     assert resp.status_code == 200
 
 def test_get_error():
