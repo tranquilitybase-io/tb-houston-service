@@ -10,7 +10,6 @@ from models import LandingZoneWAN, LandingZoneWANSchema
 from extendedSchemas import ExtendedLandingZoneWANSchema
 from extendedSchemas import IdSchema
 from pprint import pformat
-from pprint import pprint
 from flatten_json import flatten, unflatten
 
 delimiter = '__'

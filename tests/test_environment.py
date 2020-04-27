@@ -9,7 +9,7 @@ HOUSTON_SERVICE_URL=os.environ['HOUSTON_SERVICE_URL']
 url = f"http://{HOUSTON_SERVICE_URL}/api/keyValues/environment/"
     
 # Additional headers.
-headers = {'Content-Type': 'application/json' } 
+headers = {'Content-Type': 'application/json' }
 
 def test_post():
     #Test POST Then GET

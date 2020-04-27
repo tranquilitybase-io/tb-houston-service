@@ -1,5 +1,6 @@
 from models import Activator, ModelTools
 import activator_extension
+import json
 
 
 def build_application(app):
@@ -9,7 +10,7 @@ def build_application(app):
         'env': app.env,
         'status': app.status,
         'description': app.description,
-        'resources': ModelTools.load_json_array(app.resources),
+        'resources': json.loads(app.resources or '[]'),
         'lastUpdated': app.lastUpdated
     }
     acts = Activator.query.filter(Activator.id == app.activatorId).all()

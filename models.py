@@ -25,13 +25,6 @@ class ModelTools():
             return dt.strftime("%Y-%m-%d %H:%M:%S")
 
     @staticmethod
-    def load_json_array(s):
-        try:
-            return json.loads(s)
-        except Exception:
-            return []
-
-    @staticmethod
     def json_dump(obj):
         #return json.dumps(obj, indent=2, sort_keys=True)
         return json.dumps(obj)
@@ -82,7 +75,6 @@ class Activator(db.Model):
     activator = db.Column(db.String(255))
     status = db.Column(db.String(255))
     description = db.Column(db.String(255))
-    #accessRequestedBy = db.Column(db.Integer, db.ForeignKey('user.id'))
     accessRequestedBy = db.Column(db.Integer)
     source = db.Column(db.String(100))
     activatorLink = db.Column(db.String(255))
@@ -95,88 +87,6 @@ class ActivatorSchema(ma.ModelSchema):
     class Meta:
         model = Activator
         sqla_session = db.session
-
-    accessRequestedBy = fields.Int()
-
-    @pre_load
-    def serialize_arrays(self, in_data, **kwargs):
-        try:
-            in_data["ci"] = json.dumps(in_data["ci"])
-        except Exception as e:
-            app.logger.warning(e)
-        try:
-            in_data["cd"] = json.dumps(in_data["cd"])
-        except Exception as e:
-            app.logger.warning(e)
-        try:
-            in_data["resources"] = json.dumps(in_data["resources"])
-        except Exception as e:
-            app.logger.warning(e)
-        try:
-            in_data["hosting"] = json.dumps(in_data["hosting"])
-        except Exception as e:
-            app.logger.warning(e)
-        try:
-            in_data["envs"] = json.dumps(in_data["envs"])
-        except Exception as e:
-            app.logger.warning(e)
-        try:
-            in_data["sourceControl"] = json.dumps(in_data["sourceControl"])
-        except Exception as e:
-            app.logger.warning(e)
-        try:
-            in_data["regions"] = json.dumps(in_data["regions"])
-        except Exception as e:
-            app.logger.warning(e)
-        try:
-            in_data["apiManagement"] = json.dumps(in_data["apiManagement"])
-        except Exception as e:
-            app.logger.warning(e)
-        try:
-            in_data["platforms"] = json.dumps(in_data["platforms"])
-        except Exception as e:
-            app.logger.warning(e)
-        return in_data
-
-    @post_dump
-    def deserialize_arrays(self, out_data, many, **kwargs):
-        try:
-            out_data["ci"] = json.loads(out_data["ci"])
-        except Exception as e:
-            app.logger.warning(e)
-        try:
-            out_data["cd"] = json.loads(out_data["cd"])
-        except Exception as e:
-            app.logger.warning(e)
-        try:
-            out_data["resources"] = json.loads(out_data["resources"])
-        except Exception as e:
-            app.logger.warning(e)
-        try:
-            out_data["hosting"] = json.loads(out_data["hosting"])
-        except Exception as e:
-            app.logger.warning(e)
-        try:
-            out_data["envs"] = json.loads(out_data["envs"])
-        except Exception as e: 
-            app.logger.warning(e)
-        try:
-            out_data["sourceControl"] = json.loads(out_data["sourceControl"])
-        except Exception as e: 
-            app.logger.warning(e)
-        try:
-            out_data["regions"] = json.loads(out_data["regions"])
-        except Exception as e: 
-            app.logger.warning(e)
-        try:
-            out_data["apiManagement"] = json.loads(out_data["apiManagement"])
-        except Exception as e: 
-            app.logger.warning(e)
-        try:
-            out_data["platforms"] = json.loads(out_data["platforms"])
-        except Exception as e:
-            app.logger.warning(e)
-        return out_data
 
 
 # Application
@@ -204,22 +114,6 @@ class ApplicationSchema(ma.ModelSchema):
     solutionId = fields.Int()
     activatorId = fields.Int()
 
-    @pre_load
-    def serialize_arrays(self, in_data, **kwargs):
-        try:
-            in_data["resources"] = json.dumps(in_data["resources"])
-        except Exception as e:
-            app.logger.warning(e)
-        return in_data
-
-    @post_dump
-    def deserialize_arrays(self, out_data, many, **kwargs):
-        try:
-            out_data["resources"] = json.loads(out_data["resources"])
-        except Exception as e:
-            app.logger.warning(e)
-        return out_data
-
 
 # Solutions
 class Solution(db.Model):
@@ -238,6 +132,10 @@ class Solution(db.Model):
     teams = db.Column(db.Integer())
     lastUpdated = db.Column(db.String(255))
     deployed = db.Column(db.Boolean())
+    deploymentState = db.Column(db.String(45))
+    statusId = db.Column(db.Integer())
+    statusCode = db.Column(db.String(45))
+    statusMessage = db.Column(db.String(255))
 
     applications = db.relationship('Application')
 
@@ -249,21 +147,22 @@ class SolutionSchema(ma.ModelSchema):
         model = Solution
         sqla_session = db.session
 
-    @pre_load
-    def serialize_arrays(self, in_data, **kwargs):
-        try:
-            in_data["environments"] = json.dumps(in_data["environments"])
-        except Exception as e:
-            app.logger.warning(e)
-        return in_data
 
-    @post_dump
-    def deserialize_arrays(self, out_data, many, **kwargs):
-        try:
-            out_data["environments"] = json.loads(out_data["environments"])
-        except Exception as e:
-            app.logger.warning(e)
-        return out_data
+# SolutionResource
+class SolutionResource(db.Model):
+    __tablename__ = "solutionresource"
+    id = db.Column(db.Integer(), primary_key=True)
+    solutionId = db.Column(db.Integer())
+    key = db.Column(db.String(50))
+    value = db.Column(db.String(255))
+
+class SolutionResourceSchema(ma.ModelSchema):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    class Meta:
+        model = SolutionResource
+        sqla_session = db.session
 
 
 # Team

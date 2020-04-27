@@ -10,11 +10,13 @@ def test_login():
 
     headers = {'Content-Type': 'application/json' } 
 
+    false = 1 == 0
     payload = {
     'email': 'test@testmail.com',
+    'username': 'string',
     'firstName': 'string',
     'id': '0',
-    'isAdmin': False,
+    'isAdmin': false,
     'lastName': 'string',
     'password': 'string'
     }
@@ -22,7 +24,5 @@ def test_login():
     resp = requests.post(url, headers=headers, data=json.dumps(payload, indent=4))
     resp_json = resp.json()
     # Validate Response
-    assert resp.status_code == 500
-
-
+    assert resp.status_code == 401
 

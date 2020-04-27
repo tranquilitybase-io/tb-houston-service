@@ -35,6 +35,11 @@ docker-compose -f experimental_stack.yml pull
 ## run the docker image
 docker run -p 3000:3000 gcr.io/tranquility-base-images/tb-houston-service:alpha
 
+## Local mock images are rebuilt when necessary to prevent the cicd workflow from failing
+## e.g. when the database schema or the rest api changes
+gcr.io/eagle-console-resources/tb-gcp-dac:mock
+gcr.io/eagle-console-resources/tb-houston-mysql57:mock
+
 ## References
 <https://cloud.google.com/sql/docs/mysql/connect-kubernetes-engine>
 <https://cloud.google.com/sql/docs/mysql/configure-private-ip>

@@ -2,13 +2,11 @@
 Health check: Very basic health check, can extend in future
 """
 
-# 3rd party modules
-from extendedSchemas import HealthSchema
-
+from gcpdac.extendedSchemas import HealthSchema
 
 def check():
     """
-    :return:       200.
+    :return: 200 on success
     """
 
     status = { "status": "Healthy" }

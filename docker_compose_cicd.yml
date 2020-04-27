@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   mysql57:
-    image: gcr.io/tranquility-base-images/tb-houston-mysql57:experimental
+    image: gcr.io/eagle-console-resources/tb-houston-mysql57:ci
     command: --default-authentication-plugin=mysql_native_password
     restart: always
     environment:
@@ -14,7 +14,7 @@ services:
     - '3306:3306'
 
   houston-service:
-    image: gcr.io/tranquility-base-images/tb-houston-service:experimental
+    image: gcr.io/eagle-console-resources/tb-houston-service:ci
     restart: always
     environment:
         SQLALCHEMY_DATABASE_URI: 'mysql+mysqlconnector://eagle-user:eagle-user-secret-pw@mysql57/eagle_db'
@@ -23,4 +23,13 @@ services:
     depends_on:
         - mysql57
     ports:
-      - 3000:3000
+      - '3000:3000'
+
+  gcp-dac:
+    image: gcr.io/eagle-console-resources/tb-houston-service:mock
+    restart: always
+    environment:
+    depends_on:
+        - houston-service
+    ports:
+      - '3100:3100'

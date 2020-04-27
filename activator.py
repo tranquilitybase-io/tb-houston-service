@@ -73,7 +73,7 @@ def read_all(category=None, status=None, environment=None,
     data = activator_schema.dump(activators_arr)
     app.logger.debug("read_all")
     app.logger.debug(pformat(data))
-    return data
+    return data, 200
 
 
 def read_one(oid):
@@ -86,13 +86,13 @@ def read_one(oid):
     """
 
     act = (Activator.query.filter(Activator.id == oid).one_or_none())
-    activator = activator_extension.build_activator(act)
 
-    if activator is not None:
+    if act is not None:
         # Serialize the data for the response
-        activator_schema = ExtendedActivatorSchema()
+        activator = activator_extension.build_activator(act)
+        activator_schema = ExtendedActivatorSchema(many=False)
         data = activator_schema.dump(activator)
-        return data
+        return data, 200
     else:
         abort(
             404, f"Activator with id {oid} not found".format(id=oid)
@@ -112,15 +112,36 @@ def create(activatorDetails):
     if 'id' in activatorDetails:
         del activatorDetails['id']
 
+    activatorDetails['accessRequestedBy'] = activatorDetails.get('accessRequestedBy', 0)
+    activatorDetails['ci'] = json.dumps(activatorDetails.get('ci', []))
+    activatorDetails['cd'] = json.dumps(activatorDetails.get('cd', []))
+    activatorDetails['hosting'] = json.dumps(activatorDetails.get('hosting', []))
+    activatorDetails['envs'] = json.dumps(activatorDetails.get('envs', []))
+    activatorDetails['sourceControl'] = json.dumps(activatorDetails.get('sourceControl', []))
+    activatorDetails['regions'] = json.dumps(activatorDetails.get('regions', []))
+    activatorDetails['apiManagement'] = json.dumps(activatorDetails.get('apiManagement', []))
+    activatorDetails['platforms'] = json.dumps(activatorDetails.get('platforms', []))
+
     schema = ActivatorSchema()
     new_activator = schema.load(activatorDetails, session=db.session)
     new_activator.lastUpdated = ModelTools.get_utc_timestamp()
-    new_activator.accessRequestedBy = activatorDetails.get('accessRequestedBy', 0)
+
     db.session.add(new_activator)
     db.session.commit()
 
     # Serialize and return the newly created deployment
     # in the response
+
+    new_activator.ci = json.loads(new_activator.ci or '[]')
+    new_activator.cd = json.loads(new_activator.cd or '[]')
+    new_activator.hosting = json.loads(new_activator.hosting or '[]')
+    new_activator.envs = json.loads(new_activator.envs or '[]')
+    new_activator.sourceControl = json.loads(new_activator.sourceControl or '[]')
+    new_activator.regions = json.loads(new_activator.regions or '[]')
+    new_activator.apiManagement = json.loads(new_activator.apiManagement or '[]')
+    new_activator.platforms = json.loads(new_activator.platforms or '[]')
+
+    schema = ExtendedActivatorSchema(many=False)
     data = schema.dump(new_activator)
     return data, 201
 
@@ -163,10 +184,7 @@ def update(oid, activatorDetails):
         Activator.query.filter(Activator.id == oid).update(activatorDetails)
         db.session.commit()
         # return the updated activator in the response
-        data = schema.dump(existing_activator)
-        app.logger.debug("activator data:")
-        app.logger.debug(pformat(data))
-        return data, 200
+        return read_one(oid)
     # otherwise, nope, deployment doesn't exist, so that's an error
     else:
         abort(404, f"Activator id {oid} not found")
@@ -235,8 +253,6 @@ def categories():
     for row in rs:
         categories_arr.append({ "category": row['category'] })
 
-    print(pformat(categories_arr))
     schema = ExtendedActivatorCategorySchema(many=True)
     data = schema.dump(categories_arr)
-    print(pformat(data))
     return data, 200
