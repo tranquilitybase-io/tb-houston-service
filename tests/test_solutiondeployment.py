@@ -8,16 +8,16 @@ HOUSTON_SERVICE_URL=os.environ['HOUSTON_SERVICE_URL']
 url = f"http://{HOUSTON_SERVICE_URL}/api/solutiondeployment/"
     
 # Additional headers.
-headers = {'Content-Type': 'application/json' } 
+headers = {'Content-Type': 'application/json' }
 id = 0
 
 def typestest(resp):
-    assert type(resp['id']) is int 
-    assert type(resp['deployed']) is bool
-    assert type(resp['deploymentState']) is str
-    assert type(resp['statusCode']) is str
-    assert type(resp['statusMessage']) is str
-    assert type(resp['statusId']) is int
+    assert isinstance(resp['id'], int)
+    assert isinstance(resp['deployed'], bool)
+    assert isinstance(resp['deploymentState'], str)
+    assert isinstance(resp['statusCode'], str)
+    assert isinstance(resp['statusMessage'], str)
+    assert isinstance(resp['statusId'], int)
     pprint(resp)
 
 
@@ -39,7 +39,7 @@ def post():
       "id": 1
     }
 
-    # convert dict to json by json.dumps() for body data. 
+    # convert dict to json by json.dumps() for body data.
     resp = requests.post(url, headers=headers, data=json.dumps(payload,indent=4))       
     print(pprint(resp))
     
@@ -75,12 +75,12 @@ def put(id):
     }
 
     resp = requests.put(url+id, headers=headers, data=json.dumps(newpayload,indent=4))
-   
-    #Validate update/Put response 
+
+    #Validate update/Put response
     assert resp.status_code == 200
 
     #Get Request to get updated values
-    resp = requests.get(url+id, headers=headers) 
+    resp = requests.get(url+id, headers=headers)
     resp_json = resp.json()
     id = resp_json['id']
 
@@ -98,7 +98,7 @@ def get_all():
     print("get_all Tests")
 
     url = 'http://localhost:3000/api/solutiondeployments/'
-    resp = requests.get(url, headers=headers)  
+    resp = requests.get(url, headers=headers)
     #Validate Get All response
     assert resp.status_code == 200
 
