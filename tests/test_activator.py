@@ -86,7 +86,7 @@ def post():
         'userCapacity': 999999999
         }
         
-    # convert dict to json by json.dumps() for body data. 
+    # convert dict to json by json.dumps() for body data.
     resp = requests.post(url, headers=headers, data=json.dumps(payload,indent=4))
     
     # Validate response headers and body contents, e.g. status code.
@@ -101,11 +101,11 @@ def post():
     resp_json = resp.json()
     resp_headers = resp.headers
     
-    #Validate response 
+    #Validate response
     assert resp.status_code == 200
     assert resp_json['activator'] == 'test-activator'
     assert resp_headers['content-type'] == 'application/json'
-    assert type(resp_json['accessRequestedBy']) is type(None)
+    assert isinstance(resp_json['accessRequestedBy'], type(None))
     typestest(resp_json)
     return resp_json
 
@@ -155,7 +155,7 @@ def put(oid):
     }
     resp = requests.put(url+oid, headers=headers, data=json.dumps(newpayload,indent=4))
    
-    #Validate update/Put response 
+    #Validate update/Put response
     assert resp.status_code == 200
 
     #Get Request to get updated values
@@ -172,11 +172,11 @@ def put(oid):
 def delete(oid):
 
     #Test Delete Then GET
-    resp = requests.delete(url+oid, headers=headers) 
+    resp = requests.delete(url+oid, headers=headers)
     assert resp.status_code == 200
 
     resp = requests.get(url+oid, headers=headers) 
-    resp_json = resp.json()
+    #resp_json = resp.json()
     #Todo Ideally we should get 404 Need to check with Karwoo
     assert resp.status_code == 404
 
@@ -184,7 +184,7 @@ def delete(oid):
 def get_all():
     
     geturl = f"http://{HOUSTON_SERVICE_URL}/api/activators/"
-    resp = requests.get(geturl, headers=headers)  
+    resp = requests.get(geturl, headers=headers)
     assert resp.status_code == 200
 
 
