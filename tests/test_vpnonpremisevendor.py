@@ -62,7 +62,7 @@ def put(oid):
 
     #Get Request to get updated values
     resp = requests.get(url+oid, headers=headers) 
-    #resp_json = resp.json()
+    resp_json = resp.json()
     #oid = resp_json['id']
 
     #Validate response body for updated values
