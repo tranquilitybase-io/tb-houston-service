@@ -7,7 +7,7 @@ HOUSTON_SERVICE_URL=os.environ['HOUSTON_SERVICE_URL']
 url = f"http://{HOUSTON_SERVICE_URL}/api/landingzoneaction/"
     
 # Additional headers.
-headers = {'Content-Type': 'application/json' } 
+headers = {'Content-Type': 'application/json' }
 id = 0
 
 def test_landingzoneaction():
@@ -39,7 +39,7 @@ def post():
     'title': 'Test Landing Zone'
   }
   
-    # convert dict to json by json.dumps() for body data. 
+    # convert dict to json by json.dumps() for body data.
     resp = requests.post(url, headers=headers, data=json.dumps(payload,indent=4))       
     
     # Validate response headers and body contents, e.g. status code.
@@ -48,10 +48,10 @@ def post():
     assert resp.status_code == 201
     
     #Get Request to check Post has created item as expected
-    resp = requests.get(url+ str(id), headers=headers) 
+    resp = requests.get(url+ str(id), headers=headers)
     resp_json = resp.json()
     resp_headers = resp.headers
-    #Validate GET response 
+    #Validate GET response
     assert resp.status_code == 200
     assert resp_json['categoryClass'] == 'test-folder-structure'   
     assert resp_json['categoryName'] == 'testCategory'
@@ -79,7 +79,7 @@ def put(id):
   
     resp = requests.put(url+id, headers=headers, data=json.dumps(newpayload,indent=4))
    
-    #Validate update/Put response 
+    #Validate update/Put response
     assert resp.status_code == 200
 
     #Get Request to get updated values
@@ -99,7 +99,7 @@ def delete(id):
     assert resp.status_code == 200
     
     #Then Get request to check the item has been actully deleted
-    resp = requests.get(url+id, headers=headers) 
+    resp = requests.get(url+id, headers=headers)
     #Validate Get response
     resp_json = resp.json()
     assert resp.status_code == 404
@@ -108,8 +108,8 @@ def delete(id):
 def delete_error(id):
 
     # Delete Request for a non existing item
-    resp = requests.delete(url+id, headers=headers) 
-    resp_json = resp.json()
+    resp = requests.delete(url+id, headers=headers)
+    #resp_json = resp.json()
     resp_headers = resp.headers
     #Validate response ; expect Not found
     assert resp.status_code == 404
@@ -118,13 +118,5 @@ def delete_error(id):
 def get_all():
     
     url = f"http://{HOUSTON_SERVICE_URL}/api/landingzoneactions/"
-    resp = requests.get(url, headers=headers)  
+    resp = requests.get(url, headers=headers)
     assert resp.status_code == 200
-    
-
-
-
-
-
-
-
