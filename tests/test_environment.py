@@ -53,11 +53,11 @@ def test_put():
     assert resp_json['key'] == 'test'
     assert resp_json['value'] == 'new-test-value'
 
-  
+
 def test_delete():
 
     #Test Delete Then GET
-    resp = requests.delete(url+'test', headers=headers) 
+    resp = requests.delete(url+'test', headers=headers)
     assert resp.status_code == 200
 
 
