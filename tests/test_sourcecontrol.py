@@ -12,12 +12,12 @@ url = f"http://{HOUSTON_SERVICE_URL}/api/keyValues/sourceControl/"
 headers = {'Content-Type': 'application/json' }
 
 #key = 'test/'
-           
+
 def test_post():
 
     #Test POST Then GET
     # Body
-    payload = {'key': 'test', 'value': 'test-value'}
+    payload = {'key': 'test', 'value': 'test-post-value'}
     # convert dict to json by json.dumps() for body data.
     resp = requests.post(url, headers=headers, data=json.dumps(payload,indent=4))
 
@@ -25,7 +25,7 @@ def test_post():
     resp_json = resp.json()
     assert resp.status_code == 201
     assert resp_json['key'] == 'test'
-    assert resp_json['value'] == 'test-value'
+    assert resp_json['value'] == 'test-post-value'
 
     #Get Request to check Post has created item as expected
     resp = requests.get(url+'test', headers=headers)
@@ -34,7 +34,7 @@ def test_post():
     #Validate response
     assert resp.status_code == 200
     assert resp_json['key'] == 'test'
-    assert resp_json['value'] == 'test-value'
+    assert resp_json['value'] == 'test-post-value'
     assert resp_headers['content-type'] == 'application/json'
 
 
