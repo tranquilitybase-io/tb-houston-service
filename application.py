@@ -163,7 +163,7 @@ def update(oid, applicationDetails):
 
 def delete(oid):
     """
-    Deletes an application from the application list
+    Deletes an application from the application list.
 
     :param id: id of the application to delete
     :return:             200 on successful delete, 404 if not found
