@@ -8,18 +8,18 @@ HOUSTON_SERVICE_URL=os.environ['HOUSTON_SERVICE_URL']
 url = f"http://{HOUSTON_SERVICE_URL}/api/application/"
     
 # Additional headers.
-headers = {'Content-Type': 'application/json' } 
+headers = {'Content-Type': 'application/json' }
 id = 0
 
 def typestest(resp):
-    assert type(resp['activatorId']) is int
-    assert type(resp['description']) is str
-    assert type(resp['env']) is str
-    assert type(resp['id']) is int
-    assert type(resp['name']) is str
-    assert type(resp['resources']) is list
-    assert type(resp['solutionId']) is int
-    assert type(resp['status']) is str
+    assert isinstance(resp['activatorId'], int)
+    assert isinstance(resp['description'], str)
+    assert isinstance(resp['env'], str)
+    assert isinstance(resp['id'], int)
+    assert isinstance(resp['name'], str)
+    assert isinstance(resp['resources'], list)
+    assert isinstance(resp['solutionId'], int)
+    assert isinstance(resp['status'], str)
     pprint(resp)
 
 
@@ -91,8 +91,8 @@ def post1():
         "description": "test"
     }
 
-    # convert dict to json by json.dumps() for body data. 
-    resp = requests.post(url, headers=headers, data=json.dumps(payload,indent=4))       
+    # convert dict to json by json.dumps() for body data.
+    resp = requests.post(url, headers=headers, data=json.dumps(payload,indent=4))
     
     # Validate response headers and body contents, e.g. status code.
     resp_json = resp.json()
@@ -103,7 +103,7 @@ def post1():
     resp = requests.get(url+ id, headers=headers) 
     resp_json = resp.json()
     resp_headers = resp.headers
-    #Validate response 
+    #Validate response
     assert resp.status_code == 200
     assert resp_json['name'] == 'test'
     assert resp_json['env'] == 'DEV'
@@ -120,7 +120,7 @@ def put(id):
     newpayload  =  { 'id': int(id), 'description': 'test put', 'status': 'Inactive' }
     resp = requests.put(url+id, headers=headers, data=json.dumps(newpayload,indent=4))
    
-    #Validate update/Put response 
+    #Validate update/Put response
     assert resp.status_code == 200
 
     #Get Request to get updated values
@@ -138,21 +138,21 @@ def put(id):
 def delete(id):
 
     #Test Delete Then GET
-    resp = requests.delete(url+id, headers=headers) 
+    resp = requests.delete(url+id, headers=headers)
     #Validate Delete response
     assert resp.status_code == 200
-    
+
     #Then GET request to check the item has been actully deleted
-    resp = requests.get(url+id, headers=headers) 
+    resp = requests.get(url+id, headers=headers)
     #Validate Get response
-    resp_json = resp.json()
+    #resp_json = resp.json()
     assert resp.status_code == 404
 
 
 def get_all():
 
     url = 'http://localhost:3000/api/applications/'
-    resp = requests.get(url, headers=headers)  
+    resp = requests.get(url, headers=headers)
     #Validate Get All response
     assert resp.status_code == 200
 
