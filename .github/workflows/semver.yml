@@ -3,8 +3,7 @@
 name: semver
 
 on:
-  pull_request:
-    branches: [ master ]
+  push
 
 jobs:
   semver:
@@ -42,3 +41,4 @@ jobs:
         TAG_PREFIX: "internal-"
         WITH_V: "true"
         DEFAULT_BUMP: "patch"
+        BRANCH: ${{ steps.branch.outputs.branch }}
