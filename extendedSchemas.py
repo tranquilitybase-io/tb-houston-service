@@ -40,7 +40,7 @@ class ExtendedUserSchema(Schema):
     email = fields.Str()
     firstName = fields.Str()
     lastName = fields.Str()
-    sAdmin = fields.Boolean()
+    isAdmin = fields.Boolean()
 
 
 class ExtendedActivatorSchema(Schema):
