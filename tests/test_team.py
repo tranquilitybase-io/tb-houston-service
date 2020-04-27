@@ -31,7 +31,7 @@ def test_post():
     resp = requests.get(url+'test', headers=headers) 
     resp_json = resp.json()
     resp_headers = resp.headers
-    #Validate response 
+    #Validate response
     assert resp.status_code == 200
     assert resp_json['key'] == 'test'
     assert resp_json['value'] == 'test-value'
@@ -48,7 +48,7 @@ def test_put():
     assert resp.status_code == 200
 
     #Get Request to get updated values
-    resp = requests.get(url+'test', headers=headers) 
+    resp = requests.get(url+'test', headers=headers)
     resp_json = resp.json()
    
     #Validate response body for updated values
@@ -60,7 +60,7 @@ def test_put():
 def test_delete():
 
     #Test Delete Then GET
-    resp = requests.delete(url+'test', headers=headers) 
+    resp = requests.delete(url+'test', headers=headers)
     assert resp.status_code == 200
 
 def test_delete_error():
