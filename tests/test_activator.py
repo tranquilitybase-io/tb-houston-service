@@ -154,12 +154,12 @@ def put(oid):
         'userCapacity': 10
     }
     resp = requests.put(url+oid, headers=headers, data=json.dumps(newpayload,indent=4))
-   
+
     #Validate update/Put response
     assert resp.status_code == 200
 
     #Get Request to get updated values
-    resp = requests.get(url+oid, headers=headers) 
+    resp = requests.get(url+oid, headers=headers)
     resp_json = resp.json()
     oid = resp_json['id']
 
