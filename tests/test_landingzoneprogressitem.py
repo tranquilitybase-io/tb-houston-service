@@ -28,7 +28,7 @@ def post():
 
     #Test POST Then GET
     # Body
-    payload  =    { 'completed': True, 'id': 0, 'label': 'Testing-post' }
+    payload  =    { 'completed': True, 'id': 0, 'label': 'Testing-progress-item-post' }
   
     # convert dict to json by json.dumps() for body data.
     resp = requests.post(url, headers=headers, data=json.dumps(payload,indent=4))
@@ -45,7 +45,7 @@ def post():
     #Validate GET response
     assert resp.status_code == 200
     assert resp_json['completed'] == True
-    assert resp_json['label'] == 'Testing-post'
+    assert resp_json['label'] == 'Testing-progress-item-post'
     assert resp_headers['content-type'] == 'application/json'
 
     return resp_json
@@ -54,10 +54,10 @@ def post():
 def put(oid):
 
     # Test Update Then get updated value
-    newpayload = { 'completed': False, 'id': int(oid), 'label': 'Testing-post' }
+    newpayload = { 'completed': False, 'id': int(oid), 'label': 'Testing-new-progress-item-post' }
   
     resp = requests.put(url+oid, headers=headers, data=json.dumps(newpayload,indent=4))
-   
+
     #Validate update/Put response
     assert resp.status_code == 200
 
@@ -68,6 +68,7 @@ def put(oid):
     #Validate response body for updated values
     assert resp.status_code == 200
     assert resp_json['completed'] == False
+    assert resp_json['label'] == "Testing-new-progress-item-post"
 
 
 def delete(oid):
@@ -76,7 +77,7 @@ def delete(oid):
     resp = requests.delete(url+oid, headers=headers)
     #Validate Delete response
     assert resp.status_code == 200
-    
+
     #Then Get request to check the item has been actully deleted
     resp = requests.get(url+oid, headers=headers)
     #Validate Get response
