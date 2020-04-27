@@ -31,7 +31,7 @@ def post():
     payload  =  {'key': 'test' , 'value': 'test-value'}
   
     # convert dict to json by json.dumps() for body data.
-    resp = requests.post(url, headers=headers, data=json.dumps(payload,indent=4))       
+    resp = requests.post(url, headers=headers, data=json.dumps(payload,indent=4))
     
     # Validate response headers and body contents, e.g. status code.
     resp_json = resp.json()
@@ -43,7 +43,7 @@ def post():
     resp = requests.get(url+ str(oid), headers=headers)
     resp_json = resp.json()
     resp_headers = resp.headers
-    
+
     #Validate response
     assert resp.status_code == 200
     assert resp_json['key'] == 'test'
@@ -62,8 +62,8 @@ def put(oid):
 
     #Get Request to get updated values
     resp = requests.get(url+oid, headers=headers) 
-    resp_json = resp.json()
-    id = resp_json['id']
+    #resp_json = resp.json()
+    #oid = resp_json['id']
 
     #Validate response body for updated values
     assert resp.status_code == 200
@@ -73,13 +73,13 @@ def put(oid):
 def delete(oid):
 
     # Delete Request
-    resp = requests.delete(url+oid, headers=headers) 
+    resp = requests.delete(url+oid, headers=headers)
     #Validate Delete response
     assert resp.status_code == 200
     #Then Get request to check the item has been actully deleted
     resp = requests.get(url+oid, headers=headers)
     #Validate Get response
-    resp_json = resp.json()
+    #resp_json = resp.json()
     assert resp.status_code == 404
 
 
