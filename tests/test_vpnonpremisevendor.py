@@ -7,7 +7,7 @@ HOUSTON_SERVICE_URL=os.environ['HOUSTON_SERVICE_URL']
 url = f"http://{HOUSTON_SERVICE_URL}/api/keyValues/vpnonpremisevendor/"
     
 # Additional headers.
-headers = {'Content-Type': 'application/json' } 
+headers = {'Content-Type': 'application/json' }
 id = 0
 
 def test_vpnonpremisevendor():
@@ -31,21 +31,21 @@ def post():
     # Body
     payload  =  {'key': 'test' , 'value': 'test-value'}
   
-    # convert dict to json by json.dumps() for body data. 
+    # convert dict to json by json.dumps() for body data.
     resp = requests.post(url, headers=headers, data=json.dumps(payload,indent=4))       
     
     # Validate response headers and body contents, e.g. status code.
     resp_json = resp.json()
     id = resp_json['id']
     assert resp.status_code == 201
-    assert resp_json['key'] == 'test'   
+    assert resp_json['key'] == 'test'
     assert resp_json['value'] == 'test-value'
 
-    resp = requests.get(url+ str(id), headers=headers) 
+    resp = requests.get(url+ str(id), headers=headers)
     resp_json = resp.json()
     resp_headers = resp.headers
     
-    #Validate response 
+    #Validate response
     assert resp.status_code == 200
     assert resp_json['key'] == 'test'
     assert resp_headers['content-type'] == 'application/json'
@@ -57,8 +57,8 @@ def put(id):
     # Test Update Then get updated value
     newpayload = {'key': 'test', 'value': 'new-test-value'}
     resp = requests.put(url+id, headers=headers, data=json.dumps(newpayload,indent=4))
-   
-    #Validate update/Put response 
+
+    #Validate update/Put response
     assert resp.status_code == 200
 
     #Get Request to get updated values
@@ -78,7 +78,7 @@ def delete(id):
     #Validate Delete response
     assert resp.status_code == 200
     #Then Get request to check the item has been actully deleted
-    resp = requests.get(url+id, headers=headers) 
+    resp = requests.get(url+id, headers=headers)
     #Validate Get response
     resp_json = resp.json()
     assert resp.status_code == 404
@@ -88,7 +88,7 @@ def delete(id):
 def delete_error(id):
 
     # Delete Request for a non existing item
-    resp = requests.delete(url+id, headers=headers) 
+    resp = requests.delete(url+id, headers=headers)
     resp_json = resp.json()
     resp_headers = resp.headers
     #Validate response ; expect Not found
@@ -99,5 +99,5 @@ def delete_error(id):
 
 def get_all():
 
-    resp = requests.get(url, headers=headers)  
+    resp = requests.get(url, headers=headers)
     assert resp.status_code == 200
