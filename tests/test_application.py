@@ -9,7 +9,6 @@ url = f"http://{HOUSTON_SERVICE_URL}/api/application/"
     
 # Additional headers.
 headers = {'Content-Type': 'application/json' }
-id = 0
 
 def typestest(resp):
     assert isinstance(resp['activatorId'], int)
@@ -26,15 +25,15 @@ def typestest(resp):
 def test_application():
 
     #Testing POST request
-    id = post()
+    oid = post()
     #Testing PUT request
-    put(id)
+    put(oid)
     #Testing DELETE request
-    delete(id)
+    delete(oid)
     #Testing GETALL request
     get_all()
     # Test post with no resources
-    id = post1()
+    oid = post1()
 
     
 
@@ -61,11 +60,11 @@ def post():
     
     # Validate response headers and body contents, e.g. status code.
     resp_json = resp.json()
-    id = str(resp_json['id'])
+    oid = str(resp_json['id'])
     assert resp.status_code == 201
     
     #Get Request to check Post has created item as expected
-    resp = requests.get(url+ id, headers=headers) 
+    resp = requests.get(url+ oid, headers=headers) 
     resp_json = resp.json()
     resp_headers = resp.headers
     #Validate response
@@ -76,7 +75,7 @@ def post():
     assert resp_json['description'] == 'test'
     assert resp_headers['content-type'] == 'application/json'
     typestest(resp_json)
-    return id
+    return oid
 
 # test null resources
 def post1():
@@ -96,11 +95,11 @@ def post1():
     
     # Validate response headers and body contents, e.g. status code.
     resp_json = resp.json()
-    id = str(resp_json['id'])
+    oid = str(resp_json['id'])
     assert resp.status_code == 201
     
     #Get Request to check Post has created item as expected
-    resp = requests.get(url+ id, headers=headers) 
+    resp = requests.get(url+ oid, headers=headers) 
     resp_json = resp.json()
     resp_headers = resp.headers
     #Validate response
@@ -111,22 +110,22 @@ def post1():
     assert resp_json['description'] == 'test'
     assert resp_headers['content-type'] == 'application/json'
     typestest(resp_json)
-    return id
+    return oid
 
 
-def put(id):
+def put(oid):
 
     # Test Update Then get new value
-    newpayload  =  { 'id': int(id), 'description': 'test put', 'status': 'Inactive' }
-    resp = requests.put(url+id, headers=headers, data=json.dumps(newpayload,indent=4))
+    newpayload  =  { 'id': int(oid), 'description': 'test put', 'status': 'Inactive' }
+    resp = requests.put(url+oid, headers=headers, data=json.dumps(newpayload,indent=4))
 
     #Validate update/Put response
     assert resp.status_code == 200
 
     #Get Request to get updated values
-    resp = requests.get(url+id, headers=headers)
+    resp = requests.get(url+oid, headers=headers)
     resp_json = resp.json()
-    id = resp_json['id']
+    oid = resp_json['id']
 
     #Validate response body for updated values
     assert resp.status_code == 200
@@ -135,15 +134,15 @@ def put(id):
 
 
 
-def delete(id):
+def delete(oid):
 
     #Test Delete Then GET
-    resp = requests.delete(url+id, headers=headers)
+    resp = requests.delete(url+oid, headers=headers)
     #Validate Delete response
     assert resp.status_code == 200
 
     #Then GET request to check the item has been actully deleted
-    resp = requests.get(url+id, headers=headers)
+    resp = requests.get(url+oid, headers=headers)
     #Validate Get response
     #resp_json = resp.json()
     assert resp.status_code == 404
