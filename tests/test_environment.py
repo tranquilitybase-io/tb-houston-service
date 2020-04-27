@@ -26,7 +26,7 @@ def test_post():
     assert resp_json['value'] == 'test-value'
     
     #Get Request to check Post has created item as expected
-    resp = requests.get(url+'test', headers=headers) 
+    resp = requests.get(url+'test', headers=headers)
     resp_json = resp.json()
     resp_headers = resp.headers
     #Validate response
