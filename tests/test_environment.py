@@ -18,7 +18,7 @@ def test_post():
     # convert dict to json by json.dumps() for body data.
 
     resp = requests.post(url, headers=headers, data=json.dumps(payload,indent=4))
-    
+
     # Validate response headers and body contents, e.g. status code.
     resp_json = resp.json()
     assert resp.status_code == 201
