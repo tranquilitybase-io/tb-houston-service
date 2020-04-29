@@ -2002,13 +2002,13 @@ components:
               deploymentState:
                 type: string
                 description: The deployment state
-              errorId:
+              statusId:
                 type: integer
                 description: The error id
-              errorCode:
+              statusCode:
                 type: string
                 description: The error code
-              errorMessage:
+              statusMessage:
                 type: string
                 description: The error message
 
@@ -2439,13 +2439,13 @@ components:
         deploymentState:
           type: string
           description: Deployment state
-        errorId:
+        statusId:
           type: integer
           description: error id
-        errorCode:
+        statusCode:
           type: string
           description: error code
-        errorMessage:
+        statusMessage:
           type: string
           description: error message
 
