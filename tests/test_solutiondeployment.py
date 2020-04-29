@@ -11,7 +11,7 @@ url = f"http://{HOUSTON_SERVICE_URL}/api/solutiondeployment/"
 headers = {'Content-Type': 'application/json' }
 id = 0
 
-def typestest(resp):
+def typestest_solution_deployment(resp):
     assert isinstance(resp['id'], int)
     assert isinstance(resp['deployed'], bool)
     assert isinstance(resp['deploymentState'], str)
@@ -49,7 +49,7 @@ def post():
     assert resp.status_code == 201
     assert resp.headers['content-type'] == 'application/json'
     pprint(resp.json())
-    typestest(resp_json)
+    typestest_solution_deployment(resp_json)
 
     #Get Request to get updated values
     resp = requests.get(url+id, headers=headers) 
@@ -91,7 +91,7 @@ def put(id):
     assert resp_json['statusCode'] == '12'
     assert resp_json['statusId'] == 1
     assert resp_json['statusMessage'] == 'I just deployed again'
-    typestest(resp_json)
+    typestest_solution_deployment(resp_json)
 
 
 def get_all():

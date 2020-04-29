@@ -1,26 +1,38 @@
-"""
-This is the solution module and supports all the ReST actions for the
-solution collection
-"""
+from flask import make_response, jsonify, abort
+import os
+import requests
+import json
+from pprint import pformat
+from extendedSchemas import ResponseSchema
 
-from pprint import pprint
-from gcpdac import models
+def create(solutionDetails):
+    print(pformat(solutionDetails))
 
-def create(solution):
-    """
-    reates a new solution based on the passed in solution data
+    # mkdir Folders/Projects
 
-    :param solution:  solution to create
-    :return: 201 on success, solutionResponse: solution created
-    """
+    # skeleton code 
+    success = True
 
-    pprint(solution)
+    if success == True:
+        id = solutionDetails['id']
+        resp = { "id": id, "deployed": False, "deploymentState": "In progress", "statusId": 0, "statusCode": "SS", "statusMessage": "Successful" }
+        schema = ResponseSchema()
+        data = schema.dump(resp)
+        print(pformat(data))
+        return data, 200
+    else:
+        abort(500, "Failed to receive solution")
 
-    # Serialize and return the newly created solution in the response
-    schema = models.SolutionResponseSchema()
-    folderId = "TESTFOLDERID"
-    solutionResponse = {"id": solution.get("id"), "name": solution.get("name"), "folderId": folderId}
 
-    data = schema.dump(solutionResponse)
+def successful_deployment_update(id):
 
-    return data, 201
+    url = "http://" + os.environ['HOUSTON_SERVICE_URL'] + "/api/solutiondeployment/"
+
+    payload = { 'id': id, 'deployed': True }
+    print(f"url: {url}")
+    print(f"data: {payload}")
+    headers = { 'Content-Type': "application/json" }
+    response = requests.put(url + f"/{id}", data=json.dumps(payload), headers=headers)
+    print(pformat(response))
+    return response
+
