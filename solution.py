@@ -270,7 +270,9 @@ def deployment_create(solutionDeploymentDetails):
     This function queries a solution forwards the request to the DaC
 
     :param solution:  id
-    :return:        201 on success, 406 on failure
+    :return:        201 on success
+    :               404 if solution not found
+    :               406 if other failure
     """
 
     app.logger.debug(pformat(solutionDeploymentDetails))
@@ -287,13 +289,16 @@ def deployment_create(solutionDeploymentDetails):
         solution_schema = ExtendedSolutionSchema(many=False)
         data_to_dac = solution_schema.dump(solution)
 
+        # Send the solution to the DAC
         headers = { 'Content-Type': "application/json" }
         response = requests.post(url, data=json.dumps(data_to_dac), headers=headers)
+
+        # Process the response from the DAC
         resp_json = response.json()
         print("Response from Dac")
         print(pformat(resp_json))
 
-        schema = SolutionDeploymentSchema(many=False)
+        # Return the DAC response json
         return resp_json, 201
     else:
         abort(
@@ -342,18 +347,3 @@ def deployment_update(oid, solutionDeploymentDetails):
     else:
         abort(404, f"Solution {oid} not found")
 
-
-def send_deployment_request_to_the_dac(sol_json_payload):
-
-    url = "http://" + os.environ['GCP_DAC_URL'] + "/api/solution/"
-
-    print(f"url: {url}")
-    print(f"data: {sol_json_payload}")
-    headers = { 'Content-Type': "application/json" }
-
-    schema = ExtendedSolutionSchema(many=False)
-    #solutionDetails['environments'] = json.loads(solutionDetails['environments'])
-    response = requests.post(url, data=json.dumps(sol_json_payload), headers=headers)
-    print(pformat(response))
-    #resp_json = response.json()
-    return response

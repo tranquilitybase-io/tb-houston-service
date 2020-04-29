@@ -1002,6 +1002,23 @@ paths:
           description: Successfully created a Solution Resource
 
   "/solutionresource/{oid}":
+    get:
+      operationId: solutionresource.read_one
+      tags:
+        - solutionresource
+      summary: Read a solution resource
+      description: Read a solution resource
+      parameters:
+        - name: oid
+          in: path
+          description: key of the solution resource to update
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successfully read a Solution Resource
+
     put:
       operationId: solutionresource.update
       tags:
@@ -1019,7 +1036,7 @@ paths:
         $ref: "#/components/requestBodies/solutionresource.solutionResourceDetails"
       responses:
         "200":
-          description: Successfully updated a solution
+          description: Successfully updated a Solution Resource
 
     delete:
       operationId: solutionresource.delete

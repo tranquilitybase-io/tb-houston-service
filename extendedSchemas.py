@@ -69,7 +69,6 @@ class ExtendedActivatorSchema(Schema):
     technologyOwnerEmail  = fields.Str()
     billing = fields.Str()
     activator = fields.Str()
-    resources = fields.List(fields.Dict())
     status = fields.Str()
     description = fields.Str()
     accessRequestedBy = fields.Nested(ExtendedUserSchema(many=False))
