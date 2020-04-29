@@ -1,6 +1,6 @@
 """
-This is the deployments module and supports all the ReST actions for the
-solutionresource collection
+This is the solution resource module and supports all the ReST actions for the
+solution resource collection
 """
 
 # 3rd party modules
@@ -24,7 +24,7 @@ def read_all():
     # Serialize the data for the response
     solutionresource_schema = SolutionResourceSchema(many=True)
     data = solutionresource_schema.dump(solutionresource)
-    return data
+    return data, 200
 
 
 def read_one(oid):
@@ -42,7 +42,7 @@ def read_one(oid):
         # Serialize the data for the response
         solutionresource_schema = SolutionResourceSchema()
         data = solutionresource_schema.dump(solutionresource)
-        return data
+        return data, 200
     else:
         abort(404, f"SolutionResource with id {oid} not found")
 
@@ -65,7 +65,7 @@ def create(solutionResourceDetails):
     db.session.add(new_solutionresource)
     db.session.commit()
 
-    # Serialize and return the newly created deployment
+    # Serialize and return the newly created solution resource
     # in the response
     data = schema.dump(new_solutionresource)
     return data, 201
@@ -73,9 +73,9 @@ def create(solutionResourceDetails):
 
 def update(oid, solutionResourceDetails):
     """
-    This function updates an existing solutionresource in the solutionresource list
+    This function updates an existing solutionresource in the solution resource list
 
-    :param key:    key of the solutionresource to update in the solutionresource list
+    :param key:    key of the solutionresource to update in the solution resource list
     :param solutionresource:   solutionresource to update
     :return:       updated solutionresource
     """

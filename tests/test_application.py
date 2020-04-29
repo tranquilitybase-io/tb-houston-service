@@ -2,6 +2,7 @@ import requests
 import json
 import os
 from pprint import pprint
+from pprint import pformat
 
 
 HOUSTON_SERVICE_URL=os.environ['HOUSTON_SERVICE_URL']
@@ -34,6 +35,7 @@ def test_application():
     get_all()
     # Test post with no resources
     oid = post1()
+    delete(oid)
 
     
 
@@ -49,9 +51,9 @@ def post():
         "status": "Active",
         "description": "test",
         "resources": [
-            { "ipaddress": "string", "name": "string" },
-            { "ipaddress": "string", "name": "string" },
-            { "ipaddress": "string", "name": "string" }
+            { "ipaddress": "address1", "name": "value1" },
+            { "ipaddress": "address2", "name": "value2" },
+            { "ipaddress": "address3", "name": "value3" }
         ]
     }
 
@@ -60,12 +62,16 @@ def post():
     
     # Validate response headers and body contents, e.g. status code.
     resp_json = resp.json()
+    print("post resp_json: " + pformat(resp_json))
+
     oid = str(resp_json['id'])
     assert resp.status_code == 201
     
     #Get Request to check Post has created item as expected
     resp = requests.get(url+ oid, headers=headers) 
     resp_json = resp.json()
+    print("post resp_json: " + pformat(resp_json))
+
     resp_headers = resp.headers
     #Validate response
     assert resp.status_code == 200
@@ -73,6 +79,13 @@ def post():
     assert resp_json['env'] == 'DEV'
     assert resp_json['status'] == 'Active'
     assert resp_json['description'] == 'test'
+    assert resp_json['resources'][0]['ipaddress'] == 'address1'
+    assert resp_json['resources'][0]['name'] == 'value1'
+    assert resp_json['resources'][1]['ipaddress'] == 'address2'
+    assert resp_json['resources'][1]['name'] == 'value2'
+    assert resp_json['resources'][2]['ipaddress'] == 'address3'
+    assert resp_json['resources'][2]['name'] == 'value3'
+
     assert resp_headers['content-type'] == 'application/json'
     typestest(resp_json)
     return oid
@@ -99,7 +112,7 @@ def post1():
     assert resp.status_code == 201
     
     #Get Request to check Post has created item as expected
-    resp = requests.get(url+ oid, headers=headers) 
+    resp = requests.get(url + oid, headers=headers) 
     resp_json = resp.json()
     resp_headers = resp.headers
     #Validate response
@@ -126,6 +139,9 @@ def put(oid):
     resp = requests.get(url+oid, headers=headers)
     resp_json = resp.json()
     oid = resp_json['id']
+
+    
+    print("resources: " + pformat(resp_json['resources']))
 
     #Validate response body for updated values
     assert resp.status_code == 200
