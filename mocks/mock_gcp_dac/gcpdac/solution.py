@@ -3,7 +3,7 @@ import os
 import requests
 import json
 from pprint import pformat
-from extendedSchemas import ResponseSchema
+from gcpdac.extendedSchemas import ResponseSchema
 
 def create(solutionDetails):
     print(pformat(solutionDetails))
@@ -15,7 +15,14 @@ def create(solutionDetails):
 
     if success == True:
         id = solutionDetails['id']
-        resp = { "id": id, "deployed": False, "deploymentState": "In progress", "statusId": 0, "statusCode": "SS", "statusMessage": "Successful" }
+        resp = { "id": id,
+                "deployed": False,
+                "deploymentState": "In progress",
+                "statusId": 0,
+                "statusCode": "SS",
+                "statusMessage": "Successful",
+                "taskId": 1
+                }
         schema = ResponseSchema()
         data = schema.dump(resp)
         print(pformat(data))

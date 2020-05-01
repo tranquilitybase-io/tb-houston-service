@@ -2002,15 +2002,18 @@ components:
               deploymentState:
                 type: string
                 description: The deployment state
-              errorId:
+              statusId:
                 type: integer
                 description: The error id
-              errorCode:
+              statusCode:
                 type: string
                 description: The error code
-              errorMessage:
+              statusMessage:
                 type: string
                 description: The error message
+              taskId:
+                type: integer
+                description: The task Id
 
       description: the solution id to deploy
       required: true
@@ -2439,15 +2442,19 @@ components:
         deploymentState:
           type: string
           description: Deployment state
-        errorId:
+        statusId:
           type: integer
-          description: error id
-        errorCode:
+          description: status id
+        statusCode:
           type: string
-          description: error code
-        errorMessage:
+          description: status code
+        statusMessage:
           type: string
-          description: error message
+          description: status message
+        taskId:
+          type: integer
+          description: task id
+
 
     SolutionResource:
       type: object

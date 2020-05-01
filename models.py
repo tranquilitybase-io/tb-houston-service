@@ -136,6 +136,7 @@ class Solution(db.Model):
     statusId = db.Column(db.Integer())
     statusCode = db.Column(db.String(45))
     statusMessage = db.Column(db.String(255))
+    taskId = db.Column(db.Integer())
 
     applications = db.relationship('Application')
 

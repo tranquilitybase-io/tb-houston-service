@@ -272,7 +272,7 @@ def deployment_create(solutionDeploymentDetails):
     :param solution:  id
     :return:        201 on success
     :               404 if solution not found
-    :               406 if other failure
+    :               500 if other failure
     """
 
     app.logger.debug(pformat(solutionDeploymentDetails))
@@ -291,15 +291,33 @@ def deployment_create(solutionDeploymentDetails):
 
         # Send the solution to the DAC
         headers = { 'Content-Type': "application/json" }
-        response = requests.post(url, data=json.dumps(data_to_dac), headers=headers)
+        resp_json = None
+        try:
+          response = requests.post(url, data=json.dumps(data_to_dac), headers=headers)
+          resp_json = response.json()
+          print("Response from Dac")
+          print(pformat(resp_json))
+        except Exception:
+          print("Failed during request to DAC")
+          resp_json = {
+                  "id": oid,
+                  "statusId": 1,
+                  "errorCode": "ERROR",
+                  "statusMessage": "Failed communicating with the DAC"
+                  }
 
-        # Process the response from the DAC
-        resp_json = response.json()
-        print("Response from Dac")
-        print(pformat(resp_json))
-
-        # Return the DAC response json
-        return resp_json, 201
+        try:
+          deployment_update(oid, resp_json)
+          return resp_json, 201
+        except Exception:
+          print("Failed updating the database with the response from the DAC")
+          resp_json = {
+                  "id": oid,
+                  "statusId": 2,
+                  "errorCode": "ERROR",
+                  "statusMessage": "Failed updating the database with the response from the DAC"
+                  }
+          return resp_json, 500
     else:
         abort(
             404, f"Solution with id {oid} not found".format(id=oid)
@@ -334,6 +352,7 @@ def deployment_update(oid, solutionDeploymentDetails):
         update_solution.statusId = solutionDeploymentDetails.get('statusId', update_solution.statusId)
         update_solution.statusCode = solutionDeploymentDetails.get('statusCode', update_solution.statusCode)
         update_solution.statusMessage = solutionDeploymentDetails.get('statusMessage', update_solution.statusMessage)
+        update_solution.taskId = solutionDeploymentDetails.get('taskId', update_solution.taskId)
 
         db.session.merge(update_solution)
         db.session.commit()

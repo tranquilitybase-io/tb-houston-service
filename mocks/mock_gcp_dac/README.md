@@ -3,8 +3,8 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/3def1d65ed474beda546f2455f127e92)](https://app.codacy.com/gh/tranquilitybase-io/tb-houston-service?utm_source=github.com&utm_medium=referral&utm_content=tranquilitybase-io/tb-houston-service&utm_campaign=Badge_Grade_Settings)
 
 ## Build a mock container image using the Dockerfile used by the CICD workflow
-docker build -t gcr.io/eagle-console-resources/tb-houston-service:mock .
-docker push gcr.io/eagle-console-resources/tb-houston-service:mock
+docker build -t gcr.io/eagle-console-resources/tb-gcp-dac:mock .
+docker push gcr.io/eagle-console-resources/tb-gcp-dac:mock
 
 ## References
 
