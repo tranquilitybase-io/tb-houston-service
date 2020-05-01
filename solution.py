@@ -299,10 +299,10 @@ def deployment_create(solutionDeploymentDetails):
           print(pformat(resp_json))
         except Exception:
           print("Failed during request to DAC")
-          resp_json = { 
+          resp_json = {
                   "id": oid,
                   "statusId": 1,
-                  "errorCode": "ERROR", 
+                  "errorCode": "ERROR",
                   "statusMessage": "Failed communicating with the DAC"
                   }
 
