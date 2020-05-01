@@ -922,7 +922,6 @@ paths:
       description: receive solution id from the Eagle Console and then post the complete Solution to the DaC
       requestBody:
         $ref: "#/components/requestBodies/solution.solutionDeploymentPostDetails"
-        description: solution deployment contains the solution id
       responses:
         "201":
           description: Successfully created a Solution Deployment
@@ -1053,6 +1052,89 @@ paths:
       responses:
         "200":
           description: Successfully deleted a solution resource
+
+  /solutionresourcejsons/:
+    get:
+      operationId: solutionresourcejson.read_all
+      tags:
+        - solutionresourcejson
+      summary: Read the entire list of solution resource jsons
+      description: Read the list of solution resource jsons
+      responses:
+        "200":
+          description: Successfully read solution resource jsons list operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SolutionResourceJSON"
+
+  /solutionresourcejson/:
+    post:
+      operationId: solutionresourcejson.create
+      tags:
+        - solutionresourcejson
+      summary: Create a solution resource json
+      description: Create a solution resource json
+      requestBody:
+        $ref: "#/components/requestBodies/solutionresourcejson.solutionResourceJSONDetails"
+      responses:
+        "201":
+          description: Successfully created a Solution Resource JSON
+
+  "/solutionresourcejson/{oid}":
+    get:
+      operationId: solutionresourcejson.read_one
+      tags:
+        - solutionresourcejson
+      summary: Read a solution resource json
+      description: Read a solution resource json
+      parameters:
+        - name: oid
+          in: path
+          description: key of the solution resource json to update
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successfully read a Solution Resource JSON
+
+    put:
+      operationId: solutionresourcejson.update
+      tags:
+        - solutionresourcejson
+      summary: Update a solution resource JSON
+      description: Update a solution resource JSON with it's new state
+      parameters:
+        - name: oid
+          in: path
+          description: key of the solution resource JSON to update
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        $ref: "#/components/requestBodies/solutionresourcejson.solutionResourceJSONDetails"
+      responses:
+        "200":
+          description: Successfully updated a Solution Resource JSON
+
+    delete:
+      operationId: solutionresourcejson.delete
+      tags:
+        - solutionresourcejson
+      summary: Delete a solution resource JSON from the list
+      description: Delete a solution resource JSON
+      parameters:
+        - name: oid
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successfully deleted a solution resource JSON
 
 
   /activators/:
@@ -2026,6 +2108,7 @@ components:
             type: object
             properties:
               id:
+                type: integer
                 description: The id of the solution resource
               solutionId:
                 type: integer
@@ -2037,6 +2120,25 @@ components:
                 type: string
                 description: The solution resource value
       description: the solution resource to create
+      required: true
+
+    solutionresourcejson.solutionResourceJSONDetails:
+      content:
+        application/json:
+          schema:
+            x-body-name: solutionResourceJSONDetails
+            type: object
+            properties:
+              id:
+                type: integer
+                description: The id of the solution resource JSON object
+              solutionId:
+                type: integer
+                description: The solution id
+              json:
+                type: string
+                description: The JSON
+      description: the solution resource JSON to create
       required: true
 
   schemas:
@@ -2471,6 +2573,19 @@ components:
         value:
           type: string
           description: The solution resource value
+
+    SolutionResourceJSON:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The unique id
+        solutionId:
+          type: integer
+          description: The solution id
+        json:
+          type: string
+          description: The JSON
 
     User:
       type: object

@@ -148,7 +148,6 @@ class SolutionSchema(ma.ModelSchema):
         model = Solution
         sqla_session = db.session
 
-
 # SolutionResource
 class SolutionResource(db.Model):
     __tablename__ = "solutionresource"
@@ -165,6 +164,20 @@ class SolutionResourceSchema(ma.ModelSchema):
         model = SolutionResource
         sqla_session = db.session
 
+# SolutionResourceJSON
+class SolutionResourceJSON(db.Model):
+    __tablename__ = "solutionresourcejson"
+    id = db.Column(db.Integer(), primary_key=True)
+    solutionId = db.Column(db.Integer())
+    json = db.Column(db.String(30000))
+
+class SolutionResourceJSONSchema(ma.ModelSchema):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    class Meta:
+        model = SolutionResourceJSON
+        sqla_session = db.session
 
 # Team
 class Team(db.Model):
