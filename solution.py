@@ -297,11 +297,11 @@ def deployment_create(solutionDeploymentDetails):
           resp_json = response.json()
           print("Response from Dac")
           print(pformat(resp_json))
-        except:
+        except Exception:
           print("Failed during request to DAC")
           resp_json = { 
                   "id": oid,
-                  "statusId": 1, 
+                  "statusId": 1,
                   "errorCode": "ERROR", 
                   "statusMessage": "Failed communicating with the DAC"
                   }
@@ -309,12 +309,12 @@ def deployment_create(solutionDeploymentDetails):
         try:
           deployment_update(oid, resp_json)
           return resp_json, 201
-        except:
+        except Exception:
           print("Failed updating the database with the response from the DAC")
-          resp_json = { 
+          resp_json = {
                   "id": oid,
-                  "statusId": 2, 
-                  "errorCode": "ERROR", 
+                  "statusId": 2,
+                  "errorCode": "ERROR",
                   "statusMessage": "Failed updating the database with the response from the DAC"
                   }
           return resp_json, 500

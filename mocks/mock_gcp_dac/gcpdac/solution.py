@@ -15,11 +15,11 @@ def create(solutionDetails):
 
     if success == True:
         id = solutionDetails['id']
-        resp = { "id": id, 
-                "deployed": False, 
-                "deploymentState": "In progress", 
-                "statusId": 0, 
-                "statusCode": "SS", 
+        resp = { "id": id,
+                "deployed": False,
+                "deploymentState": "In progress",
+                "statusId": 0,
+                "statusCode": "SS",
                 "statusMessage": "Successful",
                 "taskId": 1
                 }
