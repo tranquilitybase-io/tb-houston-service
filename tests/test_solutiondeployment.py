@@ -18,6 +18,7 @@ def typestest_solution_deployment(resp):
     assert isinstance(resp['statusCode'], str)
     assert isinstance(resp['statusMessage'], str)
     assert isinstance(resp['statusId'], int)
+    assert isinstance(resp['taskId'], int)
     pprint(resp)
 
 
@@ -71,7 +72,8 @@ def put(id):
       "deploymentState": "Deployed",
       "statusCode": "12",
       "statusId": 1,
-      "statusMessage": "I just deployed again"
+      "statusMessage": "I just deployed again",
+      "taskId": 2
     }
 
     resp = requests.put(url+id, headers=headers, data=json.dumps(newpayload,indent=4))
@@ -83,6 +85,7 @@ def put(id):
     assert resp_json['statusCode'] == "12"
     assert resp_json['statusId'] == 1
     assert resp_json['statusMessage'] == "I just deployed again"
+    assert resp_json['taskId'] == 2
 
     #Validate update/Put response
     assert resp.status_code == 200
@@ -99,6 +102,7 @@ def put(id):
     assert resp_json['statusCode'] == '12'
     assert resp_json['statusId'] == 1
     assert resp_json['statusMessage'] == 'I just deployed again'
+    assert resp_json['taskId'] == 2
     typestest_solution_deployment(resp_json)
 
 

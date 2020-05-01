@@ -295,8 +295,6 @@ def deployment_create(solutionDeploymentDetails):
         try:
           response = requests.post(url, data=json.dumps(data_to_dac), headers=headers)
           resp_json = response.json()
-          deployment_update(oid, resp_json)
-          # Process the response from the DAC
           print("Response from Dac")
           print(pformat(resp_json))
         except:
@@ -317,7 +315,7 @@ def deployment_create(solutionDeploymentDetails):
                   "id": oid,
                   "statusId": 2, 
                   "errorCode": "ERROR", 
-                  "statusMessage": "Failed updating the database with the response from the DAC" 
+                  "statusMessage": "Failed updating the database with the response from the DAC"
                   }
           return resp_json, 500
     else:
@@ -354,6 +352,7 @@ def deployment_update(oid, solutionDeploymentDetails):
         update_solution.statusId = solutionDeploymentDetails.get('statusId', update_solution.statusId)
         update_solution.statusCode = solutionDeploymentDetails.get('statusCode', update_solution.statusCode)
         update_solution.statusMessage = solutionDeploymentDetails.get('statusMessage', update_solution.statusMessage)
+        update_solution.taskId = solutionDeploymentDetails.get('taskId', update_solution.taskId)
 
         db.session.merge(update_solution)
         db.session.commit()

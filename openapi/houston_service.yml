@@ -2011,6 +2011,9 @@ components:
               statusMessage:
                 type: string
                 description: The error message
+              taskId:
+                type: integer
+                description: The task Id
 
       description: the solution id to deploy
       required: true
@@ -2441,13 +2444,17 @@ components:
           description: Deployment state
         statusId:
           type: integer
-          description: error id
+          description: status id
         statusCode:
           type: string
-          description: error code
+          description: status code
         statusMessage:
           type: string
-          description: error message
+          description: status message
+        taskId:
+          type: integer
+          description: task id
+
 
     SolutionResource:
       type: object

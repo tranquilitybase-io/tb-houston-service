@@ -74,8 +74,11 @@ fi
 
 if [ "$1" == "deploy" ]; then
   docker image tag gcr.io/eagle-console-resources/tb-gcp-dac:mock gcr.io/tranquility-base-images/tb-gcp-dac:mock 
+  docker push gcr.io/tranquility-base-images/tb-gcp-dac:mock 
   docker image tag gcr.io/eagle-console-resources/tb-houston-mysql57:mock gcr.io/tranquility-base-images/tb-houston-mysql57:mock 
+  docker push gcr.io/tranquility-base-images/tb-houston-mysql57:mock 
   docker image tag gcr.io/eagle-console-resources/tb-houston-service:mock gcr.io/tranquility-base-images/tb-houston-service:mock 
+  docker push gcr.io/tranquility-base-images/tb-houston-service:mock 
   exit 0
 fi
 
