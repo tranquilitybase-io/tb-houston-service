@@ -224,7 +224,7 @@ def test_solutionresourcejson():
     #Testing GET ALL request
     get_all()
     #Testing DELETE request
-    #delete(id1)
+    delete(id1)
     post2()
     post3()
     post4()
@@ -333,7 +333,6 @@ def post3():
 def post4():
     print("Post 4 Test")
 
-    true = 1 == 1
     # Test Update 
     payload  =  {
       "solutionId": 4,
@@ -371,7 +370,7 @@ def delete(solutionId):
     assert resp.status_code == 200
 
     #Then GET request to check the item has been actully deleted
-    resp = requests.get(url+solution, headers=headers)
+    resp = requests.get(url+solutionId, headers=headers)
     #Validate Get response
     #resp_json = resp.json()
     assert resp.status_code == 404
