@@ -5,7 +5,9 @@ if [ -z "${CODACY_PROJECT_TOKEN}" ]; then
 fi
 export CODACY_PROJECT_TOKEN=${CODACY_PROJECT_TOKEN}
 python -m pip install pytest
-HOUSTON_SERVICE_URL=localhost:3000 coverage run venv/bin/pytest
+python -m pip install codacy-coverage==1.3.11
+python -m pip install coverage==5.1
+HOUSTON_SERVICE_URL=localhost:3000 coverage run "$(which pytest)"
 coverage xml
 coverage report
 coverage html

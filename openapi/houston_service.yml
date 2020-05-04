@@ -922,7 +922,6 @@ paths:
       description: receive solution id from the Eagle Console and then post the complete Solution to the DaC
       requestBody:
         $ref: "#/components/requestBodies/solution.solutionDeploymentPostDetails"
-        description: solution deployment contains the solution id
       responses:
         "201":
           description: Successfully created a Solution Deployment
@@ -1001,7 +1000,7 @@ paths:
         "201":
           description: Successfully created a Solution Resource
 
-  "/solutionresource/{oid}":
+  "/solutionresource/{solutionId}/{key}":
     get:
       operationId: solutionresource.read_one
       tags:
@@ -1009,34 +1008,21 @@ paths:
       summary: Read a solution resource
       description: Read a solution resource
       parameters:
-        - name: oid
+        - name: solutionId
           in: path
-          description: key of the solution resource to update
+          description: composite key of the solution resource to update
           required: true
           schema:
             type: integer
+        - name: key
+          in: path
+          description: composite key of the solution resource to update
+          required: true
+          schema:
+            type: string
       responses:
         "200":
           description: Successfully read a Solution Resource
-
-    put:
-      operationId: solutionresource.update
-      tags:
-        - solutionresource
-      summary: Update a solution resource
-      description: Update a solution resource with it's new state
-      parameters:
-        - name: oid
-          in: path
-          description: key of the solution resource to update
-          required: true
-          schema:
-            type: integer
-      requestBody:
-        $ref: "#/components/requestBodies/solutionresource.solutionResourceDetails"
-      responses:
-        "200":
-          description: Successfully updated a Solution Resource
 
     delete:
       operationId: solutionresource.delete
@@ -1045,14 +1031,83 @@ paths:
       summary: Delete a solution resource from the list
       description: Delete a solution resource
       parameters:
-        - name: oid
+        - name: solutionId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: key
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successfully deleted a solution resource
+
+  /solutionresourcejsons/:
+    get:
+      operationId: solutionresourcejson.read_all
+      tags:
+        - solutionresourcejson
+      summary: Read the entire list of solution resource jsons
+      description: Read the list of solution resource jsons
+      responses:
+        "200":
+          description: Successfully read solution resource jsons list operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SolutionResourceJSON"
+
+  /solutionresourcejson/:
+    post:
+      operationId: solutionresourcejson.create
+      tags:
+        - solutionresourcejson
+      summary: Create a solution resource json
+      description: Create a solution resource json
+      requestBody:
+        $ref: "#/components/requestBodies/solutionresourcejson.solutionResourceJSONDetails"
+      responses:
+        "201":
+          description: Successfully created a Solution Resource JSON
+
+  "/solutionresourcejson/{solutionId}":
+    get:
+      operationId: solutionresourcejson.read_one
+      tags:
+        - solutionresourcejson
+      summary: Read a solution resource json
+      description: Read a solution resource json
+      parameters:
+        - name: solutionId
+          in: path
+          description: key of the solution resource json to update
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successfully read a Solution Resource JSON
+
+    delete:
+      operationId: solutionresourcejson.delete
+      tags:
+        - solutionresourcejson
+      summary: Delete a solution resource JSON from the list
+      description: Delete a solution resource JSON
+      parameters:
+        - name: solutionId
           in: path
           required: true
           schema:
             type: integer
       responses:
         "200":
-          description: Successfully deleted a solution resource
+          description: Successfully deleted a solution resource JSON
 
 
   /activators/:
@@ -2025,8 +2080,6 @@ components:
             x-body-name: solutionResourceDetails
             type: object
             properties:
-              id:
-                description: The id of the solution resource
               solutionId:
                 type: integer
                 description: The solution id
@@ -2037,6 +2090,22 @@ components:
                 type: string
                 description: The solution resource value
       description: the solution resource to create
+      required: true
+
+    solutionresourcejson.solutionResourceJSONDetails:
+      content:
+        application/json:
+          schema:
+            x-body-name: solutionResourceJSONDetails
+            type: object
+            properties:
+              solutionId:
+                type: integer
+                description: The solution id
+              json:
+                type: string
+                description: The JSON
+      description: the solution resource JSON to create
       required: true
 
   schemas:
@@ -2471,6 +2540,19 @@ components:
         value:
           type: string
           description: The solution resource value
+
+    SolutionResourceJSON:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The unique id
+        solutionId:
+          type: integer
+          description: The solution id
+        json:
+          type: string
+          description: The JSON
 
     User:
       type: object
