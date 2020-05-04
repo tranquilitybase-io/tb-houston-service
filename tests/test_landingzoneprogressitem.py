@@ -1,6 +1,5 @@
 import requests
 import json
-import os
 
 import pytest_lib 
     
@@ -40,7 +39,7 @@ def post(url):
     #Get Request to check Post has created item as expected
     resp = requests.get(url + str(oid), headers=pytest_lib.headers)
     resp_json = resp.json()
-    resp_headers = resp.headers
+    #resp_headers = resp.headers
     #Validate GET response
     assert resp.status_code == 200
     #assert resp_json['completed'] == True
