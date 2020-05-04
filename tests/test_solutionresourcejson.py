@@ -269,7 +269,6 @@ def post():
 def post2():
     print("Post 2 Test")
 
-    true = 1 == 1
     # Test Update 
     payload  =  {
       "solutionId": 2,
@@ -301,7 +300,6 @@ def post2():
 def post3():
     print("Post 3 Test")
 
-    true = 1 == 1
     # Test Update 
     payload  =  {
       "solutionId": 3,
