@@ -7,6 +7,8 @@ solution resource JSON collection
 from flask import make_response, abort
 from config import db, app
 from models import SolutionResourceJSON, SolutionResourceJSONSchema
+import solutionresource
+import json
 from pprint import pformat
 
 
@@ -19,7 +21,7 @@ def read_all():
     """
 
     # Create the list of solutionresourcejsons from our data
-    solutionresourcejson = SolutionResourceJSON.query.order_by(SolutionResourceJSON.key).all()
+    solutionresourcejson = SolutionResourceJSON.query.order_by(SolutionResourceJSON.solutionId).all()
     app.logger.debug(pformat(solutionresourcejson))
     # Serialize the data for the response
     solutionresourcejson_schema = SolutionResourceJSONSchema(many=True)
@@ -27,16 +29,16 @@ def read_all():
     return data, 200
 
 
-def read_one(oid):
+def read_one(solutionId):
     """
     This function responds to a request for /api/solutionresourcejson/{oid}
     with one matching solutionresourcejson from solutionresourcejsons
 
     :param application:   id of solutionresourcejson to find
-    :return:              solutionresourcejson matching key
+    :return:              solutionresourcejson matching id
     """
 
-    solutionresourcejson = (SolutionResourceJSON.query.filter(SolutionResourceJSON.id == oid).one_or_none())
+    solutionresourcejson = (SolutionResourceJSON.query.filter(SolutionResourceJSON.solutionId == solutionId).one_or_none())
 
     if solutionresourcejson is not None:
         # Serialize the data for the response
@@ -47,80 +49,88 @@ def read_one(oid):
         abort(404, f"SolutionResourceJSON with id {oid} not found")
 
 
+def create_solution_resources(resources_dict):
+    print("resources_dict")
+    print(pformat(resources_dict))
+    solutionId = resources_dict['solutionId']
+    resources_json = json.loads(resources_dict['json'])
+    if 'resources' in resources_json:
+        for resource in resources_json['resources']:
+            if 'instances' in resource:
+                for instance in resource['instances']:
+                    if 'attributes' in instance:
+                        attributes = instance['attributes']
+                        if 'project_id' in attributes:
+                            project_id = attributes['project_id']
+                            proj_parts = project_id.split('-')
+                            if len(proj_parts) > 1:
+                              env = proj_parts[1]
+                              key = "project_id_" + env
+                              value = project_id
+                              sr = {
+                                      'solutionId': solutionId,
+                                      'key': key,
+                                      'value': value 
+                                      }
+                              solutionresource.create(sr)
+
+
 def create(solutionResourceJSONDetails):
     """
-    This function creates a new solutionresourcejson in the solutionresourcejson list
-    based on the passed in solutionresourcejson data
+    This function updates an existing or creates a solutionresource json in the solution resource json list
 
-    :param solutionresourcejson:  solutionresourcejson to create in solutionresourcejson structure
-    :return:        201 on success, 406 on solutionresourcejson exists
-    """
-
-    # Remove id as it's created automatically
-    if 'id' in solutionResourceJSONDetails:
-        del solutionResourceJSONDetails['id']
-
-    schema = SolutionResourceJSONSchema()
-    new_solutionresourcejson = schema.load(solutionResourceJSONDetails, session=db.session)
-    db.session.add(new_solutionresourcejson)
-    db.session.commit()
-
-    # Serialize and return the newly created solution resource JSON
-    # in the response
-    data = schema.dump(new_solutionresourcejson)
-    return data, 201
-
-
-def update(oid, solutionResourceJSONDetails):
-    """
-    This function updates an existing solutionresourcejson in the solution resource JSON list
-
-    :param key:    key of the solutionresourcejson to update in the solution resource JSON list
+    :param key:    solutionId and key of the solutionresource json to update in the solution resource json  list
     :param solutionresourcejson:   solutionresourcejson to update
     :return:       updated solutionresourcejson
     """
 
     app.logger.debug(pformat(solutionResourceJSONDetails))
 
-    if solutionResourceJSONDetails.get("id", oid) != oid:
-           abort(400, f"Key mismatch in path and body")
+    solutionId = solutionResourceJSONDetails['solutionId']
 
-    # Does the solutionresourcejson exist in solutionresourcejson list?
-    existing_solutionresourcejson = SolutionResourceJSON.query.filter(
-            SolutionResourceJSON.id == oid
-    ).one_or_none()
+    print(f"update_or_create {solutionId}")
 
-    # Does the solution resource JSON exist?
+    # Does the solutionresource exist in solutionresource list?
+    solutionresourcejson_filter = SolutionResourceJSON.query.filter(SolutionResourceJSON.solutionId == solutionId)
+    solutionresourcejson = solutionresourcejson_filter.one_or_none()
 
-    if existing_solutionresourcejson is not None:
-        SolutionResourceJSON.query.filter(SolutionResourceJSON.id == oid).update(solutionResourceJSONDetails)
+    schema = SolutionResourceJSONSchema()
+    # Does the solution resource json exist?
+    if solutionresourcejson is not None:
+        print(f"Update: {solutionresourcejson.solutionId}")
+        solutionresourcejson_filter.update(solutionResourceJSONDetails)
+        db.session.commit()
+    else:
+        solutionresourcejson = schema.load(solutionResourceJSONDetails, session=db.session)
+        db.session.add(solutionresourcejson)
         db.session.commit()
 
-        # return the updated the solution resource JSON in the response
-        schema = SolutionResourceJSONSchema()
-        data = schema.dump(existing_solutionresourcejson)
-        return data, 200
-    else:
-        abort(404, f"SolutionResourceJSON {oid} not found")
+    # return the updated/created object in the response
+    data = schema.dump(solutionresourcejson)
+    print(pformat(data))
+    create_solution_resources(data)
+    return data, 201
 
 
-def delete(oid):
+def delete(solutionId):
     """
     Deletes a solutionresourcejson from the solutionresourcejsons list.
 
-    :param key: key of the solutionresourcejson to delete
+    :param solutionId: solutionId of the solutionresourcejson to delete
     :return:    200 on successful delete, 404 if not found
     """
     # Does the solutionresourcejson to delete exist?
-    existing_solutionresourcejson = SolutionResourceJSON.query.filter(SolutionResourceJSON.id == oid).one_or_none()
+    existing_solutionresourcejson = SolutionResourceJSON.query.filter(SolutionResourceJSON.solutionId == solutionId).one_or_none()
 
     # if found?
     if existing_solutionresourcejson is not None:
         db.session.delete(existing_solutionresourcejson)
         db.session.commit()
 
-        return make_response(f"SolutionResourceJSON {oid} successfully deleted", 200)
+        return make_response(f"SolutionResourceJSON {solutionId} successfully deleted", 200)
 
     # Otherwise, nope, solutionresourcejson to delete not found
     else:
-        abort(404, f"SolutionResourceJSON {oid} not found")
+        abort(404, f"SolutionResourceJSON {solutionId} not found")
+
+

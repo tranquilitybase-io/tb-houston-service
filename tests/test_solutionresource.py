@@ -1,108 +1,103 @@
-import requests
+"""
+   Tests for the solutionresource endpoint.
+"""
+from pprint import pprint
 import json
 import os
-from pprint import pprint
+import requests
+from urllib.parse import urlparse
 
 
-HOUSTON_SERVICE_URL=os.environ['HOUSTON_SERVICE_URL']
-url = f"http://{HOUSTON_SERVICE_URL}/api/solutionresource/"
-    
+HOUSTON_SERVICE_URL = os.environ["HOUSTON_SERVICE_URL"]
+global_url = f"http://{HOUSTON_SERVICE_URL}/api/solutionresource/"
+
 # Additional headers.
-headers = {'Content-Type': 'application/json' }
-id = 0
+headers = {"Content-Type": "application/json"}
+
 
 def typestest_solution_resource(resp):
-    assert isinstance(resp['id'], int)
-    assert isinstance(resp['solutionId'], int)
-    assert isinstance(resp['key'], str)
-    assert isinstance(resp['value'], str)
+    """
+    check response types
+    """
+    assert isinstance(resp["solutionId"], int)
+    assert isinstance(resp["key"], str)
+    assert isinstance(resp["value"], str)
     pprint(resp)
 
 
 def test_solutionresource():
-
-    #Testing POST request
-    id = post()
-    #Testing PUT request
-    put(id)
-    #Testing GETALL request
+    """
+    main test function
+    """
+    # Testing POST request
+    (solution_id, key) = post()
+    # Testing GETALL request
     get_all()
-    
+    # Testing DELETE request
+    delete(solution_id, key)
+
 
 def post():
+    """
+    Test post endpoint.
+    """
     print("Post Tests")
-    #Test POST Then GET
+    # Test POST Then GET
     # Body
-    payload  =  {
-      "solutionId": 1,
-      "key": "key 1",
-      "value": "value 1"
-    }
+    key = 'key 1'
+    payload = {"solutionId": 1, "key": key, "value": "value 1"}
 
     # convert dict to json by json.dumps() for body data.
-    resp = requests.post(url, headers=headers, data=json.dumps(payload,indent=4))       
+    resp = requests.post(global_url, headers=headers, data=json.dumps(payload, indent=4))
     print(pprint(resp))
-    
+
     # Validate response headers and body contents, e.g. status code.
     resp_json = resp.json()
 
-    assert resp_json['solutionId'] == 1
-    assert resp_json['key'] == "key 1"
-    assert resp_json['value'] == "value 1"
+    assert resp_json["solutionId"] == 1
+    assert resp_json["key"] == key
+    assert resp_json["value"] == "value 1"
 
     assert resp.status_code == 201
-    assert resp.headers['content-type'] == 'application/json'
+    assert resp.headers["content-type"] == "application/json"
     pprint(resp.json())
     typestest_solution_resource(resp_json)
 
-    #Get Request to get updated values
-    id = str(resp_json['id'])
-    resp = requests.get(url+id, headers=headers) 
+    # Get Request to get updated values
+    solution_id = str(resp_json["solutionId"])
+    resp = requests.get(urlparse(global_url + solution_id + '/' + key).geturl(), headers=headers)
     resp_json = resp.json()
     print("solution_post")
     pprint(resp_json)
 
-    return id
+    return (solution_id, key)
 
 
-def put(id):
-    print("Put Tests")
+def delete(solution_id, key):
+    """
+    Test delete endpoint.
+    """
+    print("Delete Tests")
 
-    true = 1 == 1
-    # Test Update Then get new value
-    newpayload  =  {
-      "solutionId": 2,
-      "key": "key put 1",
-      "value": "value put 1"
-    }
-
-    print("url: " + url)
-    resp = requests.put(url+id, headers=headers, data=json.dumps(newpayload,indent=4))
-    resp_json = resp.json()
-    typestest_solution_resource(resp_json)
-    assert resp_json['solutionId'] == 2
-    assert resp_json['key'] == "key put 1"
-    assert resp_json['value'] == "value put 1"
-
-    #Validate update/Put response
+    # Test Delete Then GET
+    resp = requests.delete(urlparse(global_url + solution_id + '/' + key).geturl(), headers=headers)
+    # Validate Delete response
     assert resp.status_code == 200
 
-    #Get Request to get updated values
-    resp = requests.get(url+id, headers=headers)
-    resp_json = resp.json()
-
-    #Validate response body for updated values
-    assert resp.status_code == 200
-    assert resp_json['solutionId'] == 2
-    assert resp_json['key'] == 'key put 1'
-    assert resp_json['value'] == 'value put 1'
-    typestest_solution_resource(resp_json)
+    # Then GET request to check the item has been actully deleted
+    resp = requests.get(urlparse(global_url + solution_id + '/' + key).geturl(), headers=headers)
+    # Validate Get response
+    # resp_json = resp.json()
+    assert resp.status_code == 404
 
 
 def get_all():
+    """
+    Test getall endpoint.
+    """
     print("get_all Tests")
 
-    url = 'http://localhost:3000/api/solutionresources/'
+    url = "http://localhost:3000/api/solutionresources/"
     resp = requests.get(url, headers=headers)
-    #Validate Get All response
+    # Validate Get All response
     assert resp.status_code == 200

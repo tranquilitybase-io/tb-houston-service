@@ -1000,7 +1000,7 @@ paths:
         "201":
           description: Successfully created a Solution Resource
 
-  "/solutionresource/{oid}":
+  "/solutionresource/{solutionId}/{key}":
     get:
       operationId: solutionresource.read_one
       tags:
@@ -1008,34 +1008,21 @@ paths:
       summary: Read a solution resource
       description: Read a solution resource
       parameters:
-        - name: oid
+        - name: solutionId
           in: path
-          description: key of the solution resource to update
+          description: composite key of the solution resource to update
           required: true
           schema:
             type: integer
+        - name: key
+          in: path
+          description: composite key of the solution resource to update
+          required: true
+          schema:
+            type: string
       responses:
         "200":
           description: Successfully read a Solution Resource
-
-    put:
-      operationId: solutionresource.update
-      tags:
-        - solutionresource
-      summary: Update a solution resource
-      description: Update a solution resource with it's new state
-      parameters:
-        - name: oid
-          in: path
-          description: key of the solution resource to update
-          required: true
-          schema:
-            type: integer
-      requestBody:
-        $ref: "#/components/requestBodies/solutionresource.solutionResourceDetails"
-      responses:
-        "200":
-          description: Successfully updated a Solution Resource
 
     delete:
       operationId: solutionresource.delete
@@ -1044,11 +1031,16 @@ paths:
       summary: Delete a solution resource from the list
       description: Delete a solution resource
       parameters:
-        - name: oid
+        - name: solutionId
           in: path
           required: true
           schema:
             type: integer
+        - name: key
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         "200":
           description: Successfully deleted a solution resource
@@ -1083,7 +1075,7 @@ paths:
         "201":
           description: Successfully created a Solution Resource JSON
 
-  "/solutionresourcejson/{oid}":
+  "/solutionresourcejson/{solutionId}":
     get:
       operationId: solutionresourcejson.read_one
       tags:
@@ -1091,7 +1083,7 @@ paths:
       summary: Read a solution resource json
       description: Read a solution resource json
       parameters:
-        - name: oid
+        - name: solutionId
           in: path
           description: key of the solution resource json to update
           required: true
@@ -1101,25 +1093,6 @@ paths:
         "200":
           description: Successfully read a Solution Resource JSON
 
-    put:
-      operationId: solutionresourcejson.update
-      tags:
-        - solutionresourcejson
-      summary: Update a solution resource JSON
-      description: Update a solution resource JSON with it's new state
-      parameters:
-        - name: oid
-          in: path
-          description: key of the solution resource JSON to update
-          required: true
-          schema:
-            type: integer
-      requestBody:
-        $ref: "#/components/requestBodies/solutionresourcejson.solutionResourceJSONDetails"
-      responses:
-        "200":
-          description: Successfully updated a Solution Resource JSON
-
     delete:
       operationId: solutionresourcejson.delete
       tags:
@@ -1127,7 +1100,7 @@ paths:
       summary: Delete a solution resource JSON from the list
       description: Delete a solution resource JSON
       parameters:
-        - name: oid
+        - name: solutionId
           in: path
           required: true
           schema:
@@ -2107,9 +2080,6 @@ components:
             x-body-name: solutionResourceDetails
             type: object
             properties:
-              id:
-                type: integer
-                description: The id of the solution resource
               solutionId:
                 type: integer
                 description: The solution id
@@ -2129,9 +2099,6 @@ components:
             x-body-name: solutionResourceJSONDetails
             type: object
             properties:
-              id:
-                type: integer
-                description: The id of the solution resource JSON object
               solutionId:
                 type: integer
                 description: The solution id
