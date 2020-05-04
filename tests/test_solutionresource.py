@@ -92,7 +92,9 @@ def delete(solution_id, key):
 
 
 def get_all():
-    """ Test getall endpoint.  """
+    """
+    Test getall endpoint.
+    """
     print("get_all Tests")
 
     url = "http://localhost:3000/api/solutionresources/"

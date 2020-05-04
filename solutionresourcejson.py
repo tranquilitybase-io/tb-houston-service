@@ -113,7 +113,8 @@ def create(solutionResourceJSONDetails):
 
 
 def delete(solutionId):
-    """Deletes a solutionresourcejson from the solutionresourcejsons list.
+    """
+    Deletes a solutionresourcejson from the solutionresourcejsons list.
     :param solutionId: solutionId of the solutionresourcejson to delete
     :return:    200 on successful delete, 404 if not found
     """
