@@ -20,7 +20,7 @@ def read_all():
     """
 
     # Create the list of teams from our data
-    team = Team.query.order_by(Team.key).all()
+    team = Team.query.order_by(Team.id).all()
     app.logger.debug(pformat(team))
     # Serialize the data for the response
     team_schema = TeamSchema(many=True)
@@ -28,7 +28,7 @@ def read_all():
     return data
 
 
-def read_one(key):
+def read_one(id):
     """
     This function responds to a request for /api/team/{key}
     with one matching team from teams
@@ -37,7 +37,8 @@ def read_one(key):
     :return:              team matching key
     """
 
-    team = (Team.query.filter(Team.key == key).one_or_none())
+    team = (Team.query.filter(Team.id == id).one_or_none())
+
 
     if team is not None:
         # Serialize the data for the response
@@ -46,7 +47,7 @@ def read_one(key):
         return data
     else:
         abort(
-            404, "Team with key {key} not found".format(key=key)
+            404, "Team with id {id} not found".format(id=id)
         )
 
 
@@ -58,11 +59,12 @@ def create(teamDetails):
     :param team:  team to create in team structure
     :return:        201 on success, 406 on team exists
     """
-    key = teamDetails.get("key", None)
-
+    # Remove id as it's created automatically
+    if 'id' in teamDetails:
+        del teamDetails['id']
     # Does the team exist already?
     existing_team = (
-        Team.query.filter(Team.key == key).one_or_none()
+        Team.query.filter(Team.name == teamDetails['name']).one_or_none()
     )
 
     if existing_team is None:
@@ -79,26 +81,26 @@ def create(teamDetails):
 
     # Otherwise, it already exists, that's an error
     else:
-        abort(406, f"Deployment already exists")
+        abort(406, f"Team already exists")
 
 
-def update(key, teamDetails):
+def update(id, teamDetails):
     """
     This function updates an existing team in the team list
 
-    :param key:    key of the team to update in the team list
+    :param id:    id of the team to update in the team list
     :param team:   team to update
     :return:       updated team
     """
 
     app.logger.debug(pformat(teamDetails))
 
-    if teamDetails["key"] != key:
-           abort(400, f"Key mismatch in path and body")
+    if teamDetails["id"] != int(id):
+           abort(400, f"Id mismatch in path and body")
 
     # Does the team exist in team list?
     existing_team = Team.query.filter(
-            Team.key == key
+            Team.id == id
     ).one_or_none()
 
     # Does team exist?
@@ -106,7 +108,7 @@ def update(key, teamDetails):
     if existing_team is not None:
         schema = TeamSchema()
         update_team = schema.load(teamDetails, session=db.session)
-        update_team.key = teamDetails['key']
+        update_team.id = teamDetails['id']
 
         db.session.merge(update_team)
         db.session.commit()
@@ -120,25 +122,25 @@ def update(key, teamDetails):
         abort(404, f"Team not found")
 
 
-def delete(key):
+def delete(id):
     """
     This function deletes a team from the teams list
 
-    :param key: key of the team to delete
+    :param id: id of the team to delete
     :return:    200 on successful delete, 404 if not found
     """
     # Does the team to delete exist?
-    existing_team = Team.query.filter(Team.key == key).one_or_none()
+    existing_team = Team.query.filter(Team.id == id).one_or_none()
 
     # if found?
     if existing_team is not None:
         db.session.delete(existing_team)
         db.session.commit()
 
-        return make_response(f"Team {key} successfully deleted", 200)
+        return make_response(f"Team {id} successfully deleted", 200)
 
     # Otherwise, nope, team to delete not found
     else:
-        abort(404, f"Team {key} not found")
+        abort(404, f"Team {id} not found")
 
 

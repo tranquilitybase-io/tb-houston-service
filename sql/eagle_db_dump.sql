@@ -121,30 +121,6 @@ INSERT INTO `bgproutingmode` VALUES (1,'Global','Global');
 UNLOCK TABLES;
 
 --
--- Table structure for table `businessunit`
---
-
-DROP TABLE IF EXISTS `businessunit`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `businessunit` (
-  `key` varchar(255) NOT NULL,
-  `value` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`key`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `businessunit`
---
-
-LOCK TABLES `businessunit` WRITE;
-/*!40000 ALTER TABLE `businessunit` DISABLE KEYS */;
-INSERT INTO `businessunit` VALUES ('Data','Data'),('FICC','FICC'),('Modern Apps','Modern Apps');
-/*!40000 ALTER TABLE `businessunit` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `cd`
 --
 
@@ -536,11 +512,13 @@ DROP TABLE IF EXISTS `teammember`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `teammember` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `userId` int(11) NOT NULL REFERENCES user(id),
   `teamId` int(11) NOT NULL REFERENCES team(id),
   `role` varchar(100) NOT NULL,
-  `isActive` tinyint(1) NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `isActive` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -549,7 +527,7 @@ CREATE TABLE `teammember` (
 
 LOCK TABLES `teammember` WRITE;
 /*!40000 ALTER TABLE `teammember` DISABLE KEYS */;
-INSERT INTO `teammember` VALUES (0,0,'Admin',1);
+INSERT INTO `teammember` VALUES (0,0,0,'Admin',1);
 /*!40000 ALTER TABLE `teammember` ENABLE KEYS */;
 UNLOCK TABLES;
 --

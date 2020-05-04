@@ -219,7 +219,7 @@ paths:
                   length:
                     type: integer
 
-  /keyValues/team/:
+  /team/:
     get:
       operationId: team.read_all
       tags:
@@ -234,13 +234,7 @@ paths:
               schema:
                 type: array
                 items:
-                  properties:
-                    key:
-                      type: string
-                      description: key
-                    value:
-                      type: string
-                      description: value
+                  $ref: "#/components/schemas/Team"
     post:
       operationId: team.create
       tags:
@@ -253,7 +247,7 @@ paths:
         "201":
           description: Successfully created a team
 
-  "/keyValues/team/{key}":
+  "/team/{id}":
     get:
       operationId: team.read_one
       tags:
@@ -261,24 +255,19 @@ paths:
       summary: Read one team from the list
       description: Read one team from the list
       parameters:
-        - name: key
+        - name: id
           in: path
           description: key of the team to get from the list
           required: true
           schema:
             type: string
       responses:
-        "200":
-          description: Successfully read a team from the list
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  key:
-                    type: string
-                  value:
-                    type: string
+              "200":
+                description: Successfully read an team from the list
+                content:
+                  application/json:
+                    schema:
+                      $ref: "#/components/schemas/Team"
     put:
       operationId: team.update
       tags:
@@ -286,7 +275,7 @@ paths:
       summary: Update a team in the list
       description: Update a team in the list
       parameters:
-        - name: key
+        - name: id
           in: path
           description: key of the team to update
           required: true
@@ -305,7 +294,7 @@ paths:
       summary: Delete a team from the list
       description: Delete a team
       parameters:
-        - name: key
+        - name: id
           in: path
           required: true
           schema:
@@ -313,6 +302,203 @@ paths:
       responses:
         "200":
           description: Successfully deleted a team
+
+  /teammember/:
+    get:
+      operationId: teammember.read_all
+      tags:
+        - teammember
+      summary: Read the entire list of team members
+      description: Read the list of team members
+      parameters:
+        - in: query
+          name: userId
+          schema:
+            type: integer
+        - in: query
+          name: teamId
+          schema:
+            type: integer
+        - in: query
+          name: active
+          schema:
+            type: boolean
+        - in: query
+          name: page
+          schema:
+            type: integer 
+        - in: query
+          name: page_size
+          schema:
+            type: integer 
+        - in: query
+          name: sort
+          schema:
+            type: array
+            items:
+              type: string
+          explode: true
+      responses:
+        "200":
+          description: Successfully read team member list operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TeamMember"
+    post:
+      operationId: teammember.create
+      tags:
+        - teammember
+      summary: Create a team memeber and add it to the team list
+      description: Create a new team member in the teammembers list
+      requestBody:
+        $ref: '#/components/requestBodies/teammember.teamMemberDetails'
+      responses:
+        "201":
+          description: Successfully created a team member
+
+  "/teammember/{id}":
+    get:
+      operationId: teammember.read_one
+      tags:
+        - teammember
+      summary: Read one team member from the list
+      description: Read one team  memberfrom the list
+      parameters:
+        - name: id
+          in: path
+          description: id of the team member to get from the list
+          required: true
+          schema:
+            type: string
+      responses:
+              "200":
+                description: Successfully read an team member from the list
+                content:
+                  application/json:
+                    schema:
+                      $ref: "#/components/schemas/TeamMember"
+    put:
+      operationId: teammember.update
+      tags:
+        - teammember
+      summary: Update a team member in the list
+      description: Update a team member in the list
+      parameters:
+        - name: id
+          in: path
+          description: id of the team member to update
+          required: true
+          schema:
+            type: string
+      requestBody:
+        $ref: "#/components/requestBodies/teammember.teamMemberDetails"
+      responses:
+        "200":
+          description: Successfully updated a team member
+
+    delete:
+      operationId: teammember.delete
+      tags:
+        - teammember
+      summary: Delete a teammember from the list
+      description: Delete a team member
+      parameters:
+        - name: id
+          in: path
+          description: id of the team member to delete
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successfully deleted a teammember
+
+  /cloudaccount/:
+    get:
+      operationId: cloudaccount.read_all
+      tags:
+        - cloudaccount
+      summary: Read the entire list of cloudaccounts
+      description: Read the list of cloudaccounts
+      responses:
+        "200":
+          description: Successfully read cloudaccount list operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CloudAccount"
+    post:
+      operationId: cloudaccount.create
+      tags:
+        - cloudaccount
+      summary: Create a cloudaccount and add it to the cloudaccount list
+      description: Create a new cloudaccount in the cloudaccount list
+      requestBody:
+        $ref: '#/components/requestBodies/cloudaccount.cloudAccountDetails'
+      responses:
+        "201":
+          description: Successfully created a cloudaccount
+
+  "/cloudaccount/{id}":
+    get:
+      operationId: cloudaccount.read_one
+      tags:
+        - cloudaccount
+      summary: Read one cloudaccount from the list
+      description: Read one cloudaccount from the list
+      parameters:
+        - name: id
+          in: path
+          description: key of the cloudaccount to get from the list
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successfully read an cloudaccount from the list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CloudAccount"
+    put:
+      operationId: cloudaccount.update
+      tags:
+        - cloudaccount
+      summary: Update a cloudaccount in the list
+      description: Update a cloudaccount in the list
+      parameters:
+        - name: id
+          in: path
+          description: key of the cloudaccount to update
+          required: true
+          schema:
+            type: string
+      requestBody:
+        $ref: "#/components/requestBodies/cloudaccount.cloudAccountDetails"
+      responses:
+        "200":
+          description: Successfully updated a cloudaccount
+
+    delete:
+      operationId: cloudaccount.delete
+      tags:
+        - cloudaccount
+      summary: Delete a cloudaccount from the list
+      description: Delete a cloudaccount
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successfully deleted a cloud account
 
   /keyValues/environment/:
     get:
@@ -686,7 +872,7 @@ paths:
         "200":
           description: Successfully deleted a source control
 
-  /keyValues/businessUnit/:
+  /businessunit/:
     get:
       operationId: businessUnit.read_all
       tags:
@@ -701,14 +887,7 @@ paths:
               schema:
                 type: array
                 items:
-                  properties:
-                    key:
-                      type: string
-                      description: key
-                    value:
-                      type: string
-                      description: value
-
+                  $ref: "#/components/schemas/BusinessUnit"
     post:
       operationId: businessUnit.create
       tags:
@@ -722,7 +901,7 @@ paths:
         "201":
           description: Successfully created an business unit
 
-  "/keyValues/businessUnit/{key}":
+  "/businessunit/{id}":
     get:
       operationId: businessUnit.read_one
       tags:
@@ -730,24 +909,19 @@ paths:
       summary: Read one business unit from the list
       description: Read one business unit from the list
       parameters:
-        - name: key
+        - name: id
           in: path
-          description: key of the business unit to get from the list
+          description: id of the business unit to get from the list
           required: true
           schema:
-            type: string
+            type: integer
       responses:
         "200":
           description: Successfully read an business unit from the list
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  key:
-                    type: string
-                  value:
-                    type: string
+                $ref: "#/components/schemas/BusinessUnit"
     put:
       operationId: businessUnit.update
       tags:
@@ -755,12 +929,12 @@ paths:
       summary: Update an business unit in the list
       description: Update an business unit in the list
       parameters:
-        - name: key
+        - name: id
           in: path
           description: key of the business unit to update
           required: true
           schema:
-            type: string
+            type: integer
       requestBody:
         $ref: "#/components/requestBodies/businessUnit.businessUnitDetails"
       responses:
@@ -773,11 +947,11 @@ paths:
       summary: Delete an business unit from the list
       description: Delete an business unit
       parameters:
-        - name: key
+        - name: id
           in: path
           required: true
           schema:
-            type: string
+            type: integer
       responses:
         "200":
           description: Successfully deleted an business unit
@@ -1930,6 +2104,24 @@ components:
             $ref: "#/components/schemas/Team"
       description: teamDetails to create
       required: true
+    
+    teammember.teamMemberDetails:
+      content:
+        application/json:
+          schema:
+            x-body-name: teamMemberDetails
+            $ref: "#/components/schemas/TeamMember"
+      description: teamMemberDetails to create
+      required: true
+
+    cloudaccount.cloudAccountDetails:
+      content:
+        application/json:
+          schema:
+            x-body-name: cloudAccountDetails
+            $ref: "#/components/schemas/CloudAccount"
+      description: cloudAccountDetails to create
+      required: true
 
     environment.environmentDetails:
       content:
@@ -2159,13 +2351,57 @@ components:
     Team:
       type: object
       properties:
-        key:
+        id:
+          type: integer
+          description: id
+        name:
           type: string
-          description: key
-        value:
+          description: name of the team
+        description:
           type: string
-          description: value
+          description: more details about the team
+        businessUnitId:
+          type: integer
+          description: business unit to which the team belongs to
+        isActive:
+          type: boolean
+          description: to activate/deactivate the team
+      
+    TeamMember:
+      type: object
+      properties:
+        id:
+          type: integer
+          description:  id of the team member
+        userId:
+          type: integer
+          description: user Id of the user
+        teamId:
+          type: integer
+          description: team Id of the team
+        role:
+          type: string
+          description: user's role in the team
+        isActive:
+          type: boolean
+          description: to activate/deactivate user role from a team
 
+    CloudAccount:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: cloud account id
+        name:
+          type: string
+          description: name of the cloud account
+        userId:
+          type: integer
+          description: user id mapped to the cloud account
+        isActive:
+          type: boolean
+          description: to activate/deactivate the cloud account
+               
     BGPRoutingMode:
       type: object
       properties:
@@ -2182,13 +2418,19 @@ components:
     BusinessUnit:
       type: object
       properties:
-        key:
+        id:
+          type: integer
+          description: id
+        name:
           type: string
-          description: key
-        value:
+          description: name of the business unit
+        description:
           type: string
-          description: value
-
+          description: more details about business unit
+        isActive:
+          type: boolean
+          description: to activate/deactivate the business unit
+    
     Environment:
       type: object
       properties:

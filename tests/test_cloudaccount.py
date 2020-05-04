@@ -8,21 +8,21 @@ from pprint import pprint
 LOG_LEVEL = logging.INFO # DEBUG, INFO, WARNING, ERROR, CRITICAL
 
 HOUSTON_SERVICE_URL=os.environ['HOUSTON_SERVICE_URL']
-url = f"http://{HOUSTON_SERVICE_URL}/api/businessunit/"
+url = f"http://{HOUSTON_SERVICE_URL}/api/cloudaccount/"
     
 # Additional headers.
 headers = {'Content-Type': 'application/json' }
 id = 0
 
 def typestest(resp):
-    assert isinstance(resp['description'], str)
     assert isinstance(resp['id'], int)
+    assert isinstance(resp['userId'], int)
     assert isinstance(resp['isActive'], bool)
     assert isinstance(resp['name'], str)
     pprint(resp)
 
 
-def test_businessunit():
+def test_team():
 
     #Testing POST request
     id = post()
@@ -42,9 +42,9 @@ def post():
     # Body
     true = 1 == 1
     payload = { 
-    "id": 0,
-    "name": "BU-Test",
-    "description": "Test BU desc",
+    "id": 10,
+    "userId": 1,
+    "name": "GCP-Test",
     "isActive": True
     }
 
@@ -62,9 +62,8 @@ def post():
     resp_headers = resp.headers
     #Validate response
     assert resp.status_code == 200
-    assert resp_json['name'] == 'BU-Test'
-    assert resp_json['description'] == 'Test BU desc'
-    assert resp_json['isActive'] == True
+    assert resp_json['name'] == 'GCP-Test'
+    assert resp_json['userId'] == 1
     assert resp_headers['content-type'] == 'application/json'
     typestest(resp_json)
     return id
@@ -77,11 +76,10 @@ def put(id):
     # Test Update Then get new value
     newpayload  =  { 
     "id": int(id),
-    "name": "BU-Test",
-    "description": "Test BU desc",
+    "userId": 1,
+    "name": "GCP-Test-Updated",
     "isActive": False
     }
-
 
     resp = requests.put(url+id, headers=headers, data=json.dumps(newpayload,indent=4))
    
@@ -95,10 +93,9 @@ def put(id):
 
     #Validate response body for updated values
     assert resp.status_code == 200
-    assert resp_json['name'] == 'BU-Test'
-    assert resp_json['description'] == 'Test BU desc'
+    assert resp_json['name'] == 'GCP-Test-Updated'
     assert resp_json['isActive'] == False
-   
+
     typestest(resp_json)
 
 
