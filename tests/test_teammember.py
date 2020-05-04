@@ -22,7 +22,7 @@ def typestest(resp):
     pprint(resp)
 
 
-def test_team():
+def test_teammember():
 
     #Testing POST request
     id = post()

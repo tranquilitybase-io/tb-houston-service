@@ -530,6 +530,7 @@ LOCK TABLES `teammember` WRITE;
 INSERT INTO `teammember` VALUES (0,0,0,'Admin',1);
 /*!40000 ALTER TABLE `teammember` ENABLE KEYS */;
 UNLOCK TABLES;
+
 --
 -- Table structure for table `vpnonpremisevendor`
 --

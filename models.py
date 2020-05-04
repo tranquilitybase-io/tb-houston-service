@@ -48,6 +48,13 @@ class User(db.Model):
     isAdmin = db.Column(db.Boolean())
     isActive = db.Column(db.Boolean())
 
+class UserSchema(ma.ModelSchema):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    class Meta:
+        model = User
+        sqla_session = db.session
 
 # Activator
 class Activator(db.Model):
