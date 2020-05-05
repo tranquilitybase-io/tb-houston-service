@@ -65,11 +65,11 @@ def read_all(userId=None, teamId=None, active=None,
 
 def read_one(id):
     """
-    This function responds to a request for /api/teammember/{id}
+    Responds to a request for /api/teammember/{id}
     with one matching team from teams
 
     :param application:   key of team to find
-    :return:              team matching key
+    :return:              team matching key.
     """
 
     teammember = (TeamMember.query.filter(TeamMember.id == id).one_or_none())
@@ -88,11 +88,11 @@ def read_one(id):
 
 def create(teamMemberDetails):
     """
-    This function creates a new team in the team list
+    Creates a new team in the team list
     based on the passed in team data
 
     :param team:  team to create in team structure
-    :return:        201 on success, 406 on team exists
+    :return:        201 on success, 406 on team exists.
     """
      # Remove id as it's created automatically
     if 'id' in teamMemberDetails:
@@ -122,11 +122,11 @@ def create(teamMemberDetails):
 
 def update(id, teamMemberDetails):
     """
-    This function updates an existing team member in the team list
+    Updates an existing team member in the team list
 
     :param id:    id of the team to update in the team list
     :param team:   team to update
-    :return:       updated team
+    :return:       updated team.
     """
 
     app.logger.debug(pformat(teamMemberDetails))
@@ -160,10 +160,10 @@ def update(id, teamMemberDetails):
 
 def delete(id):
     """
-    This function deletes a team from the teams list
+    Deletes a team from the teams list
 
     :param id: id of the team to delete
-    :return:    200 on successful delete, 404 if not found
+    :return:    200 on successful delete, 404 if not found.
     """
     # Does the team member to delete exist?
     existing_team_member = TeamMember.query.filter(TeamMember.id == id).one_or_none()
