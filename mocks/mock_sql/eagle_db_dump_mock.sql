@@ -461,6 +461,49 @@ INSERT INTO `subnetmode` VALUES (1,'Custom','Custom');
 /*!40000 ALTER TABLE `subnetmode` ENABLE KEYS */;
 UNLOCK TABLES;
 
+
+--
+-- Table structure for table `businessunit`
+--
+
+DROP TABLE IF EXISTS `businessunit`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `businessunit` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  `description` varchar(200) NOT NULL,
+  `isActive` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `businessunit`
+--
+
+LOCK TABLES `businessunit` WRITE;
+/*!40000 ALTER TABLE `businessunit` DISABLE KEYS */;
+INSERT INTO `businessunit` VALUES (0,'BU-A','First Business Unit',1);
+/*!40000 ALTER TABLE `businessunit` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `cloudaccount`
+--
+
+DROP TABLE IF EXISTS `cloudaccount`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `cloudaccount` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  `userId` int(11) NOT NULL REFERENCES user(id),
+  `isActive` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
 --
 -- Table structure for table `team`
 --
@@ -469,10 +512,13 @@ DROP TABLE IF EXISTS `team`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `team` (
-  `key` varchar(100) NOT NULL,
-  `value` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`key`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  `description` varchar(200) NOT NULL,
+  `businessUnitId` int(11) NOT NULL REFERENCES businessunit(id),
+  `isActive` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -481,10 +527,36 @@ CREATE TABLE `team` (
 
 LOCK TABLES `team` WRITE;
 /*!40000 ALTER TABLE `team` DISABLE KEYS */;
-INSERT INTO `team` VALUES ('Developers','Developers');
+INSERT INTO `team` VALUES (0,'Team-A','First Team',0,1);
 /*!40000 ALTER TABLE `team` ENABLE KEYS */;
 UNLOCK TABLES;
 
+--
+-- Table structure for table `team member`
+--
+
+DROP TABLE IF EXISTS `teammember`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `teammember` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `userId` int(11) NOT NULL REFERENCES user(id),
+  `teamId` int(11) NOT NULL REFERENCES team(id),
+  `role` varchar(100) NOT NULL,
+  `isActive` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `teammember`
+--
+
+LOCK TABLES `teammember` WRITE;
+/*!40000 ALTER TABLE `teammember` DISABLE KEYS */;
+INSERT INTO `teammember` VALUES (0,0,0,'Admin',1);
+/*!40000 ALTER TABLE `teammember` ENABLE KEYS */;
+UNLOCK TABLES;
 --
 -- Table structure for table `user`
 --
@@ -498,6 +570,7 @@ CREATE TABLE `user` (
   `firstName` varchar(100) NOT NULL,
   `lastName` varchar(100) NOT NULL,
   `isAdmin` tinyint(1) NOT NULL DEFAULT '0',
+  `isActive` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -508,7 +581,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,'dev@your.company','Jon','Snow',0),(2,'admin@your.company','Adam','Smith',1);
+INSERT INTO `user` VALUES (1,'dev@your.company','Jon','Snow',0,1),(2,'admin@your.company','Adam','Smith',1,1);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 

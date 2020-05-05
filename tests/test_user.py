@@ -10,22 +10,24 @@ import pytest_lib
 LOG_LEVEL = logging.INFO # DEBUG, INFO, WARNING, ERROR, CRITICAL
 
 HOUSTON_SERVICE_URL=os.environ['HOUSTON_SERVICE_URL']
-url = f"http://{HOUSTON_SERVICE_URL}/api/businessunit/"
-plural_url = f"http://{HOUSTON_SERVICE_URL}/api/businessunits/"
+url = f"http://{HOUSTON_SERVICE_URL}/api/user/"
+plural_url = f"http://{HOUSTON_SERVICE_URL}/api/users/"
     
 # Additional headers.
 headers = {'Content-Type': 'application/json' }
 id = 0
 
 def typestest(resp):
-    assert isinstance(resp['description'], str)
     assert isinstance(resp['id'], int)
+    assert isinstance(resp['email'], str)
+    assert isinstance(resp['firstName'], str)
+    assert isinstance(resp['lastName'], str)
+    assert isinstance(resp['isAdmin'], bool)
     assert isinstance(resp['isActive'], bool)
-    assert isinstance(resp['name'], str)
     pprint(resp)
 
 
-def test_businessunit():
+def test_user():
 
     #Testing POST request
     id = post()
@@ -46,9 +48,11 @@ def post():
     # Body
     payload = { 
     "id": 0,
-    "name": "BU-Test",
-    "description": "Test BU desc",
-    "isActive": True
+    "firstName": "test",
+    "lastName": "test",
+    "email": "test@test.com",
+    "isActive": True,
+    "isAdmin": True
     }
 
     # convert dict to json by json.dumps() for body data.
@@ -65,8 +69,9 @@ def post():
     resp_headers = resp.headers
     #Validate response
     assert resp.status_code == 200
-    assert resp_json['name'] == 'BU-Test'
-    assert resp_json['description'] == 'Test BU desc'
+    assert resp_json['firstName'] == 'test'
+    assert resp_json['lastName'] == 'test'
+    assert resp_json['email'] == 'test@test.com'
     assert resp_json['isActive'] == True
     assert resp_headers['content-type'] == 'application/json'
     typestest(resp_json)
@@ -79,11 +84,12 @@ def put(id):
     # Test Update Then get new value
     newpayload  =  { 
     "id": int(id),
-    "name": "BU-Test",
-    "description": "Test BU desc",
-    "isActive": False
+    "firstName": "test",
+    "lastName": "test",
+    "email": "test@test.com",
+    "isActive": False,
+    "isAdmin": True
     }
-
 
     resp = requests.put(url+id, headers=headers, data=json.dumps(newpayload,indent=4))
    
@@ -97,8 +103,10 @@ def put(id):
 
     #Validate response body for updated values
     assert resp.status_code == 200
-    assert resp_json['name'] == 'BU-Test'
-    assert resp_json['description'] == 'Test BU desc'
+    assert resp_json['firstName'] == 'test'
     assert resp_json['isActive'] == False
-   
+
     typestest(resp_json)
+
+
+

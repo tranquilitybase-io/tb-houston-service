@@ -46,7 +46,15 @@ class User(db.Model):
     firstName = db.Column(db.String(100))
     lastName = db.Column(db.String(100))
     isAdmin = db.Column(db.Boolean())
+    isActive = db.Column(db.Boolean())
 
+class UserSchema(ma.ModelSchema):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    class Meta:
+        model = User
+        sqla_session = db.session
 
 # Activator
 class Activator(db.Model):
@@ -180,8 +188,11 @@ class SolutionResourceJSONSchema(ma.ModelSchema):
 # Team
 class Team(db.Model):
     __tablename__ = "team"
-    key = db.Column(db.String(255), primary_key=True)
-    value = db.Column(db.String(255))
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100))
+    description = db.Column(db.String(200))
+    businessUnitId = db.Column(db.Integer)
+    isActive = db.Column(db.Boolean())
 
 
 class TeamSchema(ma.ModelSchema):
@@ -190,6 +201,42 @@ class TeamSchema(ma.ModelSchema):
 
     class Meta:
         model = Team
+        sqla_session = db.session
+
+
+# Team Member
+class TeamMember(db.Model):
+    __tablename__ = "teammember"
+    id = db.Column(db.Integer, primary_key=True)
+    userId = db.Column(db.Integer)
+    teamId = db.Column(db.Integer)
+    role = db.Column(db.String(100))
+    isActive = db.Column(db.Boolean())
+
+
+class TeamMemberSchema(ma.ModelSchema):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    class Meta:
+        model = TeamMember
+        sqla_session = db.session
+
+# Cloud Account
+class CloudAccount(db.Model):
+    __tablename__ = "cloudaccount"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100))
+    userId = db.Column(db.Integer)
+    isActive = db.Column(db.Boolean())
+
+
+class CloudAccountSchema(ma.ModelSchema):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    class Meta:
+        model = CloudAccount
         sqla_session = db.session
 
 
@@ -253,9 +300,10 @@ class SourceControlSchema(ma.ModelSchema):
 # BusinessUnit
 class BusinessUnit(db.Model):
     __tablename__ = "businessunit"
-    key = db.Column(db.String(255), primary_key=True)
-    value = db.Column(db.String(255))
-
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100))
+    description = db.Column(db.String(200))
+    isActive = db.Column(db.Boolean())
 
 class BusinessUnitSchema(ma.ModelSchema):
     def __init__(self, **kwargs):
@@ -264,6 +312,7 @@ class BusinessUnitSchema(ma.ModelSchema):
     class Meta:
         model = BusinessUnit
         sqla_session = db.session
+        
 # LandingZoneProgressItem
 class LandingZoneProgressItem(db.Model):
     __tablename__ = "landingzoneprogressitem"
