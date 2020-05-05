@@ -170,7 +170,7 @@ def update(oid, activatorDetails):
     # Does activator exist?
 
     if existing_activator is not None:
-        schema = ActivatorSchema()
+        #schema = ActivatorSchema()
         activatorDetails['lastUpdated'] = ModelTools.get_utc_timestamp()
         activatorDetails['accessRequestedBy'] = activatorDetails.get('accessRequestedBy', existing_activator.accessRequestedBy)
         activatorDetails["ci"] = json.dumps(activatorDetails.get("ci", existing_activator.ci))

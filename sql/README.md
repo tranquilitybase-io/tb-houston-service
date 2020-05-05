@@ -28,3 +28,5 @@ mysqldump eagle_db --column-statistics=false --no-create-info -u eagle-user -p >
 
 ## Full DB dump
 mysqldump eagle_db --column-statistics=false -u eagle-user -p > eagle_db_dump.tmp
+or
+mysqldump eagle_db -h 0.0.0.0 --column-statistics=false -u eagle-user -p > eagle_db_dump.tmp

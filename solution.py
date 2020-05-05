@@ -148,26 +148,17 @@ def create(solutionDetails):
     solutionDetails['lastUpdated'] = ModelTools.get_utc_timestamp()
     solutionDetails['environments'] = json.dumps(solutionDetails.get('environments') or [])
 
-    print("Create name 2: " + solutionDetails['name'])
-
     schema = SolutionSchema(many=False)
     new_solution = schema.load(solutionDetails, session=db.session)
     db.session.add(new_solution)
     db.session.commit()
 
-    print("Create name 3: " + new_solution.name)
-
     # Serialize and return the newly created solution
     # in the response
 
-    print(pformat(solutionDetails['environments']))
-
-    print("create solution")
-    print(pformat(new_solution))
-    print(pformat(new_solution.environments))
-
-    schema = ExtendedSolutionSchema()
+    schema = SolutionSchema()
     data = schema.dump(new_solution)
+    data['environments'] = json.loads(data['environments'])
     return data, 201
 
 
@@ -201,7 +192,6 @@ def update(oid, solutionDetails):
 
         # return the updted solutions in the response
         schema = ExtendedSolutionSchema(many=False)
-        print(">>>>>  " + pformat(solutionDetails))
         solutionDetails['environments'] = json.loads(solutionDetails['environments'])
         data = schema.dump(solutionDetails)
         return data, 200
@@ -280,18 +270,58 @@ def deployment_create(solutionDeploymentDetails):
     This function queries a solution forwards the request to the DaC
 
     :param solution:  id
-    :return:        201 on success, 406 if solution doesn't exist
+    :return:        201 on success
+    :               404 if solution not found
+    :               500 if other failure
     """
 
     app.logger.debug(pformat(solutionDeploymentDetails))
     oid = solutionDeploymentDetails['id'];
-    sol_json_payload = read_one(oid)
-    resp = sol_json_payload[0]
-    print(pformat(resp))
-    data = send_deployment_request_to_the_dac(resp)
-    resp_json = data.json()
-    print(pformat(resp_json))
-    return resp_json, 201
+    sol = (Solution.query.filter(Solution.id == oid).one_or_none())
+    if sol is not None:
+        # Serialize the data for forwarding to the DaC
+        url = "http://" + os.environ['GCP_DAC_URL'] + "/api/solution/"
+        solution = solution_extension.build_solution(sol)
+        #print("deployment_create: solution start")
+        #print(pformat(solution))
+        #print("deployment_create: solution end")
+
+        solution_schema = ExtendedSolutionSchema(many=False)
+        data_to_dac = solution_schema.dump(solution)
+
+        # Send the solution to the DAC
+        headers = { 'Content-Type': "application/json" }
+        resp_json = None
+        try:
+          response = requests.post(url, data=json.dumps(data_to_dac), headers=headers)
+          resp_json = response.json()
+          print("Response from Dac")
+          print(pformat(resp_json))
+        except Exception:
+          print("Failed during request to DAC")
+          resp_json = {
+                  "id": oid,
+                  "statusId": 1,
+                  "errorCode": "ERROR",
+                  "statusMessage": "Failed communicating with the DAC"
+                  }
+
+        try:
+          deployment_update(oid, resp_json)
+          return resp_json, 201
+        except Exception:
+          print("Failed updating the database with the response from the DAC")
+          resp_json = {
+                  "id": oid,
+                  "statusId": 2,
+                  "errorCode": "ERROR",
+                  "statusMessage": "Failed updating the database with the response from the DAC"
+                  }
+          return resp_json, 500
+    else:
+        abort(
+            404, f"Solution with id {oid} not found".format(id=oid)
+        )
 
 
 def deployment_update(oid, solutionDeploymentDetails):
@@ -322,6 +352,7 @@ def deployment_update(oid, solutionDeploymentDetails):
         update_solution.statusId = solutionDeploymentDetails.get('statusId', update_solution.statusId)
         update_solution.statusCode = solutionDeploymentDetails.get('statusCode', update_solution.statusCode)
         update_solution.statusMessage = solutionDeploymentDetails.get('statusMessage', update_solution.statusMessage)
+        update_solution.taskId = solutionDeploymentDetails.get('taskId', update_solution.taskId)
 
         db.session.merge(update_solution)
         db.session.commit()
@@ -335,15 +366,3 @@ def deployment_update(oid, solutionDeploymentDetails):
     else:
         abort(404, f"Solution {oid} not found")
 
-
-def send_deployment_request_to_the_dac(sol_json_payload):
-
-    url = "http://" + os.environ['GCP_DAC_URL'] + "/api/solution/"
-
-    print(f"url: {url}")
-    print(f"data: {sol_json_payload}")
-    headers = { 'Content-Type': "application/json" }
-    response = requests.post(url, data=json.dumps(sol_json_payload), headers=headers)
-    print(pformat(response))
-    #resp_json = response.json()
-    return response

@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   mysql57:
-    image: gcr.io/eagle-console-resources/tb-houston-mysql57:cicd
+    image: gcr.io/eagle-console-resources/tb-houston-mysql57:mock
     command: --default-authentication-plugin=mysql_native_password
     restart: always
     environment:
@@ -13,16 +13,8 @@ services:
     ports:
     - '3306:3306'
 
-  gcp-dac:
-    image: gcr.io/eagle-console-resources/tb-gcp-dac:mock
-    restart: always
-    environment:
-        HOUSTON_SERVICE_URL: 'houston-service:3000'
-    ports:
-      - '3100:3100'
-
   houston-service:
-    image: gcr.io/eagle-console-resources/tb-houston-service:cicd
+    image: gcr.io/eagle-console-resources/tb-houston-service:mock
     restart: always
     environment:
         SQLALCHEMY_DATABASE_URI: 'mysql+mysqlconnector://eagle-user:eagle-user-secret-pw@mysql57/eagle_db'
@@ -31,7 +23,15 @@ services:
         GCP_DAC_URL: 'gcp-dac:3100'
     depends_on:
         - mysql57
-        - gcp-dac
     ports:
       - '3000:3000'
 
+  gcp-dac:
+    image: gcr.io/eagle-console-resources/tb-gcp-dac:mock
+    restart: always
+    environment:
+        HOUSTON_SERVICE_URL: 'houston-service:3000'
+    depends_on:
+        - houston-service
+    ports:
+      - '3100:3100'
