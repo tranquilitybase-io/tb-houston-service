@@ -81,7 +81,6 @@ def post():
 def put(id):
     print("Put Tests")
 
-    true = 1 == 1
     # Test Update Then get new value
     newpayload  =  { 
     "id": int(id),
@@ -117,7 +116,6 @@ def get_all_params():
     params = {'userId':1000, 'teamId': 1000} 
 
     resp = requests.get(plural_url, headers=headers, params = params)
-    resp_json = resp.json()
 
     #Validate Get All response
     assert resp.status_code == 200

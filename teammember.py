@@ -9,13 +9,14 @@ from flask import make_response, abort
 from config import db, app
 from models import TeamMember, TeamMemberSchema
 from pprint import pformat
+from sqlalchemy import literal_column
 
 
 def read_all(userId=None, teamId=None, active=None,
         page=None, page_size=None, sort=None):
     """
-    This function responds to a request for /api/teammember
-    with the complete lists of team members
+    Gets the complete lists of team members
+    Responds to a request for /api/teammember
 
     :return:        json string of list of team members
     """

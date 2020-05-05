@@ -44,7 +44,6 @@ def post():
     print("Post Tests")
     #Test POST Then GET
     # Body
-    true = 1 == 1
     payload = { 
     "businessUnitId": 0,
     "description": "Test Team",

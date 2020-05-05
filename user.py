@@ -13,8 +13,7 @@ from pprint import pformat
 
 def read_all():
     """
-    This function responds to a request for /api/user
-    with the complete lists of users
+    Gets the complete lists of users
 
     :return:        json string of list of users
     """

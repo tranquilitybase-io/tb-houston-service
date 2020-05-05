@@ -13,7 +13,7 @@ from pprint import pformat
 
 def read_all():
     """
-    This function responds to a request for /api/cloudaccount
+    Responds to a request for /api/cloudaccount
     with the complete lists of cloudaccounts
 
     :return:        json string of list of cloudaccounts

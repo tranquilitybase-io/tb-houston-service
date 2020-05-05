@@ -570,6 +570,7 @@ CREATE TABLE `user` (
   `firstName` varchar(100) NOT NULL,
   `lastName` varchar(100) NOT NULL,
   `isAdmin` tinyint(1) NOT NULL DEFAULT '0',
+  `isActive` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -580,7 +581,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,'dev@your.company','Jon','Snow',0),(2,'admin@your.company','Adam','Smith',1);
+INSERT INTO `user` VALUES (1,'dev@your.company','Jon','Snow',0,1),(2,'admin@your.company','Adam','Smith',1,1);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 

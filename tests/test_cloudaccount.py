@@ -49,7 +49,7 @@ def post():
     "id": 10,
     "userId": 1,
     "name": "GCP-Test",
-    "isActive": True
+    "isActive": true
     }
 
     # convert dict to json by json.dumps() for body data.
