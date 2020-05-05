@@ -76,7 +76,6 @@ def post():
 def put(id):
     print("Put Tests")
 
-    true = 1 == 1
     # Test Update Then get new value
     newpayload  =  { 
     "id": int(id),
