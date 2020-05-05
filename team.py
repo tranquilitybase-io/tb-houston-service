@@ -13,10 +13,10 @@ from pprint import pformat
 
 def read_all():
     """
-    This function responds to a request for /api/team
+    Responds to a request for /api/team
     with the complete lists of teams
 
-    :return:        json string of list of teams
+    :return:        json string of list of teams.
     """
 
     # Create the list of teams from our data
@@ -30,7 +30,7 @@ def read_all():
 
 def read_one(id):
     """
-    This function responds to a request for /api/team/{key}
+    Responds to a request for /api/team/{key}
     with one matching team from teams
 
     :param application:   key of team to find
@@ -53,11 +53,11 @@ def read_one(id):
 
 def create(teamDetails):
     """
-    This function creates a new team in the team list
+    Creates a new team in the team list
     based on the passed in team data
 
     :param team:  team to create in team structure
-    :return:        201 on success, 406 on team exists
+    :return:        201 on success, 406 on team exists.
     """
     # Remove id as it's created automatically
     if 'id' in teamDetails:
@@ -86,11 +86,11 @@ def create(teamDetails):
 
 def update(id, teamDetails):
     """
-    This function updates an existing team in the team list
+    Updates an existing team in the team list
 
     :param id:    id of the team to update in the team list
     :param team:   team to update
-    :return:       updated team
+    :return:       updated team.
     """
 
     app.logger.debug(pformat(teamDetails))
@@ -124,10 +124,10 @@ def update(id, teamDetails):
 
 def delete(id):
     """
-    This function deletes a team from the teams list
+    Deletes a team from the teams list
 
     :param id: id of the team to delete
-    :return:    200 on successful delete, 404 if not found
+    :return:    200 on successful delete, 404 if not found.
     """
     # Does the team to delete exist?
     existing_team = Team.query.filter(Team.id == id).one_or_none()

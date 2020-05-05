@@ -30,7 +30,7 @@ def read_all():
 
 def read_one(id):
     """
-    This function responds to a request for /api/businessunit/{id}
+    Responds to a request for /api/businessunit/{id}
     with one matching businessUnit from BusinessUnits 
 
     :param application:   id of businessUnit to find
@@ -53,7 +53,7 @@ def read_one(id):
 
 def create(businessUnitDetails):
     """
-    This function creates a new businessUnit in the businessUnit list
+    Creates a new businessUnit in the businessUnit list
     based on the passed in businessUnit data
 
     :param businessUnit: businessUnit to create in businessUnit structure
@@ -87,11 +87,11 @@ def create(businessUnitDetails):
 
 def update(id, businessUnitDetails):
     """
-    This function updates an existing businessUnit in the businessUnit list
+    Updates an existing businessUnit in the businessUnit list
 
     :param key:    id of the businessUnit to update in the businessUnit list
     :param businessUnit:   businessUnit to update
-    :return:       updated businessUnit
+    :return:       updated businessUnit.
     """
 
     if businessUnitDetails["id"] != id:
