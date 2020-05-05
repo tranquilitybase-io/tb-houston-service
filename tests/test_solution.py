@@ -98,7 +98,7 @@ def put(id):
       "ci": "test put",
       "costCentre": "test put",
       "description": "test put",
-      "environments": [ "test put" ],
+      "environments": [ "test put 1", "test put 2", "test put 3" ],
       "favourite": true,
       "lastUpdated": "test put",
       "name": "test put",
@@ -124,6 +124,9 @@ def put(id):
     assert resp_json['ci'] == 'test put'
     assert resp_json['cd'] == 'test put'
     assert resp_json['sourceControl'] == 'test put'
+    assert resp_json['environments'][0] == 'test put 1'
+    assert resp_json['environments'][1] == 'test put 2'
+    assert resp_json['environments'][2] == 'test put 3'
     typestest(resp_json)
 
 

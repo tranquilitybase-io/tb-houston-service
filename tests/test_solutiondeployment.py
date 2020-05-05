@@ -11,13 +11,14 @@ url = f"http://{HOUSTON_SERVICE_URL}/api/solutiondeployment/"
 headers = {'Content-Type': 'application/json' }
 id = 0
 
-def typestest(resp):
+def typestest_solution_deployment(resp):
     assert isinstance(resp['id'], int)
     assert isinstance(resp['deployed'], bool)
     assert isinstance(resp['deploymentState'], str)
     assert isinstance(resp['statusCode'], str)
     assert isinstance(resp['statusMessage'], str)
     assert isinstance(resp['statusId'], int)
+    assert isinstance(resp['taskId'], int)
     pprint(resp)
 
 
@@ -49,7 +50,7 @@ def post():
     assert resp.status_code == 201
     assert resp.headers['content-type'] == 'application/json'
     pprint(resp.json())
-    typestest(resp_json)
+    typestest_solution_deployment(resp_json)
 
     #Get Request to get updated values
     resp = requests.get(url+id, headers=headers) 
@@ -71,10 +72,20 @@ def put(id):
       "deploymentState": "Deployed",
       "statusCode": "12",
       "statusId": 1,
-      "statusMessage": "I just deployed again"
+      "statusMessage": "I just deployed again",
+      "taskId": 2
     }
 
     resp = requests.put(url+id, headers=headers, data=json.dumps(newpayload,indent=4))
+    resp_json = resp.json()
+    typestest_solution_deployment(resp_json)
+    assert resp_json['id'] == 1
+    assert resp_json['deployed'] == true
+    assert resp_json['deploymentState'] == "Deployed"
+    assert resp_json['statusCode'] == "12"
+    assert resp_json['statusId'] == 1
+    assert resp_json['statusMessage'] == "I just deployed again"
+    assert resp_json['taskId'] == 2
 
     #Validate update/Put response
     assert resp.status_code == 200
@@ -91,7 +102,8 @@ def put(id):
     assert resp_json['statusCode'] == '12'
     assert resp_json['statusId'] == 1
     assert resp_json['statusMessage'] == 'I just deployed again'
-    typestest(resp_json)
+    assert resp_json['taskId'] == 2
+    typestest_solution_deployment(resp_json)
 
 
 def get_all():

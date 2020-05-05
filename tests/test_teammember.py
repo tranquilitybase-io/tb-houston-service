@@ -3,12 +3,16 @@ import json
 import logging
 import os
 from pprint import pprint
+import pytest_lib 
+
 
 
 LOG_LEVEL = logging.INFO # DEBUG, INFO, WARNING, ERROR, CRITICAL
 
 HOUSTON_SERVICE_URL=os.environ['HOUSTON_SERVICE_URL']
 url = f"http://{HOUSTON_SERVICE_URL}/api/teammember/"
+plural_url = f"http://{HOUSTON_SERVICE_URL}/api/teammembers/"
+
     
 # Additional headers.
 headers = {'Content-Type': 'application/json' }
@@ -31,9 +35,11 @@ def test_teammember():
     #Test GET all teammbers with parameters 
     get_all_params()
     #Testing DELETE request
-    delete(id)
+    pytest_lib.delete(url, id)
+    #Testing DELETE Request Error
+    pytest_lib.delete_error(url, id)
     #Testing GETALL request
-    get_all()
+    pytest_lib.get_all(plural_url)
     
     
 
@@ -104,37 +110,13 @@ def put(id):
 
     typestest(resp_json)
 
-
-
-def delete(id):
-    print("Delete Tests")
-
-    #Test Delete Then GET
-    resp = requests.delete(url+id, headers=headers)
-    #Validate Delete response
-    assert resp.status_code == 200
-    
-    #Then GET request to check the item has been actully deleted
-    resp = requests.get(url+id, headers=headers)
-    #Validate Get response
-    #resp_json = resp.json()
-    assert resp.status_code == 404
-
-
-def get_all():
-    print("get_all Tests")
-
-    resp = requests.get(url, headers=headers)
-    #Validate Get All response
-    assert resp.status_code == 200
-
 def get_all_params():
     print("get_all Tests with parameters")
 
     # defining a params dict for the parameters to be sent to the API 
     params = {'userId':1000, 'teamId': 1000} 
 
-    resp = requests.get(url, headers=headers, params = params)
+    resp = requests.get(plural_url, headers=headers, params = params)
     resp_json = resp.json()
 
     #Validate Get All response

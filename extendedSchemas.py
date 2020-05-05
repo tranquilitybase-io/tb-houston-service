@@ -40,7 +40,7 @@ class ExtendedUserSchema(Schema):
     email = fields.Str()
     firstName = fields.Str()
     lastName = fields.Str()
-    sAdmin = fields.Boolean()
+    isAdmin = fields.Boolean()
 
 
 class ExtendedActivatorSchema(Schema):
@@ -69,7 +69,6 @@ class ExtendedActivatorSchema(Schema):
     technologyOwnerEmail  = fields.Str()
     billing = fields.Str()
     activator = fields.Str()
-    resources = fields.List(fields.Dict())
     status = fields.Str()
     description = fields.Str()
     accessRequestedBy = fields.Nested(ExtendedUserSchema(many=False))
@@ -126,6 +125,7 @@ class SolutionDeploymentSchema(Schema):
     statusId = fields.Int()
     statusCode = fields.Str()
     statusMessage = fields.Str()
+    taskId = fields.Int()
 
 
 class ExtendedGoogleSessionSchema(Schema):

@@ -3,8 +3,6 @@ import json
 import os
 
 def test_login():
-
-    
     HOUSTON_SERVICE_URL=os.environ['HOUSTON_SERVICE_URL']
     url = f"http://{HOUSTON_SERVICE_URL}/api/login"
 
@@ -25,4 +23,3 @@ def test_login():
     resp_json = resp.json()
     # Validate Response
     assert resp.status_code == 401
-
