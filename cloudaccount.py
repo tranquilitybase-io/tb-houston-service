@@ -13,7 +13,7 @@ from pprint import pformat
 
 def read_all():
     """
-    Responds to a request for /api/cloudaccount
+    Responds to a request for /api/cloudaccount.
     with the complete lists of cloudaccounts
 
     :return:        json string of list of cloudaccounts.
@@ -30,7 +30,7 @@ def read_all():
 
 def read_one(id):
     """
-    Responds to a request for /api/cloudaccount/{key}
+    Responds to a request for /api/cloudaccount/{key}.
     with one matching cloudaccount from cloudaccounts
 
     :param application:   key of cloudaccount to find
@@ -53,7 +53,7 @@ def read_one(id):
 
 def create(cloudAccountDetails):
     """
-    Creates a new cloudaccount in the cloudaccount list
+    Creates a new cloudaccount in the cloudaccount list.
     based on the passed in cloudaccount data
 
     :param cloudaccount:  cloudaccount to create in cloudaccount structure
@@ -84,7 +84,7 @@ def create(cloudAccountDetails):
 
 def update(id, cloudAccountDetails):
     """
-    Updates an existing cloudaccount in the cloudaccount list
+    Updates an existing cloudaccount in the cloudaccount list.
 
     :param id:    id of the cloudaccount to update in the cloudaccount list
     :param cloudaccount:   cloudaccount to update
@@ -122,7 +122,7 @@ def update(id, cloudAccountDetails):
 
 def delete(id):
     """
-    Deletes a cloudaccount from the cloudaccounts list
+    Deletes a cloudaccount from the cloudaccounts list.
 
     :param id: id of the cloudaccount to delete
     :return:    200 on successful delete, 404 if not found.
