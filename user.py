@@ -29,7 +29,7 @@ def read_all():
 
 def read_one(id):
     """
-    This function responds to a request for /api/user/{id}
+    Responds to a request for /api/user/{id}.
     with one matching user from users
 
     :param application:   id of user to find
@@ -52,7 +52,7 @@ def read_one(id):
 
 def create(userDetails):
     """
-    This function creates a new user in the user list
+    Creates a new user in the user list.
     based on the passed in user data
 
     :param user:  user to create in user structure
@@ -85,7 +85,7 @@ def create(userDetails):
 
 def update(id, userDetails):
     """
-    This function updates an existing user in the user list
+    Updates an existing user in the user list.
 
     :param id:    id of the user to update in the user list
     :param user:   user to update
@@ -123,7 +123,7 @@ def update(id, userDetails):
 
 def delete(id):
     """
-    This function deletes a user from the users list
+    Deletes a user from the users list.
 
     :param id: id of the user to delete
     :return:    200 on successful delete, 404 if not found
