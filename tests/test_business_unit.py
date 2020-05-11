@@ -12,6 +12,7 @@ LOG_LEVEL = logging.INFO # DEBUG, INFO, WARNING, ERROR, CRITICAL
 HOUSTON_SERVICE_URL=os.environ['HOUSTON_SERVICE_URL']
 url = f"http://{HOUSTON_SERVICE_URL}/api/businessunit/"
 plural_url = f"http://{HOUSTON_SERVICE_URL}/api/businessunits/"
+keyvalue_url = f"http://{HOUSTON_SERVICE_URL}/api/keyValues/businessUnit/"
     
 # Additional headers.
 headers = {'Content-Type': 'application/json' }
@@ -37,6 +38,8 @@ def test_businessunit():
     pytest_lib.delete_error(url, id)
     #Testing GETALL request
     pytest_lib.get_all(plural_url)
+    #Testing GETALL request
+    pytest_lib.get_all(keyvalue_url)
 
     
 

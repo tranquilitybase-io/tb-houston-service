@@ -15,7 +15,6 @@ plural_url = f"http://{HOUSTON_SERVICE_URL}/api/users/"
     
 # Additional headers.
 headers = {'Content-Type': 'application/json' }
-id = 0
 
 def typestest(resp):
     assert isinstance(resp['id'], int)
@@ -47,7 +46,7 @@ def post():
     #Test POST Then GET
     # Body
     payload = { 
-    "id": 0,
+    "id": "0",
     "firstName": "test",
     "lastName": "test",
     "email": "test@test.com",
@@ -83,7 +82,7 @@ def put(id):
 
     # Test Update Then get new value
     newpayload  =  { 
-    "id": int(id),
+    "id": id,
     "firstName": "test",
     "lastName": "test",
     "email": "test@test.com",

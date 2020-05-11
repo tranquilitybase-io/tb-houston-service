@@ -166,6 +166,7 @@ def put(oid):
     #Validate response body for updated values
     assert resp.status_code == 200
     assert resp_json['activator'] == 'new-test-activator'
+    assert resp_json['businessUnit'] == 'businessUnit'
     typestest(resp_json)
 
 

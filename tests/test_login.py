@@ -13,7 +13,7 @@ def test_login():
     'email': 'test@testmail.com',
     'username': 'string',
     'firstName': 'string',
-    'id': 0,
+    'id': '0',
     'isAdmin': false,
     'lastName': 'string',
     'password': 'string'
