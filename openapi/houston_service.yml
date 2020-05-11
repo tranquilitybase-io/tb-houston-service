@@ -2407,7 +2407,7 @@ components:
                 type: string
                 description: The error message
               taskId:
-                type: integer
+                type: string
                 description: The task Id
 
       description: the solution id to deploy
@@ -2911,7 +2911,7 @@ components:
           type: string
           description: status message
         taskId:
-          type: integer
+          type: string
           description: task id
 
 

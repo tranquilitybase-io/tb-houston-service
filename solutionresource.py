@@ -60,10 +60,10 @@ def create(solutionResourceDetails):
     solutionId = solutionResourceDetails['solutionId']
     key = solutionResourceDetails['key']
 
-    print("solutionresource:create")
-    print(pformat(solutionResourceDetails))
+    app.logger.debug("solutionresource:create")
+    app.logger.debug(pformat(solutionResourceDetails))
 
-    print(f"solutionId: {solutionId} key: {key}")
+    app.logger.debug(f"solutionId: {solutionId} key: {key}")
     
     # Does the solutionresource exist in solutionresource list?
     solutionresource = SolutionResource.query.filter(SolutionResource.solutionId == solutionId, SolutionResource.key == key).one_or_none()
@@ -80,8 +80,8 @@ def create(solutionResourceDetails):
 
     # return the updated/created object in the response
     data = schema.dump(solutionresource)
-    print("solutionresource")
-    print(pformat(data))
+    app.logger.debug("solutionresource")
+    app.logger.debug(pformat(data))
     return data, 201
 
 

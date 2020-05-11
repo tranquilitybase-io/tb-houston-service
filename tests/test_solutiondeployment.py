@@ -1,120 +1,114 @@
 import requests
 import json
 import os
+from pprint import pformat
 from pprint import pprint
+import unittest
 
 
-HOUSTON_SERVICE_URL=os.environ['HOUSTON_SERVICE_URL']
-url = f"http://{HOUSTON_SERVICE_URL}/api/solutiondeployment/"
+class TestSolutionDeployment(unittest.TestCase):
+    HOUSTON_SERVICE_URL=os.environ['HOUSTON_SERVICE_URL']
+    url = f"http://{HOUSTON_SERVICE_URL}/api/solutiondeployment/"
+
+    # Additional headers.
+    headers = {'Content-Type': 'application/json' }
+    oid = "1"
+
+    def typestest_solution_deployment(self, resp):
+        self.assertTrue(isinstance(resp['id'], int))
+        self.assertTrue(isinstance(resp['deployed'], bool))
+        self.assertTrue(isinstance(resp['deploymentState'], str))
+        self.assertTrue(isinstance(resp['statusCode'], str))
+        self.assertTrue(isinstance(resp['statusMessage'], str))
+        self.assertTrue(isinstance(resp['statusId'], int))
+        self.assertTrue(isinstance(resp['taskId'], str))
+        pprint(resp)
+
+    def test_solutiondeployment(self):
+        #Testing POST request
+        taskid = self.post()
+        #Testing PUT request
+        self.put(self.oid)
+        #Testing GETALL request
+        self.get_all()
     
-# Additional headers.
-headers = {'Content-Type': 'application/json' }
-id = 0
+    def post(self):
+        print("Post Tests")
+        #Test POST Then GET
+        # Body
+        payload  =  """
+        {{
+            "id": {0}
+        }}
+        """
 
-def typestest_solution_deployment(resp):
-    assert isinstance(resp['id'], int)
-    assert isinstance(resp['deployed'], bool)
-    assert isinstance(resp['deploymentState'], str)
-    assert isinstance(resp['statusCode'], str)
-    assert isinstance(resp['statusMessage'], str)
-    assert isinstance(resp['statusId'], int)
-    assert isinstance(resp['taskId'], int)
-    pprint(resp)
-
-
-def test_solutiondeployment():
-
-    #Testing POST request
-    id = post()
-    #Testing PUT request
-    put(id)
-    #Testing GETALL request
-    get_all()
+        # convert dict to json by json.dumps() for body data.
+        resp = requests.post(self.url, headers=self.headers, data=payload.format(self.oid))
     
+        # Validate response headers and body contents, e.g. status code.
+        resp_json = resp.json()
+        print(pformat(resp.json()))
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.headers['content-type'], 'application/json')
 
-def post():
-    print("Post Tests")
-    #Test POST Then GET
-    # Body
-    payload  =  {
-      "id": 1
-    }
-
-    # convert dict to json by json.dumps() for body data.
-    resp = requests.post(url, headers=headers, data=json.dumps(payload,indent=4))       
-    print(pprint(resp))
-    
-    # Validate response headers and body contents, e.g. status code.
-    resp_json = resp.json()
-    id = str(resp_json['id'])
-    assert resp.status_code == 201
-    assert resp.headers['content-type'] == 'application/json'
-    pprint(resp.json())
-    typestest_solution_deployment(resp_json)
-
-    #Get Request to get updated values
-    resp = requests.get(url+id, headers=headers) 
-    resp_json = resp.json()
-    print("solution_post")
-    pprint(resp_json)
-
-    return id
+        #Get Request to get updated values
+        resp = requests.get(self.url + self.oid, headers=self.headers) 
+        resp_json = resp.json()
+        print("solution_post")
+        pprint(resp_json)
+        return resp_json.get('taskId')
 
 
-def put(id):
-    print("Put Tests")
+    def put(self, oid):
+        print("Put Tests")
 
-    true = 1 == 1
-    # Test Update Then get new value
-    newpayload  =  {
-      "id": int(id),
-      "deployed": true,
-      "deploymentState": "Deployed",
-      "statusCode": "12",
-      "statusId": 1,
-      "statusMessage": "I just deployed again",
-      "taskId": 2
-    }
+        # Test Update Then get new value
+        newpayload  =  """
+        {{
+            "id": {0},
+            "deployed": true,
+            "deploymentState": "PENDING",
+            "statusCode": "200",
+            "statusId": 1,
+            "statusMessage": "Deployment test.",
+            "taskId": "2"
+        }}
+        """
 
-    resp = requests.put(url+id, headers=headers, data=json.dumps(newpayload,indent=4))
-    resp_json = resp.json()
-    typestest_solution_deployment(resp_json)
-    assert resp_json['id'] == 1
-    assert resp_json['deployed'] == true
-    assert resp_json['deploymentState'] == "Deployed"
-    assert resp_json['statusCode'] == "12"
-    assert resp_json['statusId'] == 1
-    assert resp_json['statusMessage'] == "I just deployed again"
-    assert resp_json['taskId'] == 2
+        resp = requests.put(self.url + self.oid, headers=self.headers, data=newpayload.format(int(self.oid)))
+        resp_json = resp.json()
+        self.typestest_solution_deployment(resp_json)
+        self.assertEqual(resp_json['id'], int(oid))
+        self.assertEqual(resp_json['deployed'], True)
+        self.assertEqual(resp_json['deploymentState'], "PENDING")
+        self.assertEqual(resp_json['statusCode'], "200")
+        self.assertEqual(resp_json['statusId'], 1)
+        self.assertEqual(resp_json['statusMessage'],"Deployment test.")
+        self.assertEqual(resp_json['taskId'], "2")
 
-    #Validate update/Put response
-    assert resp.status_code == 200
+        #Validate update/Put response
+        self.assertEqual(resp.status_code, 200)
 
-    #Get Request to get updated values
-    resp = requests.get(url+id, headers=headers)
-    resp_json = resp.json()
-    id = resp_json['id']
+        #Get Request to get updated values
+        resp = requests.get(self.url + self.oid, headers=self.headers)
+        resp_json = resp.json()
 
-    #Validate response body for updated values
-    assert resp.status_code == 200
-    assert resp_json['deployed'] == true
-    assert resp_json['deploymentState'] == 'Deployed'
-    assert resp_json['statusCode'] == '12'
-    assert resp_json['statusId'] == 1
-    assert resp_json['statusMessage'] == 'I just deployed again'
-    assert resp_json['taskId'] == 2
-    typestest_solution_deployment(resp_json)
-
-
-def get_all():
-    print("get_all Tests")
-
-    url = 'http://localhost:3000/api/solutiondeployments/'
-    resp = requests.get(url, headers=headers)
-    #Validate Get All response
-    assert resp.status_code == 200
+        #Validate response body for updated values
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp_json['deployed'], True)
+        self.assertEqual(resp_json['deploymentState'], 'PENDING')
+        
+        self.assertEqual(resp_json['statusCode'], '200')
+        self.assertEqual(resp_json['statusId'], 1)
+        self.assertEqual(resp_json['statusMessage'], 'Deployment test.')
+        self.assertEqual(resp_json['taskId'], "2")
+        self.typestest_solution_deployment(resp_json)
 
 
+    def get_all(self):
+        print("get_all Tests")
 
-
-
+        url = 'http://localhost:3000/api/solutiondeployments/'
+        resp = requests.get(url, headers=self.headers)
+        #Validate Get All response
+        self.assertEqual(resp.status_code, 200)

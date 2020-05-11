@@ -144,7 +144,7 @@ class Solution(db.Model):
     statusId = db.Column(db.Integer())
     statusCode = db.Column(db.String(45))
     statusMessage = db.Column(db.String(255))
-    taskId = db.Column(db.Integer())
+    taskId = db.Column(db.String(100))
 
     applications = db.relationship('Application')
 

@@ -125,7 +125,7 @@ class SolutionDeploymentSchema(Schema):
     statusId = fields.Int()
     statusCode = fields.Str()
     statusMessage = fields.Str()
-    taskId = fields.Int()
+    taskId = fields.Str()
 
 
 class ExtendedGoogleSessionSchema(Schema):

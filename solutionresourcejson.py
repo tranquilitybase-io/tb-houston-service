@@ -50,8 +50,8 @@ def read_one(solutionId):
 
 
 def create_solution_resources(resources_dict):
-    print("resources_dict")
-    print(pformat(resources_dict))
+    app.logger.debug("resources_dict")
+    app.logger.debug(pformat(resources_dict))
     solutionId = resources_dict['solutionId']
     resources_json = json.loads(resources_dict['json'])
     if 'resources' in resources_json:
@@ -88,7 +88,7 @@ def create(solutionResourceJSONDetails):
 
     solutionId = solutionResourceJSONDetails['solutionId']
 
-    print(f"update_or_create {solutionId}")
+    app.logger.debug(f"update_or_create {solutionId}")
 
     # Does the solutionresource exist in solutionresource list?
     solutionresourcejson_filter = SolutionResourceJSON.query.filter(SolutionResourceJSON.solutionId == solutionId)
@@ -97,7 +97,7 @@ def create(solutionResourceJSONDetails):
     schema = SolutionResourceJSONSchema()
     # Does the solution resource json exist?
     if solutionresourcejson is not None:
-        print(f"Update: {solutionresourcejson.solutionId}")
+        app.logger.debug(f"Update: {solutionresourcejson.solutionId}")
         solutionresourcejson_filter.update(solutionResourceJSONDetails)
         db.session.commit()
     else:
@@ -107,7 +107,7 @@ def create(solutionResourceJSONDetails):
 
     # return the updated/created object in the response
     data = schema.dump(solutionresourcejson)
-    print(pformat(data))
+    app.logger.debug(pformat(data))
     create_solution_resources(data)
     return data, 201
 
