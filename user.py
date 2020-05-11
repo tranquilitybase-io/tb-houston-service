@@ -68,6 +68,8 @@ def create(userDetails):
 
     if existing_user is None:
         schema = UserSchema()
+        if 'IsActive' not in userDetails:
+            userDetails['isActive'] = 1
         new_user = schema.load(userDetails, session=db.session)
         db.session.add(new_user)
         db.session.commit()
@@ -94,7 +96,7 @@ def update(id, userDetails):
 
     app.logger.debug(pformat(userDetails))
 
-    if userDetails["id"] != int(id):
+    if userDetails["id"] != str(id):
            abort(400, f"Id mismatch in path and body")
 
     # Does the user exist in user list?
