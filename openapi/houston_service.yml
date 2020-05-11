@@ -304,6 +304,29 @@ paths:
         "200":
           description: Successfully deleted a team
 
+  /keyValues/team/:
+    get:
+      operationId: team.read_keyvalues
+      tags:
+        - team
+      summary: Read the entire list of teams and return them as key value pairs
+      description: Read the list of teams and return them as key value pairs
+      responses:
+        "200":
+          description: Successfully read team list operation and returns key value pairs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties:
+                    key:
+                      type: string
+                      description: key
+                    value:
+                      type: string
+                      description: value
+
   /users/:
     get:
       operationId: user.read_all
@@ -962,6 +985,29 @@ paths:
       responses:
         "200":
           description: Successfully deleted a source control
+
+  /keyValues/businessUnit/:
+    get:
+      operationId: businessUnit.read_keyvalues
+      tags:
+        - businessUnit
+      summary: Read the entire list of business units and return them as key value pairs
+      description: Read the list of business units and return them as key value pairs
+      responses:
+        "200":
+          description: Successfully read business unit list operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties:
+                    key:
+                      type: string
+                      description: key
+                    value:
+                      type: string
+                      description: value
 
   /businessunits/:
     get:
@@ -2902,7 +2948,7 @@ components:
       type: object
       properties:
         id:
-          type: integer
+          type: string
           description: id
         email:
           type: string
@@ -2916,8 +2962,3 @@ components:
         isAdmin:
           type: boolean
           description: Is the user an administrator?
-        isActive:
-          type: boolean
-          description: indicates whether a user is active or not. Better to deactivate user first instead of deleting it.  
-  
-
