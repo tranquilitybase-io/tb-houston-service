@@ -317,7 +317,6 @@ def deployment_create(solutionDeploymentDetails):
 
     if sol is not None:
         # Serialize the data for forwarding to the DaC
-        url = "http://" + os.environ['GCP_DAC_URL'] + "/api/solution/"
         solution = solution_extension.build_solution(sol)
         app.logger.debug("deployment_create: solution start")
         app.logger.debug(pformat(solution))

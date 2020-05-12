@@ -1,5 +1,4 @@
 import requests
-import json
 import os
 from pprint import pformat
 from pprint import pprint
@@ -27,6 +26,7 @@ class TestSolutionDeployment(unittest.TestCase):
     def test_solutiondeployment(self):
         #Testing POST request
         taskid = self.post()
+        print(f"taskid: {taskid}")
         #Testing PUT request
         self.put(self.oid)
         #Testing GETALL request
