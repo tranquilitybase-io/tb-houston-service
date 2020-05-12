@@ -3,7 +3,6 @@ import json
 import logging
 import os
 from pprint import pprint
-import pytest_lib 
 
 
 LOG_LEVEL = logging.INFO # DEBUG, INFO, WARNING, ERROR, CRITICAL
