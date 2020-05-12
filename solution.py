@@ -451,11 +451,6 @@ def get_solution_results_from_the_dac(oid, task_id):
             "statusMessage": "get_solution_results_from_the_dac::failed communicating with the DAC"
         }
 
-    json = resp_json.get('tf_state', '')
-    is_valid_json = validate_json(json)
-    app.logger.debug(f"is_valid_json: {is_valid_json}")
-    print(f"is_valid_json: {is_valid_json}")
-
     # update SolutionDeployment with results
     deployed = False
     if resp_json.get('status', 'ERROR') == DEPLOYMENT_STATE['SUCCESS']:
@@ -479,6 +474,14 @@ def get_solution_results_from_the_dac(oid, task_id):
             "statusMessage": "get_solution_results_from_the_dac::Failed updating the SolutionDeployment with the response from the DAC."
         }
         return resp_json_error
+
+    if resp_json.get('status', 'ERROR') != DEPLOYMENT_STATE['SUCCESS']:
+        return deployment_json, 200
+
+    json = resp_json.get('tf_state', '')
+    is_valid_json = validate_json(json)
+    app.logger.debug(f"is_valid_json: {is_valid_json}")
+    print(f"is_valid_json: {is_valid_json}")
 
     if is_valid_json and resp_json.get('status', '') == DEPLOYMENT_STATE['SUCCESS'] and len(json) > 0:
         tf_json = {
