@@ -7,10 +7,6 @@ if [ "$1" == "build" ]; then
   docker build -t gcr.io/eagle-console-resources/tb-houston-mysql57:cicd .
   docker push gcr.io/eagle-console-resources/tb-houston-mysql57:cicd
 
-  cd "${ROOTDIR}/mocks/mock_gcp_dac/"
-  docker build -t gcr.io/eagle-console-resources/tb-gcp-dac:cicd .
-  docker push gcr.io/eagle-console-resources/tb-gcp-dac:cicd
-
   cd "${ROOTDIR}"
   docker build -t gcr.io/eagle-console-resources/tb-houston-service:cicd .
   docker push gcr.io/eagle-console-resources/tb-houston-service:cicd
