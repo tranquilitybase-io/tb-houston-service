@@ -117,7 +117,7 @@ def update(name, roleDetails):
 
     # otherwise, nope, deployment doesn't exist, so that's an error
     else:
-        abort(404, f"Role not found")
+        abort(404, f"Role {name} not found")
 
 
 def delete(name):
