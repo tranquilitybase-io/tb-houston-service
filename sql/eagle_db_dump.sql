@@ -194,30 +194,7 @@ INSERT INTO `ci` VALUES ('Bamboo','Bamboo'),('Cloud native','Cloud native'),('Je
 /*!40000 ALTER TABLE `ci` ENABLE KEYS */;
 UNLOCK TABLES;
 
---
--- Table structure for table `cloudaccount`
---
-
 DROP TABLE IF EXISTS `cloudaccount`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `cloudaccount` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(100) NOT NULL,
-  `userId` int(11) NOT NULL,
-  `isActive` tinyint(1) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `cloudaccount`
---
-
-LOCK TABLES `cloudaccount` WRITE;
-/*!40000 ALTER TABLE `cloudaccount` DISABLE KEYS */;
-/*!40000 ALTER TABLE `cloudaccount` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `environment`
@@ -346,6 +323,31 @@ LOCK TABLES `landingzonewan` WRITE;
 /*!40000 ALTER TABLE `landingzonewan` DISABLE KEYS */;
 INSERT INTO `landingzonewan` VALUES (1,'dev','dev','dev','dev','dev','dev','dev','dev','dev','dev','dev','dev','dev','dev','dev','dev','Fortinet','dev','Global','dev','Backup VPN connection between GCP US and CISCO 5505 on prem','dev',60000,'dev',60005,'dev','dev ','dev'),(2,'Subnet','abc','abc','abc','abc','abc','string','string','string','string','string','string','string','string','string','string','string','abc','abc','abc','abc','abc',12345,'abc',56789,'abc','abc','abc'),(3,'10.0.1.3/24','UK','SUBNET','','','','sds','209.11.34.56','209.11.34.56','sdds','TUN','','','','','','Fortinet','30','Global','aSA','asa','SAS',65001,'asas',65002,'asas','Custom','sasa');
 /*!40000 ALTER TABLE `landingzonewan` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `role`
+--
+
+DROP TABLE IF EXISTS `role`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `role` (
+  `name` varchar(100) NOT NULL,
+  `cloudIdentityGroup` varchar(200) NOT NULL,
+  `description` varchar(200) NOT NULL,
+  PRIMARY KEY (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `role`
+--
+
+LOCK TABLES `role` WRITE;
+/*!40000 ALTER TABLE `role` DISABLE KEYS */;
+INSERT INTO `role` VALUES ('admin','ecadmins@gftdevgcp.com','eagle console admin role'),('user','ecusers@gftdevgcp.com','eagle console user role');
+/*!40000 ALTER TABLE `role` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --

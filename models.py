@@ -239,6 +239,23 @@ class CloudAccountSchema(ma.ModelSchema):
         model = CloudAccount
         sqla_session = db.session
 
+# Role
+class Role(db.Model):
+    __tablename__ = "role"
+    name = db.Column(db.String(100), primary_key=True)
+    cloudIdentityGroup = db.Column(db.String(200))
+    description = db.Column(db.String(200))
+
+
+class RoleSchema(ma.ModelSchema):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    class Meta:
+        model = Role
+        sqla_session = db.session
+
+
 
 # Environment
 class Environment(db.Model):
@@ -253,6 +270,8 @@ class EnvironmentSchema(ma.ModelSchema):
     class Meta:
         model = Environment
         sqla_session = db.session
+
+
 
 # CI
 class CI(db.Model):
@@ -312,6 +331,7 @@ class BusinessUnitSchema(ma.ModelSchema):
     class Meta:
         model = BusinessUnit
         sqla_session = db.session
+
         
 # LandingZoneProgressItem
 class LandingZoneProgressItem(db.Model):

@@ -528,84 +528,84 @@ paths:
         "200":
           description: Successfully deleted a teammember
 
-  /cloudaccounts/:
+  /roles/:
     get:
-      operationId: cloudaccount.read_all
+      operationId: role.read_all
       tags:
-        - cloudaccount
-      summary: Read the entire list of cloudaccounts
-      description: Read the list of cloudaccounts
+        - role
+      summary: Read the entire list of roles
+      description: Read the list of roles
       responses:
         "200":
-          description: Successfully read cloudaccount list operation
+          description: Successfully read role list operation
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/CloudAccount"
+                  $ref: "#/components/schemas/Role"
 
-  /cloudaccount/:
+  /role/:
     post:
-      operationId: cloudaccount.create
+      operationId: role.create
       tags:
-        - cloudaccount
-      summary: Create a cloudaccount and add it to the cloudaccount list
-      description: Create a new cloudaccount in the cloudaccount list
+        - role
+      summary: Create a role and add it to the role list
+      description: Create a new role in the role list
       requestBody:
-        $ref: '#/components/requestBodies/cloudaccount.cloudAccountDetails'
+        $ref: '#/components/requestBodies/role.roleDetails'
       responses:
         "201":
-          description: Successfully created a cloudaccount
+          description: Successfully created a role
 
-  "/cloudaccount/{id}":
+  "/role/{name}":
     get:
-      operationId: cloudaccount.read_one
+      operationId: role.read_one
       tags:
-        - cloudaccount
-      summary: Read one cloudaccount from the list
-      description: Read one cloudaccount from the list
+        - role
+      summary: Read one role from the list
+      description: Read one role from the list
       parameters:
-        - name: id
+        - name: name
           in: path
-          description: key of the cloudaccount to get from the list
+          description: key of the role to get from the list
           required: true
           schema:
             type: string
       responses:
         "200":
-          description: Successfully read an cloudaccount from the list
+          description: Successfully read an role from the list
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CloudAccount"
+                $ref: "#/components/schemas/Role"
     put:
-      operationId: cloudaccount.update
+      operationId: role.update
       tags:
-        - cloudaccount
-      summary: Update a cloudaccount in the list
-      description: Update a cloudaccount in the list
+        - role
+      summary: Update a role in the list
+      description: Update a role in the list
       parameters:
-        - name: id
+        - name: name
           in: path
-          description: key of the cloudaccount to update
+          description: key of the role to update
           required: true
           schema:
             type: string
       requestBody:
-        $ref: "#/components/requestBodies/cloudaccount.cloudAccountDetails"
+        $ref: "#/components/requestBodies/role.roleDetails"
       responses:
         "200":
-          description: Successfully updated a cloudaccount
+          description: Successfully updated a role
 
     delete:
-      operationId: cloudaccount.delete
+      operationId: role.delete
       tags:
-        - cloudaccount
-      summary: Delete a cloudaccount from the list
-      description: Delete a cloudaccount
+        - role
+      summary: Delete a role from the list
+      description: Delete a role
       parameters:
-        - name: id
+        - name: name
           in: path
           required: true
           schema:
@@ -2325,13 +2325,13 @@ components:
       description: teamMemberDetails to create
       required: true
 
-    cloudaccount.cloudAccountDetails:
+    role.roleDetails:
       content:
         application/json:
           schema:
-            x-body-name: cloudAccountDetails
-            $ref: "#/components/schemas/CloudAccount"
-      description: cloudAccountDetails to create
+            x-body-name: roleDetails
+            $ref: "#/components/schemas/Role"
+      description: roleDetails to create
       required: true
 
     user.userDetails:
@@ -2623,21 +2623,18 @@ components:
           type: boolean
           description: to activate/deactivate user role from a team
 
-    CloudAccount:
+    Role:
       type: object
       properties:
-        id:
-          type: integer
-          description: cloud account id
         name:
           type: string
-          description: name of the cloud account
-        userId:
-          type: integer
-          description: user id mapped to the cloud account
-        isActive:
-          type: boolean
-          description: to activate/deactivate the cloud account
+          description: name of the role in eagle console
+        cloudIdentityGroup:
+          type: string
+          description: name of the cloud identity group
+        description:
+          type: string
+          description: description of the role
                
     BGPRoutingMode:
       type: object
