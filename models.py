@@ -462,3 +462,17 @@ class VPNOnPremiseVendorSchema(ma.ModelSchema):
         sqla_session = db.session
 
 
+# LZFolderStructureMeta
+class LZFolderStructureMeta(db.Model):
+    __tablename__ = "lzfolderstructuremeta"
+    id = db.Column(db.Integer, primary_key=True)
+    isEnable = db.Column(db.Boolean)
+    name = db.Column(db.String)
+    children = db.Column(db.Integer)
+
+# LZLANVPCMeta
+class LZLANVPCMeta(db.Model):
+    __tablename__ = "lzlanvpcmeta"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String)
+    environments = db.Column(db.String)
