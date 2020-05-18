@@ -470,7 +470,7 @@ class LZFolderStructureMeta(db.Model):
     name = db.Column(db.String)
     childrenId = db.Column(db.Integer)
 
-class LZFolderStructureMeta(ma.ModelSchema):
+class LZFolderStructureMetaSchema(ma.ModelSchema):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
@@ -485,7 +485,7 @@ class LZLANVPCMeta(db.Model):
     name = db.Column(db.String)
     environments = db.Column(db.String)
 
-class LZLANVPCMeta(ma.ModelSchema):
+class LZLANVPCMetaSchema(ma.ModelSchema):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
