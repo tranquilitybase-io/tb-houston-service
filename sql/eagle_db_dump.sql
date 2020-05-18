@@ -1,4 +1,4 @@
--- MySQL dump 10.13  Distrib 5.7.29, for macos10.14 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.19, for Win64 (x86_64)
 --
 -- Host: 0.0.0.0    Database: eagle_db
 -- ------------------------------------------------------
@@ -245,7 +245,7 @@ CREATE TABLE `landingzoneaction` (
 
 LOCK TABLES `landingzoneaction` WRITE;
 /*!40000 ALTER TABLE `landingzoneaction` DISABLE KEYS */;
-INSERT INTO `landingzoneaction` VALUES (1,'Folder structure','','folder-structure',100,0,''),(2,'LAN','Network Setup','network-setup',100,0,''),(3,'WAN','Network Setup','network-setup',0,0,'/administration/landing-zone/wan'),(4,'DNS','Network Setup','network-setup',75,1,''),(5,'Internet access','Network Setup','network-setup',9,1,''),(6,'SSO','AD Integration','ad-integration',25,1,''),(7,'ADFS','AD Integration','ad-integration',0,1,''),(8,'Stackdriver','Logging','logging',50,1,''),(9,'Data Dog','Logging','logging',30,1,''),(10,'Cloud Health','Billing/Cost Management','billing-cost-management',19,1,''),(11,'Security','','security',13,1,''),(12,'Multizone setup','','multizone-setup',12,1,'');
+INSERT INTO `landingzoneaction` VALUES (1,'Environment','','environment',0,0,'/administration/landing-zone/environment'),(2,'WAN','Network Setup','network-setup',0,1,'/administration/landing-zone/wan'),(3,'DNS','Network Setup','network-setup',75,1,''),(4,'Internet access','Network Setup','network-setup',9,1,''),(5,'SSO','AD Integration','ad-integration',25,1,''),(6,'ADFS','AD Integration','ad-integration',0,1,''),(7,'Stackdriver','Logging','logging',50,1,''),(8,'Data Dog','Logging','logging',30,1,''),(9,'Cloud Health','Billing/Cost Management','billing-cost-management',19,1,''),(10,'Security','','security',13,1,''),(11,'Multizone setup','','multizone-setup',12,1,'');
 /*!40000 ALTER TABLE `landingzoneaction` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -270,7 +270,7 @@ CREATE TABLE `landingzoneprogressitem` (
 
 LOCK TABLES `landingzoneprogressitem` WRITE;
 /*!40000 ALTER TABLE `landingzoneprogressitem` DISABLE KEYS */;
-INSERT INTO `landingzoneprogressitem` VALUES (0,'Folder structure',1),(1,'LAN',1),(2,'WAN',0),(3,'DNS',0),(4,'ADFS',0),(5,'SSO',0),(6,'Logging',0),(7,'Billing',0);
+INSERT INTO `landingzoneprogressitem` VALUES (0,'Environment',0),(1,'WAN',0),(2,'DNS',0),(3,'ADFS',0),(4,'SSO',0),(5,'Logging',0),(6,'Billing',0);
 /*!40000 ALTER TABLE `landingzoneprogressitem` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -321,7 +321,6 @@ CREATE TABLE `landingzonewan` (
 
 LOCK TABLES `landingzonewan` WRITE;
 /*!40000 ALTER TABLE `landingzonewan` DISABLE KEYS */;
-INSERT INTO `landingzonewan` VALUES (1,'dev','dev','dev','dev','dev','dev','dev','dev','dev','dev','dev','dev','dev','dev','dev','dev','Fortinet','dev','Global','dev','Backup VPN connection between GCP US and CISCO 5505 on prem','dev',60000,'dev',60005,'dev','dev ','dev'),(2,'Subnet','abc','abc','abc','abc','abc','string','string','string','string','string','string','string','string','string','string','string','abc','abc','abc','abc','abc',12345,'abc',56789,'abc','abc','abc'),(3,'10.0.1.3/24','UK','SUBNET','','','','sds','209.11.34.56','209.11.34.56','sdds','TUN','','','','','','Fortinet','30','Global','aSA','asa','SAS',65001,'asas',65002,'asas','Custom','sasa');
 /*!40000 ALTER TABLE `landingzonewan` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -606,4 +605,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-05-12  9:42:42
+-- Dump completed on 2020-05-18  8:56:05
