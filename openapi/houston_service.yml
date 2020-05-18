@@ -1918,6 +1918,93 @@ paths:
         "200":
           description: Successfully deleted a landing zone WAN
 
+  /lzfolderstructuremeta/:
+    post:
+      operationId: lzfolderstructuremeta.create
+      tags:
+        - lzfolderstructuremeta
+      summary: Create a lzfolderstructuremeta and add it to the landing zone Folder structure meta data list
+      description: Create a new new lzfolderstructuremeta in the landing zone Folder structure meta data list
+      requestBody:
+        $ref: "#/components/requestBodies/lzFolderStructureMeta.lzfolderstructuremetaDetails"
+      responses:
+        "201":
+          description: Successfully created a landing zone Folder structure meta dataFolder structure meta data
+
+    get:
+      operationId: lzfolderstructuremeta.read_all
+      tags:
+        - lzfolderstructuremeta
+      summary: Read the landing zone Folder structure meta data
+      description: Read the landing zone Folder structure meta data
+      responses:
+        "200":
+          description: Successfully ran landing zone Folder structure meta data list operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LZFolderStructureMeta"
+        
+        
+  "/lzfolderstructuremeta/{oid}":
+    get:
+      operationId: lzfolderstructuremeta.read_one
+      tags:
+        - lzfolderstructuremeta
+      summary: Read one landing zone Folder structure meta data from the list
+      description: Read one landing zone Folder structure meta data from the list
+      parameters:
+        - name: oid
+          in: path
+          description: key of the landing zone Folder structure meta data to get from the list
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successfully read an landing zone Folder structure meta data from the list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/lzfolderstructuremeta"
+        
+    put:
+      operationId: lzfolderstructuremeta.update
+      tags:
+        - lzfolderstructuremeta
+      summary: Update an landing zone Folder structure meta data in the list
+      description: Update an landing zone Folder structure meta data in the list
+      parameters:
+        - name: oid
+          in: path
+          description: key of the landing zone Folder structure meta data to update
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        $ref: "#/components/requestBodies/lzfolderstructuremeta.lzfolderstructuremetaDetails"
+      responses:
+        "200":
+          description: Successfully updated a landing zone Folder structure meta data
+        
+    delete:
+      operationId: lzfolderstructuremeta.delete
+      tags:
+        - lzfolderstructuremeta
+      summary: Delete a landing zone Folder structure meta data from the list
+      description: Delete a landing zone Folder structure meta data
+      parameters:
+        - name: oid
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successfully deleted a landing zone Folder structure meta data
+                
   /keyValues/bgproutingmode/:
     get:
       operationId: bgpRoutingMode.read_all
@@ -2279,7 +2366,16 @@ components:
             $ref: "#/components/schemas/LandingZoneWAN"
       description: landingzonewan to create
       required: true
-
+      
+    lzFolderStructureMeta.lzfolderstructuremetaDetails:
+        content:
+          application/json:
+            schema:
+              x-body-name: landingZoneWANDetails
+              $ref: "#/components/schemas/LZFolderStructureMeta"
+        description: landingzone folder structure meta data to create
+        required: true
+      
     bgpRoutingMode.bgpRoutingModeDetails:
       content:
         application/json:
