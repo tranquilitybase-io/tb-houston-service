@@ -468,7 +468,7 @@ class LZFolderStructureMeta(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     isEnable = db.Column(db.Boolean)
     name = db.Column(db.String)
-    children = db.Column(db.Integer)
+    childrenId = db.Column(db.Integer)
 
 # LZLANVPCMeta
 class LZLANVPCMeta(db.Model):
