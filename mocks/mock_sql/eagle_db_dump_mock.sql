@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 5.7.28, for macos10.14 (x86_64)
 --
--- Host: localhost    Database: eagle_db
+-- Host: 0.0.0.0    Database: eagle_db
 -- ------------------------------------------------------
 -- Server version	5.7.28
 
@@ -324,54 +324,30 @@ INSERT INTO `landingzonewan` VALUES (1,'dev','dev','dev','dev','dev','dev','dev'
 UNLOCK TABLES;
 
 --
--- Table structure for table `lzfolderstructuremeta`
+-- Table structure for table `lzmetadata`
 --
 
-DROP TABLE IF EXISTS `lzfolderstructuremeta`;
+DROP TABLE IF EXISTS `lzmetadata`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `lzfolderstructuremeta` (
-  `id` int(11) NOT NULL,
-  `isEnabled` tinyint(1) NOT NULL DEFAULT '1',
-  `name` varchar(255) DEFAULT NULL,
-  `childrenId` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE `lzmetadata` (
+  `group` varchar(255) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `value` text NOT NULL,
+  `description` varchar(255) DEFAULT NULL,
+  `active` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`group`,`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `lzfolderstructuremeta`
+-- Dumping data for table `lzmetadata`
 --
 
-LOCK TABLES `lzfolderstructuremeta` WRITE;
-/*!40000 ALTER TABLE `lzfolderstructuremeta` DISABLE KEYS */;
-INSERT INTO `lzfolderstructuremeta` VALUES (1,1,'Application',2),(2,1,'Business Unit',3),(3,1,'Team',4),(4,1,'Solution',NULL);
-/*!40000 ALTER TABLE `lzfolderstructuremeta` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `lzlanvpcmeta`
---
-
-DROP TABLE IF EXISTS `lzlanvpcmeta`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `lzlanvpcmeta` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) DEFAULT NULL,
-  `environments` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `lzlanvpcmeta`
---
-
-LOCK TABLES `lzlanvpcmeta` WRITE;
-/*!40000 ALTER TABLE `lzlanvpcmeta` DISABLE KEYS */;
-INSERT INTO `lzlanvpcmeta` VALUES (1,'development','[\"Development\",\"Poc\"]'),(2,'production','[\"UAT\",\"Production\"]');
-/*!40000 ALTER TABLE `lzlanvpcmeta` ENABLE KEYS */;
+LOCK TABLES `lzmetadata` WRITE;
+/*!40000 ALTER TABLE `lzmetadata` DISABLE KEYS */;
+INSERT INTO `lzmetadata` VALUES ('folder_structure','folder_structure','[\"Application\",\"Business Unit\",\"Team\",\"Solution\"]','Landing Zone metadata for folder structure',1),('lan_vpc','development','[\"Development\",\"Poc\"]','Landing Zone metadata for LAN VPC of Dev environment',1),('lan_vpc','production','[\"UAT\",\"Production\"]','Landing Zone metadata for LAN VPC of Prod environment',1);
+/*!40000 ALTER TABLE `lzmetadata` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -655,4 +631,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-05-18 15:05:38
+-- Dump completed on 2020-05-19 12:06:21

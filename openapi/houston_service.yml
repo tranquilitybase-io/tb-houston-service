@@ -1918,92 +1918,85 @@ paths:
         "200":
           description: Successfully deleted a landing zone WAN
 
-  /lzfolderstructuremeta/:
+  /lzmetadata/:
     post:
-      operationId: lzfolderstructuremeta.create
+      operationId: lzmetadata.create
       tags:
-        - lzfolderstructuremeta
-      summary: Create a lzfolderstructuremeta and add it to the landing zone Folder structure meta data list
-      description: Create a new new lzfolderstructuremeta in the landing zone Folder structure meta data list
+        - lzmetadata
+      summary: Create or update landing zone metadata for a given group and name
+      description: Create or update landing zone metadata for a given group and name
       requestBody:
-        $ref: "#/components/requestBodies/lzFolderStructureMeta.lzfolderstructuremetaDetails"
+        $ref: "#/components/requestBodies/lzMetadata.lzMetadataDetails"
       responses:
         "201":
-          description: Successfully created a landing zone Folder structure meta dataFolder structure meta data
+          description: Successfully created a landing zone meta ata
 
     get:
-      operationId: lzfolderstructuremeta.read_all
+      operationId: lzmetadata.read_all
       tags:
-        - lzfolderstructuremeta
-      summary: Read the landing zone Folder structure meta data
-      description: Read the landing zone Folder structure meta data
+        - lzmetadata
+      summary: Read the landing zone metadata
+      description: Read the landing zone metadata
       responses:
         "200":
-          description: Successfully ran landing zone Folder structure meta data list operation
+          description: Successfully ran landing zone metadata 
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/LZFolderStructureMeta"
+                  $ref: "#/components/schemas/LZMetaData"
         
         
-  "/lzfolderstructuremeta/{oid}":
+  "/lzmetadata/{group}/{name}":
     get:
-      operationId: lzfolderstructuremeta.read_one
+      operationId: lzmetadata.read_one
       tags:
-        - lzfolderstructuremeta
-      summary: Read one landing zone Folder structure meta data from the list
-      description: Read one landing zone Folder structure meta data from the list
+        - lzmetadata
+      summary: Read one landing zone metadata from the list
+      description: Read one landing zone metadata from the list
       parameters:
-        - name: oid
+        - name: group
           in: path
-          description: key of the landing zone Folder structure meta data to get from the list
+          description: landing zone metadata group
           required: true
           schema:
-            type: integer
-      responses:
-        "200":
-          description: Successfully read an landing zone Folder structure meta data from the list
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/lzfolderstructuremeta"
-        
-    put:
-      operationId: lzfolderstructuremeta.update
-      tags:
-        - lzfolderstructuremeta
-      summary: Update an landing zone Folder structure meta data in the list
-      description: Update an landing zone Folder structure meta data in the list
-      parameters:
-        - name: oid
+            type: string
+        - name: name
           in: path
-          description: key of the landing zone Folder structure meta data to update
-          required: true
-          schema:
-            type: integer
-      requestBody:
-        $ref: "#/components/requestBodies/lzfolderstructuremeta.lzfolderstructuremetaDetails"
-      responses:
-        "200":
-          description: Successfully updated a landing zone Folder structure meta data
-        
-    delete:
-      operationId: lzfolderstructuremeta.delete
-      tags:
-        - lzfolderstructuremeta
-      summary: Delete a landing zone Folder structure meta data from the list
-      description: Delete a landing zone Folder structure meta data
-      parameters:
-        - name: oid
-          in: path
+          description: landing zone metadata name
           required: true
           schema:
             type: string
       responses:
         "200":
-          description: Successfully deleted a landing zone Folder structure meta data
+          description: Successfully read an landing zone metadata 
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LZMetaData"
+        
+    delete:
+      operationId: lzmetadata.delete
+      tags:
+        - lzmetadata
+      summary: Delete a landing zone metadata from the list
+      description: Delete a landing zone  metadata
+      parameters:
+        - name: group
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: name
+          in: path
+          description: landing zone metadata key
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successfully deleted a landing zone metadata
                 
   /keyValues/bgproutingmode/:
     get:
@@ -2367,13 +2360,13 @@ components:
       description: landingzonewan to create
       required: true
       
-    lzFolderStructureMeta.lzfolderstructuremetaDetails:
+    lzMetadata.lzMetadataDetails:
         content:
           application/json:
             schema:
-              x-body-name: landingZoneWANDetails
-              $ref: "#/components/schemas/LZFolderStructureMeta"
-        description: landingzone folder structure meta data to create
+              x-body-name: lzMetadataDetails
+              $ref: "#/components/schemas/LZMetaData"
+        description: landingzone  meta data to create
         required: true
       
     bgpRoutingMode.bgpRoutingModeDetails:
@@ -3055,3 +3048,22 @@ components:
         isAdmin:
           type: boolean
           description: Is the user an administrator?
+          
+    LZMetaData:
+      type: object
+      properties:
+        group:
+          type: string
+          description: group of the metadata
+        name:
+          type: string
+          description: name/key of meta data
+        value:
+          type: string
+          description: meta data values
+        description:
+          type: string
+          description:  description
+        active:
+          type: boolean
+          description: Is the metadaa active?

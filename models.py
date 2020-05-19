@@ -462,33 +462,19 @@ class VPNOnPremiseVendorSchema(ma.ModelSchema):
         sqla_session = db.session
 
 
-# LZFolderStructureMeta
-class LZFolderStructureMeta(db.Model):
-    __tablename__ = "lzfolderstructuremeta"
-    id = db.Column(db.Integer, primary_key=True)
-    isEnable = db.Column(db.Boolean)
-    name = db.Column(db.String)
-    childrenId = db.Column(db.Integer)
-
-class LZFolderStructureMetaSchema(ma.ModelSchema):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
-    class Meta:
-        model = LZFolderStructureMeta
-        sqla_session = db.session
-
 # LZLANVPCMeta
-class LZLANVPCMeta(db.Model):
-    __tablename__ = "lzlanvpcmeta"
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String)
-    environments = db.Column(db.String)
+class LZMetadata(db.Model):
+    __tablename__ = "lzmetadata"
+    group = db.Column(db.String, primary_key=True)
+    name = db.Column(db.String, primary_key=True)
+    value = db.Column(db.String)
+    description = db.Column(db.String)
+    active = db.Column(db.Boolean)
 
-class LZLANVPCMetaSchema(ma.ModelSchema):
+class LZMetadataSchema(ma.ModelSchema):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
     class Meta:
-        model = LZLANVPCMeta
+        model = LZMetadata
         sqla_session = db.session
