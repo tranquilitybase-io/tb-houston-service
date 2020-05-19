@@ -10,6 +10,8 @@ from urllib.parse import urlparse
 
 HOUSTON_SERVICE_URL = os.environ["HOUSTON_SERVICE_URL"]
 global_url = f"http://{HOUSTON_SERVICE_URL}/api/solutionresource/"
+get_url = f"http://{HOUSTON_SERVICE_URL}/api/solutionresources/"
+
 
 # Additional headers.
 headers = {"Content-Type": "application/json"}
@@ -97,7 +99,6 @@ def get_all():
     """
     print("get_all Tests")
 
-    url = "http://localhost:3000/api/solutionresources/"
-    resp = requests.get(url, headers=headers)
+    resp = requests.get(get_url, headers=headers)
     # Validate Get All response
     assert resp.status_code == 200

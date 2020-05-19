@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.7.29, for macos10.14 (x86_64)
+-- MySQL dump 10.13  Distrib 5.7.28, for macos10.14 (x86_64)
 --
 -- Host: 0.0.0.0    Database: eagle_db
 -- ------------------------------------------------------
--- Server version	5.7.29
+-- Server version	5.7.28
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -51,7 +51,7 @@ CREATE TABLE `activator` (
   `source` varchar(100) DEFAULT NULL,
   `activatorLink` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=116 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=112 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -82,7 +82,7 @@ CREATE TABLE `application` (
   `lastUpdated` datetime DEFAULT NULL,
   `resources` varchar(255) DEFAULT '[]',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -107,7 +107,7 @@ CREATE TABLE `bgproutingmode` (
   `key` varchar(45) DEFAULT NULL,
   `value` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -133,7 +133,7 @@ CREATE TABLE `businessunit` (
   `description` varchar(200) NOT NULL,
   `isActive` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -194,8 +194,6 @@ INSERT INTO `ci` VALUES ('Bamboo','Bamboo'),('Cloud native','Cloud native'),('Je
 /*!40000 ALTER TABLE `ci` ENABLE KEYS */;
 UNLOCK TABLES;
 
-DROP TABLE IF EXISTS `cloudaccount`;
-
 --
 -- Table structure for table `environment`
 --
@@ -236,7 +234,7 @@ CREATE TABLE `landingzoneaction` (
   `locked` tinyint(1) NOT NULL DEFAULT '0',
   `routerLink` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -261,7 +259,7 @@ CREATE TABLE `landingzoneprogressitem` (
   `label` varchar(255) DEFAULT NULL,
   `completed` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -312,7 +310,7 @@ CREATE TABLE `landingzonewan` (
   `vpn__subnetMode` varchar(45) DEFAULT NULL,
   `vpn__vpcName` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -323,6 +321,33 @@ LOCK TABLES `landingzonewan` WRITE;
 /*!40000 ALTER TABLE `landingzonewan` DISABLE KEYS */;
 INSERT INTO `landingzonewan` VALUES (1,'dev','dev','dev','dev','dev','dev','dev','dev','dev','dev','dev','dev','dev','dev','dev','dev','Fortinet','dev','Global','dev','Backup VPN connection between GCP US and CISCO 5505 on prem','dev',60000,'dev',60005,'dev','dev ','dev'),(2,'Subnet','abc','abc','abc','abc','abc','string','string','string','string','string','string','string','string','string','string','string','abc','abc','abc','abc','abc',12345,'abc',56789,'abc','abc','abc'),(3,'10.0.1.3/24','UK','SUBNET','','','','sds','209.11.34.56','209.11.34.56','sdds','TUN','','','','','','Fortinet','30','Global','aSA','asa','SAS',65001,'asas',65002,'asas','Custom','sasa');
 /*!40000 ALTER TABLE `landingzonewan` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `lzmetadata`
+--
+
+DROP TABLE IF EXISTS `lzmetadata`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `lzmetadata` (
+  `group` varchar(255) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `value` text NOT NULL,
+  `description` varchar(255) DEFAULT NULL,
+  `active` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`group`,`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `lzmetadata`
+--
+
+LOCK TABLES `lzmetadata` WRITE;
+/*!40000 ALTER TABLE `lzmetadata` DISABLE KEYS */;
+INSERT INTO `lzmetadata` VALUES ('environments','environments','\"[\'Development\',\'UAT\',\'Staging\',\'PoC\',\'Production\']\"','List of environments available',1),('folder_structure','folder_structure','[\"Application\",\"Business Unit\",\"Team\",\"Solution\"]','Landing Zone metadata for folder structure',1),('lan_vpc','development','[\"Development\",\"Poc\"]','Landing Zone metadata for LAN VPC of Dev environment',1),('lan_vpc','production','[\"UAT\",\"Production\"]','Landing Zone metadata for LAN VPC of Prod environment',1);
+/*!40000 ALTER TABLE `lzmetadata` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -378,7 +403,7 @@ CREATE TABLE `solution` (
   `statusMessage` varchar(255) DEFAULT NULL,
   `taskId` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -531,7 +556,7 @@ CREATE TABLE `teammember` (
   `role` varchar(100) NOT NULL,
   `isActive` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -559,7 +584,7 @@ CREATE TABLE `user` (
   `isAdmin` tinyint(1) NOT NULL DEFAULT '0',
   `isActive` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -584,7 +609,7 @@ CREATE TABLE `vpnonpremisevendor` (
   `key` varchar(45) DEFAULT NULL,
   `value` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -606,4 +631,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-05-12  9:42:42
+-- Dump completed on 2020-05-19 16:45:36

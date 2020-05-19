@@ -462,3 +462,19 @@ class VPNOnPremiseVendorSchema(ma.ModelSchema):
         sqla_session = db.session
 
 
+# LZLANVPCMeta
+class LZMetadata(db.Model):
+    __tablename__ = "lzmetadata"
+    group = db.Column(db.String, primary_key=True)
+    name = db.Column(db.String, primary_key=True)
+    value = db.Column(db.String)
+    description = db.Column(db.String)
+    active = db.Column(db.Boolean)
+
+class LZMetadataSchema(ma.ModelSchema):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    class Meta:
+        model = LZMetadata
+        sqla_session = db.session
