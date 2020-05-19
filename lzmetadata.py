@@ -93,7 +93,7 @@ def create(lzMetadataDetails):
     # Does the landig zone meta data for the given group and name exist?
     if lzmetadata is not None:
         LZMetadata.query.filter(
-            LZMetadata.name == name, LZMetadata.group == group
+            LZMetadata.group == group, LZMetadata.name == name
         ).update(lzMetadataDetails)
         db.session.commit()
     else:
