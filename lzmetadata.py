@@ -19,7 +19,11 @@ def read_all():
     """
 
     # Create the list of lzmetadata from our data
-    lzmetadata = LZMetadata.query.filter(LZMetadata.active == True).order_by(LZMetadata.group).all()
+    lzmetadata = (
+        LZMetadata.query.filter(LZMetadata.active == True)
+        .order_by(LZMetadata.group)
+        .all()
+    )
     app.logger.debug(pformat(lzmetadata))
     # Serialize the data for the response
     lzmetadata_schema = LZMetadataSchema(many=True)
@@ -36,7 +40,9 @@ def read_one(group, name):
     :return:              landing zone metadata matching group and name
     """
 
-    lzmetadata = LZMetadata.query.filter(LZMetadata.name == name, LZMetadata.group == group , LZMetadata.active == True).one_or_none()
+    lzmetadata = LZMetadata.query.filter(
+        LZMetadata.name == name, LZMetadata.group == group, LZMetadata.active == True
+    ).one_or_none()
 
     if lzmetadata is not None:
         # Serialize the data for the response
@@ -57,23 +63,27 @@ def create(lzMetadataDetails):
 
     app.logger.debug(pformat(lzMetadataDetails))
 
-    group = lzMetadataDetails['group']
-    name = lzMetadataDetails['name']
-    # Always set active to True while creating 
-    lzMetadataDetails['active'] = True
+    group = lzMetadataDetails["group"]
+    name = lzMetadataDetails["name"]
+    # Always set active to True while creating
+    lzMetadataDetails["active"] = True
 
     app.logger.debug("lzmetadata:create")
     app.logger.debug(pformat(lzMetadataDetails))
 
     app.logger.debug(f"group: {group} name: {name}")
-    
+
     # Does the landing zone metadata exist already?
-    lzmetadata = LZMetadata.query.filter(LZMetadata.group == group, LZMetadata.name == name).one_or_none()
+    lzmetadata = LZMetadata.query.filter(
+        LZMetadata.group == group, LZMetadata.name == name
+    ).one_or_none()
 
     schema = LZMetadataSchema()
     # Does the landig zone meta data for the given group and name exist?
     if lzmetadata is not None:
-        LZMetadata.query.filter(LZMetadata.name == name, LZMetadata.group == group).update(lzMetadataDetails)
+        LZMetadata.query.filter(
+            LZMetadata.name == name, LZMetadata.group == group
+        ).update(lzMetadataDetails)
         db.session.commit()
     else:
         lzmetadata = schema.load(lzMetadataDetails, session=db.session)
@@ -95,18 +105,25 @@ def delete(group, name):
     :return:    200 on successful delete, 404 if not found
     """
     # Does the landing zone metadata to delete exist?
-    lzmetadata = LZMetadata.query.filter(LZMetadata.group == group, LZMetadata.name == name, LZMetadata.active == True).one_or_none()
+    lzmetadata = LZMetadata.query.filter(
+        LZMetadata.group == group, LZMetadata.name == name, LZMetadata.active == True
+    ).one_or_none()
     schema = LZMetadataSchema()
 
     # if found?
     if lzmetadata is not None:
         # Deactivate the metadata instead of deleting it
         lzmetadataDetails = schema.dump(lzmetadata)
-        lzmetadataDetails['active'] = False
-        LZMetadata.query.filter(LZMetadata.name == name, LZMetadata.group == group).update(lzmetadataDetails)
+        lzmetadataDetails["active"] = False
+        LZMetadata.query.filter(
+            LZMetadata.name == name, LZMetadata.group == group
+        ).update(lzmetadataDetails)
         db.session.commit()
 
-        return make_response(f"Landing zone metadata for group: {group} name: {name} successfully deactivated", 200)
+        return make_response(
+            f"Landing zone metadata for group: {group} name: {name} successfully deactivated",
+            200,
+        )
 
     # Otherwise, nope, landing zone metadata to delete not found
     else:
