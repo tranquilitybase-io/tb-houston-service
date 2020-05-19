@@ -100,7 +100,7 @@ def delete(group, name):
 
     # if found?
     if lzmetadata is not None:
-        # Always set active to True while creating 
+        # Deactivate the metadata instead of deleting it
         lzmetadataDetails = schema.dump(lzmetadata)
         lzmetadataDetails['active'] = False
         LZMetadata.query.filter(LZMetadata.name == name, LZMetadata.group == group).update(lzmetadataDetails)
