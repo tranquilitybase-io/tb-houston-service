@@ -346,7 +346,7 @@ CREATE TABLE `lzmetadata` (
 
 LOCK TABLES `lzmetadata` WRITE;
 /*!40000 ALTER TABLE `lzmetadata` DISABLE KEYS */;
-INSERT INTO `lzmetadata` VALUES ('folder_structure','folder_structure','[\"Application\",\"Business Unit\",\"Team\",\"Solution\"]','Landing Zone metadata for folder structure',1),('lan_vpc','development','[\"Development\",\"Poc\"]','Landing Zone metadata for LAN VPC of Dev environment',1),('lan_vpc','production','[\"UAT\",\"Production\"]','Landing Zone metadata for LAN VPC of Prod environment',1);
+INSERT INTO `lzmetadata` VALUES ('environments','environments','\"[\'Development\',\'UAT\',\'Staging\',\'PoC\',\'Production\']\"','List of environments available',1),('folder_structure','folder_structure','[\"Application\",\"Business Unit\",\"Team\",\"Solution\"]','Landing Zone metadata for folder structure',1),('lan_vpc','development','[\"Development\",\"Poc\"]','Landing Zone metadata for LAN VPC of Dev environment',1),('lan_vpc','production','[\"UAT\",\"Production\"]','Landing Zone metadata for LAN VPC of Prod environment',1);
 /*!40000 ALTER TABLE `lzmetadata` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -529,7 +529,7 @@ CREATE TABLE `team` (
   `businessUnitId` int(11) NOT NULL,
   `isActive` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -631,4 +631,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-05-19 12:06:21
+-- Dump completed on 2020-05-19 16:45:36
