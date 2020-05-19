@@ -44,7 +44,7 @@ def read_one(group, name):
         data = lzmetadata_schema.dump(lzmetadata)
         return data, 200
     else:
-        abort(404, f"Landing zone metadata with group {group}, name {name} not found")
+        abort(404, f"Landing zone metadata for group {group}, name {name} not found")
 
 
 def create(lzMetadataDetails):
@@ -59,6 +59,8 @@ def create(lzMetadataDetails):
 
     group = lzMetadataDetails['group']
     name = lzMetadataDetails['name']
+    # Always set active to True while creating 
+    lzMetadataDetails['active'] = True
 
     app.logger.debug("lzmetadata:create")
     app.logger.debug(pformat(lzMetadataDetails))
@@ -97,11 +99,13 @@ def delete(group, name):
 
     # if found?
     if lzmetadata is not None:
-        db.session.delete(lzmetadata)
+        # Always set active to True while creating 
+        lzmetadata['active'] = False
+        LZMetadata.query.filter(LZMetadata.name == name, LZMetadata.group == group).update(lzmetadata)
         db.session.commit()
 
-        return make_response(f"Landing zone metadata group: {group} name: {name} successfully deleted", 200)
+        return make_response(f"Landing zone metadata for group: {group} name: {name} successfully deactivated", 200)
 
     # Otherwise, nope, landing zone metadata to delete not found
     else:
-        abort(404, f"Landing zone metadata group: {group} name: {name} not found")
+        abort(404, f"Landing zone metadata for group: {group} name: {name} not found")
