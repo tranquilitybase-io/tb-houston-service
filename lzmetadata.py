@@ -57,7 +57,6 @@ def read_one(group, name):
         lzmetadata_schema = LZMetadataSchema()
         lzmetadata.value = json.loads(lzmetadata.value or "[]")
         new_lzmetadata = lzmetadata_schema.dump(lzmetadata)
-        print(new_lzmetadata)
         return new_lzmetadata, 200
     else:
         abort(404, f"Landing zone metadata for group {group}, name {name} not found")
