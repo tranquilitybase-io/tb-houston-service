@@ -8,6 +8,7 @@ from flask import make_response, abort
 from config import db, app
 from models import LZMetadata, LZMetadataSchema
 from pprint import pformat
+import json
 
 
 def read_all():
@@ -25,10 +26,17 @@ def read_all():
         .all()
     )
     app.logger.debug(pformat(lzmetadata))
-    # Serialize the data for the response
-    lzmetadata_schema = LZMetadataSchema(many=True)
-    data = lzmetadata_schema.dump(lzmetadata)
-    return data, 200
+
+    # Check id returned metadata list is empty
+    if lzmetadata:
+        # Serialize the data for the response
+        lzmetadata_schema = LZMetadataSchema(many=True)
+        for metadata_row in lzmetadata:
+            metadata_row.value = json.loads(metadata_row.value or "[]")
+        new_lzmetadata = lzmetadata_schema.dump(lzmetadata)
+        return new_lzmetadata, 200
+    else:
+        abort(404, f"Landing zone metadata not found")
 
 
 def read_one(group, name):
@@ -47,8 +55,10 @@ def read_one(group, name):
     if lzmetadata is not None:
         # Serialize the data for the response
         lzmetadata_schema = LZMetadataSchema()
-        data = lzmetadata_schema.dump(lzmetadata)
-        return data, 200
+        lzmetadata.value = json.loads(lzmetadata.value or "[]")
+        new_lzmetadata = lzmetadata_schema.dump(lzmetadata)
+        print(new_lzmetadata)
+        return new_lzmetadata, 200
     else:
         abort(404, f"Landing zone metadata for group {group}, name {name} not found")
 
@@ -67,6 +77,7 @@ def create(lzMetadataDetails):
     name = lzMetadataDetails["name"]
     # Always set active to True while creating
     lzMetadataDetails["active"] = True
+    lzMetadataDetails["value"] = json.dumps(lzMetadataDetails.get("value", []))
 
     app.logger.debug("lzmetadata:create")
     app.logger.debug(pformat(lzMetadataDetails))
@@ -91,10 +102,11 @@ def create(lzMetadataDetails):
         db.session.commit()
 
     # return the updated/created object in the response
-    data = schema.dump(lzmetadata)
+    lzmetadata.value = json.loads(lzmetadata.value or "[]")
+    new_lzmetadata = schema.dump(lzmetadata)
     app.logger.debug("lzmetadata")
-    app.logger.debug(pformat(data))
-    return data, 201
+    app.logger.debug(pformat(new_lzmetadata))
+    return new_lzmetadata, 201
 
 
 def delete(group, name):
