@@ -7,9 +7,13 @@ landig zone meta data
 from flask import make_response, abort
 from config import db, app
 from models import LZMetadata, LZMetadataSchema
+from extendedSchemas import ExtendedLZMetadataSchema
+from extendedSchemas import ExtendedLZMetadataFSApplicationSchema
 from pprint import pformat
 import json
 
+folder_structure_group = "folder_structure"
+folder_structure_name = "folder_structure"
 
 def read_all():
     """
@@ -22,7 +26,7 @@ def read_all():
     # Create the list of lzmetadata from our data
     lzmetadata = (
         LZMetadata.query.filter(LZMetadata.active == True)
-        .order_by(LZMetadata.group)
+        .order_by(LZMetadata.group, LZMetadata.name)
         .all()
     )
     app.logger.debug(pformat(lzmetadata))
@@ -30,11 +34,12 @@ def read_all():
     # Check id returned metadata list is empty
     if lzmetadata:
         # Serialize the data for the response
-        lzmetadata_schema = LZMetadataSchema(many=True)
         for metadata_row in lzmetadata:
-            metadata_row.value = json.loads(metadata_row.value or "[]")
-        new_lzmetadata = lzmetadata_schema.dump(lzmetadata)
-        return new_lzmetadata, 200
+            metadata_row.value = json.loads(metadata_row.value or '[]')
+
+        schema = ExtendedLZMetadataSchema(many=True)
+        data = schema.dump(lzmetadata)
+        return data, 200
     else:
         abort(404, f"Landing zone metadata not found")
 
@@ -54,12 +59,36 @@ def read_one(group, name):
 
     if lzmetadata is not None:
         # Serialize the data for the response
-        lzmetadata_schema = LZMetadataSchema()
+        schema = ExtendedLZMetadataSchema(many=False)
         lzmetadata.value = json.loads(lzmetadata.value or "[]")
-        new_lzmetadata = lzmetadata_schema.dump(lzmetadata)
-        return new_lzmetadata, 200
+        return schema.dump(lzmetadata), 200
     else:
         abort(404, f"Landing zone metadata for group {group}, name {name} not found")
+
+
+def read_one_group(group):
+    """
+    This function responds to a request for /api/lzmetadata_group/{group}
+    with one matching group
+
+    :param group:   group of landing zone metadata to find
+    :return:        landing zone metadata matching group and name
+    """
+
+    lzmetadata = LZMetadata.query.filter(
+            LZMetadata.group == group, LZMetadata.active == True
+    ).all()
+
+    if lzmetadata:
+        # Serialize the data for the response
+        for metadata_row in lzmetadata:
+            metadata_row.value = json.loads(metadata_row.value or '[]')
+
+        schema = ExtendedLZMetadataSchema(many=True)
+        data = schema.dump(lzmetadata)
+        return data, 200
+    else:
+        abort(404, f"Landing zone metadata for group {group} not found")
 
 
 def create(lzMetadataDetails):
@@ -101,11 +130,11 @@ def create(lzMetadataDetails):
         db.session.commit()
 
     # return the updated/created object in the response
-    lzmetadata.value = json.loads(lzmetadata.value or "[]")
-    new_lzmetadata = schema.dump(lzmetadata)
+    # TODO: Already serialized above?
+    #lzmetadata.value = json.loads(lzmetadata.value or "[]")
     app.logger.debug("lzmetadata")
-    app.logger.debug(pformat(new_lzmetadata))
-    return new_lzmetadata, 201
+    app.logger.debug(pformat(lzmetadata))
+    return schema.dump(lzmetadata), 201
 
 
 def delete(group, name):
@@ -139,3 +168,75 @@ def delete(group, name):
     # Otherwise, nope, landing zone metadata to delete not found
     else:
         abort(404, f"Landing zone metadata for group: {group} name: {name} not found")
+
+
+
+def read_folder_structure():
+    """
+    This function responds to a request for /api/lztablestructure
+    with one matching landing zone table structure
+
+    :return:              Landing Zone table structure metadata
+    """
+
+    lzmetadata = LZMetadata.query.filter(
+        LZMetadata.group == folder_structure_group, 
+        LZMetadata.name == folder_structure_name, 
+        LZMetadata.active == True
+    ).one_or_none()
+
+    if lzmetadata is not None:
+        # Serialize the data for the response
+        schema = ExtendedLZMetadataFSApplicationSchema(many=True)
+        lzmetadataFolderStructure = json.loads(f"[{lzmetadata.value}]")
+        return schema.dump(lzmetadataFolderStructure), 200
+    else:
+        abort(404, f"Landing zone folder_structure not found")
+
+
+def create_folder_structure(lzMetadataFolderStructureDetails):
+    """
+    This function updates an existing or creates a 
+    lzmetadata folder structure.
+
+    :param lzFolderStructureDetails:   lzmetadata to create or update
+    :return:       updated landing zone metadata folder structure metadata
+    """
+
+    app.logger.debug(pformat(lzMetadataFolderStructureDetails))
+
+    # Always set active to True while creating
+    lzMetadataDetails = {}
+    lzMetadataDetails["active"] = True
+    lzMetadataDetails["group"] = folder_structure_group
+    lzMetadataDetails["name"] = folder_structure_name
+    lzMetadataDetails["value"] = json.dumps(lzMetadataFolderStructureDetails)
+
+    app.logger.debug("lzmetadata:create")
+    app.logger.debug(pformat(lzMetadataFolderStructureDetails))
+
+    # Does the landing zone metadata exist already?
+    lzmetadata = LZMetadata.query.filter(
+        LZMetadata.group == folder_structure_group,
+        LZMetadata.name == folder_structure_name
+    ).one_or_none()
+
+    schema = ExtendedLZMetadataFSApplicationSchema(many=True)
+    # Does the landing zone meta data for the given group and name exist?
+    if lzmetadata is not None:
+        LZMetadata.query.filter(
+            LZMetadata.group == folder_structure_group,
+            LZMetadata.name == folder_structure_name
+        ).update(lzMetadataDetails)
+        db.session.commit()
+    else:
+        lzmetadata = schema.load(lzMetadataDetails, session=db.session)
+        db.session.add(lzmetadata)
+        db.session.commit()
+
+    # return the updated/created object in the response
+    # TODO: Already serialized above?
+    lzmetadata_value = json.loads(f"[{lzmetadata.value}]")
+    app.logger.debug("lzmetadata")
+    app.logger.debug(pformat(lzmetadata_value))
+    return schema.dump(lzmetadata_value), 201

@@ -176,3 +176,38 @@ class ExtendedLandingZoneWANSchema(Schema):
 class ExtendedActivatorCategorySchema(Schema):
     __envelope__ = {"single": "activatorCategory", "many": "activatorCategories"}
     category = fields.Str()
+
+
+class ExtendedLZMetadataSchema(Schema):
+    active = fields.Boolean()
+    group = fields.Str()
+    name = fields.Str()
+    description = fields.Str()
+    value = fields.List(fields.Str())
+
+
+class ExtendedLZMetadataFSSolutionSchema(Schema):
+    id = fields.Int() 
+    isEnabled = fields.Boolean()
+    name = fields.String()
+
+
+class ExtendedLZMetadataFSTeamSchema(Schema):
+    id = fields.Int() 
+    isEnabled = fields.Boolean()
+    name = fields.String()
+    children = fields.Nested(ExtendedLZMetadataFSSolutionSchema(many=True))
+
+
+class ExtendedLZMetadataFSBusinessUnitSchema(Schema):
+    id = fields.Int() 
+    isEnabled = fields.Boolean()
+    name = fields.String()
+    children = fields.Nested(ExtendedLZMetadataFSTeamSchema(many=True))
+
+
+class ExtendedLZMetadataFSApplicationSchema(Schema):
+    id = fields.Int() 
+    isEnabled = fields.Boolean()
+    name = fields.String()
+    children = fields.Nested(ExtendedLZMetadataFSBusinessUnitSchema(many=True))

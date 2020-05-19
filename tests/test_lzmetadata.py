@@ -53,7 +53,7 @@ def post():
         "description": "Landing Zone metadata for Test environment",
         "group": "test_group",
         "name": "test",
-        "value": "['UAT', 'Production']",
+        "value": ["UAT", "Production"],
     }
     # convert dict to json by json.dumps() for body data.
     resp = requests.post(
@@ -63,10 +63,11 @@ def post():
 
     # Validate response headers and body contents, e.g. status code.
     resp_json = resp.json()
+    print(resp_json)
 
     assert resp_json["group"] == "test_group"
     assert resp_json["name"] == "test"
-    assert resp_json["value"] == "['UAT', 'Production']"
+    assert resp_json["value"] == '["UAT", "Production"]'
 
     assert resp.status_code == 201
     assert resp.headers["content-type"] == "application/json"
@@ -97,7 +98,7 @@ def update():
         "description": "Landing Zone metadata for Test environment",
         "group": "test_group",
         "name": "test",
-        "value": "['UAT', 'Poc']",
+        "value": ["UAT", "Poc"],
     }
     # convert dict to json by json.dumps() for body data.
     resp = requests.post(
@@ -110,7 +111,7 @@ def update():
 
     assert resp_json["group"] == "test_group"
     assert resp_json["name"] == "test"
-    assert resp_json["value"] == "['UAT', 'Poc']"
+    assert resp_json["value"] == '["UAT", "Poc"]'
 
     assert resp.status_code == 201
     assert resp.headers["content-type"] == "application/json"
