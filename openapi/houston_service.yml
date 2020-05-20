@@ -1929,7 +1929,7 @@ paths:
         $ref: "#/components/requestBodies/lzMetadata.lzMetadataDetails"
       responses:
         "201":
-          description: Successfully created a landing zone meta ata
+          description: Successfully created a landing zone metadata
 
     get:
       operationId: lzmetadata.read_all
@@ -1997,7 +1997,59 @@ paths:
       responses:
         "200":
           description: Successfully deleted a landing zone metadata
+
+
+  "/lzmetadata_group/{group}":
+    get:
+      operationId: lzmetadata.read_one_group
+      tags:
+        - lzmetadata
+      summary: Read group of landing zone metadata from the list
+      description: Read group of landing zone metadata from the list
+      parameters:
+        - name: group
+          in: path
+          description: landing zone metadata group
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successfully read an landing zone metadata 
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LZMetaData"
+        
                 
+  "/lzmetadata_folder_structure/":
+    post:
+      operationId: lzmetadata.create_folder_structure
+      tags:
+        - lzmetadata
+      summary: Create or update landing zone folder structure metadata
+      description: Create or update landing zone folder structure metadata
+      requestBody:
+        $ref: "#/components/requestBodies/lzMetadata.lzMetadataFolderStructureDetails"
+      responses:
+        "201":
+          description: Successfully created a landing zone folder structure metadata
+
+    get:
+      operationId: lzmetadata.read_folder_structure
+      tags:
+        - lzmetadata
+      summary: Read the landing zone folder structure metadata
+      description: Read the landing zone folder structure metadata
+      responses:
+        "200":
+          description: Successfully read an landing zone metadata 
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LZMetaDataFolderStructure"
+
+
   /keyValues/bgproutingmode/:
     get:
       operationId: bgpRoutingMode.read_all
@@ -2367,6 +2419,15 @@ components:
               x-body-name: lzMetadataDetails
               $ref: "#/components/schemas/LZMetaData"
         description: landingzone  meta data to create
+        required: true
+
+    lzMetadata.lzMetadataFolderStructureDetails:
+        content:
+          application/json:
+            schema:
+              x-body-name: lzMetadataFolderStructureDetails
+              $ref: "#/components/schemas/LZMetaDataFolderStructure"
+        description: landingzone  folder structure meta data to create
         required: true
       
     bgpRoutingMode.bgpRoutingModeDetails:
@@ -3059,11 +3120,16 @@ components:
           type: string
           description: name/key of meta data
         value:
-          type: string
+          type: array
           description: meta data values
+          items:
+            type: string
         description:
           type: string
           description:  description
         active:
           type: boolean
           description: Is the metadaa active?
+
+    LZMetaDataFolderStructure:
+      type: object
