@@ -52,27 +52,16 @@ def read_one(solutionId):
 def create_solution_resources(resources_dict):
     app.logger.debug("resources_dict")
     app.logger.debug(pformat(resources_dict))
-    solutionId = resources_dict['solutionId']
-    resources_json = json.loads(resources_dict['json'])
-    if 'resources' in resources_json:
-        for resource in resources_json['resources']:
-            if 'instances' in resource:
-                for instance in resource['instances']:
-                    if 'attributes' in instance:
-                        attributes = instance['attributes']
-                        if 'project_id' in attributes:
-                            project_id = attributes['project_id']
-                            proj_parts = project_id.split('-')
-                            if len(proj_parts) > 1:
-                              env = proj_parts[1]
-                              key = "project_id_" + env
-                              value = project_id
-                              sr = {
-                                      'solutionId': solutionId,
-                                      'key': key,
-                                      'value': value 
-                                      }
-                              solutionresource.create(sr)
+    solutionId = resources_dict.get('solutionId')
+    resources = json.loads(resources_dict.get('json'))
+    value = resources.get('environment_projects').get('value')
+    for v in value:
+        sr = {}        
+        env = v.get('labels').get('environment')
+        sr['solutionId'] = solutionId
+        sr['value'] = v.get('project_id')
+        sr['key'] = f"project-id-{env}"
+        solutionresource.create(sr)
 
 
 def create(solutionResourceJSONDetails):

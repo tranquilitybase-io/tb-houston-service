@@ -211,7 +211,7 @@ def update(oid, solutionDetails):
 
     # otherwise, nope, deployment doesn't exist, so that's an error
     else:
-        abort(404, f"Solution not found")
+        abort(404, f"Solution not found {oid}")
 
 
 def delete(oid):
@@ -300,7 +300,7 @@ def deployment_create(solutionDeploymentDetails):
     """
 
     app.logger.debug(pformat(solutionDeploymentDetails))
-    oid = solutionDeploymentDetails['id'];
+    oid = solutionDeploymentDetails['id']
     sol = (Solution.query.filter(Solution.id == oid).one_or_none())
 
     if sol == None:
@@ -379,18 +379,20 @@ def deployment_update(oid, solutionDeploymentDetails):
 def send_solution_deployment_to_the_dac(solution_deployment):
     oid = solution_deployment.get('id')
     resp_json = None
+    # KTANG: Add debug
+    print(json.dumps(solution_deployment))
     try:
         response = requests.post(deployment_create_url, data=json.dumps(solution_deployment), headers=headers)
         resp_json = response.json()
         app.logger.debug("Response from Dac")
         app.logger.debug(pformat(resp_json))
-    except Exception:
+    except requests.exceptions.RequestException as e:
         app.logger.debug("send_solution_deployment_to_the_dac::Failed during request to DAC")
         resp_json_error = {
             "id": oid,
             "statusId": 500,
             "errorCode": "ERROR",
-            "statusMessage": "Failed communicating with the DAC"
+            "statusMessage": f"Failed communicating with the DAC, {e}."
         }
         return resp_json_error
 
@@ -411,22 +413,24 @@ def send_solution_deployment_to_the_dac(solution_deployment):
         app.logger.debug(pformat(deployment_json))
         deployment_update(oid, deployment_json)
         return deployment_json
-    except Exception:
+    except requests.exceptions.RequestException as e:
         app.logger.debug("send_solution_deployment_to_the_dac::Failed updating the database with the response from the DAC.")
         resp_json_error = {
             "id": oid,
             "statusId": 500,
             "statusCode": "ERROR",
-            "statusMessage": "Failed updating the database with the response from the DAC"
+            "statusMessage": f"Failed updating the database with the response from the DAC, {e}."
         }
         return resp_json_error
 
 
 def validate_json(some_json):
+    print(f"json: {some_json}")
     try:
         json.loads(some_json)
         return True
-    except ValueError:
+    except ValueError as e:
+        print(f"validate_json: {e}")
         return False
 
 
@@ -435,79 +439,75 @@ def get_solution_results_from_the_dac(oid, task_id):
     Get the solution deployment results from the DAC.
     params: task_id
     """
-    resp_json = None
+    payload_json = ""
+    status = ""
     try:
         response = requests.get(deployment_create_result_url+task_id, headers=headers)
+        app.logger.debug(f"response_json: {response.json()}")
         resp_json = response.json()
-        app.logger.debug("Response from Dac")
-        app.logger.debug(pformat(resp_json))
-        print(pformat(resp_json))
-    except Exception:
+        payload_json = resp_json['payload']
+        status = resp_json['status']
+        app.logger.debug(f"solution::get_solution_results_from_the_dac::resp_json: {pformat(resp_json)}")
+    except requests.exceptions.RequestException as e:
         app.logger.debug("get_solution_results_from_the_dac::Failed during request to DAC")
         resp_json_error = {
             "id": oid,
             "statusId": 30,
             "statusCode": "ERROR",
-            "statusMessage": "get_solution_results_from_the_dac::failed communicating with the DAC"
+            "statusMessage": f"get_solution_results_from_the_dac::failed communicating with the DAC, {e}."
         }
 
     # update SolutionDeployment with results
     deployed = False
-    if resp_json.get('status', 'ERROR') == DEPLOYMENT_STATE['SUCCESS']:
+    if status == DEPLOYMENT_STATE['SUCCESS']:
         deployed = True
     deployment_json = {
         "statusId": 200,
         "deployed": deployed,
-        "deploymentState": resp_json.get('status', 'ERROR'),
+        "deploymentState": status,
         "statusCode": "200",
         "statusMessage": "Solution deployment updated."
     }
     app.logger.debug(f"get_solution_results_from_the_dac::deployment_json: {pformat(deployment_json)}")
     try:
         deployment_update(oid, deployment_json)
-    except Exception:
+    except requests.exceptions.RequestException as e:
         app.logger.debug("get_solution_results_from_the_dac::Failed updating the SolutionDeployment with the response from the DAC.")
         resp_json_error = {
             "id": oid,
             "statusId": 500,
             "statusCode": "500",
-            "statusMessage": "get_solution_results_from_the_dac::Failed updating the SolutionDeployment with the response from the DAC."
+            "statusMessage": f"get_solution_results_from_the_dac::Failed updating the SolutionDeployment with the response from the DAC, {e}."
         }
         return resp_json_error
 
-    if resp_json.get('status', 'ERROR') != DEPLOYMENT_STATE['SUCCESS']:
+    if status != DEPLOYMENT_STATE['SUCCESS']:
         return deployment_json, 200
 
-    json = resp_json.get('tf_state', '')
-    is_valid_json = validate_json(json)
-    app.logger.debug(f"is_valid_json: {is_valid_json}")
-    print(f"is_valid_json: {is_valid_json}")
-
-    if is_valid_json and resp_json.get('status', '') == DEPLOYMENT_STATE['SUCCESS'] and len(json) > 0:
+    if resp_json.get('status', '') == DEPLOYMENT_STATE['SUCCESS'] and len(payload_json) > 0:
         tf_json = {
             "solutionId": oid,
-            "json": json
+            "json": payload_json
         }
         print("tf_json: " + pformat(tf_json))
         solutionresourcejson.create(tf_json)
         
     try:
         # Update Solution Resource JSON
-        app.logger.debug(f"is_valid_json: {is_valid_json}")
-        if is_valid_json and resp_json.get('status', '') == DEPLOYMENT_STATE['SUCCESS'] and len(json) > 0:
+        if resp_json.get('status', '') == DEPLOYMENT_STATE['SUCCESS'] and len(payload_json) > 0:
             tf_json = {
                 "solutionId": oid,
-                "json": json
+                "json": payload_json
             }
             print("tf_json: " + pformat(tf_json))
             solutionresourcejson.create(tf_json)
         return deployment_json
-    except Exception:
+    except requests.exceptions.RequestException as e:
         app.logger.debug("get_solution_results_from_the_dac::Failed updating the SolutionResourceJSON with the response from the DAC.")
         resp_json = {
             "id": oid,
             "statusId": 500,
             "errorCode": "ERROR",
-            "statusMessage": "get_solution_results_from_the_dac::Failed updating the SolutionResourceJSON with the response from the DAC."
+            "statusMessage": f"get_solution_results_from_the_dac::Failed updating the SolutionResourceJSON with the response from the DAC, {e}."
         }
         return resp_json

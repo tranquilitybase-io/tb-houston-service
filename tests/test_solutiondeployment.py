@@ -10,7 +10,7 @@ class TestSolutionDeployment(unittest.TestCase):
     url = f"http://{HOUSTON_SERVICE_URL}/api/solutiondeployment/"
 
     # Additional headers.
-    headers = {'Content-Type': 'application/json' }
+    headers = {'Content-Type': 'application/json'}
     oid = "1"
 
     def typestest_solution_deployment(self, resp):

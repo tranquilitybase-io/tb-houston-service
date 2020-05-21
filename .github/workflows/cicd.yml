@@ -84,9 +84,9 @@ jobs:
 
     - name: Test with pytest
       run: |
-        cd ${GITHUB_WORKSPACE}/tb-houston-service
+        cd ${GITHUB_WORKSPACE}/tb-houston-service/tests
         pip install pytest
-        HOUSTON_SERVICE_URL="localhost:3000" pytest --rootdir tests
+        HOUSTON_SERVICE_URL="localhost:3000" pytest
 
     - name: Stop Docker Compose
       shell: bash

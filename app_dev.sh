@@ -1,5 +1,14 @@
 #!/bin/bash
-LOGLEVEL=error
+# Log Level Numeric value
+# CRITICAL 50
+# ERROR 40
+# WARNING 30
+# INFO 20
+# DEBUG 10
+# NOTSET 0
+
+LOGLEVEL=10
+
 NUMBER_OF_WORKERS=5
 PORT=3000
 
