@@ -8,6 +8,7 @@ import unittest
 class TestSolutionDeployment(unittest.TestCase):
     HOUSTON_SERVICE_URL=os.environ['HOUSTON_SERVICE_URL']
     url = f"http://{HOUSTON_SERVICE_URL}/api/solutiondeployment/"
+    urls = f"http://{HOUSTON_SERVICE_URL}/api/solutiondeployments/"
 
     # Additional headers.
     headers = {'Content-Type': 'application/json'}
@@ -108,7 +109,6 @@ class TestSolutionDeployment(unittest.TestCase):
     def get_all(self):
         print("get_all Tests")
 
-        url = 'http://localhost:3000/api/solutiondeployments/'
-        resp = requests.get(url, headers=self.headers)
+        resp = requests.get(self.urls, headers=self.headers)
         #Validate Get All response
         self.assertEqual(resp.status_code, 200)
