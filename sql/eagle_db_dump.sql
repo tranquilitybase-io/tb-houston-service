@@ -2,7 +2,7 @@
 --
 -- Host: localhost    Database: eagle_db
 -- ------------------------------------------------------
--- Server version	5.7.28
+-- Server version	5.7.29
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -219,6 +219,34 @@ INSERT INTO `environment` VALUES ('Development','Development'),('Production','Pr
 UNLOCK TABLES;
 
 --
+-- Table structure for table `folder`
+--
+
+DROP TABLE IF EXISTS `folder`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `folder` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `parentFolderId` varchar(45) NOT NULL,
+  `folderId` varchar(45) DEFAULT NULL,
+  `folderName` varchar(80) NOT NULL,
+  `status` varchar(45) NOT NULL,
+  `taskId` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `folder`
+--
+
+LOCK TABLES `folder` WRITE;
+/*!40000 ALTER TABLE `folder` DISABLE KEYS */;
+/*!40000 ALTER TABLE `folder` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `landingzoneaction`
 --
 
@@ -234,7 +262,7 @@ CREATE TABLE `landingzoneaction` (
   `locked` tinyint(1) NOT NULL DEFAULT '0',
   `routerLink` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -259,7 +287,7 @@ CREATE TABLE `landingzoneprogressitem` (
   `label` varchar(255) DEFAULT NULL,
   `completed` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -310,7 +338,7 @@ CREATE TABLE `landingzonewan` (
   `vpn__subnetMode` varchar(45) DEFAULT NULL,
   `vpn__vpcName` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -393,7 +421,6 @@ CREATE TABLE `solution` (
   `environments` varchar(255) DEFAULT NULL,
   `active` tinyint(1) DEFAULT NULL,
   `favourite` tinyint(1) DEFAULT NULL,
-  `teams` varchar(255) DEFAULT NULL,
   `lastUpdated` datetime DEFAULT NULL,
   `deployed` tinyint(4) NOT NULL DEFAULT '0',
   `deploymentState` varchar(45) NOT NULL,
@@ -401,6 +428,8 @@ CREATE TABLE `solution` (
   `statusCode` varchar(45) DEFAULT NULL,
   `statusMessage` varchar(255) DEFAULT NULL,
   `taskId` varchar(100) DEFAULT NULL,
+  `teamId` int(11) DEFAULT NULL,
+  `deploymentFolderId` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -411,7 +440,7 @@ CREATE TABLE `solution` (
 
 LOCK TABLES `solution` WRITE;
 /*!40000 ALTER TABLE `solution` DISABLE KEYS */;
-INSERT INTO `solution` VALUES (1,'Risk Engine','Solution for internal users to be able to process settlement for FX transactions','Modern Apps','XXX-123-456-YYY','Jenkins','Spinnaker','GitHub','[\"Development\"]',1,1,'2','2020-05-12 08:24:21',0,'',NULL,NULL,NULL,NULL),(2,'Back Office Settlements','Solution for internal users to be able to process settlement for FX transactions','Modern Apps','XXX-111-444-YYY','Jenkins','Spinnaker','GitHub','[\"Production\"]',1,0,'2','2020-03-08 23:07:00',0,'',NULL,NULL,NULL,NULL),(3,'FX Engine','Solution for internal users to be able to process settlement for FX transactions','Modern Apps','XXX-554-325-YYY','Jenkins','Spinnaker','GitHub','[\"Development\"]',0,0,'2','2020-03-08 23:07:00',0,'',NULL,NULL,NULL,NULL),(11,'Portfolio Valuation','A portfolio valuation is done to determine and report alternative investments\' performance, which is often required for financial reporting and tax compliance, and also affects the investment manager\'s compensation.','Data','XXX-333-222-IUY','Bamboo','Screwdriver','Cloud native','[\"Production\"]',1,1,'0','2020-03-18 21:02:02',0,'',NULL,NULL,NULL,NULL),(12,'Corporate Treasury','The treasury department occupies a central role in the finances of the modern corporation. It takes responsible for the company\'s liquidity—ensures that a company has enough cash available at all times to meet the needs of its primary business operations.','Modern Apps','XXX-333-222-IUY','Team City','Team City','GitHub','[\"Production\"]',1,1,'0','2020-03-18 21:13:14',0,'',NULL,NULL,NULL,NULL),(13,'Internal Audit','Internal auditing is the independent and objective evaluation of an organisation\'s internal controls to effectively manage risk within its risk appetite. Internal audit should monitor that any weaknesses identified are also addressed.','Modern Apps','XXX-333-222-IUY','Travis','Screwdriver','Cloud native','[\"Development\"]',1,1,'0','2020-03-18 21:15:22',0,'',NULL,NULL,NULL,NULL),(14,'Realtime Margin','Use real-time margin monitoring to see your current margin requirements at a glance, and to understand the margin implications of any transaction before you transmit an order. The Account window shows your account details.','Data','ABC-123-ABC-123','Cloud native','Spinnaker','Cloud native','[\"Development\"]',1,1,'0','2020-03-18 21:19:58',0,'',NULL,NULL,NULL,NULL),(15,'Product Control','product control are a center of cost responsible for the daily PnL(Profit and Loss) and its explanation for a dedicated trading desk. The team is responsible to communicate this result within the bank and to the authority FED or ECB.','Data','dat-000-ser-322','Bamboo','Screwdriver','BitBucket','[\"Production\"]',1,1,'0','2020-03-18 21:25:10',0,'',NULL,NULL,NULL,NULL),(16,'General Ledger','A general ledger (GL) is a set of numbered accounts a business uses to keep track of its financial transactions and to prepare financial reports. Each account is a unique record summarizing each type of asset, liability, equity, revenue and expense.','Data','ldf-343-sds-232','Cloud native','Team City','Cloud native','[\"Development\", \"Production\"]',1,1,'0','2020-03-18 21:43:54',0,'',NULL,NULL,NULL,NULL),(17,'Corporate Finance','Corporate finance is the division of finance that deals with financing, capital structuring, and investment decisions. Corporate finance is primarily concerned with maximizing shareholder value throug','Modern Apps','ASD-456-FFH-234','Bamboo','Screwdriver','Cloud native','[\"Production\"]',1,1,'0','2020-03-19 23:41:59',0,'',NULL,NULL,NULL,NULL);
+INSERT INTO `solution` VALUES (1,'Risk Engine','Solution for internal users to be able to process settlement for FX transactions','Modern Apps','XXX-123-456-YYY','Jenkins','Spinnaker','GitHub','[\"Development\"]',1,1,'2020-05-12 08:24:21',0,'',NULL,NULL,NULL,NULL,1,NULL),(2,'Back Office Settlements','Solution for internal users to be able to process settlement for FX transactions','Modern Apps','XXX-111-444-YYY','Jenkins','Spinnaker','GitHub','[\"Production\"]',1,0,'2020-03-08 23:07:00',0,'',NULL,NULL,NULL,NULL,1,NULL),(3,'FX Engine','Solution for internal users to be able to process settlement for FX transactions','Modern Apps','XXX-554-325-YYY','Jenkins','Spinnaker','GitHub','[\"Development\"]',0,0,'2020-03-08 23:07:00',0,'',NULL,NULL,NULL,NULL,1,NULL),(11,'Portfolio Valuation','A portfolio valuation is done to determine and report alternative investments\' performance, which is often required for financial reporting and tax compliance, and also affects the investment manager\'s compensation.','Data','XXX-333-222-IUY','Bamboo','Screwdriver','Cloud native','[\"Production\"]',1,1,'2020-03-18 21:02:02',0,'',NULL,NULL,NULL,NULL,1,NULL),(12,'Corporate Treasury','The treasury department occupies a central role in the finances of the modern corporation. It takes responsible for the company\'s liquidity—ensures that a company has enough cash available at all times to meet the needs of its primary business operations.','Modern Apps','XXX-333-222-IUY','Team City','Team City','GitHub','[\"Production\"]',1,1,'2020-03-18 21:13:14',0,'',NULL,NULL,NULL,NULL,1,NULL),(13,'Internal Audit','Internal auditing is the independent and objective evaluation of an organisation\'s internal controls to effectively manage risk within its risk appetite. Internal audit should monitor that any weaknesses identified are also addressed.','Modern Apps','XXX-333-222-IUY','Travis','Screwdriver','Cloud native','[\"Development\"]',1,1,'2020-03-18 21:15:22',0,'',NULL,NULL,NULL,NULL,1,NULL),(14,'Realtime Margin','Use real-time margin monitoring to see your current margin requirements at a glance, and to understand the margin implications of any transaction before you transmit an order. The Account window shows your account details.','Data','ABC-123-ABC-123','Cloud native','Spinnaker','Cloud native','[\"Development\"]',1,1,'2020-03-18 21:19:58',0,'',NULL,NULL,NULL,NULL,1,NULL),(15,'Product Control','product control are a center of cost responsible for the daily PnL(Profit and Loss) and its explanation for a dedicated trading desk. The team is responsible to communicate this result within the bank and to the authority FED or ECB.','Data','dat-000-ser-322','Bamboo','Screwdriver','BitBucket','[\"Production\"]',1,1,'2020-03-18 21:25:10',0,'',NULL,NULL,NULL,NULL,1,NULL),(16,'General Ledger','A general ledger (GL) is a set of numbered accounts a business uses to keep track of its financial transactions and to prepare financial reports. Each account is a unique record summarizing each type of asset, liability, equity, revenue and expense.','Data','ldf-343-sds-232','Cloud native','Team City','Cloud native','[\"Development\", \"Production\"]',1,1,'2020-03-18 21:43:54',0,'',NULL,NULL,NULL,NULL,1,NULL),(17,'Corporate Finance','Corporate finance is the division of finance that deals with financing, capital structuring, and investment decisions. Corporate finance is primarily concerned with maximizing shareholder value throug','Modern Apps','ASD-456-FFH-234','Bamboo','Screwdriver','Cloud native','[\"Production\"]',1,1,'2020-03-19 23:41:59',0,'',NULL,NULL,NULL,NULL,1,NULL);
 /*!40000 ALTER TABLE `solution` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -537,7 +566,7 @@ CREATE TABLE `team` (
 
 LOCK TABLES `team` WRITE;
 /*!40000 ALTER TABLE `team` DISABLE KEYS */;
-INSERT INTO `team` VALUES (2,'Developers','All Developers',1,1);
+INSERT INTO `team` VALUES (1,'Developers','All Developers',1,1),(2,'Admins','All Admins',1,1);
 /*!40000 ALTER TABLE `team` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -555,7 +584,7 @@ CREATE TABLE `teammember` (
   `role` varchar(100) NOT NULL,
   `isActive` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -564,7 +593,7 @@ CREATE TABLE `teammember` (
 
 LOCK TABLES `teammember` WRITE;
 /*!40000 ALTER TABLE `teammember` DISABLE KEYS */;
-INSERT INTO `teammember` VALUES (0,0,0,'Admin',1);
+INSERT INTO `teammember` VALUES (0,1,1,'Developer',1),(1,2,2,'Admin',1);
 /*!40000 ALTER TABLE `teammember` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -582,6 +611,7 @@ CREATE TABLE `user` (
   `lastName` varchar(100) NOT NULL,
   `isAdmin` tinyint(1) NOT NULL DEFAULT '0',
   `isActive` tinyint(1) NOT NULL DEFAULT '0',
+  `showWelcome` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -592,7 +622,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,'dev@your.company','Jon','Snow',0,1),(2,'admin@your.company','Adam','Smith',1,1);
+INSERT INTO `user` VALUES (1,'dev@your.company','Jon','Snow',0,1,1),(2,'admin@your.company','Adam','Smith',1,1,1);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -630,4 +660,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-05-19 23:05:44
+-- Dump completed on 2020-06-01 16:29:35

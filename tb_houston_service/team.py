@@ -7,7 +7,7 @@ team collection
 # 3rd party modules
 from flask import make_response, abort
 from config import db, app
-from models import Team, TeamSchema
+from tb_houston_service.models import Team, TeamSchema
 from pprint import pformat
 
 
@@ -20,11 +20,15 @@ def read_all():
     """
 
     # Create the list of teams from our data
-    team = Team.query.order_by(Team.id).all()
-    app.logger.debug(pformat(team))
+    teams = (
+        db.session.query(Team)
+        .order_by(Team.id)
+        .all()
+    )
+    app.logger.debug(pformat(teams))
     # Serialize the data for the response
     team_schema = TeamSchema(many=True)
-    data = team_schema.dump(team)
+    data = team_schema.dump(teams)
     return data
 
 
@@ -37,8 +41,11 @@ def read_one(id):
     :return:              team matching key
     """
 
-    team = (Team.query.filter(Team.id == id).one_or_none())
-
+    team = (
+        db.session.query(Team)
+        .filter(Team.id == id)
+        .one_or_none()
+    )
 
     if team is not None:
         # Serialize the data for the response
@@ -58,7 +65,11 @@ def read_keyvalues():
     """
 
     # Create the list of teams from our data
-    team = Team.query.order_by(Team.id).all()
+    team = ( 
+        db.session.query(Team)
+        .order_by(Team.id)
+        .all()
+    )
     app.logger.debug(pformat(team))
     # Serialize the data for the response
     team_schema = TeamSchema(many=True)
@@ -87,12 +98,15 @@ def create(teamDetails):
         del teamDetails['id']
     # Does the team exist already?
     existing_team = (
-        Team.query.filter(Team.name == teamDetails['name']).one_or_none()
+        db.session.query(Team)
+            .filter(Team.name == teamDetails['name'])
+            .one_or_none()
     )
 
     if existing_team is None:
-        schema = TeamSchema()
+        schema = TeamSchema(many=False)
         new_team = schema.load(teamDetails, session=db.session)
+        app.logger.debug(f"new_team: {new_team} type: {type(new_team)}")
         db.session.add(new_team)
         db.session.commit()
 
@@ -122,9 +136,11 @@ def update(id, teamDetails):
            abort(400, f"Id mismatch in path and body")
 
     # Does the team exist in team list?
-    existing_team = Team.query.filter(
-            Team.id == id
-    ).one_or_none()
+    existing_team = (
+        db.session.query(Team)
+            .filter(Team.id == id)
+            .one_or_none()
+    )
 
     # Does team exist?
 
@@ -153,7 +169,11 @@ def delete(id):
     :return:    200 on successful delete, 404 if not found.
     """
     # Does the team to delete exist?
-    existing_team = Team.query.filter(Team.id == id).one_or_none()
+    existing_team = (
+        db.session.query(Team)
+            .filter(Team.id == id)
+            .one_or_none()
+    )
 
     # if found?
     if existing_team is not None:
@@ -165,5 +185,3 @@ def delete(id):
     # Otherwise, nope, team to delete not found
     else:
         abort(404, f"Team {id} not found")
-
-

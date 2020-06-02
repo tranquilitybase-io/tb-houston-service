@@ -7,7 +7,7 @@ team collection
 # 3rd party modules
 from flask import make_response, abort
 from config import db, app
-from models import TeamMember, TeamMemberSchema
+from tb_houston_service.models import TeamMember, TeamMemberSchema
 from pprint import pformat
 from sqlalchemy import literal_column
 
@@ -25,7 +25,10 @@ def read_all(userId=None, teamId=None, active=None,
     # pre-process sort instructions
     
     if (sort==None):
-        teammember_query = TeamMember.query.order_by(TeamMember.id)
+        teammember_query = (
+            db.session.query(TeamMember)
+            .order_by(TeamMember.id)
+        )
     
     else:
         try:
@@ -39,10 +42,17 @@ def read_all(userId=None, teamId=None, active=None,
                     si2 = "asc"
                 orderby_arr.append(f"{si1} {si2}")
             #print("orderby: {}".format(orderby_arr))
-            teammember_query = TeamMember.query.order_by(literal_column(", ".join(orderby_arr)))
+            teammember_query = (
+                db.session
+                    .query(TeamMember)
+                    .order_by(literal_column(", ".join(orderby_arr)))
+            )
         except Exception as e:
             print(e)
-            teammember_query = TeamMember.query.order_by(TeamMember.id)
+            teammember_query = (
+                db.session.query(TeamMember)
+                    .order_by(TeamMember.id)
+            )
 
     teammember_query = teammember_query.filter(
       (userId == None or TeamMember.userId == userId),
@@ -72,7 +82,7 @@ def read_one(id):
     :return:              team matching key.
     """
 
-    teammember = (TeamMember.query.filter(TeamMember.id == id).one_or_none())
+    teammember = (db.session.query(TeamMember).filter(TeamMember.id == id).one_or_none())
 
 
     if teammember is not None:
@@ -100,7 +110,10 @@ def create(teamMemberDetails):
 
     # Does the team member exist already?
     existing_team_member = (
-        TeamMember.query.filter(TeamMember.userId == teamMemberDetails['userId']).filter(TeamMember.teamId == teamMemberDetails['teamId']).one_or_none()
+        db.session.query(TeamMember)
+            .filter(TeamMember.userId == teamMemberDetails['userId'])
+            .filter(TeamMember.teamId == teamMemberDetails['teamId'])
+            .one_or_none()
     )
 
     if existing_team_member is None:
@@ -135,9 +148,12 @@ def update(id, teamMemberDetails):
            abort(400, f"Id mismatch in path and body")
 
     # Does the teammembr exist in teammembers list?
-    existing_team_member = TeamMember.query.filter(
-            TeamMember.id == id
-    ).one_or_none()
+    existing_team_member = (
+        db.session
+            .query(TeamMember)
+            .filter(TeamMember.id == id)
+            .one_or_none()
+    )
 
     # Does team exist?
 
@@ -166,7 +182,7 @@ def delete(id):
     :return:    200 on successful delete, 404 if not found.
     """
     # Does the team member to delete exist?
-    existing_team_member = TeamMember.query.filter(TeamMember.id == id).one_or_none()
+    existing_team_member = db.session.query(TeamMember).filter(TeamMember.id == id).one_or_none()
 
     # if found?
     if existing_team_member is not None:

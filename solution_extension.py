@@ -1,7 +1,9 @@
+import json
+from config import db
 from models import ModelTools
 from models import Application
+from tb_houston_service.models import Team
 import application_extension
-import json
 
 
 def build_solution(sol):
@@ -17,8 +19,9 @@ def build_solution(sol):
     'environments': json.loads(sol.environments or '[]'),
     'active': sol.active,
     'favourite': sol.favourite,
-    'teams': sol.teams,
-    'lastUpdated': ModelTools.datetime_as_string(sol.lastUpdated)
+    'teamId': sol.teamId,
+    'lastUpdated': ModelTools.datetime_as_string(sol.lastUpdated),
+    'deploymentFolderId': sol.deploymentFolderId
   }
 
   apps = Application.query.filter(Application.solutionId == sol.id).all()
@@ -29,4 +32,13 @@ def build_solution(sol):
       app_arr.append(app_dict)
 
   sol_dict['applications'] = app_arr
+
+  team = (
+    db.session
+      .query(Team)
+      .filter(Team.id == sol.teamId)
+      .one_or_none()
+  )
+  sol_dict['team'] = team
+
   return sol_dict

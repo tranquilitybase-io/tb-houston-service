@@ -96,7 +96,7 @@ def update(id, userDetails):
 
     app.logger.debug(pformat(userDetails))
 
-    if userDetails["id"] != str(id):
+    if userDetails.get("id") and userDetails.get("id") != id:
            abort(400, f"Id mismatch in path and body")
 
     # Does the user exist in user list?
@@ -109,8 +109,6 @@ def update(id, userDetails):
     if existing_user is not None:
         schema = UserSchema()
         update_user = schema.load(userDetails, session=db.session)
-        update_user.id = userDetails['id']
-
         db.session.merge(update_user)
         db.session.commit()
 
@@ -135,7 +133,8 @@ def delete(id):
 
     # if found?
     if existing_user is not None:
-        db.session.delete(existing_user)
+        existing_user.isActive = False
+        db.session.merge(existing_user)
         db.session.commit()
 
         return make_response(f"User {id} successfully deleted", 200)

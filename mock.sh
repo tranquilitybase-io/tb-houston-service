@@ -8,7 +8,7 @@ if [ "$1" == "build" ]; then
   docker push gcr.io/eagle-console-resources/tb-houston-mysql57:mock
 
   cd "${ROOTDIR}"
-  docker build -t gcr.io/eagle-console-resources/tb-houston-service:mock .
+  docker build -f Dockerfile -t gcr.io/eagle-console-resources/tb-houston-service:mock .
   docker push gcr.io/eagle-console-resources/tb-houston-service:mock
   exit 0
 fi
@@ -25,6 +25,11 @@ fi
 
 if [ "$1" == "kill" ]; then
   docker-compose -f docker_compose_mock.yml kill
+  exit 0
+fi
+
+if [ "$1" == "prune" ]; then
+  docker image prune -f
   exit 0
 fi
 
@@ -79,4 +84,4 @@ if [ "$1" == "deploy" ]; then
 fi
 
 echo "Invalid or no arguement found!"
-echo "Usage: $0 build | run | deploy | pull | down | ps | kill"
+echo "Usage: $0 build | run | deploy | prune | pull | down | ps | kill"

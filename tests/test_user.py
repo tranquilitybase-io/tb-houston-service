@@ -3,7 +3,7 @@ import json
 import logging
 import os
 from pprint import pprint
-import pytest_lib 
+from tests import pytest_lib 
 
 
 
@@ -23,6 +23,7 @@ def typestest(resp):
     assert isinstance(resp['lastName'], str)
     assert isinstance(resp['isAdmin'], bool)
     assert isinstance(resp['isActive'], bool)
+    assert isinstance(resp['showWelcome'], bool)
     pprint(resp)
 
 
@@ -33,9 +34,9 @@ def test_user():
     #Testing PUT request
     put(id)
     #Testing DELETE request
-    pytest_lib.delete(url, id)
+    pytest_lib.delete_isActive(url, str(id))
     #Testing DELETE Request Error
-    pytest_lib.delete_error(url, id)
+    pytest_lib.delete_error(url, str(-1))
     #Testing GETALL request
     pytest_lib.get_all(plural_url)
 
@@ -46,12 +47,13 @@ def post():
     #Test POST Then GET
     # Body
     payload = { 
-    "id": "0",
+    "id": 0,
     "firstName": "test",
     "lastName": "test",
     "email": "test@test.com",
     "isActive": True,
-    "isAdmin": True
+    "isAdmin": True,
+    "showWelcome": True
     }
 
     # convert dict to json by json.dumps() for body data.
@@ -60,10 +62,10 @@ def post():
     # Validate response headers and body contents, e.g. status code.
     resp_json = resp.json()
     assert resp.status_code == 201
-    id = str(resp_json['id'])
+    id = resp_json['id']
     
     #Get Request to check Post has created item as expected
-    resp = requests.get(url+ id, headers=headers) 
+    resp = requests.get(url+ str(id), headers=headers) 
     resp_json = resp.json()
     resp_headers = resp.headers
     #Validate response
@@ -87,16 +89,17 @@ def put(id):
     "lastName": "test",
     "email": "test@test.com",
     "isActive": False,
-    "isAdmin": True
+    "isAdmin": True,
+    "showWelcome": True
     }
 
-    resp = requests.put(url+id, headers=headers, data=json.dumps(newpayload,indent=4))
+    resp = requests.put(url+str(id), headers=headers, data=json.dumps(newpayload,indent=4))
    
     #Validate update/Put response
     assert resp.status_code == 200
 
     #Get Request to get updated values
-    resp = requests.get(url+id, headers=headers) 
+    resp = requests.get(url + str(id), headers=headers) 
     resp_json = resp.json()
     id = resp_json['id']
 
@@ -106,6 +109,3 @@ def put(id):
     assert resp_json['isActive'] == False
 
     typestest(resp_json)
-
-
-

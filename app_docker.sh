@@ -19,3 +19,4 @@ echo "Using DB server IP: ${DB_SERVER_IP}"
 echo "SH SQLALCHEMY_DATABASE_URI: ${SQLALCHEMY_DATABASE_URI}"
 
 SQLALCHEMY_DATABASE_URI="${SQLALCHEMY_DATABASE_URI}" DEBUG="${LOGLEVEL}" gunicorn --workers="${NUMBER_OF_WORKERS}" --bind="0.0.0.0:${PORT}" --access-logformat '%(h)s %(l)s %(u)s %(t)s "%(r)s" %(s)s %(b)s "%(f)s" "%(a)s"' app:connex_app
+

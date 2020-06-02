@@ -7,6 +7,7 @@ from pprint import pprint
 
 HOUSTON_SERVICE_URL=os.environ['HOUSTON_SERVICE_URL']
 url = f"http://{HOUSTON_SERVICE_URL}/api/solutionresourcejson/"
+urls = f"http://{HOUSTON_SERVICE_URL}/api/solutionresourcejsons/"
     
 # Additional headers.
 headers = {'Content-Type': 'application/json' }
@@ -187,7 +188,6 @@ def delete(solutionId):
 def get_all():
     print("get_all Tests")
 
-    url = 'http://localhost:3000/api/solutionresourcejsons/'
-    resp = requests.get(url, headers=headers)
+    resp = requests.get(urls, headers=headers)
     #Validate Get All response
     assert resp.status_code == 200

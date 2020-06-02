@@ -24,7 +24,7 @@ def typestest(resp):
     assert isinstance(resp['lastUpdated'], str)
     assert isinstance(resp['name'], str)
     assert isinstance(resp['sourceControl'], str)
-    assert isinstance(resp['teams'], int)
+    assert isinstance(resp['teamId'], int)
     pprint(resp)
 
 
@@ -60,7 +60,7 @@ def post():
       "lastUpdated": "test",
       "name": "test",
       "sourceControl": "test",
-      "teams": 0
+      "teamId": 1
     }
 
     # convert dict to json by json.dumps() for body data.
@@ -102,8 +102,7 @@ def put(id):
       "favourite": true,
       "lastUpdated": "test put",
       "name": "test put",
-      "sourceControl": "test put",
-      "teams": 10
+      "sourceControl": "test put"
     }
 
     resp = requests.put(url+id, headers=headers, data=json.dumps(newpayload,indent=4))

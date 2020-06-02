@@ -221,7 +221,7 @@ paths:
 
   /teams/:
     get:
-      operationId: team.read_all
+      operationId: tb_houston_service.team.read_all
       tags:
         - team
       summary: Read the entire list of teams
@@ -237,7 +237,7 @@ paths:
                   $ref: "#/components/schemas/Team"
   /team/:
     post:
-      operationId: team.create
+      operationId: tb_houston_service.team.create
       tags:
         - team
       summary: Create a team and add it to the team list
@@ -250,7 +250,7 @@ paths:
 
   "/team/{id}":
     get:
-      operationId: team.read_one
+      operationId: tb_houston_service.team.read_one
       tags:
         - team
       summary: Read one team from the list
@@ -270,7 +270,7 @@ paths:
                     schema:
                       $ref: "#/components/schemas/Team"
     put:
-      operationId: team.update
+      operationId: tb_houston_service.team.update
       tags:
         - team
       summary: Update a team in the list
@@ -289,7 +289,7 @@ paths:
           description: Successfully updated a team
 
     delete:
-      operationId: team.delete
+      operationId: tb_houston_service.team.delete
       tags:
         - team
       summary: Delete a team from the list
@@ -306,7 +306,7 @@ paths:
 
   /keyValues/team/:
     get:
-      operationId: team.read_keyvalues
+      operationId: tb_houston_service.team.read_keyvalues
       tags:
         - team
       summary: Read the entire list of teams and return them as key value pairs
@@ -314,6 +314,36 @@ paths:
       responses:
         "200":
           description: Successfully read team list operation and returns key value pairs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties:
+                    key:
+                      type: string
+                      description: key
+                    value:
+                      type: string
+                      description: value
+
+  /keyValues/teamsByUserId/{userId}:
+    get:
+      operationId: tb_houston_service.teamsByUserId.read_all
+      tags:
+        - team
+      summary: Read list of teams the user is a member of 
+      description: Read list of teams the user is a member of.
+      parameters:
+        - name: userId
+          in: path
+          description: the user's id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successfully read team list for user operation and returns key value pairs
           content:
             application/json:
               schema:
@@ -415,7 +445,7 @@ paths:
 
   /teammembers/:
     get:
-      operationId: teammember.read_all
+      operationId: tb_houston_service.teammember.read_all
       tags:
         - teammember
       summary: Read the entire list of team members
@@ -460,7 +490,7 @@ paths:
 
   /teammember/:
     post:
-      operationId: teammember.create
+      operationId: tb_houston_service.teammember.create
       tags:
         - teammember
       summary: Create a team memeber and add it to the team list
@@ -473,7 +503,7 @@ paths:
 
   "/teammember/{id}":
     get:
-      operationId: teammember.read_one
+      operationId: tb_houston_service.teammember.read_one
       tags:
         - teammember
       summary: Read one team member from the list
@@ -493,7 +523,7 @@ paths:
                     schema:
                       $ref: "#/components/schemas/TeamMember"
     put:
-      operationId: teammember.update
+      operationId: tb_houston_service.teammember.update
       tags:
         - teammember
       summary: Update a team member in the list
@@ -512,7 +542,7 @@ paths:
           description: Successfully updated a team member
 
     delete:
-      operationId: teammember.delete
+      operationId: tb_houston_service.teammember.delete
       tags:
         - teammember
       summary: Delete a teammember from the list
@@ -1211,7 +1241,7 @@ paths:
 
   /solutiondeployments/:
     get:
-      operationId: solution.deployment_read_all
+      operationId: solution_deployment.deployment_read_all
       tags:
         - solution
       summary: Read the entire list of deployed solutions
@@ -1228,7 +1258,7 @@ paths:
 
   /solutiondeployment/:
     post:
-      operationId: solution.deployment_create
+      operationId: solution_deployment.deployment_create
       tags:
         - solution
       summary: receive solution id from the Eagle Console and then post the complete Solution to the DaC
@@ -1241,7 +1271,7 @@ paths:
 
   "/solutiondeployment/{oid}":
     get:
-      operationId: solution.deployment_read_one
+      operationId: solution_deployment.deployment_read_one
       tags:
         - solution
       summary: Read a solution deployment from the list 
@@ -1264,7 +1294,7 @@ paths:
                   $ref: "#/components/schemas/SolutionDeployment"
 
     put:
-      operationId: solution.deployment_update
+      operationId: solution_deployment.deployment_update
       tags:
         - solution
       summary: Update a solution deployment in the list with the deployed state
@@ -2310,6 +2340,96 @@ paths:
         "200":
           description: Successfully deleted a vpnOnPremiseVendor
 
+
+  /folders/:
+    get:
+      operationId: folder.read_all
+      tags:
+        - folder
+      summary: Read the entire list of folders
+      description: Read the list of folders
+      responses:
+        "200":
+          description: Successfully read folder list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Folder"
+
+  /folder/:
+    post:
+      operationId: folder.create
+      tags:
+        - folder
+      summary: Create a folder and add it to the folder list
+      description: Create a new folder in the folder list
+      requestBody:
+        $ref: "#/components/requestBodies/folder.folderDetails"
+        description: folder to create
+        required: true
+      responses:
+        "201":
+          description: Successfully created a Folder
+
+  "/folder/{oid}":
+    get:
+      operationId: folder.read_one
+      tags:
+        - folder
+      summary: Read one folder rom the list
+      description: Read one folder from the list
+      parameters:
+        - name: oid
+          in: path
+          description: id of the folder to get from the list
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successfully read a folder from the list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Folder"
+
+    put:
+      operationId: folder.update
+      tags:
+        - folder
+      summary: Update a folder in the list
+      description: Update a folder in the list
+      parameters:
+        - name: oid
+          in: path
+          description: id of the folder to update
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        $ref: "#/components/requestBodies/folder.folderDetails"
+      responses:
+        "200":
+          description: Successfully updated a folder
+
+    delete:
+      operationId: folder.delete
+      tags:
+        - folder
+      summary: Delete a folder from the list
+      description: Delete a folder
+      parameters:
+        - name: oid
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successfully deleted a folder
+
 servers:
   - url: /api
 
@@ -2507,7 +2627,7 @@ components:
         application/json:
           schema:
             x-body-name: login_details
-            $ref: "#/components/schemas/User"
+            $ref: "#/components/schemas/Login"
       description: login details
       required: true
       
@@ -2558,6 +2678,7 @@ components:
                 description: The error message
               taskId:
                 type: string
+                nullable: true
                 description: The task Id
 
       description: the solution id to deploy
@@ -2597,6 +2718,16 @@ components:
                 description: The JSON
       description: the solution resource JSON to create
       required: true
+
+    folder.folderDetails:
+      content:
+        application/json:
+          schema:
+            x-body-name: folderDetails
+            $ref: "#/components/schemas/Folder"
+      description: the folder to create
+      required: true
+
 
   schemas:
     Activator:
@@ -3029,9 +3160,9 @@ components:
         favourite:
           type: boolean
           description: favourite
-        teams:
+        teamId:
           type: integer
-          description: teams
+          description: teamId
         lastUpdated:
           type: string
           description: "UTC/CUT last updated datetime stamp see: https://github.com/tranquilitybase-io/tb-houston-service/wiki/UTC-Timestamp"
@@ -3059,6 +3190,7 @@ components:
           description: status message
         taskId:
           type: string
+          nullable: true
           description: task id
 
 
@@ -3095,7 +3227,7 @@ components:
       type: object
       properties:
         id:
-          type: string
+          type: integer
           description: id
         email:
           type: string
@@ -3109,7 +3241,20 @@ components:
         isAdmin:
           type: boolean
           description: Is the user an administrator?
-          
+        showWelcome:
+          type: boolean
+          description: Show the welcome screen?
+
+    Login:
+          type: object
+          properties:
+            username:
+              type: string
+              description: The email address
+            password:
+              type: string
+              description: Password
+
     LZMetaData:
       type: object
       properties:
@@ -3131,5 +3276,31 @@ components:
           type: boolean
           description: Is the metadaa active?
 
+    Folder:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: id
+        parentFolderId: 
+          type: string
+          description: parentFolderId
+        folderId: 
+          type: string
+          nullable: true
+          description: folderId
+        folderName:
+          type: string
+          description: folderName
+        status:
+          type: string
+          description: status
+        taskId:
+          type: string
+          nullable: true
+          description: taskId
+
     LZMetaDataFolderStructure:
       type: object
+
+

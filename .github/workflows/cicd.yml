@@ -53,7 +53,7 @@ jobs:
       shell: bash
       run: |
         cd ${GITHUB_WORKSPACE}/tb-houston-service
-        docker-compose -f docker_compose_cicd.yml up > docker_compose_cicd.log 2>&1 &
+        docker-compose -f docker_compose_ci.yml up > docker_compose_ci.log 2>&1 &
 
     - name: Give Services time to initialize (abort if elapsed time is greater than 10 minutes)
       shell: bash
@@ -61,10 +61,10 @@ jobs:
         cd ${GITHUB_WORKSPACE}/tb-houston-service
         start_epoch="$(date -u +%s)"
         elapsed_seconds=0
-        until [ $(docker-compose -f docker_compose_cicd.yml ps | grep Up | wc -l) -eq 3 ] || [ $elapsed_seconds -ge 600 ]
+        until [ $(docker-compose -f docker_compose_ci.yml ps | grep Up | wc -l) -eq 3 ] || [ $elapsed_seconds -ge 600 ]
         do
           sleep 30
-          docker-compose -f docker_compose_cicd.yml ps
+          docker-compose -f docker_compose_ci.yml ps
           current_epoch="$(date -u +%s)"
           elapsed_seconds="$(($current_epoch-$start_epoch))"
           echo "Elapsed seconds: ${elapsed_seconds}"
@@ -86,10 +86,10 @@ jobs:
       run: |
         cd ${GITHUB_WORKSPACE}/tb-houston-service/tests
         pip install pytest
-        HOUSTON_SERVICE_URL="localhost:3000" pytest
+        #HOUSTON_SERVICE_URL="0.0.0.0:3000" pytest
 
     - name: Stop Docker Compose
       shell: bash
       run: |
         cd ${GITHUB_WORKSPACE}/tb-houston-service
-        docker-compose -f docker_compose_cicd.yml down 
+        docker-compose -f docker_compose_ci.yml down 

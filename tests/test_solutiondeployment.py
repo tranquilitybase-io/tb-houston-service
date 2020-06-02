@@ -3,6 +3,7 @@ import os
 from pprint import pformat
 from pprint import pprint
 import unittest
+from DeploymentStatus import DeploymentStatus
 
 
 class TestSolutionDeployment(unittest.TestCase):
@@ -21,7 +22,7 @@ class TestSolutionDeployment(unittest.TestCase):
         self.assertTrue(isinstance(resp['statusCode'], str))
         self.assertTrue(isinstance(resp['statusMessage'], str))
         self.assertTrue(isinstance(resp['statusId'], int))
-        self.assertTrue(isinstance(resp['taskId'], str))
+        self.assertTrue(isinstance(resp['taskId'], str) or resp['taskId'] is None)
         pprint(resp)
 
     def test_solutiondeployment(self):
@@ -30,8 +31,8 @@ class TestSolutionDeployment(unittest.TestCase):
         print(f"taskid: {taskid}")
         #Testing PUT request
         self.put(self.oid)
-        #Testing GETALL request
-        self.get_all()
+        #Testing get deployment results
+        self.get_deployment_results()
     
     def post(self):
         print("Post Tests")
@@ -72,12 +73,13 @@ class TestSolutionDeployment(unittest.TestCase):
             "statusCode": "200",
             "statusId": 1,
             "statusMessage": "Deployment test.",
-            "taskId": "2"
+            "taskId": null
         }}
         """
 
         resp = requests.put(self.url + self.oid, headers=self.headers, data=newpayload.format(int(self.oid)))
         resp_json = resp.json()
+        print(f"put resp_json: {resp_json}")
         self.typestest_solution_deployment(resp_json)
         self.assertEqual(resp_json['id'], int(oid))
         self.assertEqual(resp_json['deployed'], True)
@@ -85,7 +87,7 @@ class TestSolutionDeployment(unittest.TestCase):
         self.assertEqual(resp_json['statusCode'], "200")
         self.assertEqual(resp_json['statusId'], 1)
         self.assertEqual(resp_json['statusMessage'],"Deployment test.")
-        self.assertEqual(resp_json['taskId'], "2")
+        self.assertEqual(resp_json['taskId'], None)
 
         #Validate update/Put response
         self.assertEqual(resp.status_code, 200)
@@ -102,13 +104,20 @@ class TestSolutionDeployment(unittest.TestCase):
         self.assertEqual(resp_json['statusCode'], '200')
         self.assertEqual(resp_json['statusId'], 1)
         self.assertEqual(resp_json['statusMessage'], 'Deployment test.')
-        self.assertEqual(resp_json['taskId'], "2")
+        self.assertEqual(resp_json['taskId'], None)
         self.typestest_solution_deployment(resp_json)
 
 
-    def get_all(self):
+    def get_deployment_results(self):
         print("get_all Tests")
-
         resp = requests.get(self.urls, headers=self.headers)
+        resp_json = resp.json()
+        print(f"resp_json: {resp_json}")
+        for x in range(0, 50):
+            resp = requests.get(self.urls, headers=self.headers)
+            resp_json = resp.json()
+            print(f"{resp_json}")
+            #time.sleep(1)
         #Validate Get All response
         self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp_json[0]['deploymentState'], DeploymentStatus.SUCCESS)

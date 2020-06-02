@@ -1,13 +1,5 @@
 from marshmallow import Schema, fields
-#from flask import Flask
-
-#from flask_sqlalchemy import SQLAlchemy
-#from flask_marshmallow import Marshmallow
-#import json
-
-#app = Flask(__name__)
-#db = SQLAlchemy(app)
-#ma = Marshmallow(app)
+from tb_houston_service.models import TeamSchema
 
 
 class IdSchema(Schema):
@@ -41,6 +33,7 @@ class ExtendedUserSchema(Schema):
     firstName = fields.Str()
     lastName = fields.Str()
     isAdmin = fields.Boolean()
+    showWelcome = fields.Boolean()
 
 
 class ExtendedActivatorSchema(Schema):
@@ -104,9 +97,10 @@ class ExtendedSolutionSchema(Schema):
     environments = fields.List(fields.Str())
     active = fields.Boolean()
     favourite = fields.Boolean()
-    teams = fields.Int()
+    teamId = fields.Int()
     lastUpdated = fields.Str()
     applications = fields.Nested(ExtendedApplicationSchema(many=True))
+    team = fields.Nested(TeamSchema(many=False))
 
 
 class SolutionNamesOnlySchema(Schema):
@@ -211,3 +205,4 @@ class ExtendedLZMetadataFSApplicationSchema(Schema):
     isEnabled = fields.Boolean()
     name = fields.String()
     children = fields.Nested(ExtendedLZMetadataFSBusinessUnitSchema(many=True))
+

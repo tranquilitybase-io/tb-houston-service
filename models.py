@@ -47,6 +47,7 @@ class User(db.Model):
     lastName = db.Column(db.String(100))
     isAdmin = db.Column(db.Boolean())
     isActive = db.Column(db.Boolean())
+    showWelcome = db.Column(db.Boolean())
 
 class UserSchema(ma.ModelSchema):
     def __init__(self, **kwargs):
@@ -137,7 +138,7 @@ class Solution(db.Model):
     environments = db.Column(db.String(255))
     active = db.Column(db.Boolean())
     favourite = db.Column(db.Boolean())
-    teams = db.Column(db.Integer())
+    teamId = db.Column(db.Integer())
     lastUpdated = db.Column(db.String(255))
     deployed = db.Column(db.Boolean())
     deploymentState = db.Column(db.String(45))
@@ -145,8 +146,9 @@ class Solution(db.Model):
     statusCode = db.Column(db.String(45))
     statusMessage = db.Column(db.String(255))
     taskId = db.Column(db.String(100))
-
+    deploymentFolderId = db.Column(db.String(50))
     applications = db.relationship('Application')
+
 
 class SolutionSchema(ma.ModelSchema):
     def __init__(self, **kwargs):
@@ -185,42 +187,6 @@ class SolutionResourceJSONSchema(ma.ModelSchema):
         model = SolutionResourceJSON
         sqla_session = db.session
 
-# Team
-class Team(db.Model):
-    __tablename__ = "team"
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100))
-    description = db.Column(db.String(200))
-    businessUnitId = db.Column(db.Integer)
-    isActive = db.Column(db.Boolean())
-
-
-class TeamSchema(ma.ModelSchema):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
-    class Meta:
-        model = Team
-        sqla_session = db.session
-
-
-# Team Member
-class TeamMember(db.Model):
-    __tablename__ = "teammember"
-    id = db.Column(db.Integer, primary_key=True)
-    userId = db.Column(db.Integer)
-    teamId = db.Column(db.Integer)
-    role = db.Column(db.String(100))
-    isActive = db.Column(db.Boolean())
-
-
-class TeamMemberSchema(ma.ModelSchema):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
-    class Meta:
-        model = TeamMember
-        sqla_session = db.session
 
 # Cloud Account
 class CloudAccount(db.Model):
@@ -477,4 +443,24 @@ class LZMetadataSchema(ma.ModelSchema):
 
     class Meta:
         model = LZMetadata
+        sqla_session = db.session
+
+  
+# Folder
+class Folder(db.Model):
+    __tablename__ = "folder"
+    id = db.Column(db.Integer, primary_key=True)
+    parentFolderId = db.Column(db.String(45))
+    folderId = db.Column(db.String(45))
+    folderName = db.Column(db.String(100))
+    status = db.Column(db.String(50))
+    taskId = db.Column(db.String(50))
+
+
+class FolderSchema(ma.ModelSchema):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    class Meta:
+        model = Folder
         sqla_session = db.session

@@ -10,12 +10,7 @@ def test_login():
 
     false = 1 == 0
     payload = {
-    'email': 'test@testmail.com',
-    'username': 'string',
-    'firstName': 'string',
-    'id': '0',
-    'isAdmin': false,
-    'lastName': 'string',
+    'username': 'test@testmail.com',
     'password': 'string'
     }
 
