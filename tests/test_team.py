@@ -33,9 +33,9 @@ def test_team():
     #Testing PUT request
     put(id)
     #Testing DELETE request
-    pytest_lib.delete(url, id)
+    pytest_lib.logical_delete(url, str(id))
     #Testing DELETE Request Error
-    pytest_lib.delete_error(url, id)
+    pytest_lib.delete_error(url, "-1")
     #Testing GETALL request
     pytest_lib.get_all(plural_url)
      
@@ -58,10 +58,12 @@ def post():
     # Validate response headers and body contents, e.g. status code.
     resp_json = resp.json()
     assert resp.status_code == 201
-    id = str(resp_json['id'])
+    id = resp_json['id']
+    pprint(id)
     
     #Get Request to check Post has created item as expected
-    resp = requests.get(url+ id, headers=headers) 
+    resp = requests.get(url + str(id), headers=headers) 
+
     resp_json = resp.json()
     resp_headers = resp.headers
     #Validate response
@@ -81,18 +83,18 @@ def put(id):
     newpayload  =  { 
     "businessUnitId": 0,
     "description": "Test Team",
-    "id": int(id),
+    "id": id,
     "isActive": False,
     "name": "Team-Test-Updated"
     }
 
-    resp = requests.put(url+id, headers=headers, data=json.dumps(newpayload,indent=4))
+    resp = requests.put(url+str(id), headers=headers, data=json.dumps(newpayload,indent=4))
    
     #Validate update/Put response
     assert resp.status_code == 200
 
     #Get Request to get updated values
-    resp = requests.get(url+id, headers=headers) 
+    resp = requests.get(url + str(id), headers=headers) 
     resp_json = resp.json()
     id = resp_json['id']
 

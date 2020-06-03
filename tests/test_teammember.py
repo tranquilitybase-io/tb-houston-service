@@ -35,9 +35,9 @@ def test_teammember():
     #Test GET all teammbers with parameters 
     get_all_params()
     #Testing DELETE request
-    pytest_lib.delete(url, id)
+    pytest_lib.logical_delete(url, str(id))
     #Testing DELETE Request Error
-    pytest_lib.delete_error(url, id)
+    pytest_lib.delete_error(url, "-1")
     #Testing GETALL request
     pytest_lib.get_all(plural_url)
     

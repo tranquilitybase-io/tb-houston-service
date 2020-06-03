@@ -5,11 +5,12 @@ team collection
 """
 
 # 3rd party modules
+from pprint import pformat
 from flask import make_response, abort
+from sqlalchemy import literal_column
+
 from config import db, app
 from tb_houston_service.models import TeamMember, TeamMemberSchema
-from pprint import pformat
-from sqlalchemy import literal_column
 
 
 def read_all(userId=None, teamId=None, active=None,
@@ -73,16 +74,16 @@ def read_all(userId=None, teamId=None, active=None,
 
 
 
-def read_one(id):
+def read_one(oid):
     """
-    Responds to a request for /api/teammember/{id}
+    Responds to a request for /api/teammember/{oid}
     with one matching team from teams
 
     :param application:   key of team to find
     :return:              team matching key.
     """
 
-    teammember = (db.session.query(TeamMember).filter(TeamMember.id == id).one_or_none())
+    teammember = (db.session.query(TeamMember).filter(TeamMember.id == oid).one_or_none())
 
 
     if teammember is not None:
@@ -91,9 +92,7 @@ def read_one(id):
         data = team_member_schema.dump(teammember)
         return data
     else:
-        abort(
-            404, "Team Memebers with id {id} not found".format(id=id)
-        )
+        abort(404, f"Team Member with id {oid} not found")
 
 
 def create(teamMemberDetails):
@@ -133,7 +132,7 @@ def create(teamMemberDetails):
         abort(406, f"Team member already exists")
 
 
-def update(id, teamMemberDetails):
+def update(oid, teamMemberDetails):
     """
     Updates an existing team member in the team list
 
@@ -144,14 +143,14 @@ def update(id, teamMemberDetails):
 
     app.logger.debug(pformat(teamMemberDetails))
 
-    if teamMemberDetails["id"] != int(id):
+    if teamMemberDetails["id"] != int(oid):
            abort(400, f"Id mismatch in path and body")
 
     # Does the teammembr exist in teammembers list?
     existing_team_member = (
         db.session
             .query(TeamMember)
-            .filter(TeamMember.id == id)
+            .filter(TeamMember.id == oid)
             .one_or_none()
     )
 
@@ -174,25 +173,24 @@ def update(id, teamMemberDetails):
         abort(404, f"Team Member not found")
 
 
-def delete(id):
+def delete(oid):
     """
-    Deletes a team from the teams list
+    Logical deletes a team member from the team members list
 
-    :param id: id of the team to delete
+    :param id: id of the team member to delete
     :return:    200 on successful delete, 404 if not found.
     """
     # Does the team member to delete exist?
-    existing_team_member = db.session.query(TeamMember).filter(TeamMember.id == id).one_or_none()
+    existing_team_member = db.session.query(TeamMember).filter(TeamMember.id == oid).one_or_none()
 
     # if found?
     if existing_team_member is not None:
-        db.session.delete(existing_team_member)
+        existing_team_member.isActive = False
+        db.session.merge(existing_team_member)
         db.session.commit()
 
-        return make_response(f"Team Member {id} successfully deleted", 200)
+        return make_response(f"Team Member {oid} successfully deleted", 200)
 
     # Otherwise, nope, team member to delete not found
     else:
-        abort(404, f"Team Member {id} not found")
-
-
+        abort(404, f"Team Member {oid} not found")

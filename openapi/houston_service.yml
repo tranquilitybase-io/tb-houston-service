@@ -19,7 +19,7 @@ info:
 paths:
   /login:
     post:
-      operationId: login.check_credentials
+      operationId: tb_houston_service.login.check_credentials
       tags:
         - login
       summary: login credentials check
@@ -48,7 +48,7 @@ paths:
                     description: is the user an admin user?
   /health:
     get:
-      operationId: health.check
+      operationId: tb_houston_service.health.check
       tags:
         - health
       summary: The Houston Service general health check.
@@ -59,7 +59,7 @@ paths:
 
   /applications/:
     get:
-      operationId: application.read_all
+      operationId: tb_houston_service.application.read_all
       tags:
         - application
       summary: Read the entire list of applications
@@ -104,7 +104,7 @@ paths:
 
   /application/:
     post:
-      operationId: application.create
+      operationId: tb_houston_service.application.create
       tags:
         - application
       summary: Create an application and add it to the applications list
@@ -118,7 +118,7 @@ paths:
 
   "/application/{oid}":
     get:
-      operationId: application.read_one
+      operationId: tb_houston_service.application.read_one
       tags:
         - application
       summary: Read one application from the list
@@ -126,7 +126,7 @@ paths:
       parameters:
         - name: oid
           in: path
-          description: id of the application to get from the list
+          description: oid of the application to get from the list
           required: true
           schema:
             type: integer
@@ -139,7 +139,7 @@ paths:
                 $ref: "#/components/schemas/Application"
 
     put:
-      operationId: application.update
+      operationId: tb_houston_service.application.update
       tags:
         - application
       summary: Update an application in the list
@@ -147,7 +147,7 @@ paths:
       parameters:
         - name: oid
           in: path
-          description: id of the application to update
+          description: oid of the application to update
           required: true
           schema:
             type: integer
@@ -157,7 +157,7 @@ paths:
         "200":
           description: Successfully updated an application
     delete:
-      operationId: application.delete
+      operationId: tb_houston_service.application.delete
       tags:
         - application
       summary: Delete a application from the list
@@ -174,7 +174,7 @@ paths:
 
   "/application_meta/{activatorId}":
     get:
-      operationId: application_meta.read_one
+      operationId: tb_houston_service.application_meta.read_one
       tags:
         - application
       summary: Read application_meta
@@ -201,7 +201,7 @@ paths:
 
   "/activator_meta/":
     get:
-      operationId: activator_meta.read_one
+      operationId: tb_houston_service.activator_meta.read_one
       tags:
         - activator
       summary: Read activator_meta
@@ -248,7 +248,7 @@ paths:
         "201":
           description: Successfully created a team
 
-  "/team/{id}":
+  "/team/{oid}":
     get:
       operationId: tb_houston_service.team.read_one
       tags:
@@ -256,7 +256,7 @@ paths:
       summary: Read one team from the list
       description: Read one team from the list
       parameters:
-        - name: id
+        - name: oid
           in: path
           description: key of the team to get from the list
           required: true
@@ -276,7 +276,7 @@ paths:
       summary: Update a team in the list
       description: Update a team in the list
       parameters:
-        - name: id
+        - name: oid
           in: path
           description: key of the team to update
           required: true
@@ -295,7 +295,7 @@ paths:
       summary: Delete a team from the list
       description: Delete a team
       parameters:
-        - name: id
+        - name: oid
           in: path
           required: true
           schema:
@@ -359,7 +359,7 @@ paths:
 
   /users/:
     get:
-      operationId: user.read_all
+      operationId: tb_houston_service.user.read_all
       tags:
         - user
       summary: Read the entire list of users
@@ -375,7 +375,7 @@ paths:
                   $ref: "#/components/schemas/User"
   /user/:
     post:
-      operationId: user.create
+      operationId: tb_houston_service.user.create
       tags:
         - user
       summary: Create a user and add it to the user list
@@ -386,15 +386,15 @@ paths:
         "201":
           description: Successfully created a user
 
-  "/user/{id}":
+  "/user/{oid}":
     get:
-      operationId: user.read_one
+      operationId: tb_houston_service.user.read_one
       tags:
         - user
       summary: Read one user from the list
       description: Read one user from the list
       parameters:
-        - name: id
+        - name: oid
           in: path
           description: key of the user to get from the list
           required: true
@@ -408,13 +408,13 @@ paths:
                     schema:
                       $ref: "#/components/schemas/User"
     put:
-      operationId: user.update
+      operationId: tb_houston_service.user.update
       tags:
         - user
       summary: Update a user in the list
       description: Update a user in the list
       parameters:
-        - name: id
+        - name: oid
           in: path
           description: key of the user to update
           required: true
@@ -427,13 +427,13 @@ paths:
           description: Successfully updated a user
 
     delete:
-      operationId: user.delete
+      operationId: tb_houston_service.user.delete
       tags:
         - user
       summary: Delete a user from the list
       description: Delete a user
       parameters:
-        - name: id
+        - name: oid
           in: path
           required: true
           schema:
@@ -501,7 +501,7 @@ paths:
         "201":
           description: Successfully created a team member
 
-  "/teammember/{id}":
+  "/teammember/{oid}":
     get:
       operationId: tb_houston_service.teammember.read_one
       tags:
@@ -509,7 +509,7 @@ paths:
       summary: Read one team member from the list
       description: Read one team  memberfrom the list
       parameters:
-        - name: id
+        - name: oid
           in: path
           description: id of the team member to get from the list
           required: true
@@ -529,7 +529,7 @@ paths:
       summary: Update a team member in the list
       description: Update a team member in the list
       parameters:
-        - name: id
+        - name: oid
           in: path
           description: id of the team member to update
           required: true
@@ -548,7 +548,7 @@ paths:
       summary: Delete a teammember from the list
       description: Delete a team member
       parameters:
-        - name: id
+        - name: oid
           in: path
           description: id of the team member to delete
           required: true
@@ -560,7 +560,7 @@ paths:
 
   /roles/:
     get:
-      operationId: role.read_all
+      operationId: tb_houston_service.role.read_all
       tags:
         - role
       summary: Read the entire list of roles
@@ -577,7 +577,7 @@ paths:
 
   /role/:
     post:
-      operationId: role.create
+      operationId: tb_houston_service.role.create
       tags:
         - role
       summary: Create a role and add it to the role list
@@ -590,7 +590,7 @@ paths:
 
   "/role/{name}":
     get:
-      operationId: role.read_one
+      operationId: tb_houston_service.role.read_one
       tags:
         - role
       summary: Read one role from the list
@@ -610,7 +610,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Role"
     put:
-      operationId: role.update
+      operationId: tb_houston_service.role.update
       tags:
         - role
       summary: Update a role in the list
@@ -629,7 +629,7 @@ paths:
           description: Successfully updated a role
 
     delete:
-      operationId: role.delete
+      operationId: tb_houston_service.role.delete
       tags:
         - role
       summary: Delete a role from the list
@@ -646,7 +646,7 @@ paths:
 
   /keyValues/environment/:
     get:
-      operationId: environment.read_all
+      operationId: tb_houston_service.environment.read_all
       tags:
         - environment
       summary: Read the entire list of environments
@@ -667,7 +667,7 @@ paths:
                       type: string
                       description: value
     post:
-      operationId: environment.create
+      operationId: tb_houston_service.environment.create
       tags:
         - environment
       summary: Create an environment and add it to the environment list
@@ -680,7 +680,7 @@ paths:
 
   "/keyValues/environment/{key}":
     get:
-      operationId: environment.read_one
+      operationId: tb_houston_service.environment.read_one
       tags:
         - environment
       summary: Read one environment from the list
@@ -705,7 +705,7 @@ paths:
                   value:
                     type: string
     put:
-      operationId: environment.update
+      operationId: tb_houston_service.environment.update
       tags:
         - environment
       summary: Update an environment in the list
@@ -723,7 +723,7 @@ paths:
         "200":
           description: Successfully updated an environment
     delete:
-      operationId: environment.delete
+      operationId: tb_houston_service.environment.delete
       tags:
         - environment
       summary: Delete an environment from the list
@@ -739,7 +739,7 @@ paths:
           description: Successfully deleted an environment
   /keyValues/ci/:
     get:
-      operationId: ci.read_all
+      operationId: tb_houston_service.ci.read_all
       tags:
         - ci
       summary: Read the entire list of CIs
@@ -760,7 +760,7 @@ paths:
                       type: string
                       description: value
     post:
-      operationId: ci.create
+      operationId: tb_houston_service.ci.create
       tags:
         - ci
       summary: Create an ci and add it to the ci list
@@ -772,7 +772,7 @@ paths:
           description: Successfully created an ci
   "/keyValues/ci/{key}":
     get:
-      operationId: ci.read_one
+      operationId: tb_houston_service.ci.read_one
       tags:
         - ci
       summary: Read one ci from the list
@@ -797,7 +797,7 @@ paths:
                   value:
                     type: string
     put:
-      operationId: ci.update
+      operationId: tb_houston_service.ci.update
       tags:
         - ci
       summary: Update an ci in the list
@@ -815,7 +815,7 @@ paths:
         "200":
           description: Successfully updated an CI
     delete:
-      operationId: ci.delete
+      operationId: tb_houston_service.ci.delete
       tags:
         - ci
       summary: Delete an CI from the list
@@ -831,7 +831,7 @@ paths:
           description: Successfully deleted an CI
   /keyValues/cd/:
     get:
-      operationId: cd.read_all
+      operationId: tb_houston_service.cd.read_all
       tags:
         - cd
       summary: Read the entire list of CDs
@@ -852,7 +852,7 @@ paths:
                       type: string
                       description: value
     post:
-      operationId: cd.create
+      operationId: tb_houston_service.cd.create
       tags:
         - cd
       summary: Create a continuous deployment and add it to the continuous deployment list
@@ -864,7 +864,7 @@ paths:
           description: Successfully created an continuous deployment
   "/keyValues/cd/{key}":
     get:
-      operationId: cd.read_one
+      operationId: tb_houston_service.cd.read_one
       tags:
         - cd
       summary: Read one continuous deployment from the list
@@ -889,7 +889,7 @@ paths:
                   value:
                     type: string
     put:
-      operationId: cd.update
+      operationId: tb_houston_service.cd.update
       tags:
         - cd
       summary: Update an cd in the list
@@ -907,7 +907,7 @@ paths:
         "200":
           description: Successfully updated a continuous deployment 
     delete:
-      operationId: cd.delete
+      operationId: tb_houston_service.cd.delete
       tags:
         - cd
       summary: Delete a continuous deployment from the list
@@ -924,7 +924,7 @@ paths:
 
   /keyValues/sourceControl/:
     get:
-      operationId: sourcecontrol.read_all
+      operationId: tb_houston_service.sourcecontrol.read_all
       tags:
         - sourcecontrol
       summary: Read the entire list of source control types
@@ -945,7 +945,7 @@ paths:
                       type: string
                       description: value
     post:
-      operationId: sourcecontrol.create
+      operationId: tb_houston_service.sourcecontrol.create
       tags:
         - sourcecontrol
       summary: Create an source control type and add it to the source control type list
@@ -958,7 +958,7 @@ paths:
 
   "/keyValues/sourceControl/{key}":
     get:
-      operationId: sourcecontrol.read_one
+      operationId: tb_houston_service.sourcecontrol.read_one
       tags:
         - sourcecontrol
       summary: Read one source control type from the list
@@ -983,7 +983,7 @@ paths:
                   value:
                     type: string
     put:
-      operationId: sourcecontrol.update
+      operationId: tb_houston_service.sourcecontrol.update
       tags:
         - sourcecontrol
       summary: Update a source control in the list
@@ -1001,7 +1001,7 @@ paths:
         "200":
           description: Successfully updated an source control
     delete:
-      operationId: sourcecontrol.delete
+      operationId: tb_houston_service.sourcecontrol.delete
       tags:
         - sourcecontrol
       summary: Delete an source control from the list
@@ -1018,7 +1018,7 @@ paths:
 
   /keyValues/businessUnit/:
     get:
-      operationId: businessUnit.read_keyvalues
+      operationId: tb_houston_service.businessUnit.read_keyvalues
       tags:
         - businessUnit
       summary: Read the entire list of business units and return them as key value pairs
@@ -1041,7 +1041,7 @@ paths:
 
   /businessunits/:
     get:
-      operationId: businessUnit.read_all
+      operationId: tb_houston_service.businessUnit.read_all
       tags:
         - businessUnit
       summary: Read the entire list of business units 
@@ -1058,7 +1058,7 @@ paths:
                   
   /businessunit/:
     post:
-      operationId: businessUnit.create
+      operationId: tb_houston_service.businessUnit.create
       tags:
         - businessUnit
       summary: Create an business unit and add it to the business unit list
@@ -1070,15 +1070,15 @@ paths:
         "201":
           description: Successfully created an business unit
 
-  "/businessunit/{id}":
+  "/businessunit/{oid}":
     get:
-      operationId: businessUnit.read_one
+      operationId: tb_houston_service.businessUnit.read_one
       tags:
         - businessUnit
       summary: Read one business unit from the list
       description: Read one business unit from the list
       parameters:
-        - name: id
+        - name: oid
           in: path
           description: id of the business unit to get from the list
           required: true
@@ -1092,13 +1092,13 @@ paths:
               schema:
                 $ref: "#/components/schemas/BusinessUnit"
     put:
-      operationId: businessUnit.update
+      operationId: tb_houston_service.businessUnit.update
       tags:
         - businessUnit
       summary: Update an business unit in the list
       description: Update an business unit in the list
       parameters:
-        - name: id
+        - name: oid
           in: path
           description: key of the business unit to update
           required: true
@@ -1110,13 +1110,13 @@ paths:
         "200":
           description: Successfully updated an business unit
     delete:
-      operationId: businessUnit.delete
+      operationId: tb_houston_service.businessUnit.delete
       tags:
         - businessUnit
       summary: Delete an business unit from the list
       description: Delete an business unit
       parameters:
-        - name: id
+        - name: oid
           in: path
           required: true
           schema:
@@ -1127,7 +1127,7 @@ paths:
 
   /solutions/:
     get:
-      operationId: solution.read_all
+      operationId: tb_houston_service.solution.read_all
       tags:
         - solution
       summary: Read the entire list of solutions
@@ -1168,7 +1168,7 @@ paths:
 
   /solution/:
     post:
-      operationId: solution.create
+      operationId: tb_houston_service.solution.create
       tags:
         - solution
       summary: Create a solution and add it to the solutions list
@@ -1182,7 +1182,7 @@ paths:
 
   "/solution/{oid}":
     get:
-      operationId: solution.read_one
+      operationId: tb_houston_service.solution.read_one
       tags:
         - solution
       summary: Read a single solution
@@ -1205,7 +1205,7 @@ paths:
                   $ref: "#/components/schemas/Solution"
 
     put:
-      operationId: solution.update
+      operationId: tb_houston_service.solution.update
       tags:
         - solution
       summary: Update a solution in the list
@@ -1224,7 +1224,7 @@ paths:
           description: Successfully updated a solution
 
     delete:
-      operationId: solution.delete
+      operationId: tb_houston_service.solution.delete
       tags:
         - solution
       summary: Delete a solution from the list
@@ -1241,7 +1241,7 @@ paths:
 
   /solutiondeployments/:
     get:
-      operationId: solution_deployment.deployment_read_all
+      operationId: tb_houston_service.solution_deployment.deployment_read_all
       tags:
         - solution
       summary: Read the entire list of deployed solutions
@@ -1258,7 +1258,7 @@ paths:
 
   /solutiondeployment/:
     post:
-      operationId: solution_deployment.deployment_create
+      operationId: tb_houston_service.solution_deployment.deployment_create
       tags:
         - solution
       summary: receive solution id from the Eagle Console and then post the complete Solution to the DaC
@@ -1271,7 +1271,7 @@ paths:
 
   "/solutiondeployment/{oid}":
     get:
-      operationId: solution_deployment.deployment_read_one
+      operationId: tb_houston_service.solution_deployment.deployment_read_one
       tags:
         - solution
       summary: Read a solution deployment from the list 
@@ -1294,7 +1294,7 @@ paths:
                   $ref: "#/components/schemas/SolutionDeployment"
 
     put:
-      operationId: solution_deployment.deployment_update
+      operationId: tb_houston_service.solution_deployment.deployment_update
       tags:
         - solution
       summary: Update a solution deployment in the list with the deployed state
@@ -1314,7 +1314,7 @@ paths:
 
   /solutionresources/:
     get:
-      operationId: solutionresource.read_all
+      operationId: tb_houston_service.solutionresource.read_all
       tags:
         - solutionresource
       summary: Read the entire list of solution resources
@@ -1331,7 +1331,7 @@ paths:
 
   /solutionresource/:
     post:
-      operationId: solutionresource.create
+      operationId: tb_houston_service.solutionresource.create
       tags:
         - solutionresource
       summary: Create a solution resource
@@ -1345,7 +1345,7 @@ paths:
 
   "/solutionresource/{solutionId}/{key}":
     get:
-      operationId: solutionresource.read_one
+      operationId: tb_houston_service.solutionresource.read_one
       tags:
         - solutionresource
       summary: Read a solution resource
@@ -1368,7 +1368,7 @@ paths:
           description: Successfully read a Solution Resource
 
     delete:
-      operationId: solutionresource.delete
+      operationId: tb_houston_service.solutionresource.delete
       tags:
         - solutionresource
       summary: Delete a solution resource from the list
@@ -1390,7 +1390,7 @@ paths:
 
   /solutionresourcejsons/:
     get:
-      operationId: solutionresourcejson.read_all
+      operationId: tb_houston_service.solutionresourcejson.read_all
       tags:
         - solutionresourcejson
       summary: Read the entire list of solution resource jsons
@@ -1407,7 +1407,7 @@ paths:
 
   /solutionresourcejson/:
     post:
-      operationId: solutionresourcejson.create
+      operationId: tb_houston_service.solutionresourcejson.create
       tags:
         - solutionresourcejson
       summary: Create a solution resource json
@@ -1420,7 +1420,7 @@ paths:
 
   "/solutionresourcejson/{solutionId}":
     get:
-      operationId: solutionresourcejson.read_one
+      operationId: tb_houston_service.solutionresourcejson.read_one
       tags:
         - solutionresourcejson
       summary: Read a solution resource json
@@ -1437,7 +1437,7 @@ paths:
           description: Successfully read a Solution Resource JSON
 
     delete:
-      operationId: solutionresourcejson.delete
+      operationId: tb_houston_service.solutionresourcejson.delete
       tags:
         - solutionresourcejson
       summary: Delete a solution resource JSON from the list
@@ -1455,7 +1455,7 @@ paths:
 
   /activators/:
     get:
-      operationId: activator.read_all
+      operationId: tb_houston_service.activator.read_all
       tags:
         - activator
       summary: Read the entire list of activators
@@ -1516,7 +1516,7 @@ paths:
 
   /activator/:
     post:
-      operationId: activator.create
+      operationId: tb_houston_service.activator.create
       tags:
         - activator
       summary: Create an activator and add it to the activator list
@@ -1529,7 +1529,7 @@ paths:
 
   "/activator/{oid}":
     get:
-      operationId: activator.read_one
+      operationId: tb_houston_service.activator.read_one
       tags:
         - activator
       summary: Read one activator from the list
@@ -1549,7 +1549,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Activator"
     put:
-      operationId: activator.update
+      operationId: tb_houston_service.activator.update
       tags:
         - activator
       summary: Update an activator in the list
@@ -1568,7 +1568,7 @@ paths:
           description: Successfully updated an activator
 
     delete:
-      operationId: activator.delete
+      operationId: tb_houston_service.activator.delete
       tags:
         - activator
       summary: Delete an activator from the list
@@ -1585,7 +1585,7 @@ paths:
 
   /setactivatorstatus/:
     post:
-      operationId: activator.setActivatorStatus
+      operationId: tb_houston_service.activator.setActivatorStatus
       tags:
         - activator
       summary: set activator status
@@ -1607,7 +1607,7 @@ paths:
 
   /activatorcategories/:
     get:
-      operationId: activator.categories
+      operationId: tb_houston_service.activator.categories
       tags:
         - activator
       summary: Read the entire list of activator categories
@@ -1626,7 +1626,7 @@ paths:
 
   /landingzoneprogressitems/:
     get:
-      operationId: landingzoneprogressitem.read_all
+      operationId: tb_houston_service.landingzoneprogressitem.read_all
       tags:
         - landingzoneprogressitem
       summary: Read the entire list of landing zone progress items
@@ -1643,7 +1643,7 @@ paths:
 
   /landingzoneprogressitem/:
     post:
-      operationId: landingzoneprogressitem.create
+      operationId: tb_houston_service.landingzoneprogressitem.create
       tags:
         - landingzoneprogressitem
       summary: Create a landing zone progress item and add it to the landing zone progress item list
@@ -1671,7 +1671,7 @@ paths:
                     
   "/landingzoneprogressitem/{oid}":
     get:
-      operationId: landingzoneprogressitem.read_one
+      operationId: tb_houston_service.landingzoneprogressitem.read_one
       tags:
         - landingzoneprogressitem
       summary: Read one landing zone progress item from the list
@@ -1698,7 +1698,7 @@ paths:
                   completed:
                     type: boolean
     put:
-      operationId: landingzoneprogressitem.update
+      operationId: tb_houston_service.landingzoneprogressitem.update
       tags:
         - landingzoneprogressitem
       summary: Update an landing zone progress item in the list
@@ -1728,7 +1728,7 @@ paths:
                     type: boolean
 
     delete:
-      operationId: landingzoneprogressitem.delete
+      operationId: tb_houston_service.landingzoneprogressitem.delete
       tags:
         - landingzoneprogressitem
       summary: Delete a landing zone progress item from the list
@@ -1745,7 +1745,7 @@ paths:
 
   /landingzoneactions/:
     get:
-      operationId: landingzoneaction.read_all
+      operationId: tb_houston_service.landingzoneaction.read_all
       tags:
         - landingzoneaction
       summary: Read the entire list of landing zone actions
@@ -1783,7 +1783,7 @@ paths:
 
   /landingzoneaction/:
     post:
-      operationId: landingzoneaction.create
+      operationId: tb_houston_service.landingzoneaction.create
       tags:
         - landingzoneaction
       summary: Create a landing zone action and add it to the landing zone action list
@@ -1802,7 +1802,7 @@ paths:
 
   "/landingzoneaction/{oid}":
     get:
-      operationId: landingzoneaction.read_one
+      operationId: tb_houston_service.landingzoneaction.read_one
       tags:
         - landingzoneaction
       summary: Read one landing zone action from the list
@@ -1823,7 +1823,7 @@ paths:
                 $ref: "#/components/schemas/LandingZoneAction"
 
     put:
-      operationId: landingzoneaction.update
+      operationId: tb_houston_service.landingzoneaction.update
       tags:
         - landingzoneaction
       summary: Update an landing zone action in the list
@@ -1846,7 +1846,7 @@ paths:
                 $ref: "#/components/schemas/LandingZoneAction"
 
     delete:
-      operationId: landingzoneaction.delete
+      operationId: tb_houston_service.landingzoneaction.delete
       tags:
         - landingzoneaction
       summary: Delete a landing zone action from the list
@@ -1863,7 +1863,7 @@ paths:
 
   /landingzonewans/:
     get:
-      operationId: landingzonewan.read_all
+      operationId: tb_houston_service.landingzonewan.read_all
       tags:
         - landingzonewan
       summary: Read the entire list of landing zone WANs
@@ -1880,7 +1880,7 @@ paths:
 
   /landingzonewan/:
     post:
-      operationId: landingzonewan.create
+      operationId: tb_houston_service.landingzonewan.create
       tags:
         - landingzonewan
       summary: Create a landingzonewan and add it to the landing zone WAN list
@@ -1893,7 +1893,7 @@ paths:
 
   "/landingzonewan/{oid}":
     get:
-      operationId: landingzonewan.read_one
+      operationId: tb_houston_service.landingzonewan.read_one
       tags:
         - landingzonewan
       summary: Read one landing zone WAN from the list
@@ -1914,7 +1914,7 @@ paths:
                 $ref: "#/components/schemas/LandingZoneWAN"
 
     put:
-      operationId: landingzonewan.update
+      operationId: tb_houston_service.landingzonewan.update
       tags:
         - landingzonewan
       summary: Update an landing zone WAN in the list
@@ -1933,7 +1933,7 @@ paths:
           description: Successfully updated a landing zone WAN
 
     delete:
-      operationId: landingzonewan.delete
+      operationId: tb_houston_service.landingzonewan.delete
       tags:
         - landingzonewan
       summary: Delete a landing zone WAN from the list
@@ -1950,7 +1950,7 @@ paths:
 
   /lzmetadata/:
     post:
-      operationId: lzmetadata.create
+      operationId: tb_houston_service.lzmetadata.create
       tags:
         - lzmetadata
       summary: Create or update landing zone metadata for a given group and name
@@ -1962,7 +1962,7 @@ paths:
           description: Successfully created a landing zone metadata
 
     get:
-      operationId: lzmetadata.read_all
+      operationId: tb_houston_service.lzmetadata.read_all
       tags:
         - lzmetadata
       summary: Read the landing zone metadata
@@ -1980,7 +1980,7 @@ paths:
         
   "/lzmetadata/{group}/{name}":
     get:
-      operationId: lzmetadata.read_one
+      operationId: tb_houston_service.lzmetadata.read_one
       tags:
         - lzmetadata
       summary: Read one landing zone metadata from the list
@@ -2007,7 +2007,7 @@ paths:
                 $ref: "#/components/schemas/LZMetaData"
         
     delete:
-      operationId: lzmetadata.delete
+      operationId: tb_houston_service.lzmetadata.delete
       tags:
         - lzmetadata
       summary: Delete a landing zone metadata from the list
@@ -2031,7 +2031,7 @@ paths:
 
   "/lzmetadata_group/{group}":
     get:
-      operationId: lzmetadata.read_one_group
+      operationId: tb_houston_service.lzmetadata.read_one_group
       tags:
         - lzmetadata
       summary: Read group of landing zone metadata from the list
@@ -2054,7 +2054,7 @@ paths:
                 
   "/lzmetadata_folder_structure/":
     post:
-      operationId: lzmetadata.create_folder_structure
+      operationId: tb_houston_service.lzmetadata.create_folder_structure
       tags:
         - lzmetadata
       summary: Create or update landing zone folder structure metadata
@@ -2066,7 +2066,7 @@ paths:
           description: Successfully created a landing zone folder structure metadata
 
     get:
-      operationId: lzmetadata.read_folder_structure
+      operationId: tb_houston_service.lzmetadata.read_folder_structure
       tags:
         - lzmetadata
       summary: Read the landing zone folder structure metadata
@@ -2082,7 +2082,7 @@ paths:
 
   /keyValues/bgproutingmode/:
     get:
-      operationId: bgpRoutingMode.read_all
+      operationId: tb_houston_service.bgpRoutingMode.read_all
       tags:
         - bgproutingmode
       summary: Read the entire list of BGPRoutingModes
@@ -2098,7 +2098,7 @@ paths:
                   $ref: "#/components/schemas/BGPRoutingMode"
 
     post:
-      operationId: bgpRoutingMode.create
+      operationId: tb_houston_service.bgpRoutingMode.create
       tags:
         - bgproutingmode
       summary: Create an BGPRoutingMode and add it to the BGPRoutingMode list
@@ -2111,7 +2111,7 @@ paths:
 
   "/keyValues/bgproutingmode/{oid}":
     get:
-      operationId: bgpRoutingMode.read_one
+      operationId: tb_houston_service.bgpRoutingMode.read_one
       tags:
         - bgproutingmode
       summary: Read one bgproutingmode from the list
@@ -2132,7 +2132,7 @@ paths:
                 $ref: "#/components/schemas/BGPRoutingMode"
 
     put:
-      operationId: bgpRoutingMode.update
+      operationId: tb_houston_service.bgpRoutingMode.update
       tags:
         - bgproutingmode
       summary: Update an bgpRoutingMode in the list
@@ -2151,7 +2151,7 @@ paths:
           description: Successfully updated a bgproutingmode
 
     delete:
-      operationId: bgpRoutingMode.delete
+      operationId: tb_houston_service.bgpRoutingMode.delete
       tags:
         - bgproutingmode
       summary: Delete an bgproutingmode from the list
@@ -2168,7 +2168,7 @@ paths:
 
   /keyValues/subnetmode/:
     get:
-      operationId: subnetMode.read_all
+      operationId: tb_houston_service.subnetMode.read_all
       tags:
         - subnetmode
       summary: Read the entire list of SubnetModes
@@ -2184,7 +2184,7 @@ paths:
                   $ref: "#/components/schemas/SubnetMode"
 
     post:
-      operationId: subnetMode.create
+      operationId: tb_houston_service.subnetMode.create
       tags:
         - subnetmode
       summary: Create an subnetMode and add it to the subnetMode list
@@ -2197,7 +2197,7 @@ paths:
 
   "/keyValues/subnetmode/{oid}":
     get:
-      operationId: subnetMode.read_one
+      operationId: tb_houston_service.subnetMode.read_one
       tags:
         - subnetmode
       summary: Read one subnetmode from the list
@@ -2218,7 +2218,7 @@ paths:
                 $ref: "#/components/schemas/SubnetMode"
 
     put:
-      operationId: subnetMode.update
+      operationId: tb_houston_service.subnetMode.update
       tags:
         - subnetmode
       summary: Update an subnetMode in the list
@@ -2237,7 +2237,7 @@ paths:
           description: Successfully updated a subnetmode
 
     delete:
-      operationId: subnetMode.delete
+      operationId: tb_houston_service.subnetMode.delete
       tags:
         - subnetmode
       summary: Delete an subnetmode from the list
@@ -2254,7 +2254,7 @@ paths:
 
   /keyValues/vpnonpremisevendor/:
     get:
-      operationId: vpnOnPremiseVendor.read_all
+      operationId: tb_houston_service.vpnOnPremiseVendor.read_all
       tags:
         - vpnonpremisevendor
       summary: Read the entire list of vpnOnPremiseVendors
@@ -2270,7 +2270,7 @@ paths:
                   $ref: "#/components/schemas/VPNOnPremiseVendor"
 
     post:
-      operationId: vpnOnPremiseVendor.create
+      operationId: tb_houston_service.vpnOnPremiseVendor.create
       tags:
         - vpnonpremisevendor
       summary: Create an vpnOnPremiseVendor and add it to the vpnOnPremiseVendor list
@@ -2285,7 +2285,7 @@ paths:
 
   "/keyValues/vpnonpremisevendor/{oid}":
     get:
-      operationId: vpnOnPremiseVendor.read_one
+      operationId: tb_houston_service.vpnOnPremiseVendor.read_one
       tags:
         - vpnonpremisevendor
       summary: Read one vpnOnPremiseVendor from the list
@@ -2306,7 +2306,7 @@ paths:
                 $ref: "#/components/schemas/VPNOnPremiseVendor"
 
     put:
-      operationId: vpnOnPremiseVendor.update
+      operationId: tb_houston_service.vpnOnPremiseVendor.update
       tags:
         - vpnonpremisevendor
       summary: Update an vpnOnPremiseVendor in the list
@@ -2325,7 +2325,7 @@ paths:
           description: Successfully updated a vpnOnPremiseVendor
 
     delete:
-      operationId: vpnOnPremiseVendor.delete
+      operationId: tb_houston_service.vpnOnPremiseVendor.delete
       tags:
         - vpnonpremisevendor
       summary: Delete an VPNOnPremiseVendor from the list
@@ -2343,7 +2343,7 @@ paths:
 
   /folders/:
     get:
-      operationId: folder.read_all
+      operationId: tb_houston_service.folder.read_all
       tags:
         - folder
       summary: Read the entire list of folders
@@ -2360,7 +2360,7 @@ paths:
 
   /folder/:
     post:
-      operationId: folder.create
+      operationId: tb_houston_service.folder.create
       tags:
         - folder
       summary: Create a folder and add it to the folder list
@@ -2375,7 +2375,7 @@ paths:
 
   "/folder/{oid}":
     get:
-      operationId: folder.read_one
+      operationId: tb_houston_service.folder.read_one
       tags:
         - folder
       summary: Read one folder rom the list
@@ -2396,7 +2396,7 @@ paths:
                 $ref: "#/components/schemas/Folder"
 
     put:
-      operationId: folder.update
+      operationId: tb_houston_service.folder.update
       tags:
         - folder
       summary: Update a folder in the list
@@ -2415,7 +2415,7 @@ paths:
           description: Successfully updated a folder
 
     delete:
-      operationId: folder.delete
+      operationId: tb_houston_service.folder.delete
       tags:
         - folder
       summary: Delete a folder from the list

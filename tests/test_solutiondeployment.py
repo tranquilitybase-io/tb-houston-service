@@ -3,7 +3,8 @@ import os
 from pprint import pformat
 from pprint import pprint
 import unittest
-from DeploymentStatus import DeploymentStatus
+
+from tb_houston_service.DeploymentStatus import DeploymentStatus
 
 
 class TestSolutionDeployment(unittest.TestCase):

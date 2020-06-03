@@ -5,10 +5,11 @@ team collection
 """
 
 # 3rd party modules
+from pprint import pformat
 from flask import make_response, abort
+
 from config import db, app
 from tb_houston_service.models import Team, TeamSchema
-from pprint import pformat
 
 
 def read_all():
@@ -20,19 +21,15 @@ def read_all():
     """
 
     # Create the list of teams from our data
-    teams = (
-        db.session.query(Team)
-        .order_by(Team.id)
-        .all()
-    )
+    teams = db.session.query(Team).order_by(Team.id).all()
     app.logger.debug(pformat(teams))
     # Serialize the data for the response
     team_schema = TeamSchema(many=True)
     data = team_schema.dump(teams)
-    return data
+    return data, 200
 
 
-def read_one(id):
+def read_one(oid):
     """
     Responds to a request for /api/team/{key}
     with one matching team from teams
@@ -41,21 +38,15 @@ def read_one(id):
     :return:              team matching key
     """
 
-    team = (
-        db.session.query(Team)
-        .filter(Team.id == id)
-        .one_or_none()
-    )
+    team = db.session.query(Team).filter(Team.id == oid).one_or_none()
 
     if team is not None:
         # Serialize the data for the response
         team_schema = TeamSchema()
         data = team_schema.dump(team)
         return data
-    else:
-        abort(
-            404, "Team with id {id} not found".format(id=id)
-        )
+    return abort(404, f"Team with id {oid} not found")
+
 
 def read_keyvalues():
     """
@@ -65,11 +56,7 @@ def read_keyvalues():
     """
 
     # Create the list of teams from our data
-    team = ( 
-        db.session.query(Team)
-        .order_by(Team.id)
-        .all()
-    )
+    team = db.session.query(Team).order_by(Team.id).all()
     app.logger.debug(pformat(team))
     # Serialize the data for the response
     team_schema = TeamSchema(many=True)
@@ -78,12 +65,13 @@ def read_keyvalues():
     # Convert the data to keyvalue pairs of id and name column
     keyValues = []
     for d in data:
-        keyValuePair={}
-        keyValuePair['key']= str(d.get('name'))
-        keyValuePair['value']= d.get('name')
+        keyValuePair = {}
+        keyValuePair["key"] = str(d.get("name"))
+        keyValuePair["value"] = d.get("name")
         keyValues.append(keyValuePair)
     print(keyValues)
     return keyValues
+
 
 def create(teamDetails):
     """
@@ -94,13 +82,11 @@ def create(teamDetails):
     :return:        201 on success, 406 on team exists.
     """
     # Remove id as it's created automatically
-    if 'id' in teamDetails:
-        del teamDetails['id']
+    if "id" in teamDetails:
+        del teamDetails["id"]
     # Does the team exist already?
     existing_team = (
-        db.session.query(Team)
-            .filter(Team.name == teamDetails['name'])
-            .one_or_none()
+        db.session.query(Team).filter(Team.name == teamDetails["name"]).one_or_none()
     )
 
     if existing_team is None:
@@ -117,11 +103,10 @@ def create(teamDetails):
         return data, 201
 
     # Otherwise, it already exists, that's an error
-    else:
-        abort(406, f"Team already exists")
+    abort(406, "Team already exists")
 
 
-def update(id, teamDetails):
+def update(oid, teamDetails):
     """
     Updates an existing team in the team list
 
@@ -132,22 +117,21 @@ def update(id, teamDetails):
 
     app.logger.debug(pformat(teamDetails))
 
-    if teamDetails["id"] != int(id):
-           abort(400, f"Id mismatch in path and body")
+    if teamDetails.get("id") and teamDetails.get("id") != int(oid):
+        abort(400, f"Id mismatch in path and body")
 
     # Does the team exist in team list?
-    existing_team = (
-        db.session.query(Team)
-            .filter(Team.id == id)
-            .one_or_none()
-    )
+    existing_team = db.session.query(Team).filter(Team.id == oid).one_or_none()
 
     # Does team exist?
 
     if existing_team is not None:
         schema = TeamSchema()
         update_team = schema.load(teamDetails, session=db.session)
-        update_team.id = teamDetails['id']
+        update_team.name = teamDetails.get('name', existing_team.name)
+        update_team.description = teamDetails.get('description', existing_team.description)
+        update_team.businessUnitId = teamDetails.get('businessUnitId', existing_team.businessUnitId)
+        update_team.isActive = teamDetails.get('isActive', existing_team.isActive)
 
         db.session.merge(update_team)
         db.session.commit()
@@ -157,11 +141,10 @@ def update(id, teamDetails):
         return data, 200
 
     # otherwise, nope, deployment doesn't exist, so that's an error
-    else:
-        abort(404, f"Team not found")
+    abort(404, f"Team not found")
 
 
-def delete(id):
+def delete(oid):
     """
     Deletes a team from the teams list
 
@@ -169,19 +152,15 @@ def delete(id):
     :return:    200 on successful delete, 404 if not found.
     """
     # Does the team to delete exist?
-    existing_team = (
-        db.session.query(Team)
-            .filter(Team.id == id)
-            .one_or_none()
-    )
+    existing_team = db.session.query(Team).filter(Team.id == oid).one_or_none()
 
     # if found?
     if existing_team is not None:
-        db.session.delete(existing_team)
+        existing_team.isActive = False
+        db.session.merge(existing_team)
         db.session.commit()
 
-        return make_response(f"Team {id} successfully deleted", 200)
+        return make_response(f"Team {oid} successfully deleted", 200)
 
     # Otherwise, nope, team to delete not found
-    else:
-        abort(404, f"Team {id} not found")
+    abort(404, f"Team {oid} not found")

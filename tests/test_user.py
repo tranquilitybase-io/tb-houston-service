@@ -34,7 +34,7 @@ def test_user():
     #Testing PUT request
     put(id)
     #Testing DELETE request
-    pytest_lib.delete_isActive(url, str(id))
+    pytest_lib.logical_delete(url, str(id))
     #Testing DELETE Request Error
     pytest_lib.delete_error(url, str(-1))
     #Testing GETALL request

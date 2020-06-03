@@ -1,6 +1,7 @@
 from marshmallow import Schema, fields
-from tb_houston_service.models import TeamMember, Team
 from config import app, db
+
+from tb_houston_service.models import TeamMember, Team
 
 
 class KeyValueSchema(Schema):

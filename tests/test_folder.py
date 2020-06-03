@@ -1,7 +1,7 @@
 import requests
 import json
 import os
-from DeploymentStatus import DeploymentStatus
+from tb_houston_service.DeploymentStatus import DeploymentStatus
 
 
 HOUSTON_SERVICE_URL=os.environ['HOUSTON_SERVICE_URL']
