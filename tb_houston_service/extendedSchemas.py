@@ -101,6 +101,7 @@ class ExtendedSolutionSchema(Schema):
     lastUpdated = fields.Str()
     applications = fields.Nested(ExtendedApplicationSchema(many=True))
     team = fields.Nested(TeamSchema(many=False))
+    deploymentFolderId = fields.Str()
 
 
 class SolutionNamesOnlySchema(Schema):
