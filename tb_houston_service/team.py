@@ -6,10 +6,14 @@ team collection
 
 # 3rd party modules
 from pprint import pformat
+import json
+from http import HTTPStatus
 from flask import make_response, abort
 
 from config import db, app
-from tb_houston_service.models import Team, TeamSchema
+from tb_houston_service.models import Team, TeamMember, TeamSchema
+from marshmallow import Schema, fields
+from tb_houston_service.extendedSchemas import KeyValueSchema
 
 
 def read_all():
@@ -46,31 +50,6 @@ def read_one(oid):
         data = team_schema.dump(team)
         return data
     return abort(404, f"Team with id {oid} not found")
-
-
-def read_keyvalues():
-    """
-    Responds to a request for /api/keyValues/team
-    with the complete lists of teams
-    :return:        json string of list of teams
-    """
-
-    # Create the list of teams from our data
-    team = db.session.query(Team).order_by(Team.id).all()
-    app.logger.debug(pformat(team))
-    # Serialize the data for the response
-    team_schema = TeamSchema(many=True)
-    data = team_schema.dump(team)
-    app.logger.debug(data)
-    # Convert the data to keyvalue pairs of id and name column
-    keyValues = []
-    for d in data:
-        keyValuePair = {}
-        keyValuePair["key"] = str(d.get("name"))
-        keyValuePair["value"] = d.get("name")
-        keyValues.append(keyValuePair)
-    print(keyValues)
-    return keyValues
 
 
 def create(teamDetails):
@@ -164,3 +143,84 @@ def delete(oid):
 
     # Otherwise, nope, team to delete not found
     abort(404, f"Team {oid} not found")
+
+
+# Other queries
+def read_keyvalues():
+    """
+    Responds to a request for /api/keyValues/team
+    with the complete lists of teams
+    :return:        json string of list of teams
+    """
+
+    # Create the list of teams from our data
+    team = db.session.query(Team).order_by(Team.id).all()
+    app.logger.debug(pformat(team))
+    # Serialize the data for the response
+    team_schema = TeamSchema(many=True)
+    data = team_schema.dump(team)
+    app.logger.debug(data)
+    # Convert the data to keyvalue pairs of id and name column
+    keyValues = []
+    for d in data:
+        keyValuePair = {}
+        keyValuePair["key"] = str(d.get("name"))
+        keyValuePair["value"] = d.get("name")
+        keyValues.append(keyValuePair)
+    print(keyValues)
+    return keyValues
+
+
+def read_all_by_user_id(userId):
+    teams = (
+        db.session.query(Team)
+        .filter(
+            TeamMember.teamId == Team.id,
+            TeamMember.userId == userId,
+            Team.isActive,
+            TeamMember.isActive,
+        )
+        .all()
+    )
+
+    schema = TeamSchema(many=True)
+
+    # Convert to JSON (Serialization)
+    data = schema.dump(teams)
+    app.logger.debug(f"{data} type: {type(data)}")
+    return data, 200
+
+
+def read_key_values_by_user_id(userId):
+    teams_resp = read_all_by_user_id(userId)
+    if teams_resp[1] == HTTPStatus.OK:
+        teams_key_values = []
+        teams = teams_resp[0]
+        for team in teams:
+            kv = {}
+            kv["key"] = team.get('id')
+            kv["value"] = team.get('name')
+            teams_key_values.append(kv)
+
+        schema = KeyValueSchema(many=True)
+
+        # Convert to JSON (Serialization)
+        data = schema.dump(teams_key_values)
+        app.logger.debug(f"{data} type: {type(data)}")
+        return data, 200
+    else:
+        return abort(teams_resp[0], "Error reading key / values by user id.")
+
+
+def read_list_by_user_id(userId):
+    teams_resp = read_all_by_user_id(userId)
+    if teams_resp[1] == HTTPStatus.OK:
+        teams = teams_resp[0]
+        team_list = []
+        for team in teams:
+            team_list.append(team.get('name'))
+        data = team_list
+        app.logger.debug(f"{data} type: {type(data)}")
+        return data, 200
+    else:
+        return abort(teams_resp[0], "Error reading key / values by user id.")

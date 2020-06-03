@@ -24,6 +24,16 @@ class ResourceSchema(Schema):
     name = fields.Str()
 
 
+class ExtendedLoginSchema(Schema):
+    id = fields.Int()
+    email = fields.Str()
+    firstName = fields.Str()
+    lastName = fields.Str()
+    isAdmin = fields.Boolean()
+    showWelcome = fields.Boolean()
+    teams = fields.List(fields.Str())
+
+
 class ExtendedUserSchema(Schema):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -207,3 +217,7 @@ class ExtendedLZMetadataFSApplicationSchema(Schema):
     name = fields.String()
     children = fields.Nested(ExtendedLZMetadataFSBusinessUnitSchema(many=True))
 
+
+class KeyValueSchema(Schema):
+    key = fields.Str()
+    value = fields.Str()

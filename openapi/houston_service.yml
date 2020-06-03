@@ -329,7 +329,7 @@ paths:
 
   /keyValues/teamsByUserId/{userId}:
     get:
-      operationId: tb_houston_service.teamsByUserId.read_all
+      operationId: tb_houston_service.team.read_key_values_by_user_id
       tags:
         - team
       summary: Read list of teams the user is a member of 
