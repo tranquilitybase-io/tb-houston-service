@@ -5,13 +5,12 @@ import os
 from pprint import pprint
 from tests import pytest_lib 
 
-
-
 LOG_LEVEL = logging.INFO # DEBUG, INFO, WARNING, ERROR, CRITICAL
 
 HOUSTON_SERVICE_URL=os.environ['HOUSTON_SERVICE_URL']
 url = f"http://{HOUSTON_SERVICE_URL}/api/user/"
 plural_url = f"http://{HOUSTON_SERVICE_URL}/api/users/"
+test_email_account = "test@test.com"
     
 # Additional headers.
 headers = {'Content-Type': 'application/json' }
@@ -33,13 +32,12 @@ def test_user():
     id = post()
     #Testing PUT request
     put(id)
-    #Testing DELETE request
+    #Testing logical DELETE request
     pytest_lib.logical_delete(url, str(id))
     #Testing DELETE Request Error
     pytest_lib.delete_error(url, str(-1))
     #Testing GETALL request
     pytest_lib.get_all(plural_url)
-
     
 
 def post():
@@ -50,7 +48,7 @@ def post():
     "id": 0,
     "firstName": "test",
     "lastName": "test",
-    "email": "test@test.com",
+    "email": test_email_account,
     "isActive": True,
     "isAdmin": True,
     "showWelcome": True
@@ -72,7 +70,7 @@ def post():
     assert resp.status_code == 200
     assert resp_json['firstName'] == 'test'
     assert resp_json['lastName'] == 'test'
-    assert resp_json['email'] == 'test@test.com'
+    assert resp_json['email'] == test_email_account
     assert resp_json['isActive'] == True
     assert resp_headers['content-type'] == 'application/json'
     typestest(resp_json)

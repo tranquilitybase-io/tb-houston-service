@@ -1,39 +1,31 @@
 import json
+#import logging
 from config import db
-from tb_houston_service.tools import ModelTools
 from tb_houston_service.models import Application
 from tb_houston_service.models import Team
-from tb_houston_service import application_extension
+from tb_houston_service.models import LZEnvironment
+from tb_houston_service.models import SolutionEnvironment
+
+from tb_houston_service import team_extension
+
+#logger = logging.getLogger('tb_houston_service.solution_extension')
+
+def expand_solution(sol):
+    environments = db.session.query(LZEnvironment).filter(
+        SolutionEnvironment.solutionId == sol.id, 
+        SolutionEnvironment.environmentId == LZEnvironment.id).all()
+    sol.environments = environments
+
+    a_team = db.session.query(Team).filter(Team.id == sol.teamId).one_or_none()
+    sol.team = team_extension.expand_team(a_team)
+    return sol
 
 
-def build_solution(sol):
-    sol_dict = {
-        "id": sol.id,
-        "name": sol.name,
-        "description": sol.description,
-        "businessUnit": sol.businessUnit,
-        "costCentre": sol.costCentre,
-        "ci": sol.ci,
-        "cd": sol.cd,
-        "sourceControl": sol.sourceControl,
-        "environments": json.loads(sol.environments or "[]"),
-        "active": sol.active,
-        "favourite": sol.favourite,
-        "teamId": sol.teamId,
-        "lastUpdated": ModelTools.datetime_as_string(sol.lastUpdated),
-        "deploymentFolderId": sol.deploymentFolderId,
-    }
-
-    apps = db.session.query(Application).filter(Application.solutionId == sol.id).all()
-    app_arr = []
-    if apps is not None:
-        for ap in apps:
-            app_dict = application_extension.build_application(ap)
-            app_arr.append(app_dict)
-
-    sol_dict["applications"] = app_arr
-
-    team = db.session.query(Team).filter(Team.id == sol.teamId).one_or_none()
-    sol_dict["team"] = team
-
-    return sol_dict
+def expand_solution_for_dac(sol):
+    environments = db.session.query(LZEnvironment).filter(
+        SolutionEnvironment.solutionId == sol.id, 
+        SolutionEnvironment.environmentId == LZEnvironment.id).all()
+    sol.environments = environments
+    a_team = db.session.query(Team).filter(Team.id == sol.teamId).one_or_none()
+    sol.team = team_extension.expand_team_with_users(a_team)
+    return sol

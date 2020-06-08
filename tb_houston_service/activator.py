@@ -5,18 +5,21 @@ activators collection
 
 # 3rd party modules
 from flask import make_response, abort
+import logging
 import json
 from pprint import pformat
 from sqlalchemy import literal_column
 
 
-from config import db, app
+from config import db
 from tb_houston_service.models import Activator, ActivatorSchema
 from tb_houston_service.tools import ModelTools
 from tb_houston_service.extendedSchemas import ExtendedActivatorSchema
 from tb_houston_service.extendedSchemas import ExtendedActivatorCategorySchema
 from tb_houston_service import activator_extension
 
+
+logger = logging.getLogger('tb_houston_service.activator')
 
 def read_all(
     category=None,
@@ -76,15 +79,11 @@ def read_all(
     else:
         activators = activator_query.limit(page_size).offset(page * page_size).all()
 
-    activators_arr = []
-    for act in activators:
-        activators_arr.append(activator_extension.build_activator(act))
-
     # Serialize the data for the response
     activator_schema = ExtendedActivatorSchema(many=True)
-    data = activator_schema.dump(activators_arr)
-    app.logger.debug("read_all")
-    app.logger.debug(pformat(data))
+    data = activator_schema.dump(activators)
+    logger.debug("read_all")
+    logger.debug(pformat(data))
     return data, 200
 
 
@@ -101,9 +100,8 @@ def read_one(oid):
 
     if act is not None:
         # Serialize the data for the response
-        activator = activator_extension.build_activator(act)
         activator_schema = ExtendedActivatorSchema(many=False)
-        data = activator_schema.dump(activator)
+        data = activator_schema.dump(act)
         return data, 200
     else:
         abort(404, f"Activator with id {oid} not found".format(id=oid))
@@ -122,20 +120,6 @@ def create(activatorDetails):
     if "id" in activatorDetails:
         del activatorDetails["id"]
 
-    activatorDetails["accessRequestedBy"] = activatorDetails.get("accessRequestedBy", 0)
-    activatorDetails["ci"] = json.dumps(activatorDetails.get("ci", []))
-    activatorDetails["cd"] = json.dumps(activatorDetails.get("cd", []))
-    activatorDetails["hosting"] = json.dumps(activatorDetails.get("hosting", []))
-    activatorDetails["envs"] = json.dumps(activatorDetails.get("envs", []))
-    activatorDetails["sourceControl"] = json.dumps(
-        activatorDetails.get("sourceControl", [])
-    )
-    activatorDetails["regions"] = json.dumps(activatorDetails.get("regions", []))
-    activatorDetails["apiManagement"] = json.dumps(
-        activatorDetails.get("apiManagement", [])
-    )
-    activatorDetails["platforms"] = json.dumps(activatorDetails.get("platforms", []))
-
     schema = ActivatorSchema()
     new_activator = schema.load(activatorDetails, session=db.session)
     new_activator.lastUpdated = ModelTools.get_utc_timestamp()
@@ -145,16 +129,6 @@ def create(activatorDetails):
 
     # Serialize and return the newly created deployment
     # in the response
-
-    new_activator.ci = json.loads(new_activator.ci or "[]")
-    new_activator.cd = json.loads(new_activator.cd or "[]")
-    new_activator.hosting = json.loads(new_activator.hosting or "[]")
-    new_activator.envs = json.loads(new_activator.envs or "[]")
-    new_activator.sourceControl = json.loads(new_activator.sourceControl or "[]")
-    new_activator.regions = json.loads(new_activator.regions or "[]")
-    new_activator.apiManagement = json.loads(new_activator.apiManagement or "[]")
-    new_activator.platforms = json.loads(new_activator.platforms or "[]")
-
     schema = ExtendedActivatorSchema(many=False)
     data = schema.dump(new_activator)
     return data, 201
@@ -169,14 +143,14 @@ def update(oid, activatorDetails):
     :return:       updated activator
     """
 
-    app.logger.debug("update")
-    app.logger.debug("id")
-    app.logger.debug(oid)
-    app.logger.debug("activator")
-    app.logger.debug(pformat(activatorDetails))
+    logger.debug("update")
+    logger.debug("id")
+    logger.debug(oid)
+    logger.debug("activator")
+    logger.debug(pformat(activatorDetails))
 
     if "id" in activatorDetails and activatorDetails["id"] != oid:
-        abort(400, f"Key mismatch in path and body")
+        abort(400, "Key mismatch in path and body")
 
     # Does the activators exist in activators list?
     existing_activator = (
@@ -187,38 +161,18 @@ def update(oid, activatorDetails):
 
     if existing_activator is not None:
         # schema = ActivatorSchema()
+        activatorDetails['id'] = oid
         activatorDetails["lastUpdated"] = ModelTools.get_utc_timestamp()
-        activatorDetails["accessRequestedBy"] = activatorDetails.get(
-            "accessRequestedBy", existing_activator.accessRequestedBy
-        )
-        activatorDetails["ci"] = json.dumps(
-            activatorDetails.get("ci", existing_activator.ci)
-        )
-        activatorDetails["cd"] = json.dumps(
-            activatorDetails.get("cd", existing_activator.cd)
-        )
-        activatorDetails["hosting"] = json.dumps(
-            activatorDetails.get("hosting", existing_activator.hosting)
-        )
-        activatorDetails["envs"] = json.dumps(
-            activatorDetails.get("envs", existing_activator.envs)
-        )
-        activatorDetails["sourceControl"] = json.dumps(
-            activatorDetails.get("sourceControl", existing_activator.sourceControl)
-        )
-        activatorDetails["regions"] = json.dumps(
-            activatorDetails.get("regions", existing_activator.regions)
-        )
-        activatorDetails["apiManagement"] = json.dumps(
-            activatorDetails.get("apiManagement", existing_activator.apiManagement)
-        )
-        activatorDetails["platforms"] = json.dumps(
-            activatorDetails.get("platforms", existing_activator.platforms)
-        )
-        db.session.query(Activator).filter(Activator.id == oid).update(activatorDetails)
+        logger.info("activatorDetails: %s", activatorDetails)
+        schema = ActivatorSchema(many=False, session=db.session)
+        updatedActivator = schema.load(activatorDetails)
+        logger.info("updatedActivator: %s", updatedActivator)        
+        db.session.merge(updatedActivator)
         db.session.commit()
         # return the updated activator in the response
-        return read_one(oid)
+        schema = ExtendedActivatorSchema(many=False)
+        data = schema.dump(updatedActivator)
+        return data, 200
     # otherwise, nope, deployment doesn't exist, so that's an error
     else:
         abort(404, f"Activator id {oid} not found")
@@ -254,7 +208,7 @@ def setActivatorStatus(activatorDetails):
     : return:      The activator that was changed
     """
 
-    app.logger.info(pformat(activatorDetails))
+    logger.info(pformat(activatorDetails))
     # Does the activator to delete exist?
     existing_activator = (
         db.session.query(Activator)
@@ -275,7 +229,7 @@ def setActivatorStatus(activatorDetails):
         db.session.merge(existing_activator)
         db.session.commit()
 
-        activator = activator_extension.build_activator(existing_activator)
+        activator = activator_extension.expand_activator(existing_activator)
         activator_schema = ExtendedActivatorSchema()
         data = activator_schema.dump(activator)
         return data, 200

@@ -7,15 +7,16 @@ solutions collection
 from pprint import pformat
 import os
 import json
+import logging
 from http import HTTPStatus
 import requests
 from flask import make_response, abort
 
-from config import db, app
+from config import db
 from tb_houston_service.models import Solution, SolutionSchema
 from tb_houston_service.DeploymentStatus import DeploymentStatus
 from tb_houston_service.tools import ModelTools
-from tb_houston_service.extendedSchemas import ExtendedSolutionSchema
+from tb_houston_service.extendedSchemas import ExtendedSolutionForDACSchema
 from tb_houston_service.extendedSchemas import SolutionDeploymentSchema
 from tb_houston_service import folder
 from tb_houston_service import team
@@ -23,6 +24,7 @@ from tb_houston_service import gcp_dac_folder_deployment
 from tb_houston_service import solution_extension
 from tb_houston_service import solutionresourcejson
 
+logger = logging.getLogger('tb_houston_service.solution_deployment')
 
 deployment_create_url = f"http://{os.environ['GCP_DAC_URL']}/api/solution_async/"
 deployment_create_result_url = (
@@ -42,32 +44,32 @@ def deployment_read_all():
                     id and deployed fields
     """
 
-    app.logger.debug("solution.deployment_read_all")
+    logger.debug("deployment_read_all")
 
     solutions = db.session.query(Solution).filter(Solution.deploymentState != "").all()
     # Loop through solutions, if not a SUCCESS
     #   - send folders
     #   - once folders are sent send solution deployment
     for sol in solutions:
-        app.logger.debug(
-            f"deployment_read_all::sol.deploymentState: {sol.deploymentState}"
+        logger.debug(
+            "deployment_read_all::sol.deploymentState: %s", sol.deploymentState
         )
         if sol.deploymentState != DeploymentStatus.SUCCESS:
             oid = sol.id
             task_id = sol.taskId
             if task_id is None or task_id == "":
                 response = deploy_folders_and_solution(sol)
-                app.logger.debug(pformat(response))
+                logger.debug(pformat(response))
             else:
-                app.logger.debug(f"oid: {oid} {task_id}")
+                logger.debug("oid: %s task_id: %s", oid, task_id)
                 response = get_solution_results_from_the_dac(oid, task_id)
-                app.logger.debug(pformat(response))
+                logger.debug(pformat(response))
 
     schema = SolutionDeploymentSchema(many=True)
     data = schema.dump(solutions)
 
-    app.logger.debug("solutions data:")
-    app.logger.debug(data)
+    db.session.close()
+    logger.debug("solutions data: %s", data)
     return data, 200
 
 
@@ -81,6 +83,7 @@ def deployment_read_one(oid):
     """
 
     sol = db.session.query(Solution).filter(Solution.id == oid).one_or_none()
+    db.session.close()
 
     if sol is not None:
         # Serialize the data for the response
@@ -101,7 +104,7 @@ def deployment_create(solutionDeploymentDetails):
     :               500 if other failure
     """
 
-    app.logger.debug(pformat(solutionDeploymentDetails))
+    logger.debug(pformat(solutionDeploymentDetails))
     oid = solutionDeploymentDetails["id"]
     sol = db.session.query(Solution).filter(Solution.id == oid).one_or_none()
 
@@ -121,6 +124,8 @@ def deployment_create(solutionDeploymentDetails):
         db.session.merge(update_solution)
         db.session.commit()
         resp_json = {"id": oid, "deploymentState": update_solution.deploymentState}
+
+    db.session.close()
     return make_response(resp_json, 200)
 
 
@@ -133,7 +138,7 @@ def deployment_update(oid, solutionDeploymentDetails):
     :return:       updated solution
     """
 
-    app.logger.debug(solutionDeploymentDetails)
+    logger.debug(solutionDeploymentDetails)
 
     # Does the solutions exist in solutions list?
     existing_solution = (
@@ -193,7 +198,7 @@ def create_folder(folderId, folderName):
     status = DeploymentStatus.PENDING
     if resp[1] == HTTPStatus.OK:
         resp_dict = resp[0]
-        app.logger.debug(f"create_folder_resp: {resp_dict}")
+        logger.debug("create_folder_resp: %s", resp_dict)
         # send folder to GCP DAC
         task_id = resp_dict["taskId"]
         status = resp_dict["status"]
@@ -209,12 +214,12 @@ def create_folder(folderId, folderName):
                 }
                 dac_resp = gcp_dac_folder_deployment.create(dac_create_payload)
                 dac_resp_json = dac_resp[0]
-                app.logger.debug(
-                    f"create_folder::create_results::dac_folder_resp: {dac_resp_json}"
+                logger.debug(
+                    "create_folder::create_results::dac_folder_resp: %s", dac_resp_json
                 )
                 if dac_resp_json.get("taskid"):
-                    app.logger.debug(
-                        f"create_folder::update_db::taskId: {dac_resp_json.get('taskid')}"
+                    logger.debug(
+                        "create_folder::update_db::taskId: %s", dac_resp_json.get('taskid')
                     )
                     resp_dict["taskId"] = dac_resp_json.get("taskid")
                     folder.update(db_folder_id, resp_dict)
@@ -224,8 +229,8 @@ def create_folder(folderId, folderName):
                 # folder_id updated on the database along with the status
                 dac_resp = gcp_dac_folder_deployment.get_create_results(task_id)
                 dac_resp_json = dac_resp[0]
-                app.logger.debug(
-                    f"create_folder::create_dac_folder_resp: {dac_resp_json}"
+                logger.debug(
+                    "create_folder::create_dac_folder_resp: %s", dac_resp_json
                 )
                 if dac_resp_json.get("status") == DeploymentStatus.SUCCESS:
                     payload = json.loads(dac_resp_json.get("payload"))
@@ -238,8 +243,8 @@ def create_folder(folderId, folderName):
                         folder.update(db_folder_id, resp_dict)
                         next_folder_id = dac_folder_id
                     else:
-                        app.logger.error(
-                            f"Unable to get folder_id for folder {folderName} from the DAC payload, skipping."
+                        logger.error(
+                            "Unable to get folder_id for folder %sfrom the DAC payload, skipping.", folderName
                         )
 
     # return current status and next_folder_id if avaiable,
@@ -249,30 +254,33 @@ def create_folder(folderId, folderName):
 
 # Return SUCCESS if all folders have been created on the DB and DAC
 def create_folders(solution):
-    app.logger.debug(f"solution: {pformat(solution)}")
-    folder_meta = folder.get_folder_meta()
+    logger.debug("solution: %s", pformat(solution))
     resp = gcp_dac_folder_deployment.metadata()
-    app.logger.debug(f"resp_json: {resp.json()}")
+    logger.debug("resp_json: {resp.json()}")
     dac_metadata = resp.json()
-    app.logger.debug(f"dac_metadata: {dac_metadata}")
+    logger.debug("dac_metadata: %s", dac_metadata)
     root_folder_id = dac_metadata["root_folder_id"]
     folder_id = None
     status = None
+
+    folder_meta = folder.get_folder_meta()
+    logger.debug("solution_deployment::folder_meta: %s", folder_meta)
+
     if folder.APPLICATIONS in folder_meta:
         (folder_id, status) = create_folder(root_folder_id, folder.APPLICATIONS)
     if status == DeploymentStatus.SUCCESS and folder.BUSINESS_UNIT in folder_meta:
         (folder_id, status) = create_folder(folder_id, solution.businessUnit)
     if status == DeploymentStatus.SUCCESS and folder.TEAM in folder_meta:
         oteam = team.read_one(solution.teamId)
-        app.logger.debug(f"team: {oteam}")
+        logger.debug("team: %s", oteam)
         team_name = oteam.get("name")
-        app.logger.debug(f"team_name: {team_name}")
+        logger.debug("team_name: %s", team_name)
         (folder_id, status) = create_folder(folder_id, team_name)
 
     data = {}
     data["deploymentFolderId"] = folder_id
     data["status"] = status
-    app.logger.debug(f"create_folders::return {data}")
+    logger.debug("create_folders::return %s", data)
     return data
 
 
@@ -281,8 +289,8 @@ def deploy_folders_and_solution(sol_deployment):
     create_folders_resp = create_folders(sol_deployment)
     deploymentFolderId = create_folders_resp.get("deploymentFolderId")
     status = create_folders_resp.get("status")
-    app.logger.debug(
-        f"deploy_folders_and_solution::deploymentFolderId: {deploymentFolderId} status: {status}"
+    logger.debug(
+        "deploy_folders_and_solution::deploymentFolderId: %s status: %s", deploymentFolderId, status
     )
     if deploymentFolderId and status == DeploymentStatus.SUCCESS:
         sol_deployment.deploymentFolderId = deploymentFolderId
@@ -293,11 +301,12 @@ def deploy_folders_and_solution(sol_deployment):
 # Send the solution to the DAC
 def send_solution_deployment_to_the_dac(sol_deployment):
     oid = sol_deployment.id
-    solution = solution_extension.build_solution(sol_deployment)
-    schema = ExtendedSolutionSchema(many=False)
-    solution_data = json.dumps(schema.dump(solution))
-    app.logger.debug(
-        f"send_solution_deployment_to_the_dac::solution_deployment: {solution_data}"
+    solution = solution_extension.expand_solution_for_dac(sol_deployment)
+    schema = ExtendedSolutionForDACSchema(many=False)
+    solution_data = schema.dump(solution)
+    solution_data = json.dumps(solution_data, indent=4)
+    logger.debug(
+        "send_solution_deployment_to_the_dac::solution_deployment: %s", solution_data
     )
     resp_json = None
     try:
@@ -305,12 +314,12 @@ def send_solution_deployment_to_the_dac(sol_deployment):
             deployment_create_url, data=solution_data, headers=headers
         )
         resp_json = response.json()
-        app.logger.debug(
-            f"send_solution_deployment_to_the_dac::ResponseFromDAC: {pformat(resp_json)}"
+        logger.debug(
+            "send_solution_deployment_to_the_dac::ResponseFromDAC: %s", pformat(resp_json)
         )
-    except Exception:
-        app.logger.debug(
-            "send_solution_deployment_to_the_dac::Failed during request to DAC"
+    except requests.exceptions.RequestException as e:
+        logger.debug(
+            "send_solution_deployment_to_the_dac::Failed during request to DAC %s", e
         )
         abort("Failed communicating with the DAC", 500)
 
@@ -328,15 +337,15 @@ def send_solution_deployment_to_the_dac(sol_deployment):
             "deploymentFolderId": sol_deployment.deploymentFolderId,
         }
 
-        app.logger.debug(
-            f"send_solution_deployment_to_the_dac::deployment_json: {pformat(deployment_json)}"
+        logger.debug(
+            "send_solution_deployment_to_the_dac::deployment_json: %s", pformat(deployment_json)
         )
-        app.logger.debug(pformat(deployment_json))
+        logger.debug(pformat(deployment_json))
         deployment_update(oid, deployment_json)
         return deployment_json
-    except Exception:
-        app.logger.debug(
-            "send_solution_deployment_to_the_dac::Failed updating the database with the response from the DAC."
+    except requests.exceptions.RequestException as e:
+        logger.debug(
+            "send_solution_deployment_to_the_dac::Failed updating the database with the response from the DAC, %s.", e
         )
         abort(
             "send_solution_deployment_to_the_dac::Failed updating the database with the response from the DAC.",
@@ -357,17 +366,15 @@ def get_solution_results_from_the_dac(oid, task_id):
     Get the solution deployment results from the DAC.
     params: task_id
     """
-    app.logger.debug(f"get_solution_results_from_the_dac: oid: {oid} taskId: {task_id}")
+    logger.debug(f"get_solution_results_from_the_dac: oid: %s taskId: %s", oid, task_id)
     resp_json = None
     try:
         response = requests.get(deployment_create_result_url + task_id, headers=headers)
         resp_json = response.json()
-        app.logger.debug("Response from Dac")
-        app.logger.debug(pformat(resp_json))
-        print(pformat(resp_json))
-    except Exception:
-        app.logger.debug(
-            "get_solution_results_from_the_dac::Failed during request to DAC"
+        logger.debug("Response from Dac: %s", resp_json)
+    except requests.exceptions.RequestException as e:
+        logger.debug(
+            "get_solution_results_from_the_dac::Failed during request to DAC, %s", e
         )
         abort(
             "get_solution_results_from_the_dac::failed communicating with the DAC", 500
@@ -384,14 +391,14 @@ def get_solution_results_from_the_dac(oid, task_id):
         "statusCode": "200",
         "statusMessage": "Solution deployment updated.",
     }
-    app.logger.debug(
-        f"get_solution_results_from_the_dac::deployment_json: {pformat(deployment_json)}"
+    logger.debug(
+        "get_solution_results_from_the_dac::deployment_json: %s", pformat(deployment_json)
     )
     try:
         deployment_update(oid, deployment_json)
-    except Exception:
-        app.logger.debug(
-            "get_solution_results_from_the_dac::Failed updating the SolutionDeployment with the response from the DAC."
+    except requests.exceptions.RequestException as e:
+        logger.debug(
+            "get_solution_results_from_the_dac::Failed updating the SolutionDeployment with the response from the DAC, %s", e
         )
         abort(
             "get_solution_results_from_the_dac::Failed updating the SolutionDeployment with the response from the DAC.",
@@ -401,37 +408,26 @@ def get_solution_results_from_the_dac(oid, task_id):
     if resp_json.get("status", "ERROR") != DeploymentStatus.SUCCESS:
         return make_response(deployment_json, 200)
 
-    json = resp_json.get("tf_state", "")
-    is_valid_json = validate_json(json)
-    app.logger.debug(f"is_valid_json: {is_valid_json}")
-    print(f"is_valid_json: {is_valid_json}")
-
-    if (
-        is_valid_json
-        and resp_json.get("status", "") == DeploymentStatus.SUCCESS
-        and len(json) > 0
-    ):
-        tf_json = {"solutionId": oid, "json": json}
-        print("tf_json: " + pformat(tf_json))
-        solutionresourcejson.create(tf_json)
+    my_json = resp_json.get("payload", "")
+    is_valid_json = validate_json(my_json)
+    logger.debug("is_valid_json: %s", is_valid_json)
 
     try:
         # Update Solution Resource JSON
-        app.logger.debug(f"is_valid_json: {is_valid_json}")
         if (
             is_valid_json
             and resp_json.get("status", "") == DeploymentStatus.SUCCESS
-            and len(json) > 0
+            and len(my_json) > 0
         ):
-            tf_json = {"solutionId": oid, "json": json}
-            print("tf_json: " + pformat(tf_json))
+            tf_json = {"solutionId": oid, "json": my_json}
+            #print("tf_json: " + pformat(tf_json))
             solutionresourcejson.create(tf_json)
         return deployment_json
-    except Exception:
-        app.logger.debug(
-            "get_solution_results_from_the_dac::Failed updating the SolutionResourceJSON with the response from the DAC."
+    except requests.exceptions.RequestException as e:
+        logger.debug(
+            "get_solution_results_from_the_dac::Failed updating the SolutionResourceJSON with the response from the DAC, %s", e
         )
         abort(
             "get_solution_results_from_the_dac::Failed updating the SolutionResourceJSON with the response from the DAC.",
-            500,
+            500
         )

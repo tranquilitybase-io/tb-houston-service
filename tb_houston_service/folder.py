@@ -9,7 +9,7 @@ from flask import make_response, abort
 from config import db, app
 from tb_houston_service.models import Folder, FolderSchema
 from tb_houston_service.DeploymentStatus import DeploymentStatus
-from tb_houston_service import lzmetadata
+from tb_houston_service import lzmetadata_folder_structure
 
 
 APPLICATIONS = "Applications"
@@ -142,10 +142,12 @@ def delete(oid):
 
 
 def get_folder_meta():
-    resp = lzmetadata.read_folder_structure()
-    app.logger.debug(f"resp: {resp}")
-    jso = resp[0][0]
+    resp = lzmetadata_folder_structure.read_value()
+    app.logger.debug(f"folder::get_folder_meta: {resp}")
+    print(f"folder::get_folder_meta: {resp}")
+    jso = resp[0]
     app.logger.debug(f"jso: {jso}")
+    print(f"folder::get_folder_meta: {jso}")
     data = {}
     data[jso["name"]] = jso["isEnabled"]
     jso = jso["children"][0]
@@ -155,6 +157,7 @@ def get_folder_meta():
     jso = jso["children"][0]
     data[jso["name"]] = jso["isEnabled"]
     folder_meta = [k for k in data if data[k] == True]
+    print(f"folder::get_folder_meta: {folder_meta}")
     return folder_meta
 
 
@@ -166,13 +169,8 @@ def read_or_create_by_parent_folder_id_and_folder_name(parentFolderId, folderNam
     :return:              parentFolderId, status, taskId
     """
 
-    fdr = (
-        db.session.query(Folder)
-        .filter(
-            Folder.parentFolderId == parentFolderId, Folder.folderName == folderName
-        )
-        .one_or_none()
-    )
+    app.logger.debug(f"parentFolderId: {parentFolderId}, folderName: {folderName}")
+    fdr = db.session.query(Folder).filter(Folder.parentFolderId == parentFolderId, Folder.folderName == folderName).one_or_none()
 
     if fdr is not None:
         # Serialize the data for the response

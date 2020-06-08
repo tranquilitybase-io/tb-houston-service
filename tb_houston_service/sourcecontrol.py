@@ -5,7 +5,6 @@ sourceControl collection
 
 # System modules
 from pprint import pformat
-from datetime import datetime
 from flask import make_response, abort
 
 # 3rd party modules
@@ -61,7 +60,7 @@ def create(sourceControlDetails):
     :return:        201 on success, 406 on sourceControl exists
     """
     key = sourceControlDetails.get("key", None)
-    value = sourceControlDetails.get("value", None)
+    #value = sourceControlDetails.get("value", None)
 
     # Does the sourceControl exist already?
     existing_sourceControl = (
@@ -82,7 +81,7 @@ def create(sourceControlDetails):
 
     # Otherwise, it already exists, that's an error
     else:
-        abort(406, f"SourceControl already exists")
+        abort(406, "SourceControl already exists")
 
 
 def update(key, sourceControlDetails):
@@ -97,7 +96,7 @@ def update(key, sourceControlDetails):
     app.logger.debug(pformat(sourceControlDetails))
 
     if sourceControlDetails["key"] != key:
-        abort(400, f"Key mismatch in path and body")
+        abort(400, "Key mismatch in path and body")
 
     # Does the sourceControl exist in sourceControl list?
     existing_sourceControl = (
@@ -120,7 +119,7 @@ def update(key, sourceControlDetails):
 
     # otherwise, nope, deployment doesn't exist, so that's an error
     else:
-        abort(404, f"SourceControl not found")
+        abort(404, "SourceControl not found")
 
 
 def delete(key):

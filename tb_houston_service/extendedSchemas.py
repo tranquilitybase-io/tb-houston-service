@@ -1,6 +1,11 @@
-from marshmallow import Schema, fields
+import logging
+import json
+from marshmallow import Schema, fields, pre_load, post_load, pre_dump, post_dump
 from tb_houston_service.models import TeamSchema
+from tb_houston_service.models import BusinessUnitSchema
+from tb_houston_service.models import LZEnvironmentSchema
 
+logger = logging.getLogger('tb_houston_service.extendedSchemas')
 
 class IdSchema(Schema):
     def __init__(self, **kwargs):
@@ -10,16 +15,10 @@ class IdSchema(Schema):
 
 
 class HealthSchema(Schema):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
     status = fields.Str()
 
 
 class ResourceSchema(Schema):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
     ipaddress = fields.Str()
     name = fields.Str()
 
@@ -44,6 +43,7 @@ class ExtendedUserSchema(Schema):
     lastName = fields.Str()
     isAdmin = fields.Boolean()
     showWelcome = fields.Boolean()
+    role = fields.Str()
 
 
 class ExtendedActivatorSchema(Schema):
@@ -78,6 +78,36 @@ class ExtendedActivatorSchema(Schema):
     source = fields.Str()
     activatorLink = fields.Str()
 
+    @post_load(pass_original=True)
+    def deserialize_post_load(self, data, original_data, **kwargs):
+        logger.debug("ExtendedActivatorSchema::pre_load::serialize_post_load: %s", data)
+        data['envs'] = json.dumps(original_data.envs)     
+        data['platforms'] = json.dumps(original_data.platforms)    
+        data['regions'] = json.dumps(original_data.regions)
+        data['hosting'] = json.dumps(original_data.hosting)
+        data['apiManagement'] = json.dumps(original_data.apiManagement)
+        data['ci'] = json.dumps(original_data.ci)
+        data['cd'] = json.dumps(original_data.cd)
+        data['sourceControl'] = json.dumps(original_data.sourceControl)                                                      
+        return data
+
+
+    @post_dump(pass_original=True)
+    def deserialize_post_dump(self, data, original_data, **kwargs):
+        logger.debug("ExtendedActivatorSchema::post_dump %s", original_data)
+        data["envs"] = json.loads(original_data.envs)
+        data["platforms"] = json.loads(original_data.platforms)
+        data["regions"] = json.loads(original_data.regions)
+        data["hosting"] = json.loads(original_data.hosting)
+        data["apiManagement"] = json.loads(original_data.apiManagement)
+        data["ci"] = json.loads(original_data.ci)
+        data["cd"] = json.loads(original_data.cd)                             
+        data["sourceControl"] = json.loads(original_data.sourceControl)
+        if not original_data.accessRequestedBy:
+            data["accessRequestedBy"] = None
+        logger.debug("accessRequestedBy: %s", original_data.accessRequestedBy)
+        return data    
+
 
 class ExtendedApplicationSchema(Schema):
     id = fields.Int()
@@ -92,8 +122,68 @@ class ExtendedApplicationSchema(Schema):
     activator = fields.Nested(ExtendedActivatorSchema(many=False))
 
 
+    # @pre_load()
+    # def serialize_pre_load(self, data, **kwargs):
+    #     logger.debug("ExtendedApplicationSchema::pre_load: %s", data)   
+    #     #data['resources'] = json.loads(original_data['resources'])
+    #     return data
+
+
+    @post_load(pass_original=True)
+    def serialize_post_load(self, data, original_data, **kwargs):
+        logger.debug("ExtendedApplicationSchema::post_load: %s", data)
+        logger.debug("serialize_resources_original data: %s", original_data)            
+        data['resources'] = json.dumps(original_data.resources)
+        return data
+
+    @post_dump(pass_original=True)
+    def deserialize_post_dump(self, data, original_data, **kwargs):
+        logger.debug("ExtendedApplicationSchema::post_dump: %s", original_data)
+        logger.debug("deserialize_resources_original data: %s", original_data)
+        data['resources'] = json.loads(original_data.resources)
+        return data
+
+
 
 class ExtendedSolutionSchema(Schema):
+    __envelope__ = {"single": "solution", "many": "solutions"}
+
+    id = fields.Int()
+    name = fields.Str()
+    description = fields.Str()
+    businessUnit = fields.Str()
+    costCentre = fields.Str()
+    ci = fields.Str()
+    cd = fields.Str()
+    sourceControl = fields.Str()
+    environments = fields.Nested(LZEnvironmentSchema(many=True))
+    isActive = fields.Boolean()
+    favourite = fields.Boolean()
+    teamId = fields.Int()
+    lastUpdated = fields.Str()
+    applications = fields.Nested(ExtendedApplicationSchema(many=True))
+    team = fields.Nested(TeamSchema(many=False))
+    deploymentFolderId = fields.Str()
+
+
+class ExtendedTeamMemberSchema(Schema):
+    id = fields.Int()
+    user = fields.Nested(ExtendedUserSchema(many=False))
+    role = fields.Str()
+
+
+class ExtendedTeamDACSchema(Schema):
+    id = fields.Int()
+    name = fields.Str()
+    description = fields.Str()
+    businessUnitId = fields.Int()
+    isActive = fields.Boolean()
+    businessUnit = fields.Nested(BusinessUnitSchema(many=False))
+    lastUpdated = fields.Str()
+    teamMembers = fields.Nested(ExtendedTeamMemberSchema(many=True))
+
+
+class ExtendedSolutionForDACSchema(Schema):
     __envelope__ = {"single": "solution", "many": "solutions"}
 
     id = fields.Int()
@@ -109,8 +199,7 @@ class ExtendedSolutionSchema(Schema):
     favourite = fields.Boolean()
     teamId = fields.Int()
     lastUpdated = fields.Str()
-    applications = fields.Nested(ExtendedApplicationSchema(many=True))
-    team = fields.Nested(TeamSchema(many=False))
+    team = fields.Nested(ExtendedTeamDACSchema(many=False))
     deploymentFolderId = fields.Str()
 
 
@@ -191,6 +280,13 @@ class ExtendedLZMetadataSchema(Schema):
     value = fields.List(fields.Str())
 
 
+class ExtendedLZMetadataListSchema(Schema):
+    name = fields.Str()
+    value = fields.List(fields.Str())
+    description = fields.Str()
+    isActive = fields.Boolean()
+
+
 class ExtendedLZMetadataFSSolutionSchema(Schema):
     id = fields.Int() 
     isEnabled = fields.Boolean()
@@ -218,6 +314,23 @@ class ExtendedLZMetadataFSApplicationSchema(Schema):
     children = fields.Nested(ExtendedLZMetadataFSBusinessUnitSchema(many=True))
 
 
+class ExtendedLZMetadataFSSchema(Schema):
+    isActive = fields.Boolean()
+    name = fields.String()
+    value = fields.Nested(ExtendedLZMetadataFSApplicationSchema(many=True))
+
+
 class KeyValueSchema(Schema):
     key = fields.Str()
     value = fields.Str()
+
+
+class ExtendedTeamSchema(Schema):
+    id = fields.Int()
+    name = fields.Str()
+    description = fields.Str()
+    businessUnitId = fields.Int()
+    isActive = fields.Boolean()
+    businessUnit = fields.Nested(BusinessUnitSchema(many=False))
+    lastUpdated = fields.Str()
+    userCount = fields.Int()

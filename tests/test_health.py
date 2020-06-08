@@ -1,5 +1,4 @@
 import requests
-import json
 import os
 
 def test_health():

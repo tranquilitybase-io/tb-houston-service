@@ -8,13 +8,12 @@ def test_login():
 
     headers = {'Content-Type': 'application/json' } 
 
-    false = 1 == 0
     payload = {
     'username': 'test@testmail.com',
     'password': 'string'
     }
 
     resp = requests.post(url, headers=headers, data=json.dumps(payload, indent=4))
-    resp_json = resp.json()
+
     # Validate Response
     assert resp.status_code == 401

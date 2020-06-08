@@ -3,12 +3,12 @@ from tb_houston_service.extendedSchemas import ExtendedUserSchema
 from config import db
 
 
-def build_user(id):
-    if id == None or id == 0:
+def build_user(oid):
+    if oid == None or oid == 0:
         return None
 
     existing_user = (
-        db.session.query(User).filter(User.id == id).one_or_none()
+        db.session.query(User).filter(User.id == oid).one_or_none()
     )
 
     if existing_user is not None:

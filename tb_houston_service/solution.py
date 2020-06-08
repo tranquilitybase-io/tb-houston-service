@@ -5,17 +5,19 @@ solutions collection
 
 # 3rd party modules
 import json
-from pprint import pformat
+import logging
 from flask import make_response,  abort
 from sqlalchemy import literal_column
+from sqlalchemy.exc import SQLAlchemyError
 
-from config import db, app
+from config import db
 from tb_houston_service.tools import ModelTools
 from tb_houston_service.models import Solution, SolutionSchema
 from tb_houston_service.extendedSchemas import ExtendedSolutionSchema
 from tb_houston_service.extendedSchemas import SolutionNamesOnlySchema
 from tb_houston_service import solution_extension
 
+logger = logging.getLogger('tb_houston_service.solution')
 
 def read_all(active=None, namesonly=None, page=None, page_size=None, sort=None):
     """
@@ -25,8 +27,8 @@ def read_all(active=None, namesonly=None, page=None, page_size=None, sort=None):
     :return:        json string of list of solutions
     """
 
-    app.logger.debug("solution.read_all")
-    app.logger.debug(f"Active: {active}, namesonly: {namesonly}")
+    logger.debug("solution.read_all")
+    logger.debug("Active: %s, namesonly: %s", active, namesonly)
 
     # pre-process sort instructions
     if (sort==None):
@@ -44,8 +46,8 @@ def read_all(active=None, namesonly=None, page=None, page_size=None, sort=None):
                 orderby_arr.append(f"{si1} {si2}")
             #print("orderby: {}".format(orderby_arr))
             solution_query = db.session.query(Solution).order_by(literal_column(", ".join(orderby_arr)))
-        except Exception as e:
-            print("Exception: {}".format(pformat(e)))
+        except SQLAlchemyError as e:
+            logger.debug("Exception: %s", e)
             solution_query = db.session.query(Solution).order_by(Solution.id)
 
     # Create the list of solutions from our data
@@ -63,17 +65,12 @@ def read_all(active=None, namesonly=None, page=None, page_size=None, sort=None):
       schema = SolutionNamesOnlySchema(many=True)
       data = schema.dump(solutions)
     else:
-      solutions_arr = []
       for sol in solutions:
-        solutions_arr.append(solution_extension.build_solution(sol))
-      app.logger.debug("solutions array:")
-      app.logger.debug(pformat(solutions_arr))
-      # Serialize the data for the response
+        sol = solution_extension.expand_solution(sol)
       schema = ExtendedSolutionSchema(many=True)
-      data = schema.dump(solutions_arr)
+      data = schema.dump(solutions)
 
-    app.logger.debug("solutions data:")
-    app.logger.debug(data)
+    logger.debug("read_all: %s", data)
     return data, 200
 
 
@@ -89,7 +86,7 @@ def read_one(oid):
     sol = (db.session.query(Solution).filter(Solution.id == oid).one_or_none())
 
     if sol is not None:
-        solution = solution_extension.build_solution(sol)
+        solution = solution_extension.expand_solution(sol)
         # Serialize the data for the response
         solution_schema = ExtendedSolutionSchema()
         data = solution_schema.dump(solution)
@@ -110,8 +107,8 @@ def create(solutionDetails):
     """
 
     # Defaults
-    if (solutionDetails.get('active') == None):
-      solutionDetails['active'] = True
+    if (solutionDetails.get('isActive') == None):
+      solutionDetails['isActive'] = True
 
     if (solutionDetails.get('favourite') == None):
       solutionDetails['favourite'] = True
@@ -141,7 +138,6 @@ def create(solutionDetails):
       del solutionDetails["id"]
 
     solutionDetails['lastUpdated'] = ModelTools.get_utc_timestamp()
-    solutionDetails['environments'] = json.dumps(solutionDetails.get('environments') or [])
 
     schema = SolutionSchema(many=False)
     new_solution = schema.load(solutionDetails, session=db.session)
@@ -151,9 +147,9 @@ def create(solutionDetails):
     # Serialize and return the newly created solution
     # in the response
 
-    schema = SolutionSchema()
+    new_solution = solution_extension.expand_solution(new_solution)
+    schema = ExtendedSolutionSchema()
     data = schema.dump(new_solution)
-    data['environments'] = json.loads(data['environments'])
     return data, 201
 
 
@@ -166,7 +162,7 @@ def update(oid, solutionDetails):
     :return:       updated solutions
     """
 
-    app.logger.debug(solutionDetails)
+    logger.debug(solutionDetails)
 
     # Does the solutions exist in solutions list?
     existing_solution = db.session.query(Solution).filter(
@@ -176,18 +172,32 @@ def update(oid, solutionDetails):
     # Does solutions exist?
 
     if existing_solution is not None:
-        solutionDetails['environments'] = json.dumps(solutionDetails.get('environments') or existing_solution.environments)
-        schema = SolutionSchema()
-        update_solution = schema.load(solutionDetails, session=db.session)
-        update_solution.key = solutionDetails.get('id', oid)
-        update_solution.lastUpdated = ModelTools.get_utc_timestamp()
-
-        db.session.merge(update_solution)
+        existing_solution.lastUpdated = ModelTools.get_utc_timestamp()
+        if solutionDetails.get('businessUnit'):
+          existing_solution.businessUnit = solutionDetails['businessUnit']
+        if solutionDetails.get('cd'):
+          existing_solution.cd = solutionDetails['cd']
+        if solutionDetails.get('ci'):
+          existing_solution.ci = solutionDetails['ci']
+        if solutionDetails.get('costCentre'):
+          existing_solution.costCentre = solutionDetails['costCentre']
+        if solutionDetails.get('description'):
+          existing_solution.description = solutionDetails['description']
+        if solutionDetails.get('favourite'):
+          existing_solution.favourite = solutionDetails['favourite']          
+        if solutionDetails.get('isActive'):
+          existing_solution.isActive = solutionDetails['isActive'] 
+        if solutionDetails.get('name'):
+          existing_solution.name = solutionDetails['name']
+        if solutionDetails.get('sourceControl'):
+          existing_solution.sourceControl = solutionDetails['sourceControl']
+        if solutionDetails.get('teamId'):
+          existing_solution.teamId = solutionDetails['teamId']            
+        db.session.merge(existing_solution)
         db.session.commit()
 
         # return the updted solutions in the response
         schema = ExtendedSolutionSchema(many=False)
-        solutionDetails['environments'] = json.loads(solutionDetails['environments'])
         data = schema.dump(solutionDetails)
         return data, 200
 

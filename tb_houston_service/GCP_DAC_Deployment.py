@@ -4,12 +4,13 @@ folderstructures collection
 """
 
 # 3rd party modules
+import logging
 from pprint import pformat
 import json
 import os
 import requests
-from config import app
 
+logger = logging.getLogger('tb_houston_service.GCP_DAC_Deployment')
 
 class GCP_DAC_Deployment:
     def __init__(self, deployment_type):
@@ -25,10 +26,10 @@ class GCP_DAC_Deployment:
                 self.create_url, data=json.dumps(json_payload), headers=self.headers
             )
             resp_json = response.json()
-            app.logger.debug("Response from DAC")
-            app.logger.debug(pformat(resp_json))
+            logger.debug("Response from DAC")
+            logger.debug(pformat(resp_json))
         except requests.exceptions.RequestException as e:
-            app.logger.debug("GCP_DAC_Deployment::Failed sending request to DAC")
+            logger.debug("GCP_DAC_Deployment::Failed sending request to DAC")
             resp_json = {
                 "statusId": e.errno,
                 "statusCode": e.strerror,
@@ -47,11 +48,11 @@ class GCP_DAC_Deployment:
                 self.create_result_url + task_id, headers=self.headers
             )
             resp_json = response.json()
-            app.logger.debug("Response from Dac")
-            app.logger.debug(pformat(resp_json))
+            logger.debug("Response from Dac")
+            logger.debug(pformat(resp_json))
             print(pformat(resp_json))
         except requests.exceptions.RequestException as e:
-            app.logger.debug("GCP_DAC_Deployment::Failed getting results from the DAC")
+            logger.debug("GCP_DAC_Deployment::Failed getting results from the DAC")
             resp_json = {
                 "taskId": task_id,
                 "statusId": e.errno,

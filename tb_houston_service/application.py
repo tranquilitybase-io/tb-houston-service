@@ -5,15 +5,18 @@ application collection
 
 # 3rd party modules
 from flask import make_response, abort
+import logging
 import json
 from pprint import pformat
 from sqlalchemy import literal_column
+from sqlalchemy.exc import SQLAlchemyError
 
-from config import db, app
+from config import db
 from tb_houston_service.models import Application, ApplicationSchema
 from tb_houston_service.extendedSchemas import ExtendedApplicationSchema
 from tb_houston_service.tools import ModelTools
 
+logger = logging.getLogger('tb_houston_service.activator')
 
 def read_all(
     status=None,
@@ -49,7 +52,8 @@ def read_all(
             application_query = db.session.query(Application).order_by(
                 literal_column(", ".join(orderby_arr))
             )
-        except Exception as e:
+
+        except SQLAlchemyError as e:            
             print(e)
             application_query = db.session.query(Application).order_by(Application.id)
 
@@ -64,15 +68,11 @@ def read_all(
     else:
         applications = application_query.limit(page_size).offset(page * page_size).all()
 
-    # deserialize the resources json
-    for a in applications:
-        a.resources = json.loads(a.resources)
-
     # Serialize the data for the response
     application_schema = ExtendedApplicationSchema(many=True)
     data = application_schema.dump(applications)
-    app.logger.debug("application data:")
-    app.logger.debug(pformat(data))
+    logger.debug("application data:")
+    logger.debug(pformat(data))
     return data
 
 
@@ -89,16 +89,15 @@ def read_one(oid):
         db.session.query(Application).filter(Application.id == oid).one_or_none()
     )
 
-    app.logger.debug("application data:")
-    app.logger.debug(pformat(application))
+    logger.debug("application data:")
+    logger.debug(pformat(application))
 
     if application is not None:
         # Serialize the data for the response
-        application.resources = json.loads(application.resources)
         application_schema = ExtendedApplicationSchema()
         data = application_schema.dump(application)
-        app.logger.debug("application data:")
-        app.logger.debug(pformat(data))
+        logger.debug("application data:")
+        logger.debug(pformat(data))
         return data
     else:
         abort(404, f"Application with id {oid} not found".format(id=oid))
@@ -128,13 +127,10 @@ def create(applicationDetails):
     db.session.add(new_application)
     db.session.commit()
 
-    # Serialize and return the newly created application
-    # in the response
-    new_application.resources = json.loads(new_application.resources)
     schema = ExtendedApplicationSchema()
     data = schema.dump(new_application)
-    app.logger.debug("application data:")
-    app.logger.debug(pformat(data))
+    logger.debug("application data:")
+    logger.debug(pformat(data))
     return data, 201
 
 
@@ -147,8 +143,8 @@ def update(oid, applicationDetails):
     :return: updated application
     """
 
-    app.logger.debug("application: ")
-    app.logger.debug(pformat(applicationDetails))
+    logger.debug("application: ")
+    logger.debug(pformat(applicationDetails))
 
     # Does the application exist in applications?
     existing_application = (
@@ -157,19 +153,24 @@ def update(oid, applicationDetails):
 
     # Does application exist?
     if existing_application is not None:
-        applicationDetails["lastUpdated"] = ModelTools.get_utc_timestamp()
-        applicationDetails["resources"] = json.dumps(
-            applicationDetails.get("resources", existing_application.resources)
-        )
-        db.session.query(Application).filter(Application.id == oid).update(
-            applicationDetails
-        )
+        schema = ApplicationSchema()
+        existing_application.lastUpdated = ModelTools.get_utc_timestamp()
+        if applicationDetails.get('resources'):
+            existing_application.resources = json.dumps(applicationDetails['resources'])
+        if applicationDetails.get('name'):
+            existing_application.name = applicationDetails['name']
+        if applicationDetails.get('env'):
+            existing_application.env = applicationDetails['env']
+        if applicationDetails.get('status'):
+            existing_application.status = applicationDetails['status']
+        if applicationDetails.get('description'):
+            existing_application.description = applicationDetails['description']
+        db.session.merge(existing_application)
         db.session.commit()
 
-        applicationDetails["resources"] = json.loads(existing_application.resources)
         # return the updated application in the response
         schema = ExtendedApplicationSchema()
-        data = schema.dump(applicationDetails)
+        data = schema.dump(existing_application)
         return data, 200
 
     # otherwise, nope, application doesn't exist, so that's an error

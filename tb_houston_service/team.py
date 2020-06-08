@@ -6,15 +6,15 @@ team collection
 
 # 3rd party modules
 from pprint import pformat
-import json
 from http import HTTPStatus
 from flask import make_response, abort
 
 from config import db, app
 from tb_houston_service.models import Team, TeamMember, TeamSchema
-from marshmallow import Schema, fields
 from tb_houston_service.extendedSchemas import KeyValueSchema
-
+from tb_houston_service.extendedSchemas import ExtendedTeamSchema
+from tb_houston_service.team_extension import expand_team
+from tb_houston_service.tools import ModelTools
 
 def read_all():
     """
@@ -26,9 +26,11 @@ def read_all():
 
     # Create the list of teams from our data
     teams = db.session.query(Team).order_by(Team.id).all()
+    for tm in teams:
+        expand_team(tm)
     app.logger.debug(pformat(teams))
     # Serialize the data for the response
-    team_schema = TeamSchema(many=True)
+    team_schema = ExtendedTeamSchema(many=True)
     data = team_schema.dump(teams)
     return data, 200
 
@@ -45,8 +47,9 @@ def read_one(oid):
     team = db.session.query(Team).filter(Team.id == oid).one_or_none()
 
     if team is not None:
+        expand_team(team)
         # Serialize the data for the response
-        team_schema = TeamSchema()
+        team_schema = ExtendedTeamSchema()
         data = team_schema.dump(team)
         return data
     return abort(404, f"Team with id {oid} not found")
@@ -68,9 +71,10 @@ def create(teamDetails):
         db.session.query(Team).filter(Team.name == teamDetails["name"]).one_or_none()
     )
 
-    if existing_team is None:
+    if existing_team is None:        
         schema = TeamSchema(many=False)
         new_team = schema.load(teamDetails, session=db.session)
+        new_team.lastUpdated = ModelTools.get_utc_timestamp()   
         app.logger.debug(f"new_team: {new_team} type: {type(new_team)}")
         db.session.add(new_team)
         db.session.commit()
@@ -97,7 +101,7 @@ def update(oid, teamDetails):
     app.logger.debug(pformat(teamDetails))
 
     if teamDetails.get("id") and teamDetails.get("id") != int(oid):
-        abort(400, f"Id mismatch in path and body")
+        abort(400, "Id mismatch in path and body")
 
     # Does the team exist in team list?
     existing_team = db.session.query(Team).filter(Team.id == oid).one_or_none()
@@ -110,6 +114,7 @@ def update(oid, teamDetails):
         update_team.name = teamDetails.get('name', existing_team.name)
         update_team.description = teamDetails.get('description', existing_team.description)
         update_team.businessUnitId = teamDetails.get('businessUnitId', existing_team.businessUnitId)
+        update_team.lastUpdated = ModelTools.get_utc_timestamp()   
         update_team.isActive = teamDetails.get('isActive', existing_team.isActive)
 
         db.session.merge(update_team)

@@ -5,21 +5,21 @@ from pprint import pprint
 from pprint import pformat
 
 
-HOUSTON_SERVICE_URL=os.environ['HOUSTON_SERVICE_URL']
+HOUSTON_SERVICE_URL=os.environ["HOUSTON_SERVICE_URL"]
 url = f"http://{HOUSTON_SERVICE_URL}/api/application/"
     
 # Additional headers.
-headers = {'Content-Type': 'application/json' }
+headers = {"Content-Type": "application/json" }
 
 def typestest(resp):
-    assert isinstance(resp['activatorId'], int)
-    assert isinstance(resp['description'], str)
-    assert isinstance(resp['env'], str)
-    assert isinstance(resp['id'], int)
-    assert isinstance(resp['name'], str)
-    assert isinstance(resp['resources'], list)
-    assert isinstance(resp['solutionId'], int)
-    assert isinstance(resp['status'], str)
+    assert isinstance(resp["activatorId"], int)
+    assert isinstance(resp["description"], str)
+    assert isinstance(resp["env"], str)
+    assert isinstance(resp["id"], int)
+    assert isinstance(resp["name"], str)
+    assert isinstance(resp["resources"], list)
+    assert isinstance(resp["solutionId"], int)
+    assert isinstance(resp["status"], str)
     pprint(resp)
 
 
@@ -64,7 +64,7 @@ def post():
     resp_json = resp.json()
     print("post resp_json: " + pformat(resp_json))
 
-    oid = str(resp_json['id'])
+    oid = str(resp_json["id"])
     assert resp.status_code == 201
     
     #Get Request to check Post has created item as expected
@@ -75,18 +75,18 @@ def post():
     resp_headers = resp.headers
     #Validate response
     assert resp.status_code == 200
-    assert resp_json['name'] == 'test'
-    assert resp_json['env'] == 'DEV'
-    assert resp_json['status'] == 'Active'
-    assert resp_json['description'] == 'test'
-    assert resp_json['resources'][0]['ipaddress'] == 'address1'
-    assert resp_json['resources'][0]['name'] == 'value1'
-    assert resp_json['resources'][1]['ipaddress'] == 'address2'
-    assert resp_json['resources'][1]['name'] == 'value2'
-    assert resp_json['resources'][2]['ipaddress'] == 'address3'
-    assert resp_json['resources'][2]['name'] == 'value3'
+    assert resp_json["name"] == "test"
+    assert resp_json["env"] == "DEV"
+    assert resp_json["status"] == "Active"
+    assert resp_json["description"] == "test"
+    assert resp_json["resources"][0]["ipaddress"] == "address1"
+    assert resp_json["resources"][0]["name"] == "value1"
+    assert resp_json["resources"][1]["ipaddress"] == "address2"
+    assert resp_json["resources"][1]["name"] == "value2"
+    assert resp_json["resources"][2]["ipaddress"] == "address3"
+    assert resp_json["resources"][2]["name"] == "value3"
 
-    assert resp_headers['content-type'] == 'application/json'
+    assert resp_headers["content-type"] == "application/json"
     typestest(resp_json)
     return oid
 
@@ -108,7 +108,7 @@ def post1():
     
     # Validate response headers and body contents, e.g. status code.
     resp_json = resp.json()
-    oid = str(resp_json['id'])
+    oid = str(resp_json["id"])
     assert resp.status_code == 201
     
     #Get Request to check Post has created item as expected
@@ -117,11 +117,11 @@ def post1():
     resp_headers = resp.headers
     #Validate response
     assert resp.status_code == 200
-    assert resp_json['name'] == 'test'
-    assert resp_json['env'] == 'DEV'
-    assert resp_json['status'] == 'Active'
-    assert resp_json['description'] == 'test'
-    assert resp_headers['content-type'] == 'application/json'
+    assert resp_json["name"] == "test"
+    assert resp_json["env"] == "DEV"
+    assert resp_json["status"] == "Active"
+    assert resp_json["description"] == "test"
+    assert resp_headers["content-type"] == "application/json"
     typestest(resp_json)
     return oid
 
@@ -129,7 +129,7 @@ def post1():
 def put(oid):
 
     # Test Update Then get new value
-    newpayload  =  { 'id': int(oid), 'description': 'test put', 'status': 'Inactive' }
+    newpayload  =  { "id": int(oid), "description": "test put", "status": "Inactive" }
     resp = requests.put(url+oid, headers=headers, data=json.dumps(newpayload,indent=4))
 
     #Validate update/Put response
@@ -138,15 +138,15 @@ def put(oid):
     #Get Request to get updated values
     resp = requests.get(url+oid, headers=headers)
     resp_json = resp.json()
-    oid = resp_json['id']
+    oid = resp_json["id"]
 
     
-    print("resources: " + pformat(resp_json['resources']))
+    print("resources: " + pformat(resp_json["resources"]))
 
     #Validate response body for updated values
     assert resp.status_code == 200
-    assert resp_json['description'] == 'test put'
-    assert resp_json['status'] == 'Inactive'
+    assert resp_json["description"] == "test put"
+    assert resp_json["status"] == "Inactive"
 
 
 

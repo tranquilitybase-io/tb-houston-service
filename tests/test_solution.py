@@ -12,13 +12,12 @@ headers = {'Content-Type': 'application/json' }
 id = 0
 
 def typestest(resp):
-    assert isinstance(resp['active'], bool)
+    assert isinstance(resp['isActive'], bool)
     assert isinstance(resp['businessUnit'], str)
     assert isinstance(resp['ci'], str)
     assert isinstance(resp['cd'], str)
     assert isinstance(resp['costCentre'], str)
     assert isinstance(resp['description'], str)
-    assert isinstance(resp['environments'], list)
     assert isinstance(resp['favourite'], bool)
     assert isinstance(resp['id'], int)
     assert isinstance(resp['lastUpdated'], str)
@@ -46,18 +45,15 @@ def post():
     print("Post Tests")
     #Test POST Then GET
     # Body
-    true = 1 == 1
     payload  =  {
-      "active": true,
+      "isActive": True,
       "businessUnit": "test",
       "cd": "test",
       "ci": "test",
       "costCentre": "test",
       "description": "test",
-      "environments": [ "test" ],
-      "favourite": true,
+      "favourite": True,
       "id": 0,
-      "lastUpdated": "test",
       "name": "test",
       "sourceControl": "test",
       "teamId": 1
@@ -92,15 +88,13 @@ def put(id):
     # Test Update Then get new value
     newpayload  =  {
       "id": int(id),
-      "active": true,
+      "isActive": true,
       "businessUnit": "test put",
       "cd": "test put",
       "ci": "test put",
       "costCentre": "test put",
       "description": "test put",
-      "environments": [ "test put 1", "test put 2", "test put 3" ],
       "favourite": true,
-      "lastUpdated": "test put",
       "name": "test put",
       "sourceControl": "test put"
     }
@@ -123,9 +117,6 @@ def put(id):
     assert resp_json['ci'] == 'test put'
     assert resp_json['cd'] == 'test put'
     assert resp_json['sourceControl'] == 'test put'
-    assert resp_json['environments'][0] == 'test put 1'
-    assert resp_json['environments'][1] == 'test put 2'
-    assert resp_json['environments'][2] == 'test put 3'
     typestest(resp_json)
 
 
@@ -152,8 +143,3 @@ def get_all():
     resp = requests.get(url, headers=headers)
     #Validate Get All response
     assert resp.status_code == 200
-
-
-
-
-

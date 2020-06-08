@@ -105,6 +105,3 @@ def put(id):
     assert resp_json['isActive'] == False
 
     typestest(resp_json)
-
-
-

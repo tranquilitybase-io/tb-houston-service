@@ -142,7 +142,7 @@ CREATE TABLE `businessunit` (
 
 LOCK TABLES `businessunit` WRITE;
 /*!40000 ALTER TABLE `businessunit` DISABLE KEYS */;
-INSERT INTO `businessunit` VALUES (5,'Data','Data',1),(6,'FICC','FICC',1),(7,'Modern Apps','Modern Apps',1);
+INSERT INTO `businessunit` VALUES (1,'Modern Apps','Modern Apps',1),(2,'Data','Data',1),(3,'FICC','FICC',1);
 /*!40000 ALTER TABLE `businessunit` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -351,6 +351,33 @@ LOCK TABLES `landingzonewan` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `lzenvironment`
+--
+
+DROP TABLE IF EXISTS `lzenvironment`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `lzenvironment` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(30) NOT NULL,
+  `isActive` tinyint(4) DEFAULT '1',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`),
+  UNIQUE KEY `name_UNIQUE` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `lzenvironment`
+--
+
+LOCK TABLES `lzenvironment` WRITE;
+/*!40000 ALTER TABLE `lzenvironment` DISABLE KEYS */;
+INSERT INTO `lzenvironment` VALUES (1,'Development',1),(2,'Production',1);
+/*!40000 ALTER TABLE `lzenvironment` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `lzmetadata`
 --
 
@@ -362,7 +389,7 @@ CREATE TABLE `lzmetadata` (
   `name` varchar(255) NOT NULL,
   `value` text NOT NULL,
   `description` varchar(255) DEFAULT NULL,
-  `active` tinyint(1) NOT NULL DEFAULT '1',
+  `isActive` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`group`,`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -373,7 +400,7 @@ CREATE TABLE `lzmetadata` (
 
 LOCK TABLES `lzmetadata` WRITE;
 /*!40000 ALTER TABLE `lzmetadata` DISABLE KEYS */;
-INSERT INTO `lzmetadata` VALUES ('environments','environments','[\"Development\",\"UAT\",\"Staging\",\"PoC\",\"Production\"]','List of environments available',1),('folder_structure','folder_structure','{\"id\": 1, \"isEnabled\": true, \"name\": \"Applications\", \"children\": [{\"id\": 2, \"isEnabled\": true, \"name\": \"Business Unit\", \"children\": [{\"id\": 3, \"isEnabled\": true, \"name\": \"Team\", \"children\": [{\"id\": 4, \"isEnabled\": true, \"name\": \"Solutions\"}]}]}]}','Landing Zone metadata for folder structure',1),('lan_vpc','development','[\"Development\",\"PoC\", \"UAT\", \"Staging\"]','Landing Zone metadata for LAN VPC of Dev environment',1),('lan_vpc','production','[\"Production\", \"Staging\"]','Landing Zone metadata for LAN VPC of Prod environment',1);
+INSERT INTO `lzmetadata` VALUES ('environments','environments','[\"Development\",\"UAT\",\"Staging\",\"PoC\",\"Production\"]','List of environments available',1),('folder_structure','folder_structure','[{\"id\": 1, \"isEnabled\": true, \"name\": \"Applications\", \"children\": [{\"id\": 2, \"isEnabled\": true, \"name\": \"Business Unit\", \"children\": [{\"id\": 3, \"isEnabled\": true, \"name\": \"Team\", \"children\": [{\"id\": 4, \"isEnabled\": true, \"name\": \"Solutions\"}]}]}]}]','Landing Zone metadata for folder structure',1),('lan_vpc','development','[\"Development\",\"PoC\", \"UAT\", \"Staging\"]','Landing Zone metadata for LAN VPC of Dev environment',1),('lan_vpc','production','[\"Production\", \"Staging\"]','Landing Zone metadata for LAN VPC of Prod environment',1);
 /*!40000 ALTER TABLE `lzmetadata` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -556,6 +583,7 @@ CREATE TABLE `team` (
   `description` varchar(200) NOT NULL,
   `businessUnitId` int(11) NOT NULL,
   `isActive` tinyint(1) NOT NULL DEFAULT '0',
+  `lastUpdated` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -566,7 +594,7 @@ CREATE TABLE `team` (
 
 LOCK TABLES `team` WRITE;
 /*!40000 ALTER TABLE `team` DISABLE KEYS */;
-INSERT INTO `team` VALUES (1,'Developers','All Developers',1,1),(2,'Admins','All Admins',1,1);
+INSERT INTO `team` VALUES (1,'Developers','All Developers',1,1,'2020-03-01 12:34:56'),(2,'Admins','All Admins',1,1,'2020-03-01 12:34:56');
 /*!40000 ALTER TABLE `team` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -660,4 +688,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-06-01 16:29:35
+-- Dump completed on 2020-06-05 11:28:49

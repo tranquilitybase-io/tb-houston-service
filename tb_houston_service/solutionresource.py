@@ -4,12 +4,14 @@ solution resource collection
 """
 
 # 3rd party modules
+import logging
 from pprint import pformat
 from flask import make_response, abort
 
-from config import db, app
+from config import db
 from tb_houston_service.models import SolutionResource, SolutionResourceSchema
 
+logger = logging.getLogger("tb_houston_service.solutionresource")
 
 def read_all():
     """
@@ -23,7 +25,7 @@ def read_all():
     solutionresource = (
         db.session.query(SolutionResource).order_by(SolutionResource.solutionId).all()
     )
-    app.logger.debug(pformat(solutionresource))
+    logger.debug(pformat(solutionresource))
     # Serialize the data for the response
     solutionresource_schema = SolutionResourceSchema(many=True)
     data = solutionresource_schema.dump(solutionresource)
@@ -64,15 +66,15 @@ def create(solutionResourceDetails):
     :return:       updated solutionresource
     """
 
-    app.logger.debug(pformat(solutionResourceDetails))
+    logger.debug(pformat(solutionResourceDetails))
 
     solutionId = solutionResourceDetails["solutionId"]
     key = solutionResourceDetails["key"]
 
-    app.logger.debug("solutionresource:create")
-    app.logger.debug(pformat(solutionResourceDetails))
+    logger.debug("solutionresource:create")
+    logger.debug(pformat(solutionResourceDetails))
 
-    app.logger.debug(f"solutionId: {solutionId} key: {key}")
+    logger.debug("solutionId: %s key: %s", solutionId, key)
 
     # Does the solutionresource exist in solutionresource list?
     solutionresource = (
@@ -95,8 +97,8 @@ def create(solutionResourceDetails):
 
     # return the updated/created object in the response
     data = schema.dump(solutionresource)
-    app.logger.debug("solutionresource")
-    app.logger.debug(pformat(data))
+    logger.debug("solutionresource")
+    logger.debug(pformat(data))
     return data, 201
 
 

@@ -211,7 +211,6 @@ def delete(oid):
     #Then Get request to check the item has been actully deleted
     resp = requests.get(url+oid, headers=headers)
     #Validate Get response
-    resp_json = resp.json()
     assert resp.status_code == 404
 
 

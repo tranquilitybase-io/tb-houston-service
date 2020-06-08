@@ -101,7 +101,7 @@ def delete(id):
     #Then Get request to check the item has been actully deleted
     resp = requests.get(url+id, headers=headers)
     #Validate Get response
-    resp_json = resp.json()
+    #resp_json = resp.json()
     assert resp.status_code == 404
 
 
@@ -110,13 +110,12 @@ def delete_error(id):
     # Delete Request for a non existing item
     resp = requests.delete(url+id, headers=headers)
     #resp_json = resp.json()
-    resp_headers = resp.headers
+    #resp_headers = resp.headers
     #Validate response ; expect Not found
     assert resp.status_code == 404
 
 
 def get_all():
-
-    url = f"http://{HOUSTON_SERVICE_URL}/api/landingzoneactions/"
-    resp = requests.get(url, headers=headers)
+    local_url = f"http://{HOUSTON_SERVICE_URL}/api/landingzoneactions/"
+    resp = requests.get(local_url, headers=headers)
     assert resp.status_code == 200
