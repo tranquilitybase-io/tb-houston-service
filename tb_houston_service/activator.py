@@ -19,7 +19,8 @@ from tb_houston_service.extendedSchemas import ExtendedActivatorCategorySchema
 from tb_houston_service import activator_extension
 
 
-logger = logging.getLogger('tb_houston_service.activator')
+logger = logging.getLogger("tb_houston_service.activator")
+
 
 def read_all(
     category=None,
@@ -161,12 +162,12 @@ def update(oid, activatorDetails):
 
     if existing_activator is not None:
         # schema = ActivatorSchema()
-        activatorDetails['id'] = oid
+        activatorDetails["id"] = oid
         activatorDetails["lastUpdated"] = ModelTools.get_utc_timestamp()
         logger.info("activatorDetails: %s", activatorDetails)
         schema = ActivatorSchema(many=False, session=db.session)
         updatedActivator = schema.load(activatorDetails)
-        logger.info("updatedActivator: %s", updatedActivator)        
+        logger.info("updatedActivator: %s", updatedActivator)
         db.session.merge(updatedActivator)
         db.session.commit()
         # return the updated activator in the response
@@ -236,6 +237,7 @@ def setActivatorStatus(activatorDetails):
 
     # Otherwise, nope, activator to update was not found
     else:
+        db.session.close()
         actid = activatorDetails["id"]
         abort(404, f"Activator id {actid} not found")
 
@@ -253,4 +255,5 @@ def categories():
 
     schema = ExtendedActivatorCategorySchema(many=True)
     data = schema.dump(categories_arr)
+    db.session.close()
     return data, 200

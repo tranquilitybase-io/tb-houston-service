@@ -1,6 +1,6 @@
 import json
 
-people_string = '''
+people_string = """
 {
     "people": [
         {
@@ -17,16 +17,15 @@ people_string = '''
         }
     ]
 }
-'''
+"""
 data = json.loads(people_string)
-#print(data)
-#print(type(data))
-#print(type(data['people']))
-for person in data['people']:
-    #print(person)
-    #print(person['name'])
-    print(person['emails'])
-    
+# print(data)
+# print(type(data))
+# print(type(data['people']))
+for person in data["people"]:
+    # print(person)
+    # print(person['name'])
+    print(person["emails"])
 
-print(data['people'][0]['emails'][1])
 
+print(data["people"][0]["emails"][1])

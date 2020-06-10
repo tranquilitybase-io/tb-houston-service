@@ -1,11 +1,11 @@
 from datetime import datetime
 import json
 
-class ModelTools():
 
+class ModelTools:
     @staticmethod
     def get_utc_epoch():
-        return datetime.utcnow().strftime('%s')
+        return datetime.utcnow().strftime("%s")
 
     @staticmethod
     def get_utc_timestamp():
@@ -24,13 +24,13 @@ class ModelTools():
 
     @staticmethod
     def json_dump(obj):
-        #return json.dumps(obj, indent=2, sort_keys=True)
+        # return json.dumps(obj, indent=2, sort_keys=True)
         return json.dumps(obj)
 
     # simple redact function, used prior to logging
     @staticmethod
     def redact_dict(my_dict):
         new_dict = my_dict.copy()
-        new_dict['username'] = "XXXXX"
-        new_dict['password'] = "XXXXX"
+        new_dict["username"] = "XXXXX"
+        new_dict["password"] = "XXXXX"
         return new_dict

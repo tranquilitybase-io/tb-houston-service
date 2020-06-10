@@ -3,9 +3,9 @@ class DeploymentStatus:
         pass
 
     PENDING = "PENDING"
-    STARTED =  "STARTED"
+    STARTED = "STARTED"
     SUCCESS = "SUCCESS"
-    RETRY =  "RETRY"
+    RETRY = "RETRY"
     FAILURE = "FAILURE"
     REVOKED = "REVOKED"
 

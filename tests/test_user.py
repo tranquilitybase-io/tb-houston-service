@@ -3,76 +3,76 @@ import json
 import logging
 import os
 from pprint import pprint
-from tests import pytest_lib 
+from tests import pytest_lib
 
-LOG_LEVEL = logging.INFO # DEBUG, INFO, WARNING, ERROR, CRITICAL
+LOG_LEVEL = logging.INFO  # DEBUG, INFO, WARNING, ERROR, CRITICAL
 
-HOUSTON_SERVICE_URL=os.environ['HOUSTON_SERVICE_URL']
+HOUSTON_SERVICE_URL = os.environ["HOUSTON_SERVICE_URL"]
 url = f"http://{HOUSTON_SERVICE_URL}/api/user/"
 plural_url = f"http://{HOUSTON_SERVICE_URL}/api/users/"
 test_email_account = "test@test.com"
-    
+
 # Additional headers.
-headers = {'Content-Type': 'application/json' }
+headers = {"Content-Type": "application/json"}
+
 
 def typestest(resp):
-    assert isinstance(resp['id'], int)
-    assert isinstance(resp['email'], str)
-    assert isinstance(resp['firstName'], str)
-    assert isinstance(resp['lastName'], str)
-    assert isinstance(resp['isAdmin'], bool)
-    assert isinstance(resp['isActive'], bool)
-    assert isinstance(resp['showWelcome'], bool)
+    assert isinstance(resp["id"], int)
+    assert isinstance(resp["email"], str)
+    assert isinstance(resp["firstName"], str)
+    assert isinstance(resp["lastName"], str)
+    assert isinstance(resp["isAdmin"], bool)
+    assert isinstance(resp["isActive"], bool)
+    assert isinstance(resp["showWelcome"], bool)
     pprint(resp)
 
 
 def test_user():
 
-    #Testing POST request
+    # Testing POST request
     id = post()
-    #Testing PUT request
+    # Testing PUT request
     put(id)
-    #Testing logical DELETE request
+    # Testing logical DELETE request
     pytest_lib.logical_delete(url, str(id))
-    #Testing DELETE Request Error
+    # Testing DELETE Request Error
     pytest_lib.delete_error(url, str(-1))
-    #Testing GETALL request
+    # Testing GETALL request
     pytest_lib.get_all(plural_url)
-    
 
 def post():
     print("Post Tests")
-    #Test POST Then GET
+    # Test POST Then GET
     # Body
-    payload = { 
-    "id": 0,
-    "firstName": "test",
-    "lastName": "test",
-    "email": test_email_account,
-    "isActive": True,
-    "isAdmin": True,
-    "showWelcome": True
+    payload = {
+        "id": 0,
+        "firstName": "test",
+        "lastName": "test",
+        "email": test_email_account,
+        "isActive": True,
+        "isAdmin": True,
+        "showWelcome": True,
     }
 
     # convert dict to json by json.dumps() for body data.
-    resp = requests.post(url, headers=headers, data=json.dumps(payload,indent=4))       
-    
+    resp = requests.post(url, headers=headers, data=json.dumps(payload, indent=4))
+
     # Validate response headers and body contents, e.g. status code.
     resp_json = resp.json()
     assert resp.status_code == 201
-    id = resp_json['id']
-    
-    #Get Request to check Post has created item as expected
-    resp = requests.get(url+ str(id), headers=headers) 
+    id = resp_json["id"]
+
+    # Get Request to check Post has created item as expected
+    resp = requests.get(url + str(id), headers=headers)
     resp_json = resp.json()
     resp_headers = resp.headers
-    #Validate response
+    # Validate response
     assert resp.status_code == 200
-    assert resp_json['firstName'] == 'test'
-    assert resp_json['lastName'] == 'test'
-    assert resp_json['email'] == test_email_account
-    assert resp_json['isActive'] == True
-    assert resp_headers['content-type'] == 'application/json'
+    assert resp_json["firstName"] == "test"
+    assert resp_json["lastName"] == "test"
+    assert resp_json["email"] == test_email_account
+    assert resp_json["isActive"] == True
+    assert resp_headers["content-type"] == "application/json"
     typestest(resp_json)
     return id
 
@@ -81,29 +81,31 @@ def put(id):
     print("Put Tests")
 
     # Test Update Then get new value
-    newpayload  =  { 
-    "id": id,
-    "firstName": "test",
-    "lastName": "test",
-    "email": "test@test.com",
-    "isActive": False,
-    "isAdmin": True,
-    "showWelcome": True
+    newpayload = {
+        "id": id,
+        "firstName": "test",
+        "lastName": "test",
+        "email": "test@test.com",
+        "isActive": False,
+        "isAdmin": True,
+        "showWelcome": True,
     }
 
-    resp = requests.put(url+str(id), headers=headers, data=json.dumps(newpayload,indent=4))
-   
-    #Validate update/Put response
+    resp = requests.put(
+        url + str(id), headers=headers, data=json.dumps(newpayload, indent=4)
+    )
+
+    # Validate update/Put response
     assert resp.status_code == 200
 
-    #Get Request to get updated values
-    resp = requests.get(url + str(id), headers=headers) 
+    # Get Request to get updated values
+    resp = requests.get(url + str(id), headers=headers)
     resp_json = resp.json()
-    id = resp_json['id']
+    id = resp_json["id"]
 
-    #Validate response body for updated values
+    # Validate response body for updated values
     assert resp.status_code == 200
-    assert resp_json['firstName'] == 'test'
-    assert resp_json['isActive'] == False
+    assert resp_json["firstName"] == "test"
+    assert resp_json["isActive"] == False
 
     typestest(resp_json)

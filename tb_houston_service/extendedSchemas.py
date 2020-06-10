@@ -1,9 +1,12 @@
 import logging
 import json
-from marshmallow import Schema, fields, pre_load, post_load, pre_dump, post_dump
+from marshmallow import Schema, fields, post_load, post_dump
 from tb_houston_service.models import TeamSchema
 from tb_houston_service.models import BusinessUnitSchema
 from tb_houston_service.models import LZEnvironmentSchema
+from tb_houston_service.models import LZLanVpcSchema
+
+logger = logging.getLogger("tb_houston_service.extendedSchemas")
 
 logger = logging.getLogger('tb_houston_service.extendedSchemas')
 
@@ -69,7 +72,7 @@ class ExtendedActivatorSchema(Schema):
     sourceControl = fields.List(fields.Str())
     businessUnit = fields.Str()
     technologyOwner = fields.Str()
-    technologyOwnerEmail  = fields.Str()
+    technologyOwnerEmail = fields.Str()
     billing = fields.Str()
     activator = fields.Str()
     status = fields.Str()
@@ -81,16 +84,15 @@ class ExtendedActivatorSchema(Schema):
     @post_load(pass_original=True)
     def deserialize_post_load(self, data, original_data, **kwargs):
         logger.debug("ExtendedActivatorSchema::pre_load::serialize_post_load: %s", data)
-        data['envs'] = json.dumps(original_data.envs)     
-        data['platforms'] = json.dumps(original_data.platforms)    
-        data['regions'] = json.dumps(original_data.regions)
-        data['hosting'] = json.dumps(original_data.hosting)
-        data['apiManagement'] = json.dumps(original_data.apiManagement)
-        data['ci'] = json.dumps(original_data.ci)
-        data['cd'] = json.dumps(original_data.cd)
-        data['sourceControl'] = json.dumps(original_data.sourceControl)                                                      
+        data["envs"] = json.dumps(original_data.envs)
+        data["platforms"] = json.dumps(original_data.platforms)
+        data["regions"] = json.dumps(original_data.regions)
+        data["hosting"] = json.dumps(original_data.hosting)
+        data["apiManagement"] = json.dumps(original_data.apiManagement)
+        data["ci"] = json.dumps(original_data.ci)
+        data["cd"] = json.dumps(original_data.cd)
+        data["sourceControl"] = json.dumps(original_data.sourceControl)
         return data
-
 
     @post_dump(pass_original=True)
     def deserialize_post_dump(self, data, original_data, **kwargs):
@@ -101,12 +103,12 @@ class ExtendedActivatorSchema(Schema):
         data["hosting"] = json.loads(original_data.hosting)
         data["apiManagement"] = json.loads(original_data.apiManagement)
         data["ci"] = json.loads(original_data.ci)
-        data["cd"] = json.loads(original_data.cd)                             
+        data["cd"] = json.loads(original_data.cd)
         data["sourceControl"] = json.loads(original_data.sourceControl)
         if not original_data.accessRequestedBy:
             data["accessRequestedBy"] = None
         logger.debug("accessRequestedBy: %s", original_data.accessRequestedBy)
-        return data    
+        return data
 
 
 class ExtendedApplicationSchema(Schema):
@@ -120,14 +122,6 @@ class ExtendedApplicationSchema(Schema):
     lastUpdated = fields.Str()
     resources = fields.Nested(ResourceSchema(many=True))
     activator = fields.Nested(ExtendedActivatorSchema(many=False))
-
-
-    # @pre_load()
-    # def serialize_pre_load(self, data, **kwargs):
-    #     logger.debug("ExtendedApplicationSchema::pre_load: %s", data)   
-    #     #data['resources'] = json.loads(original_data['resources'])
-    #     return data
-
 
     @post_load(pass_original=True)
     def serialize_post_load(self, data, original_data, **kwargs):
@@ -144,6 +138,15 @@ class ExtendedApplicationSchema(Schema):
         return data
 
 
+class ExtendedTeamSchema(Schema):
+    id = fields.Int()
+    name = fields.Str()
+    description = fields.Str()
+    businessUnitId = fields.Int()
+    isActive = fields.Boolean()
+    businessUnit = fields.Nested(BusinessUnitSchema(many=False))
+    lastUpdated = fields.Str()
+    userCount = fields.Int()
 
 class ExtendedSolutionSchema(Schema):
     __envelope__ = {"single": "solution", "many": "solutions"}
@@ -162,7 +165,7 @@ class ExtendedSolutionSchema(Schema):
     teamId = fields.Int()
     lastUpdated = fields.Str()
     applications = fields.Nested(ExtendedApplicationSchema(many=True))
-    team = fields.Nested(TeamSchema(many=False))
+    team = fields.Nested(ExtendedTeamSchema(many=False))
     deploymentFolderId = fields.Str()
 
 
@@ -288,28 +291,28 @@ class ExtendedLZMetadataListSchema(Schema):
 
 
 class ExtendedLZMetadataFSSolutionSchema(Schema):
-    id = fields.Int() 
-    isEnabled = fields.Boolean()
+    id = fields.Int()
+    isActive = fields.Boolean()
     name = fields.String()
 
 
 class ExtendedLZMetadataFSTeamSchema(Schema):
-    id = fields.Int() 
-    isEnabled = fields.Boolean()
+    id = fields.Int()
+    isActive = fields.Boolean()
     name = fields.String()
     children = fields.Nested(ExtendedLZMetadataFSSolutionSchema(many=True))
 
 
 class ExtendedLZMetadataFSBusinessUnitSchema(Schema):
-    id = fields.Int() 
-    isEnabled = fields.Boolean()
+    id = fields.Int()
+    isActive = fields.Boolean()
     name = fields.String()
     children = fields.Nested(ExtendedLZMetadataFSTeamSchema(many=True))
 
 
 class ExtendedLZMetadataFSApplicationSchema(Schema):
-    id = fields.Int() 
-    isEnabled = fields.Boolean()
+    id = fields.Int()
+    isActive = fields.Boolean()
     name = fields.String()
     children = fields.Nested(ExtendedLZMetadataFSBusinessUnitSchema(many=True))
 
@@ -321,16 +324,14 @@ class ExtendedLZMetadataFSSchema(Schema):
 
 
 class KeyValueSchema(Schema):
-    key = fields.Str()
+    key = fields.Int()
     value = fields.Str()
 
 
-class ExtendedTeamSchema(Schema):
+class ExtendedLZLanVpcEnvironmentSchema(Schema):
     id = fields.Int()
-    name = fields.Str()
-    description = fields.Str()
-    businessUnitId = fields.Int()
-    isActive = fields.Boolean()
-    businessUnit = fields.Nested(BusinessUnitSchema(many=False))
-    lastUpdated = fields.Str()
-    userCount = fields.Int()
+    environmentName = fields.Str()
+    lzlanvpcId = fields.Int()
+    environmentId = fields.Int()
+    lzlanvpc = fields.Nested(LZLanVpcSchema(many=False))
+    environment = fields.Nested(LZEnvironmentSchema(many=False))

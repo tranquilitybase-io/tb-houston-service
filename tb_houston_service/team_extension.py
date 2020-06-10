@@ -2,14 +2,15 @@ import logging
 from config import db
 from tb_houston_service.models import BusinessUnit, TeamMember, User
 
-logger = logging.getLogger('tb_houston_service.solution')
+logger = logging.getLogger("tb_houston_service.solution")
+
 
 def expand_team(a_team):
     logger.debug("team: %s", a_team)
 
     if a_team == None:
-        return None 
-        
+        return None
+
     bu = (
         db.session.query(BusinessUnit)
         .filter(BusinessUnit.id == a_team.businessUnitId and BusinessUnit.isActive)
@@ -21,7 +22,13 @@ def expand_team(a_team):
 
     user_count = (
         db.session.query(User)
-        .filter(TeamMember.teamId == a_team.id, TeamMember.userId == User.id, a_team.isActive, TeamMember.isActive, User.isActive)
+        .filter(
+            TeamMember.teamId == a_team.id,
+            TeamMember.userId == User.id,
+            a_team.isActive,
+            TeamMember.isActive,
+            User.isActive,
+        )
         .count()
     )
     a_team.userCount = user_count
@@ -42,15 +49,22 @@ def expand_team_with_users(a_team):
     user_dict = {}
     for u in users:
         user_dict[u.id] = u
-        
     users = db.session.query(User).filter(User.isActive).all()
     user_dict = {}
     for u in users:
         user_dict[u.id] = u
-        
-    team_members = db.session.query(TeamMember).filter(TeamMember.teamId == a_team.id, TeamMember.userId == User.id, TeamMember.isActive, User.isActive).all()
+
+    team_members = (
+        db.session.query(TeamMember)
+        .filter(
+            TeamMember.teamId == a_team.id,
+            TeamMember.userId == User.id,
+            TeamMember.isActive,
+            User.isActive,
+        )
+        .all()
+    )
     for tm in team_members:
         tm.user = user_dict.get(tm.userId)
     a_team.teamMembers = team_members
     return a_team
-

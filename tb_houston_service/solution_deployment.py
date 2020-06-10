@@ -24,7 +24,7 @@ from tb_houston_service import gcp_dac_folder_deployment
 from tb_houston_service import solution_extension
 from tb_houston_service import solutionresourcejson
 
-logger = logging.getLogger('tb_houston_service.solution_deployment')
+logger = logging.getLogger("tb_houston_service.solution_deployment")
 
 deployment_create_url = f"http://{os.environ['GCP_DAC_URL']}/api/solution_async/"
 deployment_create_result_url = (
@@ -219,7 +219,8 @@ def create_folder(folderId, folderName):
                 )
                 if dac_resp_json.get("taskid"):
                     logger.debug(
-                        "create_folder::update_db::taskId: %s", dac_resp_json.get('taskid')
+                        "create_folder::update_db::taskId: %s",
+                        dac_resp_json.get("taskid"),
                     )
                     resp_dict["taskId"] = dac_resp_json.get("taskid")
                     folder.update(db_folder_id, resp_dict)
@@ -229,9 +230,7 @@ def create_folder(folderId, folderName):
                 # folder_id updated on the database along with the status
                 dac_resp = gcp_dac_folder_deployment.get_create_results(task_id)
                 dac_resp_json = dac_resp[0]
-                logger.debug(
-                    "create_folder::create_dac_folder_resp: %s", dac_resp_json
-                )
+                logger.debug("create_folder::create_dac_folder_resp: %s", dac_resp_json)
                 if dac_resp_json.get("status") == DeploymentStatus.SUCCESS:
                     payload = json.loads(dac_resp_json.get("payload"))
                     dac_folder_id = gcp_dac_folder_deployment.get_folder_id_from_payload(
@@ -244,7 +243,8 @@ def create_folder(folderId, folderName):
                         next_folder_id = dac_folder_id
                     else:
                         logger.error(
-                            "Unable to get folder_id for folder %sfrom the DAC payload, skipping.", folderName
+                            "Unable to get folder_id for folder %sfrom the DAC payload, skipping.",
+                            folderName,
                         )
 
     # return current status and next_folder_id if avaiable,
@@ -290,7 +290,9 @@ def deploy_folders_and_solution(sol_deployment):
     deploymentFolderId = create_folders_resp.get("deploymentFolderId")
     status = create_folders_resp.get("status")
     logger.debug(
-        "deploy_folders_and_solution::deploymentFolderId: %s status: %s", deploymentFolderId, status
+        "deploy_folders_and_solution::deploymentFolderId: %s status: %s",
+        deploymentFolderId,
+        status,
     )
     if deploymentFolderId and status == DeploymentStatus.SUCCESS:
         sol_deployment.deploymentFolderId = deploymentFolderId
@@ -315,7 +317,8 @@ def send_solution_deployment_to_the_dac(sol_deployment):
         )
         resp_json = response.json()
         logger.debug(
-            "send_solution_deployment_to_the_dac::ResponseFromDAC: %s", pformat(resp_json)
+            "send_solution_deployment_to_the_dac::ResponseFromDAC: %s",
+            pformat(resp_json),
         )
     except requests.exceptions.RequestException as e:
         logger.debug(
@@ -338,14 +341,16 @@ def send_solution_deployment_to_the_dac(sol_deployment):
         }
 
         logger.debug(
-            "send_solution_deployment_to_the_dac::deployment_json: %s", pformat(deployment_json)
+            "send_solution_deployment_to_the_dac::deployment_json: %s",
+            pformat(deployment_json),
         )
         logger.debug(pformat(deployment_json))
         deployment_update(oid, deployment_json)
         return deployment_json
     except requests.exceptions.RequestException as e:
         logger.debug(
-            "send_solution_deployment_to_the_dac::Failed updating the database with the response from the DAC, %s.", e
+            "send_solution_deployment_to_the_dac::Failed updating the database with the response from the DAC, %s.",
+            e,
         )
         abort(
             "send_solution_deployment_to_the_dac::Failed updating the database with the response from the DAC.",
@@ -392,13 +397,15 @@ def get_solution_results_from_the_dac(oid, task_id):
         "statusMessage": "Solution deployment updated.",
     }
     logger.debug(
-        "get_solution_results_from_the_dac::deployment_json: %s", pformat(deployment_json)
+        "get_solution_results_from_the_dac::deployment_json: %s",
+        pformat(deployment_json),
     )
     try:
         deployment_update(oid, deployment_json)
     except requests.exceptions.RequestException as e:
         logger.debug(
-            "get_solution_results_from_the_dac::Failed updating the SolutionDeployment with the response from the DAC, %s", e
+            "get_solution_results_from_the_dac::Failed updating the SolutionDeployment with the response from the DAC, %s",
+            e,
         )
         abort(
             "get_solution_results_from_the_dac::Failed updating the SolutionDeployment with the response from the DAC.",
@@ -420,12 +427,13 @@ def get_solution_results_from_the_dac(oid, task_id):
             and len(my_json) > 0
         ):
             tf_json = {"solutionId": oid, "json": my_json}
-            #print("tf_json: " + pformat(tf_json))
+            # print("tf_json: " + pformat(tf_json))
             solutionresourcejson.create(tf_json)
         return deployment_json
     except requests.exceptions.RequestException as e:
         logger.debug(
-            "get_solution_results_from_the_dac::Failed updating the SolutionResourceJSON with the response from the DAC, %s", e
+            "get_solution_results_from_the_dac::Failed updating the SolutionResourceJSON with the response from the DAC, %s",
+            e,
         )
         abort(
             "get_solution_results_from_the_dac::Failed updating the SolutionResourceJSON with the response from the DAC.",

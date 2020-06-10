@@ -2,8 +2,7 @@ import requests
 import json
 from tests import pytest_lib
 
-url = f"http://{pytest_lib.HOUSTON_SERVICE_URL}/api/lzmetadataLanVpc/"
-test_name = "testing_999999999"
+url = f"http://{pytest_lib.HOUSTON_SERVICE_URL}/api/lzmetadataLanVpcEnvironment/"
 
 
 def test_main():
@@ -14,7 +13,7 @@ def post():
 
     # Test POST Then GET
     # Body
-    payload = [ { "isActive": True, "name": test_name } ] 
+    payload = [ { "environmentId": 2, "id": 0, "lzlanvpcId": 1 } ] 
     print(f"url: {url}")
     print(f"payload: {json.dumps(payload)}")
 
@@ -32,5 +31,5 @@ def post():
     assert resp1.status_code == 200
     for j in resp_json1:
         assert isinstance(j["id"], int)
-        assert isinstance(j["name"], str)
-        assert isinstance(j["isActive"], bool)
+        assert isinstance(j["environmentId"], int)
+        assert isinstance(j["lzlanvpcId"], int)

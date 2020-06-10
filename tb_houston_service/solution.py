@@ -6,7 +6,7 @@ solutions collection
 # 3rd party modules
 import json
 import logging
-from flask import make_response,  abort
+from flask import make_response, abort
 from sqlalchemy import literal_column
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -17,7 +17,8 @@ from tb_houston_service.extendedSchemas import ExtendedSolutionSchema
 from tb_houston_service.extendedSchemas import SolutionNamesOnlySchema
 from tb_houston_service import solution_extension
 
-logger = logging.getLogger('tb_houston_service.solution')
+logger = logging.getLogger("tb_houston_service.solution")
+
 
 def read_all(active=None, namesonly=None, page=None, page_size=None, sort=None):
     """
@@ -31,11 +32,11 @@ def read_all(active=None, namesonly=None, page=None, page_size=None, sort=None):
     logger.debug("Active: %s, namesonly: %s", active, namesonly)
 
     # pre-process sort instructions
-    if (sort==None):
+    if sort == None:
         solution_query = db.session.query(Solution).order_by(Solution.id)
     else:
         try:
-            sort_inst = [ si.split(":") for si in sort ]
+            sort_inst = [si.split(":") for si in sort]
             orderby_arr = []
             for si in sort_inst:
                 si1 = si[0]
@@ -44,32 +45,35 @@ def read_all(active=None, namesonly=None, page=None, page_size=None, sort=None):
                 else:
                     si2 = "asc"
                 orderby_arr.append(f"{si1} {si2}")
-            #print("orderby: {}".format(orderby_arr))
-            solution_query = db.session.query(Solution).order_by(literal_column(", ".join(orderby_arr)))
+            # print("orderby: {}".format(orderby_arr))
+            solution_query = db.session.query(Solution).order_by(
+                literal_column(", ".join(orderby_arr))
+            )
         except SQLAlchemyError as e:
             logger.debug("Exception: %s", e)
             solution_query = db.session.query(Solution).order_by(Solution.id)
 
     # Create the list of solutions from our data
     if active != None:
-      solution_query = solution_query.filter(Solution.active == active)
+        solution_query = solution_query.filter(Solution.isActive == active)
 
     # do limit and offset last
-    if (page==None or page_size==None):
-      solutions = solution_query.all()
+    if page == None or page_size == None:
+        solutions = solution_query.all()
     else:
-      solutions = solution_query.limit(page_size).offset(page * page_size)
+        solutions = solution_query.limit(page_size).offset(page * page_size)
 
     if namesonly == True:
-      # Serialize the data for the response
-      schema = SolutionNamesOnlySchema(many=True)
-      data = schema.dump(solutions)
+        # Serialize the data for the response
+        schema = SolutionNamesOnlySchema(many=True)
+        data = schema.dump(solutions)
     else:
-      for sol in solutions:
-        sol = solution_extension.expand_solution(sol)
-      schema = ExtendedSolutionSchema(many=True)
-      data = schema.dump(solutions)
+        for sol in solutions:
+            sol = solution_extension.expand_solution(sol)
+        schema = ExtendedSolutionSchema(many=True)
+        data = schema.dump(solutions)
 
+    db.session.close()
     logger.debug("read_all: %s", data)
     return data, 200
 
@@ -83,7 +87,7 @@ def read_one(oid):
     :return:              solution matching id
     """
 
-    sol = (db.session.query(Solution).filter(Solution.id == oid).one_or_none())
+    sol = db.session.query(Solution).filter(Solution.id == oid).one_or_none()
 
     if sol is not None:
         solution = solution_extension.expand_solution(sol)
@@ -92,9 +96,7 @@ def read_one(oid):
         data = solution_schema.dump(solution)
         return data, 200
     else:
-        abort(
-            404, f"Solution with id {oid} not found".format(id=oid)
-        )
+        abort(404, f"Solution with id {oid} not found".format(id=oid))
 
 
 def create(solutionDetails):
@@ -106,50 +108,64 @@ def create(solutionDetails):
     :return:        201 on success, 406 on solutions exists
     """
 
-    # Defaults
-    if (solutionDetails.get('isActive') == None):
-      solutionDetails['isActive'] = True
+    data = None
+    try:
+        # Defaults
+        if solutionDetails.get("isActive") == None:
+            solutionDetails["isActive"] = True
 
-    if (solutionDetails.get('favourite') == None):
-      solutionDetails['favourite'] = True
+        if solutionDetails.get("favourite") == None:
+            solutionDetails["favourite"] = True
 
-    if (solutionDetails.get('deployed') == None):
-      solutionDetails['deployed'] = False
+        if solutionDetails.get("deployed") == None:
+            solutionDetails["deployed"] = False
 
-    if (solutionDetails.get('deploymentState') == None):
-      solutionDetails['deploymentState'] = ""
+        if solutionDetails.get("deploymentState") == None:
+            solutionDetails["deploymentState"] = ""
 
-    if (solutionDetails.get('statusId') == None):
-      solutionDetails['statusId'] = 0
+        if solutionDetails.get("statusId") == None:
+            solutionDetails["statusId"] = 0
 
-    if (solutionDetails.get('statusCode') == None):
-      solutionDetails['statusCode'] = ""
+        if solutionDetails.get("statusCode") == None:
+            solutionDetails["statusCode"] = ""
 
-    if (solutionDetails.get('statusMessage') == None):
-      solutionDetails['statusMessage'] = ""
+        if solutionDetails.get("statusMessage") == None:
+            solutionDetails["statusMessage"] = ""
 
-    # Remove applications because Solutions don't have
-    # any applications when they are first created
-    if ('applications' in solutionDetails):
-      del solutionDetails['applications']
+        # Remove applications because Solutions don't have
+        # any applications when they are first created
+        if "applications" in solutionDetails:
+            del solutionDetails["applications"]
 
-    # we don't need the id, the is generated automatically on the database
-    if ('id' in solutionDetails):
-      del solutionDetails["id"]
+        # we don't need the id, the is generated automatically on the database
+        if "id" in solutionDetails:
+            del solutionDetails["id"]
 
-    solutionDetails['lastUpdated'] = ModelTools.get_utc_timestamp()
+        solutionDetails["lastUpdated"] = ModelTools.get_utc_timestamp()
+        envs = solutionDetails['environments']
 
-    schema = SolutionSchema(many=False)
-    new_solution = schema.load(solutionDetails, session=db.session)
-    db.session.add(new_solution)
-    db.session.commit()
+        # Removing this as the below schema is not expecting this field.
+        if "environments" in solutionDetails:
+            del solutionDetails["environments"]
 
+        schema = SolutionSchema(many=False)
+        new_solution = schema.load(solutionDetails, session=db.session)
+        db.session.add(new_solution)
+        db.session.flush()
+        solution_extension.create_solution_environments(new_solution.id, envs)
+        new_solution = solution_extension.expand_solution(new_solution)        
+        schema = ExtendedSolutionSchema()
+        data = schema.dump(new_solution)        
+        db.session.commit()
+    except:
+        db.session.rollback()
+        raise
+    finally:    
+        db.session.close()
+        
     # Serialize and return the newly created solution
     # in the response
 
-    new_solution = solution_extension.expand_solution(new_solution)
-    schema = ExtendedSolutionSchema()
-    data = schema.dump(new_solution)
     return data, 201
 
 
@@ -165,36 +181,48 @@ def update(oid, solutionDetails):
     logger.debug(solutionDetails)
 
     # Does the solutions exist in solutions list?
-    existing_solution = db.session.query(Solution).filter(
-            Solution.id == oid
-    ).one_or_none()
+    existing_solution = (
+        db.session.query(Solution).filter(Solution.id == oid).one_or_none()
+    )
 
     # Does solutions exist?
 
     if existing_solution is not None:
-        existing_solution.lastUpdated = ModelTools.get_utc_timestamp()
-        if solutionDetails.get('businessUnit'):
-          existing_solution.businessUnit = solutionDetails['businessUnit']
-        if solutionDetails.get('cd'):
-          existing_solution.cd = solutionDetails['cd']
-        if solutionDetails.get('ci'):
-          existing_solution.ci = solutionDetails['ci']
-        if solutionDetails.get('costCentre'):
-          existing_solution.costCentre = solutionDetails['costCentre']
-        if solutionDetails.get('description'):
-          existing_solution.description = solutionDetails['description']
-        if solutionDetails.get('favourite'):
-          existing_solution.favourite = solutionDetails['favourite']          
-        if solutionDetails.get('isActive'):
-          existing_solution.isActive = solutionDetails['isActive'] 
-        if solutionDetails.get('name'):
-          existing_solution.name = solutionDetails['name']
-        if solutionDetails.get('sourceControl'):
-          existing_solution.sourceControl = solutionDetails['sourceControl']
-        if solutionDetails.get('teamId'):
-          existing_solution.teamId = solutionDetails['teamId']            
-        db.session.merge(existing_solution)
-        db.session.commit()
+        try:
+            envs = solutionDetails['environments']
+            # Remove envs as it's processed separately, but in the same transaction.
+            if "environments" in solutionDetails:
+                del solutionDetails["environments"]
+            solution_extension.create_solution_environments(oid, envs)
+
+            existing_solution.lastUpdated = ModelTools.get_utc_timestamp()
+            if solutionDetails.get("businessUnit"):
+                existing_solution.businessUnit = solutionDetails["businessUnit"]
+            if solutionDetails.get("cd"):
+                existing_solution.cd = solutionDetails["cd"]
+            if solutionDetails.get("ci"):
+                existing_solution.ci = solutionDetails["ci"]
+            if solutionDetails.get("costCentre"):
+                existing_solution.costCentre = solutionDetails["costCentre"]
+            if solutionDetails.get("description"):
+                existing_solution.description = solutionDetails["description"]
+            if solutionDetails.get("favourite"):
+                existing_solution.favourite = solutionDetails["favourite"]
+            if solutionDetails.get("isActive"):
+                existing_solution.isActive = solutionDetails["isActive"]
+            if solutionDetails.get("name"):
+                existing_solution.name = solutionDetails["name"]
+            if solutionDetails.get("sourceControl"):
+                existing_solution.sourceControl = solutionDetails["sourceControl"]
+            if solutionDetails.get("teamId"):
+                existing_solution.teamId = solutionDetails["teamId"]
+            db.session.merge(existing_solution)
+            db.session.commit()
+        except:
+            db.session.rollback()
+            raise
+        finally:
+            db.session.close()
 
         # return the updted solutions in the response
         schema = ExtendedSolutionSchema(many=False)
@@ -203,6 +231,7 @@ def update(oid, solutionDetails):
 
     # otherwise, nope, deployment doesn't exist, so that's an error
     else:
+        db.session.close()
         abort(404, f"Solution {oid} not found")
 
 
@@ -214,7 +243,9 @@ def delete(oid):
     :return:    200 on successful delete, 404 if not found
     """
     # Does the solution to delete exist?
-    existing_solution = db.session.query(Solution).filter(Solution.id == oid).one_or_none()
+    existing_solution = (
+        db.session.query(Solution).filter(Solution.id == oid).one_or_none()
+    )
 
     # if found?
     if existing_solution is not None:
@@ -225,4 +256,5 @@ def delete(oid):
 
     # Otherwise, nope, solution to delete not found
     else:
+        db.session.close()
         abort(404, f"Solution {oid} not found")

@@ -1,3 +1,5 @@
+use eagle_db;
+
 -- MySQL dump 10.13  Distrib 5.7.29, for macos10.14 (x86_64)
 --
 -- Host: localhost    Database: eagle_db
@@ -51,7 +53,7 @@ CREATE TABLE `activator` (
   `source` varchar(100) DEFAULT NULL,
   `activatorLink` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=112 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=115 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -60,7 +62,7 @@ CREATE TABLE `activator` (
 
 LOCK TABLES `activator` WRITE;
 /*!40000 ALTER TABLE `activator` DISABLE KEYS */;
-INSERT INTO `activator` VALUES (1,'CMS Web App','Web application',1,'Public','Tier 3','[\"POC\", \"DEV\"]','[\"GCP\"]','2020-05-12 08:29:07',1000,1200,'[\"UK\", \"DB\"]','[\"Appengine\"]','[\"ApiGee\"]','[\"Jenkins\", \"Travis\"]','[\"Codeship\", \"Option\"]','[\"JIRA\", \"Option\"]','FICC Business Unit','Sanjeev Gupta','s.gupta@company.name','Monthly: Eagle tier 3','Single Region Kubernetes','Available','Some very long description that I did not want to copy. Some very long description that I did not want to copy. Some very long description that I did not want to copy',0,'open',''),(2,'Multi region kubernetes','Micro-services',1,'Restricted','Tier 1','[\"POC\", \"AWS\", \"Other\", \"Fancy\"]','[\"GCP\"]','2020-05-07 08:38:56',1300,2000,'[\"UK\", \"DB\"]','[\"Appengine\"]','[\"ApiGee\"]','[\"Jenkins\", \"Travis\"]','[\"Codeship\", \"Option\"]','[\"JIRA\", \"Option\"]','M&A Business Unit','Nathanael Stoltenberg','Nathanael.Stoltenberg@yahoo.com','Monthly: Eagle tier 1','Multi Region Kubernetes','Deprecated','Some very long description that I did not want to copy. Some very long description that I did not want to copy. Some very long description that I did not want to copy',0,'open',''),(3,'SQL Single region kubernetes','Micro-services',1,'Restricted','Tier 2','[\"POC\", \"Prod\"]','[\"Azure\", \"GCP\", \"AWS\", \"Other\", \"Fancy\"]','2020-05-07 10:49:44',100,120,'[\"UK\", \"DB\"]','[\"Appengine\"]','[\"ApiGee\"]','[\"Jenkins\", \"Travis\"]','[\"Codeship\", \"Option\"]','[\"JIRA\", \"Option\"]','Equity Capital Business Unit','Brando Howell','Brando.Howell@hotmail.com','Monthly: Eagle tier 2','SQL Single region kubernetes','Deprecated','Some very long description that I did not want to copy. Some very long description that I did not want to copy. Some very long description that I did not want to copy',0,'open',''),(101,'CMS Web App','Tier 3',1,'Public','Web application','[\"POC\", \"DEV\", \"PRD\"]','[\"GCP\", \"Cloud Foundry\"]','2020-05-12 08:29:57',500,300,'[\"UK\", \"DB\"]','[\"Appengine\"]','[\"ApiGee\"]','[\"Jenkins\", \"Travis\"]','[\"Codeship\", \"Option\"]','[\"JIRA\", \"Option\"]','Debit Capital Business Unit','Mohammed Will PhD','Mohammed.Will@gmail.com','Monthly: Eagle tier 3','CMS Web App','Available','Some very long description that I did not want to copy. Some very long description that I did not want to copy. Some very long description that I did not want to copy',0,'thirdparty',''),(102,'Multi region kubernetes','Micro-services',1,'Restricted','Tier 1','[\"POC\", \"AWS\", \"Other\", \"Fancy\"]','[\"GCP\"]','2020-05-07 10:56:43',1600,2500,'[\"UK\", \"DB\"]','[\"Appengine\"]','[\"ApiGee\"]','[\"Jenkins\", \"Travis\"]','[\"Codeship\", \"Option\"]','[\"JIRA\", \"Option\"]','FICC Business Unit','Tressa Ullrich','Tressa97@yahoo.com','Monthly: Eagle tier 1','Multi region kubernetes','Locked','Some very long description that I did not want to copy. Some very long description that I did not want to copy. Some very long description that I did not want to copy',0,'thirdparty',''),(103,'SQL Single region kubernetes','Micro-services',1,'Restricted','Tier 2','[\"POC\", \"Prod\"]','[\"Azure\", \"GCP\", \"AWS\", \"Other\", \"Fancy\"]','2020-04-02 19:25:52',900,600,'[\"UK\", \"DB\", \"HK\", \"US\", \"AU\"]','[\"Appengine\"]','[\"ApiGee\"]','[\"Jenkins\", \"Travis\"]','[\"Codeship\", \"Option\"]','[\"JIRA\", \"Option\"]','M&A Business Unit','Rose Dickens Sr.','Rose.Dickens19@hotmail.com','Monthly: Eagle tier 2','SQL Single region kubernetes','Available','Some very long description that I did not want to copy. Some very long description that I did not want to copy. Some very long description that I did not want to copy',0,'internal',''),(109,'CMS Web App','Web application',1,'Public','Tier 3','[\"POC\", \"DEV\", \"PRD\"]','[\"GCP\"]','2020-04-07 13:39:47',1000,1200,'[\"UK\", \"DB\"]','[\"Appengine\"]','[\"ApiGee\"]','[\"Jenkins\", \"Travis\"]','[\"Codeship\", \"Option\"]','[\"JIRA\", \"Option\"]','FICC Business Unit','Sanjeev Gupta','s.gupta@company.name','Monthly: Eagle tier 3','Single Region Kubernetes','Available','Some very long description that I did not want to copy. Some very long description that I did not want to copy. Some very long description that I did not want to copy',0,'open',''),(110,'CMS Web App','Web application',1,'Public','Tier 3','[\"POC\", \"DEV\", \"PRD\"]','[\"GCP\"]','2020-04-07 13:38:22',1000,1200,'[\"UK\", \"DB\"]','[\"Appengine\"]','[\"ApiGee\"]','[\"Jenkins\", \"Travis\"]','[\"Codeship\", \"Option\"]','[\"JIRA\", \"Option\"]','FICC Business Unit','Sanjeev Gupta','s.gupta@company.name','Monthly: Eagle tier 3','Single Region Kubernetes','Available','Some very long description that I did not want to copy. Some very long description that I did not want to copy. Some very long description that I did not want to copy',0,'open',''),(111,'CMS Web App','Web application',1,'Public','Tier 3','[\"POC\", \"DEV\"]','[\"GCP\"]','2020-05-07 10:55:49',1000,1200,'[\"UK\", \"DB\"]','[\"Appengine\"]','[\"ApiGee\"]','[\"Jenkins\", \"Travis\"]','[\"Codeship\", \"Option\"]','[\"JIRA\", \"Option\"]','FICC Business Unit','Sanjeev Gupta','s.gupta@company.name','Monthly: Eagle tier 3','Single Region Kubernetes','Locked','Some very long description that I did not want to copy. Some very long description that I did not want to copy. Some very long description that I did not want to copy',0,'open','');
+INSERT INTO `activator` VALUES (1,'CMS Web App','Web application',1,'Public','Tier 3','[\"POC\", \"DEV\"]','[\"GCP\"]','2020-05-12 08:29:07',1000,1200,'[\"UK\", \"DB\"]','[\"Appengine\"]','[\"ApiGee\"]','[\"Jenkins\", \"Travis\"]','[\"Codeship\", \"Option\"]','[\"JIRA\", \"Option\"]','FICC Business Unit','Sanjeev Gupta','s.gupta@company.name','Monthly: Eagle tier 3','Single Region Kubernetes','Available','Some very long description that I did not want to copy. Some very long description that I did not want to copy. Some very long description that I did not want to copy',0,'open',''),(2,'Multi region kubernetes','Micro-services',1,'Restricted','Tier 1','[\"POC\", \"AWS\", \"Other\", \"Fancy\"]','[\"GCP\"]','2020-05-07 08:38:56',1300,2000,'[\"UK\", \"DB\"]','[\"Appengine\"]','[\"ApiGee\"]','[\"Jenkins\", \"Travis\"]','[\"Codeship\", \"Option\"]','[\"JIRA\", \"Option\"]','M&A Business Unit','Nathanael Stoltenberg','Nathanael.Stoltenberg@yahoo.com','Monthly: Eagle tier 1','Multi Region Kubernetes','Deprecated','Some very long description that I did not want to copy. Some very long description that I did not want to copy. Some very long description that I did not want to copy',0,'open',''),(3,'SQL Single region kubernetes','Micro-services',1,'Restricted','Tier 2','[\"POC\", \"Prod\"]','[\"Azure\", \"GCP\", \"AWS\", \"Other\", \"Fancy\"]','2020-05-07 10:49:44',100,120,'[\"UK\", \"DB\"]','[\"Appengine\"]','[\"ApiGee\"]','[\"Jenkins\", \"Travis\"]','[\"Codeship\", \"Option\"]','[\"JIRA\", \"Option\"]','Equity Capital Business Unit','Brando Howell','Brando.Howell@hotmail.com','Monthly: Eagle tier 2','SQL Single region kubernetes','Deprecated','Some very long description that I did not want to copy. Some very long description that I did not want to copy. Some very long description that I did not want to copy',0,'open',''),(4,'CMS Web App','Tier 3',1,'Public','Web application','[\"POC\", \"DEV\", \"PRD\"]','[\"GCP\", \"Cloud Foundry\"]','2020-05-12 08:29:57',500,300,'[\"UK\", \"DB\"]','[\"Appengine\"]','[\"ApiGee\"]','[\"Jenkins\", \"Travis\"]','[\"Codeship\", \"Option\"]','[\"JIRA\", \"Option\"]','Debit Capital Business Unit','Mohammed Will PhD','Mohammed.Will@gmail.com','Monthly: Eagle tier 3','CMS Web App','Available','Some very long description that I did not want to copy. Some very long description that I did not want to copy. Some very long description that I did not want to copy',0,'thirdparty',''),(5,'Multi region kubernetes','Micro-services',1,'Restricted','Tier 1','[\"POC\", \"AWS\", \"Other\", \"Fancy\"]','[\"GCP\"]','2020-05-07 10:56:43',1600,2500,'[\"UK\", \"DB\"]','[\"Appengine\"]','[\"ApiGee\"]','[\"Jenkins\", \"Travis\"]','[\"Codeship\", \"Option\"]','[\"JIRA\", \"Option\"]','FICC Business Unit','Tressa Ullrich','Tressa97@yahoo.com','Monthly: Eagle tier 1','Multi region kubernetes','Locked','Some very long description that I did not want to copy. Some very long description that I did not want to copy. Some very long description that I did not want to copy',0,'thirdparty',''),(6,'SQL Single region kubernetes','Micro-services',1,'Restricted','Tier 2','[\"POC\", \"Prod\"]','[\"Azure\", \"GCP\", \"AWS\", \"Other\", \"Fancy\"]','2020-04-02 19:25:52',900,600,'[\"UK\", \"DB\", \"HK\", \"US\", \"AU\"]','[\"Appengine\"]','[\"ApiGee\"]','[\"Jenkins\", \"Travis\"]','[\"Codeship\", \"Option\"]','[\"JIRA\", \"Option\"]','M&A Business Unit','Rose Dickens Sr.','Rose.Dickens19@hotmail.com','Monthly: Eagle tier 2','SQL Single region kubernetes','Available','Some very long description that I did not want to copy. Some very long description that I did not want to copy. Some very long description that I did not want to copy',0,'internal',''),(7,'CMS Web App','Web application',1,'Public','Tier 3','[\"POC\", \"DEV\", \"PRD\"]','[\"GCP\"]','2020-04-07 13:39:47',1000,1200,'[\"UK\", \"DB\"]','[\"Appengine\"]','[\"ApiGee\"]','[\"Jenkins\", \"Travis\"]','[\"Codeship\", \"Option\"]','[\"JIRA\", \"Option\"]','FICC Business Unit','Sanjeev Gupta','s.gupta@company.name','Monthly: Eagle tier 3','Single Region Kubernetes','Available','Some very long description that I did not want to copy. Some very long description that I did not want to copy. Some very long description that I did not want to copy',0,'open',''),(8,'CMS Web App','Web application',1,'Public','Tier 3','[\"POC\", \"DEV\", \"PRD\"]','[\"GCP\"]','2020-04-07 13:38:22',1000,1200,'[\"UK\", \"DB\"]','[\"Appengine\"]','[\"ApiGee\"]','[\"Jenkins\", \"Travis\"]','[\"Codeship\", \"Option\"]','[\"JIRA\", \"Option\"]','FICC Business Unit','Sanjeev Gupta','s.gupta@company.name','Monthly: Eagle tier 3','Single Region Kubernetes','Available','Some very long description that I did not want to copy. Some very long description that I did not want to copy. Some very long description that I did not want to copy',0,'open',''),(9,'CMS Web App','Web application',1,'Public','Tier 3','[\"POC\", \"DEV\"]','[\"GCP\"]','2020-05-07 10:55:49',1000,1200,'[\"UK\", \"DB\"]','[\"Appengine\"]','[\"ApiGee\"]','[\"Jenkins\", \"Travis\"]','[\"Codeship\", \"Option\"]','[\"JIRA\", \"Option\"]','FICC Business Unit','Sanjeev Gupta','s.gupta@company.name','Monthly: Eagle tier 3','Single Region Kubernetes','Locked','Some very long description that I did not want to copy. Some very long description that I did not want to copy. Some very long description that I did not want to copy',0,'open','');
 /*!40000 ALTER TABLE `activator` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -82,7 +84,7 @@ CREATE TABLE `application` (
   `lastUpdated` datetime DEFAULT NULL,
   `resources` varchar(255) DEFAULT '[]',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -91,7 +93,7 @@ CREATE TABLE `application` (
 
 LOCK TABLES `application` WRITE;
 /*!40000 ALTER TABLE `application` DISABLE KEYS */;
-INSERT INTO `application` VALUES (1,1,1,'Placeholder','DEV','Active','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et do','2020-04-16 17:58:21','[{\"ipAddress\": \"40.123.45.236\", \"name\": \"GKE Cluster\"}, {\"ipAddress\": \"40.123.45.236\", \"name\": \"Cloud SQL\"}]'),(2,1,2,'Other App','POC','Active','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et do','2020-04-02 00:00:00','[{\"name\": \"GKE Cluster\", \"ipAddress\": \"40.123.45.236\"}, {\"name\": \"Cloud SQL\", \"ipAddress\": \"40.123.45.236\"}]'),(3,2,3,'Other App','POC','Active','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et do','2020-04-02 00:00:00','[{\"name\": \"ITSO\", \"ipAddress\": \"40.123.45.236\"}, {\"name\": \"Cloud SQL\", \"ipAddress\": \"40.123.45.236\"}]'),(4,2,2,'Great App','Prod','Active','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et do','2020-04-02 00:00:00','[{\"name\": \"GKE Cluster\", \"ipAddress\": \"40.123.45.236\"}, {\"name\": \"Cloud SQL\", \"ipAddress\": \"40.123.45.236\"}]'),(5,3,3,'Placeholder','Prod','Active','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et do','2020-04-02 00:00:00','[{\"name\": \"ITSO\", \"ipAddress\": \"40.123.45.236\"}, {\"name\": \"Cloud SQL\", \"ipAddress\": \"40.123.45.236\"}]'),(6,1,2,'My First App','POC','Active','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et do','2020-04-03 09:23:37','[{\"name\": \"GKE Cluster\", \"ipAddress\": \"40.123.45.236\"}, {\"name\": \"Cloud SQL\", \"ipAddress\": \"40.123.45.236\"}]');
+INSERT INTO `application` VALUES (1,1,1,'Placeholder','DEV','Active','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et do','2020-04-16 17:58:21','[{\"ipAddress\": \"40.123.45.236\", \"name\": \"GKE Cluster\"}, {\"ipAddress\": \"40.123.45.236\", \"name\": \"Cloud SQL\"}]'),(2,1,2,'Other App','POC','Active','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et do','2020-04-02 00:00:00','[{\"name\": \"GKE Cluster\", \"ipAddress\": \"40.123.45.236\"}, {\"name\": \"Cloud SQL\", \"ipAddress\": \"40.123.45.236\"}]'),(3,2,3,'Other App','POC','Active','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et do','2020-04-02 00:00:00','[{\"name\": \"ITSO\", \"ipAddress\": \"40.123.45.236\"}, {\"name\": \"Cloud SQL\", \"ipAddress\": \"40.123.45.236\"}]'),(4,2,2,'Great App','Prod','Active','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et do','2020-04-02 00:00:00','[{\"name\": \"GKE Cluster\", \"ipAddress\": \"40.123.45.236\"}, {\"name\": \"Cloud SQL\", \"ipAddress\": \"40.123.45.236\"}]');
 /*!40000 ALTER TABLE `application` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -107,7 +109,7 @@ CREATE TABLE `bgproutingmode` (
   `key` varchar(45) DEFAULT NULL,
   `value` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -133,7 +135,7 @@ CREATE TABLE `businessunit` (
   `description` varchar(200) NOT NULL,
   `isActive` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -195,30 +197,6 @@ INSERT INTO `ci` VALUES ('Bamboo','Bamboo'),('Cloud native','Cloud native'),('Je
 UNLOCK TABLES;
 
 --
--- Table structure for table `environment`
---
-
-DROP TABLE IF EXISTS `environment`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `environment` (
-  `key` varchar(100) NOT NULL,
-  `value` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`key`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `environment`
---
-
-LOCK TABLES `environment` WRITE;
-/*!40000 ALTER TABLE `environment` DISABLE KEYS */;
-INSERT INTO `environment` VALUES ('Development','Development'),('Production','Production');
-/*!40000 ALTER TABLE `environment` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `folder`
 --
 
@@ -234,7 +212,7 @@ CREATE TABLE `folder` (
   `taskId` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -243,6 +221,7 @@ CREATE TABLE `folder` (
 
 LOCK TABLES `folder` WRITE;
 /*!40000 ALTER TABLE `folder` DISABLE KEYS */;
+INSERT INTO `folder` VALUES (1,'rootfolderid','MOCKFOLDERID1','Applications','SUCCESS','MOCKTASKID0'),(2,'MOCKFOLDERID1','MOCKFOLDERID3','Modern Apps','SUCCESS','MOCKTASKID2'),(3,'MOCKFOLDERID3','MOCKFOLDERID5','Developers','SUCCESS','MOCKTASKID4');
 /*!40000 ALTER TABLE `folder` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -262,7 +241,7 @@ CREATE TABLE `landingzoneaction` (
   `locked` tinyint(1) NOT NULL DEFAULT '0',
   `routerLink` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -287,7 +266,7 @@ CREATE TABLE `landingzoneprogressitem` (
   `label` varchar(255) DEFAULT NULL,
   `completed` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -338,7 +317,7 @@ CREATE TABLE `landingzonewan` (
   `vpn__subnetMode` varchar(45) DEFAULT NULL,
   `vpn__vpcName` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -378,6 +357,110 @@ INSERT INTO `lzenvironment` VALUES (1,'Development',1),(2,'Production',1);
 UNLOCK TABLES;
 
 --
+-- Table structure for table `lzfolderstructure`
+--
+
+DROP TABLE IF EXISTS `lzfolderstructure`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `lzfolderstructure` (
+  `id` int(11) NOT NULL,
+  `name` varchar(45) NOT NULL,
+  `isActive` tinyint(4) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `lzfolderstructure`
+--
+
+LOCK TABLES `lzfolderstructure` WRITE;
+/*!40000 ALTER TABLE `lzfolderstructure` DISABLE KEYS */;
+INSERT INTO `lzfolderstructure` VALUES (1,'Applications',1),(2,'Business Unit',1),(3,'Team',1),(4,'Solutions',1);
+/*!40000 ALTER TABLE `lzfolderstructure` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `lzfolderstructurechild`
+--
+
+DROP TABLE IF EXISTS `lzfolderstructurechild`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `lzfolderstructurechild` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `folderId` int(11) NOT NULL,
+  `childId` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `lzfolderstructurechild`
+--
+
+LOCK TABLES `lzfolderstructurechild` WRITE;
+/*!40000 ALTER TABLE `lzfolderstructurechild` DISABLE KEYS */;
+INSERT INTO `lzfolderstructurechild` VALUES (1,1,2),(2,2,3),(3,3,4),(4,4,NULL);
+/*!40000 ALTER TABLE `lzfolderstructurechild` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `lzlanvpc`
+--
+
+DROP TABLE IF EXISTS `lzlanvpc`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `lzlanvpc` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) DEFAULT NULL,
+  `isActive` tinyint(4) DEFAULT '1',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idlzlanvpc_UNIQUE` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `lzlanvpc`
+--
+
+LOCK TABLES `lzlanvpc` WRITE;
+/*!40000 ALTER TABLE `lzlanvpc` DISABLE KEYS */;
+INSERT INTO `lzlanvpc` VALUES (1,'string',1),(2,'Development VPC',1),(3,'Production VPC',1),(4,'PoC VPC',0);
+/*!40000 ALTER TABLE `lzlanvpc` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `lzlanvpc_environment`
+--
+
+DROP TABLE IF EXISTS `lzlanvpc_environment`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `lzlanvpc_environment` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `lzlanvpcId` int(11) NOT NULL,
+  `environmentId` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `lzlanvpc_environment`
+--
+
+LOCK TABLES `lzlanvpc_environment` WRITE;
+/*!40000 ALTER TABLE `lzlanvpc_environment` DISABLE KEYS */;
+INSERT INTO `lzlanvpc_environment` VALUES (1,1,1),(2,2,1),(3,1,2),(4,0,0);
+/*!40000 ALTER TABLE `lzlanvpc_environment` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `lzmetadata`
 --
 
@@ -400,7 +483,7 @@ CREATE TABLE `lzmetadata` (
 
 LOCK TABLES `lzmetadata` WRITE;
 /*!40000 ALTER TABLE `lzmetadata` DISABLE KEYS */;
-INSERT INTO `lzmetadata` VALUES ('environments','environments','[\"Development\",\"UAT\",\"Staging\",\"PoC\",\"Production\"]','List of environments available',1),('folder_structure','folder_structure','[{\"id\": 1, \"isEnabled\": true, \"name\": \"Applications\", \"children\": [{\"id\": 2, \"isEnabled\": true, \"name\": \"Business Unit\", \"children\": [{\"id\": 3, \"isEnabled\": true, \"name\": \"Team\", \"children\": [{\"id\": 4, \"isEnabled\": true, \"name\": \"Solutions\"}]}]}]}]','Landing Zone metadata for folder structure',1),('lan_vpc','development','[\"Development\",\"PoC\", \"UAT\", \"Staging\"]','Landing Zone metadata for LAN VPC of Dev environment',1),('lan_vpc','production','[\"Production\", \"Staging\"]','Landing Zone metadata for LAN VPC of Prod environment',1);
+INSERT INTO `lzmetadata` VALUES ('environments','environments','[\"Development\",\"UAT\",\"Staging\",\"PoC\",\"Production\"]','List of environments available',1),('folder_structure','folder_structure','[{\"id\": 1, \"isEnabled\": true, \"name\": \"Applications\", \"children\": [{\"id\": 2, \"isEnabled\": true, \"name\": \"Business Unit\", \"children\": [{\"id\": 3, \"isEnabled\": true, \"name\": \"Team\", \"children\": [{\"id\": 4, \"isEnabled\": true, \"name\": \"Solutions\"}]}]}]}]','Landing Zone metadata for folder structure',0),('lan_vpc','development','[\"Development\",\"PoC\", \"UAT\", \"Staging\"]','Landing Zone metadata for LAN VPC of Dev environment',1),('lan_vpc','production','[\"Production\", \"Staging\"]','Landing Zone metadata for LAN VPC of Prod environment',1);
 /*!40000 ALTER TABLE `lzmetadata` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -445,8 +528,6 @@ CREATE TABLE `solution` (
   `ci` varchar(255) DEFAULT NULL,
   `cd` varchar(255) DEFAULT NULL,
   `sourceControl` varchar(255) DEFAULT NULL,
-  `environments` varchar(255) DEFAULT NULL,
-  `active` tinyint(1) DEFAULT NULL,
   `favourite` tinyint(1) DEFAULT NULL,
   `lastUpdated` datetime DEFAULT NULL,
   `deployed` tinyint(4) NOT NULL DEFAULT '0',
@@ -457,8 +538,9 @@ CREATE TABLE `solution` (
   `taskId` varchar(100) DEFAULT NULL,
   `teamId` int(11) DEFAULT NULL,
   `deploymentFolderId` varchar(50) DEFAULT NULL,
+  `isActive` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -467,8 +549,36 @@ CREATE TABLE `solution` (
 
 LOCK TABLES `solution` WRITE;
 /*!40000 ALTER TABLE `solution` DISABLE KEYS */;
-INSERT INTO `solution` VALUES (1,'Risk Engine','Solution for internal users to be able to process settlement for FX transactions','Modern Apps','XXX-123-456-YYY','Jenkins','Spinnaker','GitHub','[\"Development\"]',1,1,'2020-05-12 08:24:21',0,'',NULL,NULL,NULL,NULL,1,NULL),(2,'Back Office Settlements','Solution for internal users to be able to process settlement for FX transactions','Modern Apps','XXX-111-444-YYY','Jenkins','Spinnaker','GitHub','[\"Production\"]',1,0,'2020-03-08 23:07:00',0,'',NULL,NULL,NULL,NULL,1,NULL),(3,'FX Engine','Solution for internal users to be able to process settlement for FX transactions','Modern Apps','XXX-554-325-YYY','Jenkins','Spinnaker','GitHub','[\"Development\"]',0,0,'2020-03-08 23:07:00',0,'',NULL,NULL,NULL,NULL,1,NULL),(11,'Portfolio Valuation','A portfolio valuation is done to determine and report alternative investments\' performance, which is often required for financial reporting and tax compliance, and also affects the investment manager\'s compensation.','Data','XXX-333-222-IUY','Bamboo','Screwdriver','Cloud native','[\"Production\"]',1,1,'2020-03-18 21:02:02',0,'',NULL,NULL,NULL,NULL,1,NULL),(12,'Corporate Treasury','The treasury department occupies a central role in the finances of the modern corporation. It takes responsible for the company\'s liquidity—ensures that a company has enough cash available at all times to meet the needs of its primary business operations.','Modern Apps','XXX-333-222-IUY','Team City','Team City','GitHub','[\"Production\"]',1,1,'2020-03-18 21:13:14',0,'',NULL,NULL,NULL,NULL,1,NULL),(13,'Internal Audit','Internal auditing is the independent and objective evaluation of an organisation\'s internal controls to effectively manage risk within its risk appetite. Internal audit should monitor that any weaknesses identified are also addressed.','Modern Apps','XXX-333-222-IUY','Travis','Screwdriver','Cloud native','[\"Development\"]',1,1,'2020-03-18 21:15:22',0,'',NULL,NULL,NULL,NULL,1,NULL),(14,'Realtime Margin','Use real-time margin monitoring to see your current margin requirements at a glance, and to understand the margin implications of any transaction before you transmit an order. The Account window shows your account details.','Data','ABC-123-ABC-123','Cloud native','Spinnaker','Cloud native','[\"Development\"]',1,1,'2020-03-18 21:19:58',0,'',NULL,NULL,NULL,NULL,1,NULL),(15,'Product Control','product control are a center of cost responsible for the daily PnL(Profit and Loss) and its explanation for a dedicated trading desk. The team is responsible to communicate this result within the bank and to the authority FED or ECB.','Data','dat-000-ser-322','Bamboo','Screwdriver','BitBucket','[\"Production\"]',1,1,'2020-03-18 21:25:10',0,'',NULL,NULL,NULL,NULL,1,NULL),(16,'General Ledger','A general ledger (GL) is a set of numbered accounts a business uses to keep track of its financial transactions and to prepare financial reports. Each account is a unique record summarizing each type of asset, liability, equity, revenue and expense.','Data','ldf-343-sds-232','Cloud native','Team City','Cloud native','[\"Development\", \"Production\"]',1,1,'2020-03-18 21:43:54',0,'',NULL,NULL,NULL,NULL,1,NULL),(17,'Corporate Finance','Corporate finance is the division of finance that deals with financing, capital structuring, and investment decisions. Corporate finance is primarily concerned with maximizing shareholder value throug','Modern Apps','ASD-456-FFH-234','Bamboo','Screwdriver','Cloud native','[\"Production\"]',1,1,'2020-03-19 23:41:59',0,'',NULL,NULL,NULL,NULL,1,NULL);
+INSERT INTO `solution` VALUES (1,'Risk Engine','Solution for internal users to be able to process settlement for FX transactions','Modern Apps','XXX-123-456-YYY','Jenkins','Spinnaker','GitHub',1,'2020-06-09 11:12:31',1,'SUCCESS',200,'200','Solution deployment updated.','MOCKTASKID2',1,'MOCKFOLDERID5',1),(2,'Back Office Settlements','Solution for internal users to be able to process settlement for FX transactions','Modern Apps','XXX-111-444-YYY','Jenkins','Spinnaker','GitHub',0,'2020-03-08 23:07:00',0,'',NULL,NULL,NULL,NULL,1,NULL,1),(3,'FX Engine','Solution for internal users to be able to process settlement for FX transactions','Modern Apps','XXX-554-325-YYY','Jenkins','Spinnaker','GitHub',0,'2020-03-08 23:07:00',0,'',NULL,NULL,NULL,NULL,1,NULL,1),(11,'Portfolio Valuation','A portfolio valuation is done to determine and report alternative investments\' performance, which is often required for financial reporting and tax compliance, and also affects the investment manager\'s compensation.','Data','XXX-333-222-IUY','Bamboo','Screwdriver','Cloud native',1,'2020-03-18 21:02:02',0,'',NULL,NULL,NULL,NULL,1,NULL,1),(12,'Corporate Treasury','The treasury department occupies a central role in the finances of the modern corporation. It takes responsible for the company\'s liquidity—ensures that a company has enough cash available at all times to meet the needs of its primary business operations.','Modern Apps','XXX-333-222-IUY','Team City','Team City','GitHub',1,'2020-03-18 21:13:14',0,'',NULL,NULL,NULL,NULL,1,NULL,1),(13,'Internal Audit','Internal auditing is the independent and objective evaluation of an organisation\'s internal controls to effectively manage risk within its risk appetite. Internal audit should monitor that any weaknesses identified are also addressed.','Modern Apps','XXX-333-222-IUY','Travis','Screwdriver','Cloud native',1,'2020-03-18 21:15:22',0,'',NULL,NULL,NULL,NULL,1,NULL,1),(14,'Realtime Margin','Use real-time margin monitoring to see your current margin requirements at a glance, and to understand the margin implications of any transaction before you transmit an order. The Account window shows your account details.','Data','ABC-123-ABC-123','Cloud native','Spinnaker','Cloud native',1,'2020-03-18 21:19:58',0,'',NULL,NULL,NULL,NULL,1,NULL,1),(15,'Product Control','product control are a center of cost responsible for the daily PnL(Profit and Loss) and its explanation for a dedicated trading desk. The team is responsible to communicate this result within the bank and to the authority FED or ECB.','Data','dat-000-ser-322','Bamboo','Screwdriver','BitBucket',1,'2020-03-18 21:25:10',0,'',NULL,NULL,NULL,NULL,1,NULL,1),(16,'General Ledger','A general ledger (GL) is a set of numbered accounts a business uses to keep track of its financial transactions and to prepare financial reports. Each account is a unique record summarizing each type of asset, liability, equity, revenue and expense.','Data','ldf-343-sds-232','Cloud native','Team City','Cloud native',1,'2020-03-18 21:43:54',0,'',NULL,NULL,NULL,NULL,1,NULL,1),(17,'Corporate Finance','Corporate finance is the division of finance that deals with financing, capital structuring, and investment decisions. Corporate finance is primarily concerned with maximizing shareholder value throug','Modern Apps','ASD-456-FFH-234','Bamboo','Screwdriver','Cloud native',1,'2020-03-19 23:41:59',0,'',NULL,NULL,NULL,NULL,1,NULL,1);
 /*!40000 ALTER TABLE `solution` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `solutionenvironment`
+--
+
+DROP TABLE IF EXISTS `solutionenvironment`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `solutionenvironment` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `solutionId` int(11) NOT NULL,
+  `environmentId` int(11) NOT NULL,
+  `lastUpdated` datetime DEFAULT NULL,
+  `isActive` tinyint(4) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `solutionenvironment`
+--
+
+LOCK TABLES `solutionenvironment` WRITE;
+/*!40000 ALTER TABLE `solutionenvironment` DISABLE KEYS */;
+INSERT INTO `solutionenvironment` VALUES (1,1,1,'2020-06-09 11:12:31',1),(2,2,1,'2020-06-06 15:38:02',1),(3,3,1,'2020-06-06 15:38:08',1),(4,4,1,'2020-06-06 15:38:12',1),(5,5,1,'2020-06-06 15:38:16',1),(6,6,1,'2020-06-06 15:38:21',1),(7,7,1,'2020-06-06 15:38:25',1),(8,1,2,'2020-06-09 11:12:31',1),(9,2,2,'2020-06-09 11:12:31',1),(10,19,1,'2020-06-06 18:08:46',1);
+/*!40000 ALTER TABLE `solutionenvironment` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -492,7 +602,7 @@ CREATE TABLE `solutionresource` (
 
 LOCK TABLES `solutionresource` WRITE;
 /*!40000 ALTER TABLE `solutionresource` DISABLE KEYS */;
-INSERT INTO `solutionresource` VALUES (1,'project_id_dev','sol22-dev-env-ksjs726s'),(1,'project_id_prod','sol22-prod-env-ksjs726s'),(1,'project_id_staging','sol22-staging-env-ksjs726s'),(1,'project_id_workspace','sol22-workspace-ksjs726s'),(2,'project_id_dev','sol22-dev-env-ksjs726s'),(2,'project_id_prod','sol22-prod-env-ksjs726s'),(2,'project_id_staging','sol22-staging-env-ksjs726s'),(2,'project_id_workspace','sol22-workspace-ksjs726s'),(3,'project_id_dev','sol22-dev-env-ksjs726s'),(3,'project_id_prod','sol22-prod-env-ksjs726s'),(3,'project_id_staging','sol22-staging-env-ksjs726s'),(3,'project_id_workspace','sol22-workspace-ksjs726s'),(4,'project_id_dev','sol23-dev-env-ksjs726s'),(4,'project_id_prod','sol23-prod-env-ksjs726s'),(4,'project_id_staging','sol23-staging-env-ksjs726s'),(4,'project_id_workspace','sol23-workspace-ksjs726s');
+INSERT INTO `solutionresource` VALUES (1,'project-id-development-1','development-1-h08aez-ksjs726s'),(1,'project-id-development-2','development-2-h08aez-ksjs726s'),(1,'project-id-production','production-h08aez-ksjs726s'),(1,'project-id-qa','qa-h08aez-ksjs726s'),(1,'project-id-staging','staging-h08aez-ksjs726s'),(2,'project-id-development-1','development-1-h08aez-ksjs726s'),(2,'project-id-development-2','development-2-h08aez-ksjs726s'),(2,'project-id-production','production-h08aez-ksjs726s'),(2,'project-id-qa','qa-h08aez-ksjs726s'),(2,'project-id-staging','staging-h08aez-ksjs726s'),(2,'project_id_dev','sol22-dev-env-ksjs726s'),(2,'project_id_prod','sol22-prod-env-ksjs726s'),(2,'project_id_staging','sol22-staging-env-ksjs726s'),(2,'project_id_workspace','sol22-workspace-ksjs726s'),(3,'project-id-development-1','development-1-h08aez-ksjs726s'),(3,'project-id-development-2','development-2-h08aez-ksjs726s'),(3,'project-id-production','production-h08aez-ksjs726s'),(3,'project-id-qa','qa-h08aez-ksjs726s'),(3,'project-id-staging','staging-h08aez-ksjs726s'),(3,'project_id_dev','sol22-dev-env-ksjs726s'),(3,'project_id_prod','sol22-prod-env-ksjs726s'),(3,'project_id_staging','sol22-staging-env-ksjs726s'),(3,'project_id_workspace','sol22-workspace-ksjs726s'),(4,'project-id-development-1','development-1-hello-world'),(4,'project-id-development-2','development-2-hello-world'),(4,'project-id-production','production-hello-world'),(4,'project-id-qa','qa-hello-world'),(4,'project-id-staging','staging-hello-world'),(4,'project_id_dev','sol23-dev-env-ksjs726s'),(4,'project_id_prod','sol23-prod-env-ksjs726s'),(4,'project_id_staging','sol23-staging-env-ksjs726s'),(4,'project_id_workspace','sol23-workspace-ksjs726s');
 /*!40000 ALTER TABLE `solutionresource` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -517,7 +627,7 @@ CREATE TABLE `solutionresourcejson` (
 
 LOCK TABLES `solutionresourcejson` WRITE;
 /*!40000 ALTER TABLE `solutionresourcejson` DISABLE KEYS */;
-INSERT INTO `solutionresourcejson` VALUES (2,'{\"lineage\":\"7b590a8c-e4be-d8c6-6e00-57abbdfd3c3c\",\"outputs\":{},\"resources\":[{\"instances\":[{\"attributes\":{\"create_time\":\"2020-04-30T13:51:27.390Z\",\"display_name\":\"sol22 - ksjs726s\",\"id\":\"folders/615899412414\",\"lifecycle_state\":\"ACTIVE\",\"name\":\"folders/615899412414\",\"parent\":\"folders/943956663445\",\"timeouts\":null},\"private\":\"eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoyNDAwMDAwMDAwMDAsImRlbGV0ZSI6MjQwMDAwMDAwMDAwLCJyZWFkIjoyNDAwMDAwMDAwMDAsInVwZGF0ZSI6MjQwMDAwMDAwMDAwfX0=\",\"schema_version\":0}],\"mode\":\"managed\",\"module\":\"module.solution_folder\",\"name\":\"solution_folder\",\"provider\":\"provider.google\",\"type\":\"google_folder\"},{\"instances\":[{\"attributes\":{\"auto_create_network\":true,\"billing_account\":null,\"folder_id\":\"615899412414\",\"id\":\"projects/sol22-dev-env-ksjs726s\",\"labels\":null,\"name\":\"sol22-dev-env\",\"number\":\"6570889872\",\"org_id\":\"\",\"project_id\":\"sol22-dev-env-ksjs726s\",\"skip_delete\":null,\"timeouts\":null},\"dependencies\":[\"module.solution_folder.google_folder.solution_folder\"],\"private\":\"eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoyNDAwMDAwMDAwMDAsImRlbGV0ZSI6MjQwMDAwMDAwMDAwLCJyZWFkIjoyNDAwMDAwMDAwMDAsInVwZGF0ZSI6MjQwMDAwMDAwMDAwfSwic2NoZW1hX3ZlcnNpb24iOiIxIn0=\",\"schema_version\":1}],\"mode\":\"managed\",\"module\":\"module.dev_environment\",\"name\":\"environment_project\",\"provider\":\"provider.google\",\"type\":\"google_project\"},{\"instances\":[{\"attributes\":{\"auto_create_network\":true,\"billing_account\":null,\"folder_id\":\"615899412414\",\"id\":\"projects/sol22-prod-env-ksjs726s\",\"labels\":null,\"name\":\"sol22-prod-env\",\"number\":\"1072288444773\",\"org_id\":\"\",\"project_id\":\"sol22-prod-env-ksjs726s\",\"skip_delete\":null,\"timeouts\":null},\"dependencies\":[\"module.solution_folder.google_folder.solution_folder\"],\"private\":\"eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoyNDAwMDAwMDAwMDAsImRlbGV0ZSI6MjQwMDAwMDAwMDAwLCJyZWFkIjoyNDAwMDAwMDAwMDAsInVwZGF0ZSI6MjQwMDAwMDAwMDAwfSwic2NoZW1hX3ZlcnNpb24iOiIxIn0=\",\"schema_version\":1}],\"mode\":\"managed\",\"module\":\"module.prod_environment\",\"name\":\"environment_project\",\"provider\":\"provider.google\",\"type\":\"google_project\"},{\"instances\":[{\"attributes\":{\"auto_create_network\":true,\"billing_account\":null,\"folder_id\":\"615899412414\",\"id\":\"projects/sol22-staging-env-ksjs726s\",\"labels\":null,\"name\":\"sol22-staging-env\",\"number\":\"292492613552\",\"org_id\":\"\",\"project_id\":\"sol22-staging-env-ksjs726s\",\"skip_delete\":null,\"timeouts\":null},\"dependencies\":[\"module.solution_folder.google_folder.solution_folder\"],\"private\":\"eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoyNDAwMDAwMDAwMDAsImRlbGV0ZSI6MjQwMDAwMDAwMDAwLCJyZWFkIjoyNDAwMDAwMDAwMDAsInVwZGF0ZSI6MjQwMDAwMDAwMDAwfSwic2NoZW1hX3ZlcnNpb24iOiIxIn0=\",\"schema_version\":1}],\"mode\":\"managed\",\"module\":\"module.staging_environment\",\"name\":\"environment_project\",\"provider\":\"provider.google\",\"type\":\"google_project\"},{\"instances\":[{\"attributes\":{\"auto_create_network\":true,\"billing_account\":null,\"folder_id\":\"615899412414\",\"id\":\"projects/sol22-workspace-ksjs726s\",\"labels\":null,\"name\":\"sol22-workspace\",\"number\":\"555918489693\",\"org_id\":\"\",\"project_id\":\"sol22-workspace-ksjs726s\",\"skip_delete\":null,\"timeouts\":null},\"dependencies\":[\"module.solution_folder.google_folder.solution_folder\"],\"private\":\"eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoyNDAwMDAwMDAwMDAsImRlbGV0ZSI6MjQwMDAwMDAwMDAwLCJyZWFkIjoyNDAwMDAwMDAwMDAsInVwZGF0ZSI6MjQwMDAwMDAwMDAwfSwic2NoZW1hX3ZlcnNpb24iOiIxIn0=\",\"schema_version\":1}],\"mode\":\"managed\",\"module\":\"module.workspace_project\",\"name\":\"workspace_project\",\"provider\":\"provider.google\",\"type\":\"google_project\"}],\"serial\":1,\"terraform_version\":\"0.12.24\",\"version\":4}'),(3,'{\"lineage\":\"7b590a8c-e4be-d8c6-6e00-57abbdfd3c3c\",\"outputs\":{},\"resources\":[{\"instances\":[{\"attributes\":{\"create_time\":\"2020-04-30T13:51:27.390Z\",\"display_name\":\"sol22 - ksjs726s\",\"id\":\"folders/615899412414\",\"lifecycle_state\":\"ACTIVE\",\"name\":\"folders/615899412414\",\"parent\":\"folders/943956663445\",\"timeouts\":null},\"private\":\"eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoyNDAwMDAwMDAwMDAsImRlbGV0ZSI6MjQwMDAwMDAwMDAwLCJyZWFkIjoyNDAwMDAwMDAwMDAsInVwZGF0ZSI6MjQwMDAwMDAwMDAwfX0=\",\"schema_version\":0}],\"mode\":\"managed\",\"module\":\"module.solution_folder\",\"name\":\"solution_folder\",\"provider\":\"provider.google\",\"type\":\"google_folder\"},{\"instances\":[{\"attributes\":{\"auto_create_network\":true,\"billing_account\":null,\"folder_id\":\"615899412414\",\"id\":\"projects/sol22-dev-env-ksjs726s\",\"labels\":null,\"name\":\"sol22-dev-env\",\"number\":\"6570889872\",\"org_id\":\"\",\"project_id\":\"sol22-dev-env-ksjs726s\",\"skip_delete\":null,\"timeouts\":null},\"dependencies\":[\"module.solution_folder.google_folder.solution_folder\"],\"private\":\"eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoyNDAwMDAwMDAwMDAsImRlbGV0ZSI6MjQwMDAwMDAwMDAwLCJyZWFkIjoyNDAwMDAwMDAwMDAsInVwZGF0ZSI6MjQwMDAwMDAwMDAwfSwic2NoZW1hX3ZlcnNpb24iOiIxIn0=\",\"schema_version\":1}],\"mode\":\"managed\",\"module\":\"module.dev_environment\",\"name\":\"environment_project\",\"provider\":\"provider.google\",\"type\":\"google_project\"},{\"instances\":[{\"attributes\":{\"auto_create_network\":true,\"billing_account\":null,\"folder_id\":\"615899412414\",\"id\":\"projects/sol22-prod-env-ksjs726s\",\"labels\":null,\"name\":\"sol22-prod-env\",\"number\":\"1072288444773\",\"org_id\":\"\",\"project_id\":\"sol22-prod-env-ksjs726s\",\"skip_delete\":null,\"timeouts\":null},\"dependencies\":[\"module.solution_folder.google_folder.solution_folder\"],\"private\":\"eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoyNDAwMDAwMDAwMDAsImRlbGV0ZSI6MjQwMDAwMDAwMDAwLCJyZWFkIjoyNDAwMDAwMDAwMDAsInVwZGF0ZSI6MjQwMDAwMDAwMDAwfSwic2NoZW1hX3ZlcnNpb24iOiIxIn0=\",\"schema_version\":1}],\"mode\":\"managed\",\"module\":\"module.prod_environment\",\"name\":\"environment_project\",\"provider\":\"provider.google\",\"type\":\"google_project\"},{\"instances\":[{\"attributes\":{\"auto_create_network\":true,\"billing_account\":null,\"folder_id\":\"615899412414\",\"id\":\"projects/sol22-staging-env-ksjs726s\",\"labels\":null,\"name\":\"sol22-staging-env\",\"number\":\"292492613552\",\"org_id\":\"\",\"project_id\":\"sol22-staging-env-ksjs726s\",\"skip_delete\":null,\"timeouts\":null},\"dependencies\":[\"module.solution_folder.google_folder.solution_folder\"],\"private\":\"eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoyNDAwMDAwMDAwMDAsImRlbGV0ZSI6MjQwMDAwMDAwMDAwLCJyZWFkIjoyNDAwMDAwMDAwMDAsInVwZGF0ZSI6MjQwMDAwMDAwMDAwfSwic2NoZW1hX3ZlcnNpb24iOiIxIn0=\",\"schema_version\":1}],\"mode\":\"managed\",\"module\":\"module.staging_environment\",\"name\":\"environment_project\",\"provider\":\"provider.google\",\"type\":\"google_project\"},{\"instances\":[{\"attributes\":{\"auto_create_network\":true,\"billing_account\":null,\"folder_id\":\"615899412414\",\"id\":\"projects/sol22-workspace-ksjs726s\",\"labels\":null,\"name\":\"sol22-workspace\",\"number\":\"555918489693\",\"org_id\":\"\",\"project_id\":\"sol22-workspace-ksjs726s\",\"skip_delete\":null,\"timeouts\":null},\"dependencies\":[\"module.solution_folder.google_folder.solution_folder\"],\"private\":\"eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoyNDAwMDAwMDAwMDAsImRlbGV0ZSI6MjQwMDAwMDAwMDAwLCJyZWFkIjoyNDAwMDAwMDAwMDAsInVwZGF0ZSI6MjQwMDAwMDAwMDAwfSwic2NoZW1hX3ZlcnNpb24iOiIxIn0=\",\"schema_version\":1}],\"mode\":\"managed\",\"module\":\"module.workspace_project\",\"name\":\"workspace_project\",\"provider\":\"provider.google\",\"type\":\"google_project\"}],\"serial\":1,\"terraform_version\":\"0.12.24\",\"version\":4}'),(4,'{\"lineage\":\"7b590a8c-e4be-d8c6-6e00-57abbdfd3c3c\",\"outputs\":{},\"resources\":[{\"instances\":[{\"attributes\":{\"create_time\":\"2020-04-30T13:51:27.390Z\",\"display_name\":\"sol22 - ksjs726s\",\"id\":\"folders/615899412414\",\"lifecycle_state\":\"ACTIVE\",\"name\":\"folders/615899412414\",\"parent\":\"folders/943956663445\",\"timeouts\":null},\"private\":\"eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoyNDAwMDAwMDAwMDAsImRlbGV0ZSI6MjQwMDAwMDAwMDAwLCJyZWFkIjoyNDAwMDAwMDAwMDAsInVwZGF0ZSI6MjQwMDAwMDAwMDAwfX0=\",\"schema_version\":0}],\"mode\":\"managed\",\"module\":\"module.solution_folder\",\"name\":\"solution_folder\",\"provider\":\"provider.google\",\"type\":\"google_folder\"},{\"instances\":[{\"attributes\":{\"auto_create_network\":true,\"billing_account\":null,\"folder_id\":\"615899412414\",\"id\":\"projects/sol22-dev-env-ksjs726s\",\"labels\":null,\"name\":\"sol22-dev-env\",\"number\":\"6570889872\",\"org_id\":\"\",\"project_id\":\"sol23-dev-env-ksjs726s\",\"skip_delete\":null,\"timeouts\":null},\"dependencies\":[\"module.solution_folder.google_folder.solution_folder\"],\"private\":\"eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoyNDAwMDAwMDAwMDAsImRlbGV0ZSI6MjQwMDAwMDAwMDAwLCJyZWFkIjoyNDAwMDAwMDAwMDAsInVwZGF0ZSI6MjQwMDAwMDAwMDAwfSwic2NoZW1hX3ZlcnNpb24iOiIxIn0=\",\"schema_version\":1}],\"mode\":\"managed\",\"module\":\"module.dev_environment\",\"name\":\"environment_project\",\"provider\":\"provider.google\",\"type\":\"google_project\"},{\"instances\":[{\"attributes\":{\"auto_create_network\":true,\"billing_account\":null,\"folder_id\":\"615899412414\",\"id\":\"projects/sol22-prod-env-ksjs726s\",\"labels\":null,\"name\":\"sol22-prod-env\",\"number\":\"1072288444773\",\"org_id\":\"\",\"project_id\":\"sol23-prod-env-ksjs726s\",\"skip_delete\":null,\"timeouts\":null},\"dependencies\":[\"module.solution_folder.google_folder.solution_folder\"],\"private\":\"eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoyNDAwMDAwMDAwMDAsImRlbGV0ZSI6MjQwMDAwMDAwMDAwLCJyZWFkIjoyNDAwMDAwMDAwMDAsInVwZGF0ZSI6MjQwMDAwMDAwMDAwfSwic2NoZW1hX3ZlcnNpb24iOiIxIn0=\",\"schema_version\":1}],\"mode\":\"managed\",\"module\":\"module.prod_environment\",\"name\":\"environment_project\",\"provider\":\"provider.google\",\"type\":\"google_project\"},{\"instances\":[{\"attributes\":{\"auto_create_network\":true,\"billing_account\":null,\"folder_id\":\"615899412414\",\"id\":\"projects/sol22-staging-env-ksjs726s\",\"labels\":null,\"name\":\"sol22-staging-env\",\"number\":\"292492613552\",\"org_id\":\"\",\"project_id\":\"sol23-staging-env-ksjs726s\",\"skip_delete\":null,\"timeouts\":null},\"dependencies\":[\"module.solution_folder.google_folder.solution_folder\"],\"private\":\"eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoyNDAwMDAwMDAwMDAsImRlbGV0ZSI6MjQwMDAwMDAwMDAwLCJyZWFkIjoyNDAwMDAwMDAwMDAsInVwZGF0ZSI6MjQwMDAwMDAwMDAwfSwic2NoZW1hX3ZlcnNpb24iOiIxIn0=\",\"schema_version\":1}],\"mode\":\"managed\",\"module\":\"module.staging_environment\",\"name\":\"environment_project\",\"provider\":\"provider.google\",\"type\":\"google_project\"},{\"instances\":[{\"attributes\":{\"auto_create_network\":true,\"billing_account\":null,\"folder_id\":\"615899412414\",\"id\":\"projects/sol22-workspace-ksjs726s\",\"labels\":null,\"name\":\"sol22-workspace\",\"number\":\"555918489693\",\"org_id\":\"\",\"project_id\":\"sol23-workspace-ksjs726s\",\"skip_delete\":null,\"timeouts\":null},\"dependencies\":[\"module.solution_folder.google_folder.solution_folder\"],\"private\":\"eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoyNDAwMDAwMDAwMDAsImRlbGV0ZSI6MjQwMDAwMDAwMDAwLCJyZWFkIjoyNDAwMDAwMDAwMDAsInVwZGF0ZSI6MjQwMDAwMDAwMDAwfSwic2NoZW1hX3ZlcnNpb24iOiIxIn0=\",\"schema_version\":1}],\"mode\":\"managed\",\"module\":\"module.workspace_project\",\"name\":\"workspace_project\",\"provider\":\"provider.google\",\"type\":\"google_project\"}],\"serial\":1,\"terraform_version\":\"0.12.24\",\"version\":4}');
+INSERT INTO `solutionresourcejson` VALUES (2,'{\"environment_projects\": {\"sensitive\": false, \"type\": [\"tuple\", [[\"object\", {\"auto_create_network\": \"bool\", \"billing_account\": \"string\", \"folder_id\": \"string\", \"id\": \"string\", \"labels\": [\"map\", \"string\"], \"name\": \"string\", \"number\": \"string\", \"org_id\": \"string\", \"project_id\": \"string\", \"skip_delete\": \"bool\", \"timeouts\": [\"object\", {\"create\": \"string\", \"delete\": \"string\", \"read\": \"string\", \"update\": \"string\"}]}], [\"object\", {\"auto_create_network\": \"bool\", \"billing_account\": \"string\", \"folder_id\": \"string\", \"id\": \"string\", \"labels\": [\"map\", \"string\"], \"name\": \"string\", \"number\": \"string\", \"org_id\": \"string\", \"project_id\": \"string\", \"skip_delete\": \"bool\", \"timeouts\": [\"object\", {\"create\": \"string\", \"delete\": \"string\", \"read\": \"string\", \"update\": \"string\"}]}], [\"object\", {\"auto_create_network\": \"bool\", \"billing_account\": \"string\", \"folder_id\": \"string\", \"id\": \"string\", \"labels\": [\"map\", \"string\"], \"name\": \"string\", \"number\": \"string\", \"org_id\": \"string\", \"project_id\": \"string\", \"skip_delete\": \"bool\", \"timeouts\": [\"object\", {\"create\": \"string\", \"delete\": \"string\", \"read\": \"string\", \"update\": \"string\"}]}], [\"object\", {\"auto_create_network\": \"bool\", \"billing_account\": \"string\", \"folder_id\": \"string\", \"id\": \"string\", \"labels\": [\"map\", \"string\"], \"name\": \"string\", \"number\": \"string\", \"org_id\": \"string\", \"project_id\": \"string\", \"skip_delete\": \"bool\", \"timeouts\": [\"object\", {\"create\": \"string\", \"delete\": \"string\", \"read\": \"string\", \"update\": \"string\"}]}], [\"object\", {\"auto_create_network\": \"bool\", \"billing_account\": \"string\", \"folder_id\": \"string\", \"id\": \"string\", \"labels\": [\"map\", \"string\"], \"name\": \"string\", \"number\": \"string\", \"org_id\": \"string\", \"project_id\": \"string\", \"skip_delete\": \"bool\", \"timeouts\": [\"object\", {\"create\": \"string\", \"delete\": \"string\", \"read\": \"string\", \"update\": \"string\"}]}]]], \"value\": [{\"auto_create_network\": true, \"billing_account\": \"01A2F5-73127B-50AE5B\", \"folder_id\": \"282083654038\", \"id\": \"projects/development-1-h08aez-ksjs726s\", \"labels\": {\"business_unit\": \"bu-gft\", \"cost_centre\": \"cc-gft\", \"environment\": \"development-1\"}, \"name\": \"sol999-development-1\", \"number\": \"119312718634\", \"org_id\": \"\", \"project_id\": \"development-1-h08aez-ksjs726s\", \"skip_delete\": null, \"timeouts\": null}, {\"auto_create_network\": true, \"billing_account\": \"REDACTED\", \"folder_id\": \"282083654038\", \"id\": \"projects/development-2-h08aez-ksjs726s\", \"labels\": {\"business_unit\": \"bu-gft\", \"cost_centre\": \"cc-gft\", \"environment\": \"development-2\"}, \"name\": \"sol999-development-2\", \"number\": \"878261862220\", \"org_id\": \"\", \"project_id\": \"development-2-h08aez-ksjs726s\", \"skip_delete\": null, \"timeouts\": null}, {\"auto_create_network\": true, \"billing_account\": \"REDACTED\", \"folder_id\": \"282083654038\", \"id\": \"projects/staging-h08aez-ksjs726s\", \"labels\": {\"business_unit\": \"bu-gft\", \"cost_centre\": \"cc-gft\", \"environment\": \"staging\"}, \"name\": \"sol999-staging\", \"number\": \"971423854825\", \"org_id\": \"\", \"project_id\": \"staging-h08aez-ksjs726s\", \"skip_delete\": null, \"timeouts\": null}, {\"auto_create_network\": true, \"billing_account\": \"REDACTED\", \"folder_id\": \"282083654038\", \"id\": \"projects/qa-h08aez-ksjs726s\", \"labels\": {\"business_unit\": \"bu-gft\", \"cost_centre\": \"cc-gft\", \"environment\": \"qa\"}, \"name\": \"sol999-qa\", \"number\": \"662646863463\", \"org_id\": \"\", \"project_id\": \"qa-h08aez-ksjs726s\", \"skip_delete\": null, \"timeouts\": null}, {\"auto_create_network\": true, \"billing_account\": \"REDACTED\", \"folder_id\": \"282083654038\", \"id\": \"projects/production-h08aez-ksjs726s\", \"labels\": {\"business_unit\": \"bu-gft\", \"cost_centre\": \"cc-gft\", \"environment\": \"production\"}, \"name\": \"sol999-production\", \"number\": \"544667916764\", \"org_id\": \"\", \"project_id\": \"production-h08aez-ksjs726s\", \"skip_delete\": null, \"timeouts\": null}]}, \"solution_folder\": {\"sensitive\": false, \"type\": [\"object\", {\"create_time\": \"string\", \"display_name\": \"string\", \"id\": \"string\", \"lifecycle_state\": \"string\", \"name\": \"string\", \"parent\": \"string\", \"timeouts\": [\"object\", {\"create\": \"string\", \"delete\": \"string\", \"read\": \"string\", \"update\": \"string\"}]}], \"value\": {\"create_time\": \"2020-05-20T08:05:09.507Z\", \"display_name\": \"sol999\", \"id\": \"folders/282083654038\", \"lifecycle_state\": \"ACTIVE\", \"name\": \"folders/282083654038\", \"parent\": \"folders/940168182397\", \"timeouts\": null}}, \"workspace_project\": {\"sensitive\": false, \"type\": [\"object\", {\"auto_create_network\": \"bool\", \"billing_account\": \"string\", \"folder_id\": \"string\", \"id\": \"string\", \"labels\": [\"map\", \"string\"], \"name\": \"string\", \"number\": \"string\", \"org_id\": \"string\", \"project_id\": \"string\", \"skip_delete\": \"bool\", \"timeouts\": [\"object\", {\"create\": \"string\", \"delete\": \"string\", \"read\": \"string\", \"update\": \"string\"}]}], \"value\": {\"auto_create_network\": true, \"billing_account\": \"REDACTED\", \"folder_id\": \"282083654038\", \"id\": \"projects/workspace-h08aez-ksjs726s\", \"labels\": {\"business_unit\": \"bu-gft\", \"cost_centre\": \"cc-gft\"}, \"name\": \"sol999-workspace\", \"number\": \"3227416706\", \"org_id\": \"\", \"project_id\": \"workspace-h08aez-ksjs726s\", \"skip_delete\": null, \"timeouts\": null}}}'),(3,'{\"environment_projects\": {\"sensitive\": false, \"type\": [\"tuple\", [[\"object\", {\"auto_create_network\": \"bool\", \"billing_account\": \"string\", \"folder_id\": \"string\", \"id\": \"string\", \"labels\": [\"map\", \"string\"], \"name\": \"string\", \"number\": \"string\", \"org_id\": \"string\", \"project_id\": \"string\", \"skip_delete\": \"bool\", \"timeouts\": [\"object\", {\"create\": \"string\", \"delete\": \"string\", \"read\": \"string\", \"update\": \"string\"}]}], [\"object\", {\"auto_create_network\": \"bool\", \"billing_account\": \"string\", \"folder_id\": \"string\", \"id\": \"string\", \"labels\": [\"map\", \"string\"], \"name\": \"string\", \"number\": \"string\", \"org_id\": \"string\", \"project_id\": \"string\", \"skip_delete\": \"bool\", \"timeouts\": [\"object\", {\"create\": \"string\", \"delete\": \"string\", \"read\": \"string\", \"update\": \"string\"}]}], [\"object\", {\"auto_create_network\": \"bool\", \"billing_account\": \"string\", \"folder_id\": \"string\", \"id\": \"string\", \"labels\": [\"map\", \"string\"], \"name\": \"string\", \"number\": \"string\", \"org_id\": \"string\", \"project_id\": \"string\", \"skip_delete\": \"bool\", \"timeouts\": [\"object\", {\"create\": \"string\", \"delete\": \"string\", \"read\": \"string\", \"update\": \"string\"}]}], [\"object\", {\"auto_create_network\": \"bool\", \"billing_account\": \"string\", \"folder_id\": \"string\", \"id\": \"string\", \"labels\": [\"map\", \"string\"], \"name\": \"string\", \"number\": \"string\", \"org_id\": \"string\", \"project_id\": \"string\", \"skip_delete\": \"bool\", \"timeouts\": [\"object\", {\"create\": \"string\", \"delete\": \"string\", \"read\": \"string\", \"update\": \"string\"}]}], [\"object\", {\"auto_create_network\": \"bool\", \"billing_account\": \"string\", \"folder_id\": \"string\", \"id\": \"string\", \"labels\": [\"map\", \"string\"], \"name\": \"string\", \"number\": \"string\", \"org_id\": \"string\", \"project_id\": \"string\", \"skip_delete\": \"bool\", \"timeouts\": [\"object\", {\"create\": \"string\", \"delete\": \"string\", \"read\": \"string\", \"update\": \"string\"}]}]]], \"value\": [{\"auto_create_network\": true, \"billing_account\": \"01A2F5-73127B-50AE5B\", \"folder_id\": \"282083654038\", \"id\": \"projects/development-1-h08aez-ksjs726s\", \"labels\": {\"business_unit\": \"bu-gft\", \"cost_centre\": \"cc-gft\", \"environment\": \"development-1\"}, \"name\": \"sol999-development-1\", \"number\": \"119312718634\", \"org_id\": \"\", \"project_id\": \"development-1-h08aez-ksjs726s\", \"skip_delete\": null, \"timeouts\": null}, {\"auto_create_network\": true, \"billing_account\": \"REDACTED\", \"folder_id\": \"282083654038\", \"id\": \"projects/development-2-h08aez-ksjs726s\", \"labels\": {\"business_unit\": \"bu-gft\", \"cost_centre\": \"cc-gft\", \"environment\": \"development-2\"}, \"name\": \"sol999-development-2\", \"number\": \"878261862220\", \"org_id\": \"\", \"project_id\": \"development-2-h08aez-ksjs726s\", \"skip_delete\": null, \"timeouts\": null}, {\"auto_create_network\": true, \"billing_account\": \"REDACTED\", \"folder_id\": \"282083654038\", \"id\": \"projects/staging-h08aez-ksjs726s\", \"labels\": {\"business_unit\": \"bu-gft\", \"cost_centre\": \"cc-gft\", \"environment\": \"staging\"}, \"name\": \"sol999-staging\", \"number\": \"971423854825\", \"org_id\": \"\", \"project_id\": \"staging-h08aez-ksjs726s\", \"skip_delete\": null, \"timeouts\": null}, {\"auto_create_network\": true, \"billing_account\": \"REDACTED\", \"folder_id\": \"282083654038\", \"id\": \"projects/qa-h08aez-ksjs726s\", \"labels\": {\"business_unit\": \"bu-gft\", \"cost_centre\": \"cc-gft\", \"environment\": \"qa\"}, \"name\": \"sol999-qa\", \"number\": \"662646863463\", \"org_id\": \"\", \"project_id\": \"qa-h08aez-ksjs726s\", \"skip_delete\": null, \"timeouts\": null}, {\"auto_create_network\": true, \"billing_account\": \"REDACTED\", \"folder_id\": \"282083654038\", \"id\": \"projects/production-h08aez-ksjs726s\", \"labels\": {\"business_unit\": \"bu-gft\", \"cost_centre\": \"cc-gft\", \"environment\": \"production\"}, \"name\": \"sol999-production\", \"number\": \"544667916764\", \"org_id\": \"\", \"project_id\": \"production-h08aez-ksjs726s\", \"skip_delete\": null, \"timeouts\": null}]}, \"solution_folder\": {\"sensitive\": false, \"type\": [\"object\", {\"create_time\": \"string\", \"display_name\": \"string\", \"id\": \"string\", \"lifecycle_state\": \"string\", \"name\": \"string\", \"parent\": \"string\", \"timeouts\": [\"object\", {\"create\": \"string\", \"delete\": \"string\", \"read\": \"string\", \"update\": \"string\"}]}], \"value\": {\"create_time\": \"2020-05-20T08:05:09.507Z\", \"display_name\": \"sol999\", \"id\": \"folders/282083654038\", \"lifecycle_state\": \"ACTIVE\", \"name\": \"folders/282083654038\", \"parent\": \"folders/940168182397\", \"timeouts\": null}}, \"workspace_project\": {\"sensitive\": false, \"type\": [\"object\", {\"auto_create_network\": \"bool\", \"billing_account\": \"string\", \"folder_id\": \"string\", \"id\": \"string\", \"labels\": [\"map\", \"string\"], \"name\": \"string\", \"number\": \"string\", \"org_id\": \"string\", \"project_id\": \"string\", \"skip_delete\": \"bool\", \"timeouts\": [\"object\", {\"create\": \"string\", \"delete\": \"string\", \"read\": \"string\", \"update\": \"string\"}]}], \"value\": {\"auto_create_network\": true, \"billing_account\": \"REDACTED\", \"folder_id\": \"282083654038\", \"id\": \"projects/workspace-h08aez-ksjs726s\", \"labels\": {\"business_unit\": \"bu-gft\", \"cost_centre\": \"cc-gft\"}, \"name\": \"sol999-workspace\", \"number\": \"3227416706\", \"org_id\": \"\", \"project_id\": \"workspace-h08aez-ksjs726s\", \"skip_delete\": null, \"timeouts\": null}}}'),(4,'{\"environment_projects\": {\"sensitive\": false, \"type\": [\"tuple\", [[\"object\", {\"auto_create_network\": \"bool\", \"billing_account\": \"string\", \"folder_id\": \"string\", \"id\": \"string\", \"labels\": [\"map\", \"string\"], \"name\": \"string\", \"number\": \"string\", \"org_id\": \"string\", \"project_id\": \"string\", \"skip_delete\": \"bool\", \"timeouts\": [\"object\", {\"create\": \"string\", \"delete\": \"string\", \"read\": \"string\", \"update\": \"string\"}]}], [\"object\", {\"auto_create_network\": \"bool\", \"billing_account\": \"string\", \"folder_id\": \"string\", \"id\": \"string\", \"labels\": [\"map\", \"string\"], \"name\": \"string\", \"number\": \"string\", \"org_id\": \"string\", \"project_id\": \"string\", \"skip_delete\": \"bool\", \"timeouts\": [\"object\", {\"create\": \"string\", \"delete\": \"string\", \"read\": \"string\", \"update\": \"string\"}]}], [\"object\", {\"auto_create_network\": \"bool\", \"billing_account\": \"string\", \"folder_id\": \"string\", \"id\": \"string\", \"labels\": [\"map\", \"string\"], \"name\": \"string\", \"number\": \"string\", \"org_id\": \"string\", \"project_id\": \"string\", \"skip_delete\": \"bool\", \"timeouts\": [\"object\", {\"create\": \"string\", \"delete\": \"string\", \"read\": \"string\", \"update\": \"string\"}]}], [\"object\", {\"auto_create_network\": \"bool\", \"billing_account\": \"string\", \"folder_id\": \"string\", \"id\": \"string\", \"labels\": [\"map\", \"string\"], \"name\": \"string\", \"number\": \"string\", \"org_id\": \"string\", \"project_id\": \"string\", \"skip_delete\": \"bool\", \"timeouts\": [\"object\", {\"create\": \"string\", \"delete\": \"string\", \"read\": \"string\", \"update\": \"string\"}]}], [\"object\", {\"auto_create_network\": \"bool\", \"billing_account\": \"string\", \"folder_id\": \"string\", \"id\": \"string\", \"labels\": [\"map\", \"string\"], \"name\": \"string\", \"number\": \"string\", \"org_id\": \"string\", \"project_id\": \"string\", \"skip_delete\": \"bool\", \"timeouts\": [\"object\", {\"create\": \"string\", \"delete\": \"string\", \"read\": \"string\", \"update\": \"string\"}]}]]], \"value\": [{\"auto_create_network\": true, \"billing_account\": \"01A2F5-73127B-50AE5B\", \"folder_id\": \"282083654038\", \"id\": \"projects/development-1-hello-world\", \"labels\": {\"business_unit\": \"bu-gft\", \"cost_centre\": \"cc-gft\", \"environment\": \"development-1\"}, \"name\": \"sol999-development-1\", \"number\": \"119312718634\", \"org_id\": \"\", \"project_id\": \"development-1-hello-world\", \"skip_delete\": null, \"timeouts\": null}, {\"auto_create_network\": true, \"billing_account\": \"REDACTED\", \"folder_id\": \"282083654038\", \"id\": \"projects/development-2-hello-world\", \"labels\": {\"business_unit\": \"bu-gft\", \"cost_centre\": \"cc-gft\", \"environment\": \"development-2\"}, \"name\": \"sol999-development-2\", \"number\": \"878261862220\", \"org_id\": \"\", \"project_id\": \"development-2-hello-world\", \"skip_delete\": null, \"timeouts\": null}, {\"auto_create_network\": true, \"billing_account\": \"REDACTED\", \"folder_id\": \"282083654038\", \"id\": \"projects/staging-hello-world\", \"labels\": {\"business_unit\": \"bu-gft\", \"cost_centre\": \"cc-gft\", \"environment\": \"staging\"}, \"name\": \"sol999-staging\", \"number\": \"971423854825\", \"org_id\": \"\", \"project_id\": \"staging-hello-world\", \"skip_delete\": null, \"timeouts\": null}, {\"auto_create_network\": true, \"billing_account\": \"REDACTED\", \"folder_id\": \"282083654038\", \"id\": \"projects/qa-hello-world\", \"labels\": {\"business_unit\": \"bu-gft\", \"cost_centre\": \"cc-gft\", \"environment\": \"qa\"}, \"name\": \"sol999-qa\", \"number\": \"662646863463\", \"org_id\": \"\", \"project_id\": \"qa-hello-world\", \"skip_delete\": null, \"timeouts\": null}, {\"auto_create_network\": true, \"billing_account\": \"REDACTED\", \"folder_id\": \"282083654038\", \"id\": \"projects/production-hello-world\", \"labels\": {\"business_unit\": \"bu-gft\", \"cost_centre\": \"cc-gft\", \"environment\": \"production\"}, \"name\": \"sol999-production\", \"number\": \"544667916764\", \"org_id\": \"\", \"project_id\": \"production-hello-world\", \"skip_delete\": null, \"timeouts\": null}]}, \"solution_folder\": {\"sensitive\": false, \"type\": [\"object\", {\"create_time\": \"string\", \"display_name\": \"string\", \"id\": \"string\", \"lifecycle_state\": \"string\", \"name\": \"string\", \"parent\": \"string\", \"timeouts\": [\"object\", {\"create\": \"string\", \"delete\": \"string\", \"read\": \"string\", \"update\": \"string\"}]}], \"value\": {\"create_time\": \"2020-05-20T08:05:09.507Z\", \"display_name\": \"sol999\", \"id\": \"folders/282083654038\", \"lifecycle_state\": \"ACTIVE\", \"name\": \"folders/282083654038\", \"parent\": \"folders/940168182397\", \"timeouts\": null}}, \"workspace_project\": {\"sensitive\": false, \"type\": [\"object\", {\"auto_create_network\": \"bool\", \"billing_account\": \"string\", \"folder_id\": \"string\", \"id\": \"string\", \"labels\": [\"map\", \"string\"], \"name\": \"string\", \"number\": \"string\", \"org_id\": \"string\", \"project_id\": \"string\", \"skip_delete\": \"bool\", \"timeouts\": [\"object\", {\"create\": \"string\", \"delete\": \"string\", \"read\": \"string\", \"update\": \"string\"}]}], \"value\": {\"auto_create_network\": true, \"billing_account\": \"REDACTED\", \"folder_id\": \"282083654038\", \"id\": \"projects/workspace-hello-world\", \"labels\": {\"business_unit\": \"bu-gft\", \"cost_centre\": \"cc-gft\"}, \"name\": \"sol999-workspace\", \"number\": \"3227416706\", \"org_id\": \"\", \"project_id\": \"workspace-hello-world\", \"skip_delete\": null, \"timeouts\": null}}}');
 /*!40000 ALTER TABLE `solutionresourcejson` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -585,7 +695,7 @@ CREATE TABLE `team` (
   `isActive` tinyint(1) NOT NULL DEFAULT '0',
   `lastUpdated` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -612,7 +722,7 @@ CREATE TABLE `teammember` (
   `role` varchar(100) NOT NULL,
   `isActive` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -641,7 +751,7 @@ CREATE TABLE `user` (
   `isActive` tinyint(1) NOT NULL DEFAULT '0',
   `showWelcome` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -666,7 +776,7 @@ CREATE TABLE `vpnonpremisevendor` (
   `key` varchar(45) DEFAULT NULL,
   `value` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -688,4 +798,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-06-05 11:28:49
+-- Dump completed on 2020-06-09 12:28:46

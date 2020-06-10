@@ -40,10 +40,10 @@ def read_all_key_values():
     keyvalues = []
     for lze in lzenvironment:
         kv = {}
-        kv['key'] = lze.id
-        kv['value'] = lze.name
+        kv["key"] = lze.id
+        kv["value"] = lze.name
         keyvalues.append(kv)
-        
+
     app.logger.debug(pformat(lzenvironment))
     schema = KeyValueSchema(many=True)
     data = schema.dump(keyvalues)
@@ -53,22 +53,27 @@ def read_all_key_values():
 def create(lzenvDetails):
     app.logger.debug(f"lzmetadata_env::create: {lzenvDetails}")
     # Remove the id
-    lzenvDetails.pop('id', None)
+    lzenvDetails.pop("id", None)
     # Does the environment exist in environment list?
-    existing_environment = db.session.query(LZEnvironment).filter(LZEnvironment.name == lzenvDetails['name']).one_or_none()
+    existing_environment = (
+        db.session.query(LZEnvironment)
+        .filter(LZEnvironment.name == lzenvDetails["name"])
+        .one_or_none()
+    )
     schema = LZEnvironmentSchema()
-
 
     # Does environment exist?
     if existing_environment is not None:
-        app.logger.debug(f"lzmetadata_env::update: {lzenvDetails} {existing_environment}")        
-        existing_environment.isActive = lzenvDetails.get('isActive')
+        app.logger.debug(
+            f"lzmetadata_env::update: {lzenvDetails} {existing_environment}"
+        )
+        existing_environment.isActive = lzenvDetails.get("isActive")
         db.session.merge(existing_environment)
         db.session.commit()
         data = schema.dump(existing_environment)
-        return data, 201        
+        return data, 201
     else:
-        app.logger.debug(f"lzmetadata_env::create: {lzenvDetails}")          
+        app.logger.debug(f"lzmetadata_env::create: {lzenvDetails}")
         env_change = schema.load(lzenvDetails, session=db.session)
         db.session.add(env_change)
         db.session.commit()
@@ -101,7 +106,11 @@ def delete_all(lzMetadataEnvListDetails):
     """
     # Does the environment to delete exist?
     for lze in lzMetadataEnvListDetails:
-        lzenv = db.session.query(LZEnvironment).filter(LZEnvironment.name == lze.name).one_or_none()
+        lzenv = (
+            db.session.query(LZEnvironment)
+            .filter(LZEnvironment.name == lze.name)
+            .one_or_none()
+        )
         db.session.close()
         # if found?
         if lzenv is not None:

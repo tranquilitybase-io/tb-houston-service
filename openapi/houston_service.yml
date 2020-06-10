@@ -661,7 +661,7 @@ paths:
                 items:
                   properties:
                     key:
-                      type: string
+                      type: integer
                       description: key
                     value:
                       type: string
@@ -1245,7 +1245,7 @@ paths:
 
   "/solutionEnvironment/":
     post:
-      operationId: tb_houston_service.solutionEnvironment.create_all
+      operationId: tb_houston_service.solution_environment.create_all
       tags:
         - solution
       summary: Create or update solution environment relationships
@@ -1257,7 +1257,7 @@ paths:
           description: Successfully created solution environments
 
     get:
-      operationId: tb_houston_service.solutionEnvironment.read_all
+      operationId: tb_houston_service.solution_environment.read_all
       tags:
         - solution
       summary: Retrieve a list of solution environment relationships
@@ -1904,7 +1904,7 @@ paths:
           description: Successfully deleted a landing zone WAN
 
 
-  "/lzmetadata_env/":
+  "/lzmetadataEnv/":
     post:
       operationId: tb_houston_service.lzmetadata_env.create_all
       tags:
@@ -1928,87 +1928,64 @@ paths:
           description: Successfully retrieved a list of landing zone metadata environments
 
 
-  "/lzmetadata_lan_vpc/{name}":
+  "/lzmetadataLanVpc/":
     post:
-      operationId: tb_houston_service.lzmetadata_lan_vpc.create
+      operationId: tb_houston_service.lzlanvpc.create_all
       tags:
         - lzmetadata
       summary: Create or update landing zone metadata for a given group and name
-      description: Create or update landing zone metadata for a given group and name
-      parameters:
-        - name: name
-          in: path
-          description: landing zone lan vpc metadata name
-          required: true
-          schema:
-            type: string      
+      description: Create or update landing zone metadata for a given group and name   
       requestBody:
-        $ref: "#/components/requestBodies/lzMetadata.lzMetadataListDetails"
+        $ref: "#/components/requestBodies/lzMetadata.lzLanVpcListDetails"
       responses:
         "201":
           description: Successfully created a landing zone metadata
 
     get:
-      operationId: tb_houston_service.lzmetadata_lan_vpc.read
+      operationId: tb_houston_service.lzlanvpc.read
       tags:
         - lzmetadata
       summary: Read the landing zone metadata
-      description: Read the landing zone metadata
-      parameters:
-        - name: name
-          in: path
-          description: landing zone lan vpc metadata name
-          required: true
-          schema:
-            type: string      
+      description: Read the landing zone metadata    
       responses:
         "200":
           description: Successfully ran landing zone metadata 
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/LZMetaDataList"
-        
+                $ref: "#/components/schemas/LZLanVpcList"
 
-    delete:
-      operationId: tb_houston_service.lzmetadata_lan_vpc.delete
+
+  "/lzmetadataLanVpcEnvironment/":
+    post:
+      operationId: tb_houston_service.lzlanvpc_environment.create_all
       tags:
         - lzmetadata
-      summary: Delete a landing zone metadata from the list
-      description: Delete a landing zone  metadata
-      parameters:
-        - name: name
-          in: path
-          description: landing zone lan vpc metadata name
-          required: true
-          schema:
-            type: string
+      summary: Create or update landing zone metadata for a given group and name
+      description: Create or update landing zone metadata for a given group and name 
+      requestBody:
+        $ref: "#/components/requestBodies/lzMetadata.lzLanVpcEnvironmentListDetails"
       responses:
-        "200":
-          description: Successfully deleted a landing zone lan vpc metadata
-
-
-  "/lzmetadata_lan_vpc/":
+        "201":
+          description: Successfully created a landing zone metadata    
     get:
-      operationId: tb_houston_service.lzmetadata_lan_vpc.read_group
+      operationId: tb_houston_service.lzlanvpc_environment.read_all
       tags:
         - lzmetadata
-      summary: Read landing zone lan vpc metadata from the list
-      description: Read landing zone lan vpc metadata from the list
+      summary: Read all landing zone lan vpc environments from the list
+      description: Read all landing zone lan vpc environments from the list
       responses:
         "200":
-          description: Successfully read an landing zone metadata 
+          description: Successfully read all landing zone environments 
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/LZMetaDataList"
+                $ref: "#/components/schemas/LZLanVpcEnvironmentList"
         
                 
-  "/lzmetadata_folder_structure/":
+  "/lzmetadataFolderStructure/":
     post:
-      operationId: tb_houston_service.lzmetadata_folder_structure.create
+      operationId: tb_houston_service.lzfolderstructure.create
       tags:
         - lzmetadata
       summary: Create or update landing zone folder structure metadata
@@ -2024,7 +2001,7 @@ paths:
                 $ref: "#/components/schemas/LZMetaDataFolderStructure"          
 
     get:
-      operationId: tb_houston_service.lzmetadata_folder_structure.read
+      operationId: tb_houston_service.lzfolderstructure.read
       tags:
         - lzmetadata
       summary: Read the landing zone folder structure metadata
@@ -2509,6 +2486,24 @@ components:
         description: landingzone  meta data to create
         required: true
 
+    lzMetadata.lzLanVpcListDetails:
+      content:
+        application/json:
+          schema:
+            x-body-name: lzLanVpcListDetails
+            $ref: "#/components/schemas/LZLanVpcList"
+      description: landingzone meta data to create
+      required: true        
+
+    lzMetadata.lzLanVpcEnvironmentListDetails:
+      content:
+        application/json:
+          schema:
+            x-body-name: lzLanVpcEnvironmentListDetails
+            $ref: "#/components/schemas/LZLanVpcEnvironmentList"
+      description: landingzone LAN VPC environment relationship to create
+      required: true        
+
     lzMetadata.lzMetadataEnvListDetails:
         content:
           application/json:
@@ -2522,7 +2517,7 @@ components:
         content:
           application/json:
             schema:
-              x-body-name: lzMetadataFolderStructureDetails
+              x-body-name: lzFolderStructureDetails
               $ref: "#/components/schemas/LZMetaDataFolderStructure"
         description: landingzone  folder structure meta data to create
         required: true
@@ -3149,6 +3144,11 @@ components:
         teamId:
           type: integer
           description: teamId
+        environments: 
+          type: array
+          items:
+            type: integer
+            description: environment ids
         lastUpdated:
           type: string
           description: "UTC/CUT last updated datetime stamp see: https://github.com/tranquilitybase-io/tb-houston-service/wiki/UTC-Timestamp"
@@ -3271,24 +3271,46 @@ components:
         name:
           type: string
           description: name/key of meta data
-        value:
-          type: array
-          description: meta data values
-          items:
-            type: string
-        description:
-          type: string
-          description:  description
         isActive:
           type: boolean
           description: Is active?
 
+    LZLanVpc:
+      type: object
+      properties:
+        name:
+          type: string
+          description: LAN VPC name
+        isActive:
+          type: boolean
+          description: Is active?          
+
+    LZLanVpcList:
+      type: array
+      items:
+        $ref: "#/components/schemas/LZLanVpc"
+
+    LZLanVpcEnvironment:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: integer
+        lzlanvpcId:
+          type: integer
+          description: integer               
+        environmentId:
+          type: integer
+          description: integer         
+
+    LZLanVpcEnvironmentList:
+      type: array
+      items:
+        $ref: "#/components/schemas/LZLanVpcEnvironment"
 
     LZMetaDataEnv:
       type: object
       properties:
-        id: 
-          type: integer
         name:
           type: string
         isActive:
@@ -3325,54 +3347,49 @@ components:
           description: taskId
 
     LZMetaDataFolderStructure:
-      type: object
-      properties:
-        active:
-          type: boolean
-        value:
-          type: array
-          items:
-            type: object
-            properties:
-              id:
-                type: integer
-              isEnabled:
-                type: boolean
-              name:
-                type: string
-              children:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                    isEnabled:
-                      type: boolean
-                    name:
-                      type: string
-                    children:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          id:
-                            type: integer
-                          isEnabled:
-                            type: boolean
-                          name:
-                            type: string
-                          children:
-                            type: array
-                            items:
-                              type: object
-                              properties:
-                                id:
-                                  type: integer
-                                isEnabled:
-                                  type: boolean
-                                name:
-                                  type: string
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: integer
+          isActive:
+            type: boolean
+          name:
+            type: string
+          children:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: integer
+                isActive:
+                  type: boolean
+                name:
+                  type: string
+                children:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      isActive:
+                        type: boolean
+                      name:
+                        type: string
+                      children:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            isActive:
+                              type: boolean
+                            name:
+                              type: string
 
 
 

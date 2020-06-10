@@ -11,7 +11,7 @@ def check():
     :return:       200.
     """
 
-    status = { "status": "Healthy" }
+    status = {"status": "Healthy"}
 
     schema = HealthSchema()
     data = schema.dump(status)

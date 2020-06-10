@@ -3,10 +3,10 @@ import json
 from sqlalchemy import ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
-from marshmallow import Schema, fields, pre_load, post_load, pre_dump, post_dump
+from marshmallow import pre_load
 from config import db
 
-logger = logging.getLogger('tb_houston_service.models')
+logger = logging.getLogger("tb_houston_service.models")
 Base = declarative_base()
 
 # Activator
@@ -31,7 +31,7 @@ class Activator(Base):
     sourceControl = db.Column(db.String(255))
     businessUnit = db.Column(db.String(255))
     technologyOwner = db.Column(db.String(255))
-    technologyOwnerEmail  = db.Column(db.String(255))
+    technologyOwnerEmail = db.Column(db.String(255))
     billing = db.Column(db.String(255))
     activator = db.Column(db.String(255))
     status = db.Column(db.String(255))
@@ -50,7 +50,6 @@ class ActivatorSchema(SQLAlchemyAutoSchema):
         include_fk = True
         load_instance = True
 
-
     @pre_load()
     def serialize_pre_load(self, data, **kwargs):
         logger.debug("models::pre_load::serialize_pre_load: %s", data)   
@@ -64,26 +63,13 @@ class ActivatorSchema(SQLAlchemyAutoSchema):
         data['sourceControl'] = json.dumps(data['sourceControl'])        
         return data
 
-    # @post_load(pass_original=True)
-    # def deserialize_post_load(self, data, original_data, **kwargs):
-    #     logger.debug("models::ActivatorSchema::deserialize_post_load %s", data)
-    #     data['envs'] = json.dumps(original_data.envs)     
-    #     data['platforms'] = json.dumps(original_data.platforms)    
-    #     data['regions'] = json.dumps(original_data.regions)
-    #     data['hosting'] = json.dumps(original_data.hosting)
-    #     data['apiManagement'] = json.dumps(original_data.apiManagement)
-    #     data['ci'] = json.dumps(original_data.ci)
-    #     data['cd'] = json.dumps(original_data.cd)
-    #     data['sourceControl'] = json.dumps(original_data.sourceControl)                                                      
-    #     return data        
-
 
 # Application
 class Application(Base):
     __tablename__ = "application"
     id = db.Column(db.Integer, primary_key=True)
-    solutionId = db.Column(db.Integer, db.ForeignKey('solution.id'), nullable=False)
-    activatorId = db.Column(db.Integer, db.ForeignKey('activator.id'), nullable=False)
+    solutionId = db.Column(db.Integer, db.ForeignKey("solution.id"), nullable=False)
+    activatorId = db.Column(db.Integer, db.ForeignKey("activator.id"), nullable=False)
     name = db.Column(db.String(255))
     env = db.Column(db.String(64))
     status = db.Column(db.String(64))
@@ -92,7 +78,7 @@ class Application(Base):
     resources = db.Column(db.String(255))
 
     def __repr__(self):
-        return "<Application(id={self.id!r}, name={self.name!r})>".format(self=self)    
+        return "<Application(id={self.id!r}, name={self.name!r})>".format(self=self)
 
 
 class ApplicationSchema(SQLAlchemyAutoSchema):
@@ -109,6 +95,7 @@ class BusinessUnit(Base):
     name = db.Column(db.String(100))
     description = db.Column(db.String(200))
     isActive = db.Column(db.Boolean())
+
     def __repr__(self):
         return "<BusinessUnit(id={self.id!r}, name={self.name!r})>".format(self=self)    
 
@@ -128,7 +115,7 @@ class BGPRoutingMode(Base):
     value = db.Column(db.String)
 
     def __repr__(self):
-        return "<BGPRoutingMode(id={self.id!r}, name={self.key!r})>".format(self=self)    
+        return "<BGPRoutingMode(id={self.id!r}, name={self.key!r})>".format(self=self)
 
 
 class BGPRoutingModeSchema(SQLAlchemyAutoSchema):
@@ -145,7 +132,7 @@ class CD(Base):
     value = db.Column(db.String(255))
 
     def __repr__(self):
-        return "<CD(id={self.key!r}, name={self.key!r})>".format(self=self)    
+        return "<CD(id={self.key!r}, name={self.key!r})>".format(self=self)
 
 
 class CDSchema(SQLAlchemyAutoSchema):
@@ -216,7 +203,7 @@ class LandingZoneAction(Base):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String)
     categoryName = db.Column(db.String)
-    categoryClass= db.Column(db.String)
+    categoryClass = db.Column(db.String)
     completionRate = db.Column(db.Integer)
     locked = db.Column(db.Boolean())
     routerLink = db.Column(db.String)
@@ -294,12 +281,86 @@ class LZEnvironment(Base):
     __tablename__ = "lzenvironment"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, unique=True, nullable=False)
-    isActive = db.Column(db.Boolean)    
+    isActive = db.Column(db.Boolean)
 
 
 class LZEnvironmentSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = LZEnvironment
+        include_fk = True
+        load_instance = True
+
+
+# LZFolderStructure
+class LZFolderStructure(Base):
+    __tablename__ = "lzfolderstructure"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String)
+    isActive = db.Column(db.Boolean)
+
+    def __repr__(self):
+        return "<LZFolderStructure(id={self.id!r}, name={self.name!r})>".format(
+            self=self
+        )
+
+
+class LZFolderStructureSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = LZFolderStructure
+        include_fk = True
+        load_instance = True
+
+
+# LZFolderStructureChild
+class LZFolderStructureChild(Base):
+    __tablename__ = "lzfolderstructurechild"
+    id = db.Column(db.Integer, primary_key=True)
+    folderId = db.Column(db.Integer, ForeignKey("lzfolderstructure.id"))
+    childId = db.Column(db.Integer, ForeignKey("lzfolderstructure.id"))
+
+    def __repr__(self):
+        return "<LZFolderStructureChild(id={self.id!r}>".format(self=self)
+
+
+class LZFolderStructureChildSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = LZFolderStructure
+        include_fk = True
+        load_instance = True
+
+
+# LZLANVPC
+class LZLanVpc(Base):
+    __tablename__ = "lzlanvpc"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String)
+    isActive = db.Column(db.Boolean)
+
+    def __repr__(self):
+        return "<LZLanVpc(id={self.id!r}, name={self.name!r})>".format(self=self)
+
+
+class LZLanVpcSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = LZLanVpc
+        include_fk = True
+        load_instance = True
+
+
+# LZLANVPCEnvironment
+class LZLanVpcEnvironment(Base):
+    __tablename__ = "lzlanvpc_environment"
+    id = db.Column(db.Integer, primary_key=True)
+    lzlanvpcId = db.Column(db.Integer, ForeignKey("lzlanvpcId.id"))
+    environmentId = db.Column(db.Integer, ForeignKey("lzenvironment.id"))
+
+    def __repr__(self):
+        return "<LZLanVpcEnvironment(id={self.id!r})>".format(self=self)
+
+
+class LZLanVpcEnvironmentSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = LZLanVpcEnvironment
         include_fk = True
         load_instance = True
 
@@ -358,9 +419,10 @@ class Solution(Base):
     statusMessage = db.Column(db.String(255))
     taskId = db.Column(db.String(100))
     deploymentFolderId = db.Column(db.String(50))
-    applications = db.relationship('Application')
+    applications = db.relationship("Application")
+
     def __repr__(self):
-        return "<Solution(id={self.id!r}, name={self.name!r})>".format(self=self)    
+        return "<Solution(id={self.id!r}, name={self.name!r})>".format(self=self)
 
 
 class SolutionSchema(SQLAlchemyAutoSchema):
@@ -373,13 +435,16 @@ class SolutionSchema(SQLAlchemyAutoSchema):
 # SolutionEnvironment
 class SolutionEnvironment(Base):
     __tablename__ = "solutionenvironment"
-    id = db.Column(db.Integer(), primary_key=True)
-    solutionId = db.Column(db.Integer(), ForeignKey('solution.id'))
-    environmentId = db.Column(db.Integer(), ForeignKey('lzenvironment.id'))
+    id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
+    solutionId = db.Column(db.Integer(), ForeignKey("solution.id"))
+    environmentId = db.Column(db.Integer(), ForeignKey("lzenvironment.id"))
     lastUpdated = db.Column(db.String())
     isActive = db.Column(db.Boolean())
+
     def __repr__(self):
-        return "<Solution(id={self.id!r}, solutionId={self.solutionId!r}, solutionId={self.environmentId!r})>".format(self=self)        
+        return "<Solution(id={self.id!r}, solutionId={self.solutionId!r}, solutionId={self.environmentId!r})>".format(
+            self=self
+        )
 
 
 class SolutionEnvironmentSchema(SQLAlchemyAutoSchema):

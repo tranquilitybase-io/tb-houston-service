@@ -36,7 +36,7 @@ def read_one(key):
     :return:              cd matching key
     """
 
-    cd = (db.session.query(CD).filter(CD.key == key).one_or_none())
+    cd = db.session.query(CD).filter(CD.key == key).one_or_none()
 
     if cd is not None:
         # Serialize the data for the response
@@ -44,9 +44,7 @@ def read_one(key):
         data = cd_schema.dump(cd)
         return data
     else:
-        abort(
-            404, "CD with key {key} not found".format(key=key)
-        )
+        abort(404, "CD with key {key} not found".format(key=key))
 
 
 def create(cdDetails):
@@ -60,9 +58,7 @@ def create(cdDetails):
     key = cdDetails.get("key", None)
 
     # Does the cd exist already?
-    existing_cd = (
-        db.session.query(CD).filter(CD.key == key).one_or_none()
-    )
+    existing_cd = db.session.query(CD).filter(CD.key == key).one_or_none()
 
     if existing_cd is None:
         schema = CDSchema()
@@ -93,19 +89,17 @@ def update(key, cdDetails):
     app.logger.debug(pformat(cdDetails))
 
     if cdDetails["key"] != key:
-           abort(400, f"Key mismatch in path and body")
+        abort(400, f"Key mismatch in path and body")
 
     # Does the cd exist in cd list?
-    existing_cd = db.session.query(CD).filter(
-            CD.key == key
-    ).one_or_none()
+    existing_cd = db.session.query(CD).filter(CD.key == key).one_or_none()
 
     # Does cd exist?
 
     if existing_cd is not None:
         schema = CDSchema()
         update_cd = schema.load(cdDetails, session=db.session)
-        update_cd.key = cdDetails['key']
+        update_cd.key = cdDetails["key"]
 
         db.session.merge(update_cd)
         db.session.commit()
@@ -139,5 +133,3 @@ def delete(key):
     # Otherwise, nope, cd to delete not found
     else:
         abort(404, f"CD {key} not found")
-
-

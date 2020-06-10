@@ -15,8 +15,11 @@ from config import db
 from tb_houston_service.models import Application, ApplicationSchema
 from tb_houston_service.extendedSchemas import ExtendedApplicationSchema
 from tb_houston_service.tools import ModelTools
+from tb_houston_service import application_extension
 
-logger = logging.getLogger('tb_houston_service.activator')
+
+logger = logging.getLogger("tb_houston_service.activator")
+
 
 def read_all(
     status=None,
@@ -53,7 +56,7 @@ def read_all(
                 literal_column(", ".join(orderby_arr))
             )
 
-        except SQLAlchemyError as e:            
+        except SQLAlchemyError as e:
             print(e)
             application_query = db.session.query(Application).order_by(Application.id)
 
@@ -67,6 +70,10 @@ def read_all(
         applications = application_query.all()
     else:
         applications = application_query.limit(page_size).offset(page * page_size).all()
+
+
+    for app in applications:
+        application_extension.expand_application(app)
 
     # Serialize the data for the response
     application_schema = ExtendedApplicationSchema(many=True)
@@ -89,10 +96,13 @@ def read_one(oid):
         db.session.query(Application).filter(Application.id == oid).one_or_none()
     )
 
+    db.session.close()
+
     logger.debug("application data:")
     logger.debug(pformat(application))
 
     if application is not None:
+        application = application_extension.expand_application(application)
         # Serialize the data for the response
         application_schema = ExtendedApplicationSchema()
         data = application_schema.dump(application)
@@ -155,16 +165,16 @@ def update(oid, applicationDetails):
     if existing_application is not None:
         schema = ApplicationSchema()
         existing_application.lastUpdated = ModelTools.get_utc_timestamp()
-        if applicationDetails.get('resources'):
-            existing_application.resources = json.dumps(applicationDetails['resources'])
-        if applicationDetails.get('name'):
-            existing_application.name = applicationDetails['name']
-        if applicationDetails.get('env'):
-            existing_application.env = applicationDetails['env']
-        if applicationDetails.get('status'):
-            existing_application.status = applicationDetails['status']
-        if applicationDetails.get('description'):
-            existing_application.description = applicationDetails['description']
+        if applicationDetails.get("resources"):
+            existing_application.resources = json.dumps(applicationDetails["resources"])
+        if applicationDetails.get("name"):
+            existing_application.name = applicationDetails["name"]
+        if applicationDetails.get("env"):
+            existing_application.env = applicationDetails["env"]
+        if applicationDetails.get("status"):
+            existing_application.status = applicationDetails["status"]
+        if applicationDetails.get("description"):
+            existing_application.description = applicationDetails["description"]
         db.session.merge(existing_application)
         db.session.commit()
 
@@ -175,6 +185,7 @@ def update(oid, applicationDetails):
 
     # otherwise, nope, application doesn't exist, so that's an error
     else:
+        db.session.close()
         abort(404, f"Application {oid} not found")
 
 
@@ -199,4 +210,5 @@ def delete(oid):
 
     # Otherwise, nope, application to delete not found
     else:
+        db.session.close()
         abort(404, f"Application id {oid} not found")

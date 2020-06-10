@@ -13,7 +13,8 @@ from tb_houston_service.models import LandingZoneWAN, LandingZoneWANSchema
 from tb_houston_service.extendedSchemas import ExtendedLandingZoneWANSchema
 from tb_houston_service.extendedSchemas import IdSchema
 
-delimiter = '__'
+delimiter = "__"
+
 
 def read_all():
     """
@@ -46,7 +47,9 @@ def read_one(oid):
     :return:              landingZoneWAN matching the id
     """
 
-    landingZoneWAN = (db.session.query(LandingZoneWAN).filter(LandingZoneWAN.id == oid).one_or_none())
+    landingZoneWAN = (
+        db.session.query(LandingZoneWAN).filter(LandingZoneWAN.id == oid).one_or_none()
+    )
 
     if landingZoneWAN is not None:
         # Serialize the data for the response
@@ -57,9 +60,7 @@ def read_one(oid):
         app.logger.debug(pformat(data))
         return data
     else:
-        abort(
-            404, f"LandingZoneWAN with id {oid} not found".format(id=oid)
-        )
+        abort(404, f"LandingZoneWAN with id {oid} not found".format(id=oid))
 
 
 def create(landingZoneWANDetails):
@@ -72,8 +73,8 @@ def create(landingZoneWANDetails):
     """
 
     # we don't need the id, the is generated automatically on the database
-    if ('id' in landingZoneWANDetails):
-      del landingZoneWANDetails["id"]
+    if "id" in landingZoneWANDetails:
+        del landingZoneWANDetails["id"]
 
     # flatten the python object into a python dictionary
     flattened_landingZoneWAN = flatten(landingZoneWANDetails, delimiter)
@@ -104,53 +105,111 @@ def update(oid, landingZoneWANDetails):
     app.logger.debug("landingZoneWAN: ")
     app.logger.debug(pformat(landingZoneWANDetails))
 
-    if landingZoneWANDetails['id'] != oid:
+    if landingZoneWANDetails["id"] != oid:
         abort(400, f"Key mismatch in path and body")
 
     # Does the landingZoneWAN exist in landingZoneWANs?
-    existing_landingZoneWAN = db.session.query(LandingZoneWAN).filter(LandingZoneWAN.id == oid).one_or_none()
+    existing_landingZoneWAN = (
+        db.session.query(LandingZoneWAN).filter(LandingZoneWAN.id == oid).one_or_none()
+    )
 
     flattened_landingZoneWAN = flatten(landingZoneWANDetails, delimiter)
 
     # Does landingZoneWAN exist?
     if existing_landingZoneWAN is not None:
         flattened_landingZoneWAN = flatten(flatten(landingZoneWANDetails, delimiter))
-        existing_landingZoneWAN.googleSession__primaryGcpVpcSubnet = flattened_landingZoneWAN.get('googleSession__primaryGcpVpcSubnet', '')
-        existing_landingZoneWAN.googleSession__primaryRegion = flattened_landingZoneWAN.get('googleSession__primaryRegion', '')
-        existing_landingZoneWAN.googleSession__primarySubnetName = flattened_landingZoneWAN.get('googleSession__primarySubnetName', '')
-        existing_landingZoneWAN.googleSession__secondaryGcpVpcSubnet = flattened_landingZoneWAN.get('googleSession__secondaryGcpVpcSubnet', '')
-        existing_landingZoneWAN.googleSession__secondaryRegion = flattened_landingZoneWAN.get('googleSession__secondaryRegion', '')
-        existing_landingZoneWAN.googleSession__secondarySubnetName = flattened_landingZoneWAN.get('googleSession__secondarySubnetName', '')
-        existing_landingZoneWAN.onPremiseSession__primaryBgpPeer = flattened_landingZoneWAN.get('onPremiseSession__primaryBgpPeer', '')
-        existing_landingZoneWAN.onPremiseSession__primaryPeerIp = flattened_landingZoneWAN.get('onPremiseSession__primaryPeerIp', '')
-        existing_landingZoneWAN.onPremiseSession__primaryPeerIpSubnet = flattened_landingZoneWAN.get('onPremiseSession__primaryPeerIpSubnet', '')
-        existing_landingZoneWAN.onPremiseSession__primarySharedSecret = flattened_landingZoneWAN.get('onPremiseSession__primarySharedSecret', '')
-        existing_landingZoneWAN.onPremiseSession__primaryVpnTunnel = flattened_landingZoneWAN.get('onPremiseSession__primaryVpnTunnel', '')
-        existing_landingZoneWAN.onPremiseSession__secondaryBgpPeer = flattened_landingZoneWAN.get('onPremiseSession__secondaryBgpPeer', '')
-        existing_landingZoneWAN.onPremiseSession__secondaryPeerIp = flattened_landingZoneWAN.get('onPremiseSession__secondaryPeerIp', '')
-        existing_landingZoneWAN.onPremiseSession__secondaryPeerIpSubnet = flattened_landingZoneWAN.get('onPremiseSession__secondaryPeerIpSubnet', '')
-        existing_landingZoneWAN.onPremiseSession__secondarySharedSecret = flattened_landingZoneWAN.get('onPremiseSession__secondarySharedSecret', '')
-        existing_landingZoneWAN.onPremiseSession__secondaryVpnTunnel = flattened_landingZoneWAN.get('onPremiseSession__secondaryVpnTunnel', '')
-        existing_landingZoneWAN.onPremiseSession__vendor = flattened_landingZoneWAN.get('onPremiseSession__vendor', '')
-        existing_landingZoneWAN.vpn__bgpInterfaceNetLength = flattened_landingZoneWAN.get('vpn__bgpInterfaceNetLength', '')
-        existing_landingZoneWAN.vpn__bgpRoutingMode = flattened_landingZoneWAN.get('vpn__bgpRoutingMode', '')
-        existing_landingZoneWAN.vpn__cloudRouterName = flattened_landingZoneWAN.get('vpn__cloudRouterName', '')
-        existing_landingZoneWAN.vpn__description = flattened_landingZoneWAN.get('vpn__description', '')
-        existing_landingZoneWAN.vpn__externalVpnGateway = flattened_landingZoneWAN.get('vpn__externalVpnGateway', '')
-        existing_landingZoneWAN.vpn__googleASN = flattened_landingZoneWAN.get('vpn__googleASN', 0)
-        existing_landingZoneWAN.vpn__haVpnGateway = flattened_landingZoneWAN.get('vpn__haVpnGateway', '')
-        existing_landingZoneWAN.vpn__peerASN = flattened_landingZoneWAN.get('vpn__peerASN', 0)
-        existing_landingZoneWAN.vpn__projectName = flattened_landingZoneWAN.get('vpn__projectName', '')
-        existing_landingZoneWAN.vpn__subnetMode = flattened_landingZoneWAN.get('vpn__subnetMode', '')
-        existing_landingZoneWAN.vpn__vpcName = flattened_landingZoneWAN.get('vpn__vpcName', '')
+        existing_landingZoneWAN.googleSession__primaryGcpVpcSubnet = flattened_landingZoneWAN.get(
+            "googleSession__primaryGcpVpcSubnet", ""
+        )
+        existing_landingZoneWAN.googleSession__primaryRegion = flattened_landingZoneWAN.get(
+            "googleSession__primaryRegion", ""
+        )
+        existing_landingZoneWAN.googleSession__primarySubnetName = flattened_landingZoneWAN.get(
+            "googleSession__primarySubnetName", ""
+        )
+        existing_landingZoneWAN.googleSession__secondaryGcpVpcSubnet = flattened_landingZoneWAN.get(
+            "googleSession__secondaryGcpVpcSubnet", ""
+        )
+        existing_landingZoneWAN.googleSession__secondaryRegion = flattened_landingZoneWAN.get(
+            "googleSession__secondaryRegion", ""
+        )
+        existing_landingZoneWAN.googleSession__secondarySubnetName = flattened_landingZoneWAN.get(
+            "googleSession__secondarySubnetName", ""
+        )
+        existing_landingZoneWAN.onPremiseSession__primaryBgpPeer = flattened_landingZoneWAN.get(
+            "onPremiseSession__primaryBgpPeer", ""
+        )
+        existing_landingZoneWAN.onPremiseSession__primaryPeerIp = flattened_landingZoneWAN.get(
+            "onPremiseSession__primaryPeerIp", ""
+        )
+        existing_landingZoneWAN.onPremiseSession__primaryPeerIpSubnet = flattened_landingZoneWAN.get(
+            "onPremiseSession__primaryPeerIpSubnet", ""
+        )
+        existing_landingZoneWAN.onPremiseSession__primarySharedSecret = flattened_landingZoneWAN.get(
+            "onPremiseSession__primarySharedSecret", ""
+        )
+        existing_landingZoneWAN.onPremiseSession__primaryVpnTunnel = flattened_landingZoneWAN.get(
+            "onPremiseSession__primaryVpnTunnel", ""
+        )
+        existing_landingZoneWAN.onPremiseSession__secondaryBgpPeer = flattened_landingZoneWAN.get(
+            "onPremiseSession__secondaryBgpPeer", ""
+        )
+        existing_landingZoneWAN.onPremiseSession__secondaryPeerIp = flattened_landingZoneWAN.get(
+            "onPremiseSession__secondaryPeerIp", ""
+        )
+        existing_landingZoneWAN.onPremiseSession__secondaryPeerIpSubnet = flattened_landingZoneWAN.get(
+            "onPremiseSession__secondaryPeerIpSubnet", ""
+        )
+        existing_landingZoneWAN.onPremiseSession__secondarySharedSecret = flattened_landingZoneWAN.get(
+            "onPremiseSession__secondarySharedSecret", ""
+        )
+        existing_landingZoneWAN.onPremiseSession__secondaryVpnTunnel = flattened_landingZoneWAN.get(
+            "onPremiseSession__secondaryVpnTunnel", ""
+        )
+        existing_landingZoneWAN.onPremiseSession__vendor = flattened_landingZoneWAN.get(
+            "onPremiseSession__vendor", ""
+        )
+        existing_landingZoneWAN.vpn__bgpInterfaceNetLength = flattened_landingZoneWAN.get(
+            "vpn__bgpInterfaceNetLength", ""
+        )
+        existing_landingZoneWAN.vpn__bgpRoutingMode = flattened_landingZoneWAN.get(
+            "vpn__bgpRoutingMode", ""
+        )
+        existing_landingZoneWAN.vpn__cloudRouterName = flattened_landingZoneWAN.get(
+            "vpn__cloudRouterName", ""
+        )
+        existing_landingZoneWAN.vpn__description = flattened_landingZoneWAN.get(
+            "vpn__description", ""
+        )
+        existing_landingZoneWAN.vpn__externalVpnGateway = flattened_landingZoneWAN.get(
+            "vpn__externalVpnGateway", ""
+        )
+        existing_landingZoneWAN.vpn__googleASN = flattened_landingZoneWAN.get(
+            "vpn__googleASN", 0
+        )
+        existing_landingZoneWAN.vpn__haVpnGateway = flattened_landingZoneWAN.get(
+            "vpn__haVpnGateway", ""
+        )
+        existing_landingZoneWAN.vpn__peerASN = flattened_landingZoneWAN.get(
+            "vpn__peerASN", 0
+        )
+        existing_landingZoneWAN.vpn__projectName = flattened_landingZoneWAN.get(
+            "vpn__projectName", ""
+        )
+        existing_landingZoneWAN.vpn__subnetMode = flattened_landingZoneWAN.get(
+            "vpn__subnetMode", ""
+        )
+        existing_landingZoneWAN.vpn__vpcName = flattened_landingZoneWAN.get(
+            "vpn__vpcName", ""
+        )
 
         schema = LandingZoneWANSchema()
 
-        #if '_sa_instance_state' in existing_landingZoneWAN:
+        # if '_sa_instance_state' in existing_landingZoneWAN:
         #    del existing_landingZoneWAN['_sa_instance_state']
 
         # load into schema and save to db
-        #update_landingZoneWAN = schema.load(existing_landingZoneWAN, session=db.session)
+        # update_landingZoneWAN = schema.load(existing_landingZoneWAN, session=db.session)
 
         db.session.merge(existing_landingZoneWAN)
         db.session.commit()
@@ -174,7 +233,9 @@ def delete(oid):
     :return:             200 on successful delete, 404 if not found
     """
     # Does the landingZoneWAN to delete exist?
-    existing_landingZoneWAN = db.session.query(LandingZoneWAN).filter(LandingZoneWAN.id == oid).one_or_none()
+    existing_landingZoneWAN = (
+        db.session.query(LandingZoneWAN).filter(LandingZoneWAN.id == oid).one_or_none()
+    )
 
     # if found?
     if existing_landingZoneWAN is not None:
@@ -186,5 +247,3 @@ def delete(oid):
     # Otherwise, nope, landingZoneWAN to delete not found
     else:
         abort(404, f"LandingZoneWAN id {oid} not found")
-
-

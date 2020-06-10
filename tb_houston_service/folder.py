@@ -9,7 +9,7 @@ from flask import make_response, abort
 from config import db, app
 from tb_houston_service.models import Folder, FolderSchema
 from tb_houston_service.DeploymentStatus import DeploymentStatus
-from tb_houston_service import lzmetadata_folder_structure
+from tb_houston_service import lzfolderstructure
 
 
 APPLICATIONS = "Applications"
@@ -142,20 +142,18 @@ def delete(oid):
 
 
 def get_folder_meta():
-    resp = lzmetadata_folder_structure.read_value()
-    app.logger.debug(f"folder::get_folder_meta: {resp}")
-    print(f"folder::get_folder_meta: {resp}")
-    jso = resp[0]
-    app.logger.debug(f"jso: {jso}")
-    print(f"folder::get_folder_meta: {jso}")
+    resp = lzfolderstructure.read()
+    app.logger.debug(f"get_folder_meta::resp: {resp}")
+
     data = {}
-    data[jso["name"]] = jso["isEnabled"]
+    jso = resp[0][0]
+    data[jso["name"]] = jso["isActive"]
     jso = jso["children"][0]
-    data[jso["name"]] = jso["isEnabled"]
+    data[jso["name"]] = jso["isActive"]
     jso = jso["children"][0]
-    data[jso["name"]] = jso["isEnabled"]
+    data[jso["name"]] = jso["isActive"]
     jso = jso["children"][0]
-    data[jso["name"]] = jso["isEnabled"]
+    data[jso["name"]] = jso["isActive"]
     folder_meta = [k for k in data if data[k] == True]
     print(f"folder::get_folder_meta: {folder_meta}")
     return folder_meta
@@ -170,7 +168,13 @@ def read_or_create_by_parent_folder_id_and_folder_name(parentFolderId, folderNam
     """
 
     app.logger.debug(f"parentFolderId: {parentFolderId}, folderName: {folderName}")
-    fdr = db.session.query(Folder).filter(Folder.parentFolderId == parentFolderId, Folder.folderName == folderName).one_or_none()
+    fdr = (
+        db.session.query(Folder)
+        .filter(
+            Folder.parentFolderId == parentFolderId, Folder.folderName == folderName
+        )
+        .one_or_none()
+    )
 
     if fdr is not None:
         # Serialize the data for the response

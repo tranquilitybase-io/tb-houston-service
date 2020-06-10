@@ -5,7 +5,6 @@ from config import db
 from tb_houston_service.models import Activator
 
 
-
 def read_one():
     """
     Responds to a request for /api/activator_meta/.
@@ -15,5 +14,5 @@ def read_one():
     """
 
     count = db.session.query(Activator).count()
-    data = { 'count': count }
+    data = {"count": count}
     return data, 200

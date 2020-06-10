@@ -13,8 +13,9 @@ from config import db, app
 from tb_houston_service.models import TeamMember, TeamMemberSchema
 
 
-def read_all(userId=None, teamId=None, active=None,
-        page=None, page_size=None, sort=None):
+def read_all(
+    userId=None, teamId=None, active=None, page=None, page_size=None, sort=None
+):
     """
     Gets the complete lists of team members
     Responds to a request for /api/teammember
@@ -24,16 +25,13 @@ def read_all(userId=None, teamId=None, active=None,
 
     # Create the list of team members from our data
     # pre-process sort instructions
-    
-    if (sort==None):
-        teammember_query = (
-            db.session.query(TeamMember)
-            .order_by(TeamMember.id)
-        )
-    
+
+    if sort == None:
+        teammember_query = db.session.query(TeamMember).order_by(TeamMember.id)
+
     else:
         try:
-            sort_inst = [ si.split(":") for si in sort ]
+            sort_inst = [si.split(":") for si in sort]
             orderby_arr = []
             for si in sort_inst:
                 si1 = si[0]
@@ -42,28 +40,24 @@ def read_all(userId=None, teamId=None, active=None,
                 else:
                     si2 = "asc"
                 orderby_arr.append(f"{si1} {si2}")
-            #print("orderby: {}".format(orderby_arr))
-            teammember_query = (
-                db.session
-                    .query(TeamMember)
-                    .order_by(literal_column(", ".join(orderby_arr)))
+            # print("orderby: {}".format(orderby_arr))
+            teammember_query = db.session.query(TeamMember).order_by(
+                literal_column(", ".join(orderby_arr))
             )
         except Exception as e:
             print(e)
-            teammember_query = (
-                db.session.query(TeamMember)
-                    .order_by(TeamMember.id)
-            )
+            teammember_query = db.session.query(TeamMember).order_by(TeamMember.id)
 
     teammember_query = teammember_query.filter(
-      (userId == None or TeamMember.userId == userId),
-      (teamId == None or TeamMember.teamId == teamId),
-      (active == None or TeamMember.isActive == active))
+        (userId == None or TeamMember.userId == userId),
+        (teamId == None or TeamMember.teamId == teamId),
+        (active == None or TeamMember.isActive == active),
+    )
 
-    if (page==None or page_size==None):
-      teammembers = teammember_query.all()
+    if page == None or page_size == None:
+        teammembers = teammember_query.all()
     else:
-      teammembers = teammember_query.limit(page_size).offset(page * page_size).all()
+        teammembers = teammember_query.limit(page_size).offset(page * page_size).all()
 
     # Serialize the data for the response
     teammember_schema = TeamMemberSchema(many=True)
@@ -71,7 +65,6 @@ def read_all(userId=None, teamId=None, active=None,
     app.logger.debug("team members data:")
     app.logger.debug(pformat(data))
     return data
-
 
 
 def read_one(oid):
@@ -83,8 +76,7 @@ def read_one(oid):
     :return:              team matching key.
     """
 
-    teammember = (db.session.query(TeamMember).filter(TeamMember.id == oid).one_or_none())
-
+    teammember = db.session.query(TeamMember).filter(TeamMember.id == oid).one_or_none()
 
     if teammember is not None:
         # Serialize the data for the response
@@ -103,16 +95,16 @@ def create(teamMemberDetails):
     :param team:  team to create in team structure
     :return:        201 on success, 406 on team exists.
     """
-     # Remove id as it's created automatically
-    if 'id' in teamMemberDetails:
-        del teamMemberDetails['id']
+    # Remove id as it's created automatically
+    if "id" in teamMemberDetails:
+        del teamMemberDetails["id"]
 
     # Does the team member exist already?
     existing_team_member = (
         db.session.query(TeamMember)
-            .filter(TeamMember.userId == teamMemberDetails['userId'])
-            .filter(TeamMember.teamId == teamMemberDetails['teamId'])
-            .one_or_none()
+        .filter(TeamMember.userId == teamMemberDetails["userId"])
+        .filter(TeamMember.teamId == teamMemberDetails["teamId"])
+        .one_or_none()
     )
 
     if existing_team_member is None:
@@ -144,22 +136,19 @@ def update(oid, teamMemberDetails):
     app.logger.debug(pformat(teamMemberDetails))
 
     if teamMemberDetails["id"] != int(oid):
-           abort(400, f"Id mismatch in path and body")
+        abort(400, f"Id mismatch in path and body")
 
     # Does the teammembr exist in teammembers list?
     existing_team_member = (
-        db.session
-            .query(TeamMember)
-            .filter(TeamMember.id == oid)
-            .one_or_none()
+        db.session.query(TeamMember).filter(TeamMember.id == oid).one_or_none()
     )
 
     # Does team exist?
 
     if existing_team_member is not None:
         schema = TeamMemberSchema()
-        update_team_member= schema.load(teamMemberDetails, session=db.session)
-        update_team_member.id = teamMemberDetails['id']
+        update_team_member = schema.load(teamMemberDetails, session=db.session)
+        update_team_member.id = teamMemberDetails["id"]
 
         db.session.merge(update_team_member)
         db.session.commit()
@@ -181,7 +170,9 @@ def delete(oid):
     :return:    200 on successful delete, 404 if not found.
     """
     # Does the team member to delete exist?
-    existing_team_member = db.session.query(TeamMember).filter(TeamMember.id == oid).one_or_none()
+    existing_team_member = (
+        db.session.query(TeamMember).filter(TeamMember.id == oid).one_or_none()
+    )
 
     # if found?
     if existing_team_member is not None:

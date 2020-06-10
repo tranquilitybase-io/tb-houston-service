@@ -18,5 +18,6 @@ def read_one(activatorId):
         .filter(Application.activatorId == activatorId)
         .count()
     )
+    db.session.close()
     data = {"count": acount}
     return data, 200

@@ -74,7 +74,7 @@ def create(teamDetails):
     if existing_team is None:        
         schema = TeamSchema(many=False)
         new_team = schema.load(teamDetails, session=db.session)
-        new_team.lastUpdated = ModelTools.get_utc_timestamp()   
+        new_team.lastUpdated = ModelTools.get_utc_timestamp()
         app.logger.debug(f"new_team: {new_team} type: {type(new_team)}")
         db.session.add(new_team)
         db.session.commit()
@@ -111,11 +111,15 @@ def update(oid, teamDetails):
     if existing_team is not None:
         schema = TeamSchema()
         update_team = schema.load(teamDetails, session=db.session)
-        update_team.name = teamDetails.get('name', existing_team.name)
-        update_team.description = teamDetails.get('description', existing_team.description)
-        update_team.businessUnitId = teamDetails.get('businessUnitId', existing_team.businessUnitId)
-        update_team.lastUpdated = ModelTools.get_utc_timestamp()   
-        update_team.isActive = teamDetails.get('isActive', existing_team.isActive)
+        update_team.name = teamDetails.get("name", existing_team.name)
+        update_team.description = teamDetails.get(
+            "description", existing_team.description
+        )
+        update_team.businessUnitId = teamDetails.get(
+            "businessUnitId", existing_team.businessUnitId
+        )
+        update_team.lastUpdated = ModelTools.get_utc_timestamp()
+        update_team.isActive = teamDetails.get("isActive", existing_team.isActive)
 
         db.session.merge(update_team)
         db.session.commit()
@@ -203,8 +207,8 @@ def read_key_values_by_user_id(userId):
         teams = teams_resp[0]
         for team in teams:
             kv = {}
-            kv["key"] = team.get('id')
-            kv["value"] = team.get('name')
+            kv["key"] = team.get("id")
+            kv["value"] = team.get("name")
             teams_key_values.append(kv)
 
         schema = KeyValueSchema(many=True)
@@ -223,7 +227,7 @@ def read_list_by_user_id(userId):
         teams = teams_resp[0]
         team_list = []
         for team in teams:
-            team_list.append(team.get('name'))
+            team_list.append(team.get("name"))
         data = team_list
         app.logger.debug(f"{data} type: {type(data)}")
         return data, 200

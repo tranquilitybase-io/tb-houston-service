@@ -36,7 +36,7 @@ def read_one(key):
     :return:              ci matching key
     """
 
-    ci = (db.session.query(CI).filter(CI.key == key).one_or_none())
+    ci = db.session.query(CI).filter(CI.key == key).one_or_none()
 
     if ci is not None:
         # Serialize the data for the response
@@ -44,9 +44,7 @@ def read_one(key):
         data = ci_schema.dump(ci)
         return data
     else:
-        abort(
-            404, "CI with key {key} not found".format(key=key)
-        )
+        abort(404, "CI with key {key} not found".format(key=key))
 
 
 def create(ciDetails):
@@ -60,9 +58,7 @@ def create(ciDetails):
     key = ciDetails.get("key", None)
 
     # Does the ci exist already?
-    existing_ci = (
-        db.session.query(CI).filter(CI.key == key).one_or_none()
-    )
+    existing_ci = db.session.query(CI).filter(CI.key == key).one_or_none()
 
     if existing_ci is None:
         schema = CISchema()
@@ -93,7 +89,7 @@ def update(key, ciDetails):
     app.logger.debug(pformat(ciDetails))
 
     if ciDetails["key"] != key:
-           abort(400, f"Key mismatch in path and body")
+        abort(400, f"Key mismatch in path and body")
 
     # Does the ci exist in ci list?
     existing_ci = db.session.query(CI).filter(CI.key == key).one_or_none()
@@ -103,7 +99,7 @@ def update(key, ciDetails):
     if existing_ci is not None:
         schema = CISchema()
         update_ci = schema.load(ciDetails, session=db.session)
-        update_ci.key = ciDetails['key']
+        update_ci.key = ciDetails["key"]
 
         db.session.merge(update_ci)
         db.session.commit()

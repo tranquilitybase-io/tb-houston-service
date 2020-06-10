@@ -20,6 +20,7 @@ def read_all():
 
     # Create the list of bgpRoutingModes from our data
     bgpRoutingMode = db.session.query(BGPRoutingMode).order_by(BGPRoutingMode.key).all()
+    db.session.close()
     app.logger.debug(pformat(bgpRoutingMode))
     # Serialize the data for the response
     bgpRoutingMode_schema = BGPRoutingModeSchema(many=True)
@@ -36,8 +37,10 @@ def read_one(oid):
     :return:              bgpRoutingMode matching key
     """
 
-    bgpRoutingMode = (db.session.query(BGPRoutingMode).filter(BGPRoutingMode.id == oid).one_or_none())
-
+    bgpRoutingMode = (
+        db.session.query(BGPRoutingMode).filter(BGPRoutingMode.id == oid).one_or_none()
+    )
+    db.session.close()
     if bgpRoutingMode is not None:
         # Serialize the data for the response
         bgpRoutingMode_schema = BGPRoutingModeSchema()
@@ -57,8 +60,8 @@ def create(bgpRoutingModeDetails):
     """
 
     # Remove id as it's created automatically
-    if 'id' in bgpRoutingModeDetails:
-        del bgpRoutingModeDetails['id']
+    if "id" in bgpRoutingModeDetails:
+        del bgpRoutingModeDetails["id"]
 
     schema = BGPRoutingModeSchema()
     new_bgpRoutingMode = schema.load(bgpRoutingModeDetails, session=db.session)
@@ -83,17 +86,19 @@ def update(oid, bgpRoutingModeDetails):
     app.logger.debug(pformat(bgpRoutingModeDetails))
 
     if bgpRoutingModeDetails.get("id", oid) != oid:
-           abort(400, f"Key mismatch in path and body")
+        abort(400, f"Key mismatch in path and body")
 
     # Does the bgpRoutingMode exist in bgpRoutingMode list?
-    existing_bgpRoutingMode = db.session.query(BGPRoutingMode).filter(
-            BGPRoutingMode.id == oid
-    ).one_or_none()
+    existing_bgpRoutingMode = (
+        db.session.query(BGPRoutingMode).filter(BGPRoutingMode.id == oid).one_or_none()
+    )
 
     # Does bgpRoutingMode exist?
 
     if existing_bgpRoutingMode is not None:
-        db.session.query(BGPRoutingMode).filter(BGPRoutingMode.id == oid).update(bgpRoutingModeDetails)
+        db.session.query(BGPRoutingMode).filter(BGPRoutingMode.id == oid).update(
+            bgpRoutingModeDetails
+        )
         db.session.commit()
 
         # return the updted bgpRoutingMode in the response
@@ -103,6 +108,7 @@ def update(oid, bgpRoutingModeDetails):
 
     # otherwise, nope, deployment doesn't exist, so that's an error
     else:
+        db.session.close()
         abort(404, f"BGPRoutingMode not found")
 
 
@@ -114,7 +120,9 @@ def delete(oid):
     :return:    200 on successful delete, 404 if not found
     """
     # Does the bgpRoutingMode to delete exist?
-    existing_bgpRoutingMode = db.session.query(BGPRoutingMode).filter(BGPRoutingMode.id == oid).one_or_none()
+    existing_bgpRoutingMode = (
+        db.session.query(BGPRoutingMode).filter(BGPRoutingMode.id == oid).one_or_none()
+    )
 
     # if found?
     if existing_bgpRoutingMode is not None:
@@ -125,6 +133,5 @@ def delete(oid):
 
     # Otherwise, nope, bgpRoutingMode to delete not found
     else:
+        db.session.close()
         abort(404, f"BGPRoutingMode {oid} not found")
-
-

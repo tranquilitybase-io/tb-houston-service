@@ -2,16 +2,14 @@ import requests
 import json
 import os
 
+
 def test_login():
-    HOUSTON_SERVICE_URL=os.environ['HOUSTON_SERVICE_URL']
+    HOUSTON_SERVICE_URL = os.environ["HOUSTON_SERVICE_URL"]
     url = f"http://{HOUSTON_SERVICE_URL}/api/login"
 
-    headers = {'Content-Type': 'application/json' } 
+    headers = {"Content-Type": "application/json"}
 
-    payload = {
-    'username': 'test@testmail.com',
-    'password': 'string'
-    }
+    payload = {"username": "test@testmail.com", "password": "string"}
 
     resp = requests.post(url, headers=headers, data=json.dumps(payload, indent=4))
 

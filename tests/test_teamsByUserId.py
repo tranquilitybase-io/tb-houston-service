@@ -2,15 +2,16 @@ import requests
 import os
 
 
-HOUSTON_SERVICE_URL=os.environ['HOUSTON_SERVICE_URL']
+HOUSTON_SERVICE_URL = os.environ["HOUSTON_SERVICE_URL"]
 url = f"http://{HOUSTON_SERVICE_URL}/api/keyValues/teamsByUserId/"
-    
+
 # Additional headers.
-headers = {'Content-Type': 'application/json' }
+headers = {"Content-Type": "application/json"}
+
 
 def test_folder():
     get_all()
-    
+
 
 def get_all():
     oid = "1"

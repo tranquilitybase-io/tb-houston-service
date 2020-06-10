@@ -60,7 +60,7 @@ def create(sourceControlDetails):
     :return:        201 on success, 406 on sourceControl exists
     """
     key = sourceControlDetails.get("key", None)
-    #value = sourceControlDetails.get("value", None)
+    # value = sourceControlDetails.get("value", None)
 
     # Does the sourceControl exist already?
     existing_sourceControl = (
