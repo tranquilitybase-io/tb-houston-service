@@ -324,8 +324,9 @@ class LZMetadataSchema(SQLAlchemyAutoSchema):
 # Role
 class Role(Base):
     __tablename__ = "role"
-    name = db.Column(db.String(100), primary_key=True)
-    cloudIdentityGroup = db.Column(db.String(200))
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100))
+    cloudIdentityGroup = db.Column(db.String(200)) 
     description = db.Column(db.String(200))
 
 
@@ -471,7 +472,8 @@ class TeamMember(Base):
     id = db.Column(db.Integer, primary_key=True)
     userId = db.Column(db.Integer)
     teamId = db.Column(db.Integer)
-    role = db.Column(db.String(100))
+    roleId = db.Column(db.Integer)
+    isTeamAdmin = db.Column(db.Boolean())
     isActive = db.Column(db.Boolean())
 
 

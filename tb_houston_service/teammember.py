@@ -124,12 +124,18 @@ def create(teamMemberDetails):
         # Serialize and return the newly created deployment
         # in the response
         data = schema.dump(new_team_member)
-
         return data, 201
 
     # Otherwise, it already exists, that's an error
     else:
-        abort(406, f"Team member already exists")
+        update_team_member= schema.load(teamMemberDetails, session=db.session)
+        update_team_member.id = teamMemberDetails['id']
+        update_team_member.isActive = True
+
+        db.session.merge(update_team_member)
+        db.session.commit()
+        data = schema.dump(update_team_member)
+        return data, 201
 
 
 def update(oid, teamMemberDetails):
