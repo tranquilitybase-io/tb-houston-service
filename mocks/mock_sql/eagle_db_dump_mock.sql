@@ -495,10 +495,11 @@ DROP TABLE IF EXISTS `role`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `role` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
   `cloudIdentityGroup` varchar(200) NOT NULL,
   `description` varchar(200) NOT NULL,
-  PRIMARY KEY (`name`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -508,7 +509,7 @@ CREATE TABLE `role` (
 
 LOCK TABLES `role` WRITE;
 /*!40000 ALTER TABLE `role` DISABLE KEYS */;
-INSERT INTO `role` VALUES ('admin','ecadmins@gftdevgcp.com','eagle console admin role'),('user','ecusers@gftdevgcp.com','eagle console user role');
+INSERT INTO `role` VALUES (1,'admin','ecadmins@gftdevgcp.com','eagle console admin role'),(2,'user','ecusers@gftdevgcp.com','eagle console user role');
 /*!40000 ALTER TABLE `role` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -719,10 +720,11 @@ CREATE TABLE `teammember` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `userId` int(11) NOT NULL,
   `teamId` int(11) NOT NULL,
-  `role` varchar(100) NOT NULL,
-  `isActive` tinyint(1) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
+  `roleId` int(11) NOT NULL,
+  `isTeamAdmin` tinyint(1) NOT NULL DEFAULT '1',
+  `isActive` tinyint(1) NOT NULL DEFAULT '1',
+   PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -731,7 +733,7 @@ CREATE TABLE `teammember` (
 
 LOCK TABLES `teammember` WRITE;
 /*!40000 ALTER TABLE `teammember` DISABLE KEYS */;
-INSERT INTO `teammember` VALUES (0,1,1,'Developer',1),(1,2,2,'Admin',1);
+INSERT INTO `teammember` VALUES (1,2,2,2,1,1),(2,1,1,1,0,1);
 /*!40000 ALTER TABLE `teammember` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -798,4 +800,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-06-09 12:28:46
+-- Dump completed on 2020-06-11 12:06:53
