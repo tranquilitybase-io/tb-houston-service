@@ -1,3 +1,4 @@
+  
 import requests
 import json
 import logging
@@ -21,7 +22,8 @@ id = 0
 def typestest(resp):
     assert isinstance(resp["userId"], int)
     assert isinstance(resp["teamId"], int)
-    assert isinstance(resp["role"], str)
+    assert isinstance(resp["roleId"], int)
+    assert isinstance(resp["isTeamAdmin"], bool)
     assert isinstance(resp["isActive"], bool)
     pprint(resp)
 
@@ -50,7 +52,8 @@ def post():
         "id": 0,
         "userId": 1000,
         "teamId": 1000,
-        "role": "Admin",
+        "roleId": 1,
+        "isTeamAdmin": True,
         "isActive": True,
     }
 
@@ -70,7 +73,7 @@ def post():
     assert resp.status_code == 200
     assert resp_json["userId"] == 1000
     assert resp_json["teamId"] == 1000
-    assert resp_json["role"] == "Admin"
+    # assert resp_json['roleId'] == 'Admin'
     assert resp_headers["content-type"] == "application/json"
     typestest(resp_json)
     return id
@@ -84,7 +87,8 @@ def put(id):
         "id": int(id),
         "userId": 1000,
         "teamId": 1000,
-        "role": "Admin",
+        "roleId": 1,
+        "isTeamAdmin": True,
         "isActive": False,
     }
 
