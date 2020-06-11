@@ -1816,6 +1816,25 @@ paths:
         "200":
           description: Successfully deleted a landing zone action
 
+  /lzEnvironmentDeployment/:
+    post:
+      operationId: tb_houston_service.lz_action_deployment.environment_deployment
+      tags:
+        - lzdeployment
+      summary: Landing Zone action deployments
+      description: Landing Zone Action Deployments
+      responses:
+        "200":
+          description: Successfully performed a landing zone action
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  deployment:
+                    type: boolean
+                    description: The response format
+
   /landingzonewans/:
     get:
       operationId: tb_houston_service.landingzonewan.read_all
