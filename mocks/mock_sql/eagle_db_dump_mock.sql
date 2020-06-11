@@ -457,7 +457,7 @@ CREATE TABLE `lzlanvpc_environment` (
 
 LOCK TABLES `lzlanvpc_environment` WRITE;
 /*!40000 ALTER TABLE `lzlanvpc_environment` DISABLE KEYS */;
-INSERT INTO `lzlanvpc_environment` VALUES (1,1,1),(2,2,1),(3,1,2),(4,0,0);
+INSERT INTO `lzlanvpc_environment` VALUES (1,1,1,1),(2,2,1,1),(3,1,2,1),(4,0,0,1);
 /*!40000 ALTER TABLE `lzlanvpc_environment` ENABLE KEYS */;
 UNLOCK TABLES;
 
