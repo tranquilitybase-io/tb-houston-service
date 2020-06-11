@@ -447,6 +447,7 @@ CREATE TABLE `lzlanvpc_environment` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `lzlanvpcId` int(11) NOT NULL,
   `environmentId` int(11) NOT NULL,
+  `isActive` tinyint(4) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
   CONSTRAINT unq_lzlanvpc_environment UNIQUE (lzlanvpcId, environmentId) 
