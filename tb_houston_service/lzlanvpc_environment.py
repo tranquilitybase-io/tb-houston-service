@@ -1,7 +1,6 @@
 """
 A helper module to create the lzlanvpc environment relationship.
 """
-
 # 3rd party modules
 import logging
 from config import db
