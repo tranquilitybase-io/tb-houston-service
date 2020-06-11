@@ -448,7 +448,8 @@ CREATE TABLE `lzlanvpc_environment` (
   `lzlanvpcId` int(11) NOT NULL,
   `environmentId` int(11) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `id_UNIQUE` (`id`)
+  UNIQUE KEY `id_UNIQUE` (`id`),
+  CONSTRAINT unq_lzlanvpc_environment UNIQUE (lzlanvpcId, environmentId) 
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

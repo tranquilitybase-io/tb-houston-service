@@ -14,7 +14,7 @@ def post():
 
     # Test POST Then GET
     # Body
-    payload = [ { "isActive": True, "name": test_name } ] 
+    payload = [ { "environments": [], "isActive": True, "name": "Development VPC" }, { "environments": [1], "isActive": True, "name": "Production VPC" } ]
     print(f"url: {url}")
     print(f"payload: {json.dumps(payload)}")
 

@@ -10,7 +10,7 @@ from config import db, app
 from tb_houston_service.models import LZEnvironment, LZEnvironmentSchema
 from tb_houston_service.extendedSchemas import KeyValueSchema
 
-def read_all():
+def read_all(readActiveOnly=False):
     """
     This function responds to a request for /api/environment
     with the complete lists of environments
@@ -19,7 +19,12 @@ def read_all():
     """
 
     # Create the list of environments from our data
-    lzenvironment = db.session.query(LZEnvironment).order_by(LZEnvironment.name).all()
+    lzenvironment_query = db.session.query(LZEnvironment)
+    if readActiveOnly:
+        lzenvironment_query = lzenvironment_query.filter(LZEnvironment.isActive)
+
+    lzenvironment = lzenvironment_query.order_by(LZEnvironment.name).all()
+
     app.logger.debug(pformat(lzenvironment))
     # Serialize the data for the response
     environment_schema = LZEnvironmentSchema(many=True)
@@ -81,7 +86,14 @@ def create(lzenvDetails):
         return data, 201
 
 
-def create_all(lzMetadataEnvListDetails):
+def logical_delete_all_active():
+    objs = db.session.query(LZEnvironment).filter(LZEnvironment.isActive == True).all()
+    for o in objs:
+        o.isActive = False
+    db.session.add(o)
+
+
+def create_all(lzMetadataEnvListDetails, readActiveOnly=False, bulkDelete=False):
     """
     This function updates lzenvironments from a list of  lz environment
 
@@ -92,30 +104,17 @@ def create_all(lzMetadataEnvListDetails):
 
     app.logger.debug(pformat(lzMetadataEnvListDetails))
 
-    for lze in lzMetadataEnvListDetails:
-        create(lze)
-    return make_response(f"Environments successfully created/updated", 201)
-
-
-def delete_all(lzMetadataEnvListDetails):
-    """
-    Deletes an lzenvironment from the lzenvironments list.
-
-    :param key: oid of the environment to delete
-    :return:    200 on successful delete, 404 if not found
-    """
-    # Does the environment to delete exist?
-    for lze in lzMetadataEnvListDetails:
-        lzenv = (
-            db.session.query(LZEnvironment)
-            .filter(LZEnvironment.name == lze.name)
-            .one_or_none()
-        )
+    try:
+        if bulkDelete:
+            logical_delete_all_active()
+            db.session.flush()
+        for lze in lzMetadataEnvListDetails:
+            create(lze)
+        db.session.commit()
+    except:
+        db.session.rollback()
+        raise
+    finally:
         db.session.close()
-        # if found?
-        if lzenv is not None:
-            lzenv.isActive = False
-            db.session.merge(lzenv)
-            db.session.commit()
-
-    return make_response(f"Environments successfully deleted", 200)
+    resp = read_all(readActiveOnly=readActiveOnly)
+    return resp[0], 201

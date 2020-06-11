@@ -328,10 +328,8 @@ class KeyValueSchema(Schema):
     value = fields.Str()
 
 
-class ExtendedLZLanVpcEnvironmentSchema(Schema):
+class ExtendedLZLanVpcSchema(Schema):
     id = fields.Int()
-    environmentName = fields.Str()
-    lzlanvpcId = fields.Int()
-    environmentId = fields.Int()
-    lzlanvpc = fields.Nested(LZLanVpcSchema(many=False))
-    environment = fields.Nested(LZEnvironmentSchema(many=False))
+    name = fields.Str()
+    isActive = fields.Boolean()
+    environments = fields.Nested(LZEnvironmentSchema(many=True))
