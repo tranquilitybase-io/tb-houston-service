@@ -160,4 +160,5 @@ def create(lzFolderStructureDetails):
         raise
     finally:
         db.session.close()
-    read()
+    resp = read()
+    return resp[0], 201
