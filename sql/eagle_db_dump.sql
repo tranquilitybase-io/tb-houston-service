@@ -447,8 +447,10 @@ CREATE TABLE `lzlanvpc_environment` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `lzlanvpcId` int(11) NOT NULL,
   `environmentId` int(11) NOT NULL,
+  `isActive` tinyint(4) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `id_UNIQUE` (`id`)
+  UNIQUE KEY `id_UNIQUE` (`id`),
+  CONSTRAINT unq_lzlanvpc_environment UNIQUE (lzlanvpcId, environmentId) 
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -458,7 +460,7 @@ CREATE TABLE `lzlanvpc_environment` (
 
 LOCK TABLES `lzlanvpc_environment` WRITE;
 /*!40000 ALTER TABLE `lzlanvpc_environment` DISABLE KEYS */;
-INSERT INTO `lzlanvpc_environment` VALUES (1,1,1),(2,2,1),(3,1,2),(4,0,0);
+INSERT INTO `lzlanvpc_environment` VALUES (1,1,1,1),(2,2,1,1),(3,1,2,1),(4,0,0,1);
 /*!40000 ALTER TABLE `lzlanvpc_environment` ENABLE KEYS */;
 UNLOCK TABLES;
 

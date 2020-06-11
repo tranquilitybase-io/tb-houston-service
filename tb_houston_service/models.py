@@ -283,6 +283,10 @@ class LZEnvironment(Base):
     name = db.Column(db.String, unique=True, nullable=False)
     isActive = db.Column(db.Boolean)
 
+    def __repr__(self):
+        return "<LZEnvironment(id={self.id!r}, name={self.name!r}, isActive={self.isActive!r})>".format(
+            self=self
+        )
 
 class LZEnvironmentSchema(SQLAlchemyAutoSchema):
     class Meta:
@@ -351,8 +355,9 @@ class LZLanVpcSchema(SQLAlchemyAutoSchema):
 class LZLanVpcEnvironment(Base):
     __tablename__ = "lzlanvpc_environment"
     id = db.Column(db.Integer, primary_key=True)
-    lzlanvpcId = db.Column(db.Integer, ForeignKey("lzlanvpcId.id"))
+    lzlanvpcId = db.Column(db.Integer, ForeignKey("lzlanvpc.id"))
     environmentId = db.Column(db.Integer, ForeignKey("lzenvironment.id"))
+    isActive = db.Column(db.Boolean)
 
     def __repr__(self):
         return "<LZLanVpcEnvironment(id={self.id!r})>".format(self=self)

@@ -160,4 +160,5 @@ def create(lzFolderStructureDetails):
         raise
     finally:
         db.session.close()
-    return make_response("LZ Folder Structure successfully created/updated", 201)
+    resp = read()
+    return resp[0], 201

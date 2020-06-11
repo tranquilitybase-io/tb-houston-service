@@ -343,7 +343,7 @@ CREATE TABLE `lzenvironment` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
   UNIQUE KEY `name_UNIQUE` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -352,7 +352,7 @@ CREATE TABLE `lzenvironment` (
 
 LOCK TABLES `lzenvironment` WRITE;
 /*!40000 ALTER TABLE `lzenvironment` DISABLE KEYS */;
-INSERT INTO `lzenvironment` VALUES (1,'Development',1),(2,'Production',1);
+INSERT INTO `lzenvironment` VALUES (1,'Development',1),(2,'Production',1),(3,'test-env',1);
 /*!40000 ALTER TABLE `lzenvironment` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -445,6 +445,7 @@ CREATE TABLE `lzlanvpc_environment` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `lzlanvpcId` int(11) NOT NULL,
   `environmentId` int(11) NOT NULL,
+  `isActive` tinyint(4) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
@@ -456,7 +457,7 @@ CREATE TABLE `lzlanvpc_environment` (
 
 LOCK TABLES `lzlanvpc_environment` WRITE;
 /*!40000 ALTER TABLE `lzlanvpc_environment` DISABLE KEYS */;
-INSERT INTO `lzlanvpc_environment` VALUES (1,1,1),(2,2,1),(3,1,2),(4,0,0);
+INSERT INTO `lzlanvpc_environment` VALUES (1,1,1,1),(2,2,1,1),(3,1,2,1),(4,0,0,1);
 /*!40000 ALTER TABLE `lzlanvpc_environment` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -512,7 +513,6 @@ LOCK TABLES `role` WRITE;
 INSERT INTO `role` VALUES (1,'admin','ecadmins@gftdevgcp.com','eagle console admin role'),(2,'user','ecusers@gftdevgcp.com','eagle console user role');
 /*!40000 ALTER TABLE `role` ENABLE KEYS */;
 UNLOCK TABLES;
-
 --
 -- Table structure for table `solution`
 --
@@ -722,9 +722,9 @@ CREATE TABLE `teammember` (
   `teamId` int(11) NOT NULL,
   `roleId` int(11) NOT NULL,
   `isTeamAdmin` tinyint(1) NOT NULL DEFAULT '1',
-  `isActive` tinyint(1) NOT NULL DEFAULT '1',
-   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
+  `isActive` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -800,4 +800,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-06-11 12:06:53
+-- Dump completed on 2020-06-12 15:27:32

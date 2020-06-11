@@ -5,12 +5,18 @@ lzlanvpc collection
 
 # 3rd party modules
 from pprint import pformat
+import logging
 from flask import make_response
 from config import db, app
 from tb_houston_service.models import LZLanVpc, LZLanVpcSchema
+from tb_houston_service.models import LZLanVpcEnvironment
+from tb_houston_service import lzlanvpc_extension
+from tb_houston_service.extendedSchemas import ExtendedLZLanVpcSchema
 
 
-def read():
+logger = logging.getLogger("tb_houston_service.lzlanvpc")
+
+def read(readActiveOnly=None):
     """
     This function responds to a request for /api/lzmetadata_lan_vpc
     with the complete lists of lzlanvpcs
@@ -18,12 +24,21 @@ def read():
     :return:        json string of list of lzlanvpc
     """
 
+    logger.debug("readActiveOnly: %s", readActiveOnly)
+
     # Create the list of lzlanvpc from our data
-    lzlanvpc = db.session.query(LZLanVpc).order_by(LZLanVpc.name).all()
-    app.logger.debug(pformat(lzlanvpc))
+    lzlanvpcs_query = db.session.query(LZLanVpc)
+    if readActiveOnly:
+        lzlanvpcs_query = lzlanvpcs_query.filter(LZLanVpc.isActive)
+    
+    lzlanvpcs = lzlanvpcs_query.order_by(LZLanVpc.name).all()
+    app.logger.debug(pformat(lzlanvpcs))
+    for lzlanvpc in lzlanvpcs:
+        lzlanvpc_extension.expand_lzlanvpc(lzlanvpc)    
+
     # Serialize the data for the response
-    schema = LZLanVpcSchema(many=True)
-    data = schema.dump(lzlanvpc)
+    schema = ExtendedLZLanVpcSchema(many=True)
+    data = schema.dump(lzlanvpcs)
     return data, 200
 
 
@@ -39,24 +54,38 @@ def create(lzLanVpcDetails):
     )
     schema = LZLanVpcSchema()
 
-    # Does environment exist?
+    # Store for use later
+    envs = lzLanVpcDetails['environments']
+    # Removing this as the below schema is not expecting this field.
+    if "environments" in lzLanVpcDetails:
+        del lzLanVpcDetails["environments"]
+
+    # Does lanvpc exist?
     if existing_lanvpc is not None:
         app.logger.debug(f"lzmetadata_env::update: {lzLanVpcDetails} {existing_lanvpc}")
         existing_lanvpc.isActive = lzLanVpcDetails.get("isActive")
         db.session.merge(existing_lanvpc)
-        db.session.commit()
-        data = schema.dump(existing_lanvpc)
-        return data, 201
+        lzlanvpc_extension.create_lzlanvpc_environments(existing_lanvpc.id, envs)         
     else:
         app.logger.debug(f"lzmetadata_env::create: {lzLanVpcDetails}")
-        env_change = schema.load(lzLanVpcDetails, session=db.session)
-        db.session.add(env_change)
-        db.session.commit()
-        data = schema.dump(env_change)
-        return data, 201
+        lzlanvpc_change = schema.load(lzLanVpcDetails, session=db.session)
+        db.session.add(lzlanvpc_change)
+        db.session.flush()
+        lzlanvpc_extension.create_lzlanvpc_environments(lzlanvpc_change.id, envs) 
 
 
-def create_all(lzLanVpcListDetails):
+def logical_delete_all_active():
+    objs = db.session.query(LZLanVpc).filter(LZLanVpc.isActive == True).all()
+    for o in objs:
+        o.isActive = False
+    db.session.add(o)
+    objs = db.session.query(LZLanVpcEnvironment).filter(LZLanVpcEnvironment.isActive == True).all()
+    for o in objs:
+        o.isActive = False
+    db.session.add(o)    
+
+
+def create_all(lzLanVpcListDetails, readActiveOnly=False, bulkDelete=False):
     """
     This function updates lzlanvpcs from a list of  lzlanvpcs
 
@@ -67,6 +96,17 @@ def create_all(lzLanVpcListDetails):
 
     app.logger.debug(pformat(lzLanVpcListDetails))
 
-    for lze in lzLanVpcListDetails:
-        create(lze)
-    return make_response(f"LAN VPC successfully created/updated", 201)
+    try:
+        if bulkDelete:
+            logical_delete_all_active()
+            db.session.flush()
+        for lze in lzLanVpcListDetails:
+            create(lze)
+        db.session.commit()
+    except:
+        db.session.rollback()
+        raise
+    finally:
+        db.session.close()
+    resp = read(readActiveOnly=readActiveOnly)
+    return resp[0], 201
