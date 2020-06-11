@@ -11,7 +11,6 @@ from config import db, app
 from tb_houston_service.models import LZLanVpc, LZLanVpcSchema
 from tb_houston_service.models import LZLanVpcEnvironment
 from tb_houston_service import lzlanvpc_extension
-from tb_houston_service import lzlanvpc_environment
 from tb_houston_service.extendedSchemas import ExtendedLZLanVpcSchema
 
 
