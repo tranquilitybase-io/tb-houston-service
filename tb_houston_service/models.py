@@ -357,6 +357,7 @@ class LZLanVpcEnvironment(Base):
     id = db.Column(db.Integer, primary_key=True)
     lzlanvpcId = db.Column(db.Integer, ForeignKey("lzlanvpc.id"))
     environmentId = db.Column(db.Integer, ForeignKey("lzenvironment.id"))
+    isActive = db.Column(db.Boolean)
 
     def __repr__(self):
         return "<LZLanVpcEnvironment(id={self.id!r})>".format(self=self)

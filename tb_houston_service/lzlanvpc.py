@@ -9,6 +9,7 @@ import logging
 from flask import make_response
 from config import db, app
 from tb_houston_service.models import LZLanVpc, LZLanVpcSchema
+from tb_houston_service.models import LZLanVpcEnvironment
 from tb_houston_service import lzlanvpc_extension
 from tb_houston_service import lzlanvpc_environment
 from tb_houston_service.extendedSchemas import ExtendedLZLanVpcSchema
@@ -79,6 +80,10 @@ def logical_delete_all_active():
     for o in objs:
         o.isActive = False
     db.session.add(o)
+    objs = db.session.query(LZLanVpcEnvironment).filter(LZLanVpcEnvironment.isActive == True).all()
+    for o in objs:
+        o.isActive = False
+    db.session.add(o)    
 
 
 def create_all(lzLanVpcListDetails, readActiveOnly=False, bulkDelete=False):
