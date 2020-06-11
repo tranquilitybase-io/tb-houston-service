@@ -3,6 +3,7 @@ import json
 import logging
 import os
 from pprint import pprint
+from tests import pytest_lib
 
 
 LOG_LEVEL = logging.INFO  # DEBUG, INFO, WARNING, ERROR, CRITICAL
@@ -16,18 +17,36 @@ headers = {"Content-Type": "application/json"}
 id = 0
 
 
+def test_role():
+
+    # Testing POST request
+    id = post()
+    # Testing PUT request
+    put(id)
+    # Test GET all teammbers with parameters
+    get_all_params()
+    # Testing DELETE request
+    pytest_lib.delete(url, str(id))
+    # Testing DELETE Request Error
+    pytest_lib.delete_error(url, "-1")
+    # Testing GETALL request
+    pytest_lib.get_all(plural_url)
+
+
 def typestest(resp):
+    assert isinstance(resp["id"], int)
     assert isinstance(resp["name"], str)
     assert isinstance(resp["cloudIdentityGroup"], str)
     assert isinstance(resp["description"], str)
     pprint(resp)
 
 
-def test_post():
+def post():
     print("Post Tests")
     # Test POST Then GET
     # Body
     payload = {
+        "id": 0,
         "cloudIdentityGroup": "test@gftdevgcp.com",
         "description": "eagle console test role",
         "name": "test",
@@ -39,9 +58,10 @@ def test_post():
     # Validate response headers and body contents, e.g. status code.
     resp_json = resp.json()
     assert resp.status_code == 201
+    id = str(resp_json["id"])
 
     # Get Request to check Post has created item as expected
-    resp = requests.get(url + "test", headers=headers)
+    resp = requests.get(url + id, headers=headers)
     resp_json = resp.json()
     resp_headers = resp.headers
     # Validate response
@@ -50,27 +70,29 @@ def test_post():
     assert resp_json["cloudIdentityGroup"] == "test@gftdevgcp.com"
     assert resp_headers["content-type"] == "application/json"
     typestest(resp_json)
+    return id
 
 
-def test_put():
+def put(id):
     print("Put Tests")
 
     # Test Update Then get new value
     newpayload = {
+        "id": int(id),
         "cloudIdentityGroup": "test-change@gftdevgcp.com",
         "description": "eagle console test role changed",
         "name": "test",
     }
 
     resp = requests.put(
-        url + "test", headers=headers, data=json.dumps(newpayload, indent=4)
+        url + id, headers=headers, data=json.dumps(newpayload, indent=4)
     )
 
     # Validate update/Put response
     assert resp.status_code == 200
 
     # Get Request to get updated values
-    resp = requests.get(url + "test", headers=headers)
+    resp = requests.get(url + id, headers=headers)
     resp_json = resp.json()
 
     # Validate response body for updated values
@@ -81,28 +103,7 @@ def test_put():
     typestest(resp_json)
 
 
-def test_delete():
-
-    # Test Delete Then GET
-    resp = requests.delete(url + "test", headers=headers)
-    assert resp.status_code == 200
-
-
-def test_delete_error():
-
-    # Test Delete for an non existing item
-    resp = requests.delete(url + "test", headers=headers)
-    assert resp.status_code == 404
-
-
-def test_get_error():
-
-    resp = requests.get(url + "test", headers=headers)
-    # resp_json = resp.json()
-    assert resp.status_code == 404
-
-
-def test_get_all():
+def get_all_params():
 
     resp = requests.get(plural_url, headers=headers)
     assert resp.status_code == 200

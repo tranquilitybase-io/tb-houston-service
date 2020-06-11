@@ -588,7 +588,7 @@ paths:
         "201":
           description: Successfully created a role
 
-  "/role/{name}":
+  "/role/{id}":
     get:
       operationId: tb_houston_service.role.read_one
       tags:
@@ -596,12 +596,12 @@ paths:
       summary: Read one role from the list
       description: Read one role from the list
       parameters:
-        - name: name
+        - name: id
           in: path
           description: key of the role to get from the list
           required: true
           schema:
-            type: string
+            type: integer
       responses:
         "200":
           description: Successfully read an role from the list
@@ -616,12 +616,12 @@ paths:
       summary: Update a role in the list
       description: Update a role in the list
       parameters:
-        - name: name
+        - name: id
           in: path
           description: key of the role to update
           required: true
           schema:
-            type: string
+            type: integer
       requestBody:
         $ref: "#/components/requestBodies/role.roleDetails"
       responses:
@@ -635,11 +635,11 @@ paths:
       summary: Delete a role from the list
       description: Delete a role
       parameters:
-        - name: name
+        - name: id
           in: path
           required: true
           schema:
-            type: string
+            type: integer
       responses:
         "200":
           description: Successfully deleted a cloud account
@@ -2900,9 +2900,12 @@ components:
         teamId:
           type: integer
           description: team Id of the team
-        role:
-          type: string
+        roleId:
+          type: integer
           description: user's role in the team
+        isTeamAdmin:
+          type: boolean
+          description: True if a user is a Team admin 
         isActive:
           type: boolean
           description: to activate/deactivate user role from a team
@@ -2910,6 +2913,9 @@ components:
     Role:
       type: object
       properties:
+        id:
+          type: integer
+          description:  id of the role
         name:
           type: string
           description: name of the role in eagle console
