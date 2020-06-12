@@ -18,10 +18,12 @@ from tb_houston_service.tools import ModelTools
 from tb_houston_service import application_extension
 
 
-logger = logging.getLogger("tb_houston_service.activator")
+logger = logging.getLogger("tb_houston_service.application")
 
 
 def read_all(
+    isActive=None,
+    isFavourite=None,
     status=None,
     activatorId=None,
     environment=None,
@@ -36,6 +38,8 @@ def read_all(
     :return:        json string of list of applications
     """
 
+    logger.debug("Parameters: isActive: %s, isFavourite: %s, status: %s, activatorId: %s, environment: %s, page: %s, page_size: %s, sort: %s",
+     isActive, isFavourite, status, activatorId, environment, page, page_size, sort)
     # Create the list of applications from our data
     # pre-process sort instructions
     if sort == None:
@@ -57,13 +61,15 @@ def read_all(
             )
 
         except SQLAlchemyError as e:
-            print(e)
+            logger.warning(e)
             application_query = db.session.query(Application).order_by(Application.id)
 
     application_query = application_query.filter(
         (status == None or Application.status == status),
         (activatorId == None or Application.activatorId == activatorId),
         (environment == None or Application.env == environment),
+        (isActive == None or Application.isActive == isActive),
+        (isFavourite == None or Application.isFavourite == isFavourite), 
     )
 
     if page == None or page_size == None:
@@ -161,7 +167,6 @@ def update(oid, applicationDetails):
         schema = ApplicationSchema()
         applicationDetails['id'] = oid
         schema.load(applicationDetails, session=db.session)
-        existing_application.lastUpdated = ModelTools.get_utc_timestamp()
         db.session.merge(existing_application)
         db.session.commit()
 
@@ -190,7 +195,8 @@ def delete(oid):
 
     # if found?
     if existing_application is not None:
-        db.session.delete(existing_application)
+        existing_application.isActive = False
+        db.session.merge(existing_application)
         db.session.commit()
 
         return make_response(f"Application id {oid} successfully deleted", 200)

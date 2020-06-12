@@ -2,6 +2,7 @@ import requests
 import json
 import os
 from pprint import pprint
+from tests import pytest_lib
 
 
 HOUSTON_SERVICE_URL = os.environ["HOUSTON_SERVICE_URL"]
@@ -12,6 +13,11 @@ headers = {"Content-Type": "application/json"}
 
 
 def typestest(resp):
+    assert isinstance(resp["id"], int)
+    assert isinstance(resp["isActive"], bool)
+    assert isinstance(resp["isFavourite"], bool)
+    assert isinstance(resp["lastUpdated"], str)
+    assert isinstance(resp["accessRequestedBy"], dict) or resp["accessRequestedBy"] is None
     assert isinstance(resp["activator"], str)
     assert isinstance(resp["activatorLink"], str)
     assert isinstance(resp["apiManagement"], list)
@@ -22,6 +28,7 @@ def typestest(resp):
     assert isinstance(resp["cd"], list)
     assert isinstance(resp["description"], str)
     assert isinstance(resp["envs"], list)
+    assert isinstance(resp["hosting"], list)
     assert isinstance(resp["platforms"], list)
     assert isinstance(resp["regions"], list)
     assert isinstance(resp["sensitivity"], str)
@@ -45,10 +52,12 @@ def test_activators():
     # Testing PUT request
     put(oid)
     # Testing DELETE request
-    delete(oid)
+    get_one(oid)
+    # Test GET Activator Meta
+    pytest_lib.logical_delete(url, oid)
     # Testing GETALL request
     get_all()
-    # Test GET Activator Meta
+    # Testing GETONE request
     get_meta()
     # Test Get Activator Categories
     get_categories()
@@ -217,23 +226,25 @@ def put(oid):
     typestest(resp_json)
 
 
-def delete(oid):
-
-    # Test Delete Then GET
-    resp = requests.delete(url + oid, headers=headers)
-    assert resp.status_code == 200
-
-    resp = requests.get(url + oid, headers=headers)
-    # resp_json = resp.json()
-    # Todo Ideally we should get 404 Need to check with Karwoo
-    assert resp.status_code == 404
-
-
 def get_all():
 
     geturl = f"http://{HOUSTON_SERVICE_URL}/api/activators/"
     resp = requests.get(geturl, headers=headers)
+    resp_json = resp.json()
+    print(resp_json)
     assert resp.status_code == 200
+    for j in resp_json:
+        typestest(j)
+
+
+def get_one(oid):
+    print(f"get_one Test: {oid}")
+
+    resp = requests.get(url+str(oid), headers=headers)
+    resp_json = resp.json()
+    # Validate Get One response
+    assert resp.status_code == 200
+    typestest(resp_json)
 
 
 def get_meta():
@@ -254,3 +265,7 @@ def get_categories():
     pprint(resp.json())
     # Validate response
     assert resp.status_code == 200
+
+
+if __name__ == "__main__":
+    test_activators()

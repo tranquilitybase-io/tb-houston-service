@@ -20,7 +20,7 @@ from tb_houston_service import solution_extension
 logger = logging.getLogger("tb_houston_service.solution")
 
 
-def read_all(active=None, namesonly=None, page=None, page_size=None, sort=None):
+def read_all(isActive=None, isFavourite=None, namesonly=None, page=None, page_size=None, sort=None):
     """
     This function responds to a request for /api/solutions
     with the complete lists of solutions
@@ -29,7 +29,8 @@ def read_all(active=None, namesonly=None, page=None, page_size=None, sort=None):
     """
 
     logger.debug("solution.read_all")
-    logger.debug("Active: %s, namesonly: %s", active, namesonly)
+    logger.debug("Parameters: isActive: %s, isFavourite: %s, namesonly: %s, page: %s, page_size: %s, sort: %s", 
+    isActive, isFavourite, namesonly, page, page_size, sort)
 
     # pre-process sort instructions
     if sort == None:
@@ -50,12 +51,14 @@ def read_all(active=None, namesonly=None, page=None, page_size=None, sort=None):
                 literal_column(", ".join(orderby_arr))
             )
         except SQLAlchemyError as e:
-            logger.debug("Exception: %s", e)
+            logger.warning("Exception: %s", e)
             solution_query = db.session.query(Solution).order_by(Solution.id)
 
     # Create the list of solutions from our data
-    if active != None:
-        solution_query = solution_query.filter(Solution.isActive == active)
+    solution_query = solution_query.filter(
+        (isActive == None or Solution.isActive == isActive),
+        (isFavourite == None or Solution.isFavourite == isFavourite)
+    )
 
     # do limit and offset last
     if page == None or page_size == None:
@@ -237,7 +240,8 @@ def delete(oid):
 
     # if found?
     if existing_solution is not None:
-        db.session.delete(existing_solution)
+        existing_solution.isActive = False
+        db.session.merge(existing_solution)
         db.session.commit()
 
         return make_response(f"Solution {oid} successfully deleted", 200)

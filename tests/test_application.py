@@ -3,6 +3,7 @@ import json
 import os
 from pprint import pprint
 from pprint import pformat
+from tests import pytest_lib
 
 
 HOUSTON_SERVICE_URL = os.environ["HOUSTON_SERVICE_URL"]
@@ -31,12 +32,14 @@ def test_application():
     # Testing PUT request
     put(oid)
     # Testing DELETE request
-    delete(oid)
+    print(f"url: {url}, oid: {oid}")
+    pytest_lib.logical_delete(url, oid)
     # Testing GETALL request
     get_all()
     # Test post with no resources
     oid = post1()
-    delete(oid)
+    print(f"url: {url}, oid: {oid}")
+    pytest_lib.logical_delete(url, oid)
 
 
 def post():
@@ -44,8 +47,8 @@ def post():
     # Test POST Then GET
     # Body
     payload = {
-        "solutionId": 0,
-        "activatorId": 0,
+        "solutionId": 1,
+        "activatorId": 1,
         "name": "test",
         "env": "DEV",
         "status": "Active",
@@ -79,6 +82,8 @@ def post():
     assert resp_json["env"] == "DEV"
     assert resp_json["status"] == "Active"
     assert resp_json["description"] == "test"
+    assert resp_json["isActive"] == True
+    assert resp_json["isFavourite"] == False
     assert resp_json["resources"][0]["ipaddress"] == "address1"
     assert resp_json["resources"][0]["name"] == "value1"
     assert resp_json["resources"][1]["ipaddress"] == "address2"
@@ -96,8 +101,8 @@ def post1():
     # Test POST Then GET
     # Body
     payload = {
-        "solutionId": 0,
-        "activatorId": 0,
+        "solutionId": 1,
+        "activatorId": 1,
         "name": "test",
         "env": "DEV",
         "status": "Active",
@@ -151,23 +156,13 @@ def put(oid):
     assert resp_json["status"] == "Inactive"
 
 
-def delete(oid):
-
-    # Test Delete Then GET
-    resp = requests.delete(url + oid, headers=headers)
-    # Validate Delete response
-    assert resp.status_code == 200
-
-    # Then GET request to check the item has been actully deleted
-    resp = requests.get(url + oid, headers=headers)
-    # Validate Get response
-    # resp_json = resp.json()
-    assert resp.status_code == 404
-
-
 def get_all():
 
     url = f"http://{HOUSTON_SERVICE_URL}/api/applications/"
     resp = requests.get(url, headers=headers)
     # Validate Get All response
     assert resp.status_code == 200
+
+
+if __name__ == "__main__":
+    test_application()

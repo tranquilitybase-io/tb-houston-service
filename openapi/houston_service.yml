@@ -66,6 +66,14 @@ paths:
       description: Read the list of applications
       parameters:
         - in: query
+          name: isActive
+          schema:
+            type: boolean
+        - in: query
+          name: isFavourite
+          schema:
+            type: boolean                    
+        - in: query
           name: status
           schema:
             type: string
@@ -129,7 +137,7 @@ paths:
           description: oid of the application to get from the list
           required: true
           schema:
-            type: integer
+            type: integer          
       responses:
         "200":
           description: Successfully read an application from the list
@@ -1064,9 +1072,13 @@ paths:
       description: Read the list of solutions
       parameters:
         - in: query
-          name: active
+          name: isActive
           schema:
             type: boolean
+        - in: query            
+          name: isFavourite
+          schema:
+            type: boolean             
         - in: query
           name: namesonly
           schema:
@@ -1429,6 +1441,14 @@ paths:
       description: Read the list of activators
       parameters:
         - in: query
+          name: isActive
+          schema:
+            type: boolean   
+        - in: query
+          name: isFavourite
+          schema:
+            type: boolean                    
+        - in: query
           name: category
           schema:
             type: string
@@ -1507,7 +1527,7 @@ paths:
           description: key of the activator to get from the list
           required: true
           schema:
-            type: string
+            type: string           
       responses:
         "200":
           description: Successfully read an activator from the list
