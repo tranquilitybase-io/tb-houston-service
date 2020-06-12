@@ -573,6 +573,7 @@ CREATE TABLE `solutionenvironment` (
   `isActive` tinyint(4) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
+  CONSTRAINT unq_solution_environment UNIQUE (solutionId, environmentId),
   CONSTRAINT `FK_solutionenvironment_environmentId` FOREIGN KEY (`environmentId`) REFERENCES `lzenvironment` (`id`),
   CONSTRAINT `FK_solutionenvironment_solutionId` FOREIGN KEY (`solutionId`) REFERENCES `solution` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
