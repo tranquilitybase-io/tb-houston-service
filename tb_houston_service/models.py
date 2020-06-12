@@ -13,6 +13,9 @@ Base = declarative_base()
 class Activator(Base):
     __tablename__ = "activator"
     id = db.Column(db.Integer, primary_key=True)
+    isActive = db.Column(db.Boolean)
+    lastUpdated = db.Column(db.String(20))
+    isFavourite = db.Column(db.Boolean)
     name = db.Column(db.String(255))
     type = db.Column(db.String(255))
     available = db.Column(db.Boolean())
@@ -20,7 +23,6 @@ class Activator(Base):
     category = db.Column(db.String(255))
     envs = db.Column(db.String(255))
     platforms = db.Column(db.String(255))
-    lastUpdated = db.Column(db.String(255))
     userCapacity = db.Column(db.Integer)
     serverCapacity = db.Column(db.Integer)
     regions = db.Column(db.String(255))
@@ -52,15 +54,23 @@ class ActivatorSchema(SQLAlchemyAutoSchema):
 
     @pre_load()
     def serialize_pre_load(self, data, **kwargs):
-        logger.debug("models::pre_load::serialize_pre_load: %s", data)   
-        data['envs'] = json.dumps(data['envs'])
-        data['platforms'] = json.dumps(data['platforms'])
-        data['regions'] = json.dumps(data['regions'])
-        data['hosting'] = json.dumps(data['hosting'])
-        data['apiManagement'] = json.dumps(data['apiManagement'])
-        data['ci'] = json.dumps(data['ci'])
-        data['cd'] = json.dumps(data['cd'])
-        data['sourceControl'] = json.dumps(data['sourceControl'])        
+        logger.debug("models::pre_load::serialize_pre_load: %s", data) 
+        if 'envs' in data:
+            data['envs'] = json.dumps(data['envs'])
+        if 'platforms' in data:        
+            data['platforms'] = json.dumps(data['platforms'])
+        if 'regions' in data:            
+            data['regions'] = json.dumps(data['regions'])
+        if 'hosting' in data:
+            data['hosting'] = json.dumps(data['hosting'])
+        if 'apiManagement' in data:       
+            data['apiManagement'] = json.dumps(data['apiManagement'])
+        if 'ci' in data:
+            data['ci'] = json.dumps(data['ci'])
+        if 'cd' in data:            
+            data['cd'] = json.dumps(data['cd'])
+        if 'sourceControl' in data:
+            data['sourceControl'] = json.dumps(data['sourceControl'])        
         return data
 
 
@@ -68,13 +78,16 @@ class ActivatorSchema(SQLAlchemyAutoSchema):
 class Application(Base):
     __tablename__ = "application"
     id = db.Column(db.Integer, primary_key=True)
+    isActive = db.Column(db.Boolean)
+    lastUpdated = db.Column(db.String(20))
+    isFavourite = db.Column(db.Boolean)
     solutionId = db.Column(db.Integer, db.ForeignKey("solution.id"), nullable=False)
     activatorId = db.Column(db.Integer, db.ForeignKey("activator.id"), nullable=False)
     name = db.Column(db.String(255))
     env = db.Column(db.String(64))
     status = db.Column(db.String(64))
     description = db.Column(db.String(255))
-    lastUpdated = db.Column(db.String(255))
+ 
     resources = db.Column(db.String(255))
 
     def __repr__(self):
@@ -86,6 +99,13 @@ class ApplicationSchema(SQLAlchemyAutoSchema):
         model = Application
         include_fk = True
         load_instance = True
+
+    @pre_load()
+    def serialize_pre_load(self, data, **kwargs):
+        logger.debug("models::pre_load::serialize_pre_load: %s", data)
+        if 'resources' in data:
+            data['resources'] = json.dumps(data['resources'])       
+        return data        
 
 
 # BusinessUnit
@@ -407,6 +427,9 @@ class RoleSchema(SQLAlchemyAutoSchema):
 class Solution(Base):
     __tablename__ = "solution"
     id = db.Column(db.Integer(), primary_key=True)
+    isActive = db.Column(db.Boolean)
+    lastUpdated = db.Column(db.String(20))
+    isFavourite = db.Column(db.Boolean)    
     name = db.Column(db.String(255))
     description = db.Column(db.String(255))
     businessUnit = db.Column(db.String(255))
@@ -414,10 +437,7 @@ class Solution(Base):
     ci = db.Column(db.String(255))
     cd = db.Column(db.String(255))
     sourceControl = db.Column(db.String(255))
-    isActive = db.Column(db.Boolean())
-    favourite = db.Column(db.Boolean())
     teamId = db.Column(db.Integer())
-    lastUpdated = db.Column(db.String(255))
     deployed = db.Column(db.Boolean())
     deploymentState = db.Column(db.String(45))
     statusId = db.Column(db.Integer())
@@ -444,7 +464,7 @@ class SolutionEnvironment(Base):
     id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
     solutionId = db.Column(db.Integer(), ForeignKey("solution.id"))
     environmentId = db.Column(db.Integer(), ForeignKey("lzenvironment.id"))
-    lastUpdated = db.Column(db.String())
+    lastUpdated = db.Column(db.String(20))
     isActive = db.Column(db.Boolean())
 
     def __repr__(self):
@@ -525,7 +545,7 @@ class Team(Base):
     name = db.Column(db.String(100))
     description = db.Column(db.String(200))
     businessUnitId = db.Column(db.Integer)
-    lastUpdated = db.Column(db.String)
+    lastUpdated = db.Column(db.String(20))
     isActive = db.Column(db.Boolean())
 
 

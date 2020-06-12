@@ -2751,6 +2751,12 @@ components:
         id:
           type: integer
           description: id
+        isActive:
+          type: boolean
+          description: is active
+        isFavourite:
+          type: boolean
+          description: is favourite
         name:
           type: string
           description: name
@@ -2852,6 +2858,15 @@ components:
         id:
           type: integer
           description: id
+        isActive:
+          type: boolean
+          description: is active
+        lastUpdated:
+          type: string
+          description: last updated datetime UTC
+        isFavourite:
+          type: boolean
+          description: is favourite
         solutionId:
           type: integer
           description: solutionId
@@ -3156,6 +3171,15 @@ components:
         id:
           type: integer
           description: The solution id
+        isActive:
+          type: boolean
+          description: active
+        isFavourite:
+          type: boolean
+          description: isFavourite      
+        lastUpdated:
+          type: string
+          description: "UTC/CUT last updated datetime stamp see: https://github.com/tranquilitybase-io/tb-houston-service/wiki/UTC-Timestamp"
         name:
           type: string
           description: name
@@ -3179,12 +3203,6 @@ components:
           description: sourceControl
           items:
             type: string
-        isActive:
-          type: boolean
-          description: active
-        favourite:
-          type: boolean
-          description: favourite
         teamId:
           type: integer
           description: teamId
@@ -3193,9 +3211,6 @@ components:
           items:
             type: integer
             description: environment ids
-        lastUpdated:
-          type: string
-          description: "UTC/CUT last updated datetime stamp see: https://github.com/tranquilitybase-io/tb-houston-service/wiki/UTC-Timestamp"
 
     SolutionDeployment:
       type: object

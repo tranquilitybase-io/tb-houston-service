@@ -126,11 +126,6 @@ def create(applicationDetails):
     if "id" in applicationDetails:
         del applicationDetails["id"]
 
-    # As discussed with Fabio, explicitly set resources to '[]' if not set
-    if not type(applicationDetails.get("resources")) is list:
-        applicationDetails["resources"] = []
-    applicationDetails["resources"] = json.dumps(applicationDetails.get("resources"))
-
     schema = ApplicationSchema()
     new_application = schema.load(applicationDetails, session=db.session)
     new_application.lastUpdated = ModelTools.get_utc_timestamp()
@@ -164,17 +159,9 @@ def update(oid, applicationDetails):
     # Does application exist?
     if existing_application is not None:
         schema = ApplicationSchema()
+        applicationDetails['id'] = oid
+        schema.load(applicationDetails, session=db.session)
         existing_application.lastUpdated = ModelTools.get_utc_timestamp()
-        if applicationDetails.get("resources"):
-            existing_application.resources = json.dumps(applicationDetails["resources"])
-        if applicationDetails.get("name"):
-            existing_application.name = applicationDetails["name"]
-        if applicationDetails.get("env"):
-            existing_application.env = applicationDetails["env"]
-        if applicationDetails.get("status"):
-            existing_application.status = applicationDetails["status"]
-        if applicationDetails.get("description"):
-            existing_application.description = applicationDetails["description"]
         db.session.merge(existing_application)
         db.session.commit()
 

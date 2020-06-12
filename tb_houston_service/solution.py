@@ -114,8 +114,8 @@ def create(solutionDetails):
         if solutionDetails.get("isActive") == None:
             solutionDetails["isActive"] = True
 
-        if solutionDetails.get("favourite") == None:
-            solutionDetails["favourite"] = True
+        if solutionDetails.get("isFavourite") == None:
+            solutionDetails["isFavourite"] = False
 
         if solutionDetails.get("deployed") == None:
             solutionDetails["deployed"] = False
@@ -142,7 +142,7 @@ def create(solutionDetails):
             del solutionDetails["id"]
 
         solutionDetails["lastUpdated"] = ModelTools.get_utc_timestamp()
-        envs = solutionDetails['environments']
+        envs = solutionDetails.get('environments')
 
         # Removing this as the below schema is not expecting this field.
         if "environments" in solutionDetails:
@@ -150,9 +150,11 @@ def create(solutionDetails):
 
         schema = SolutionSchema(many=False)
         new_solution = schema.load(solutionDetails, session=db.session)
+        new_solution.lastUpdated = ModelTools.get_utc_timestamp()
         db.session.add(new_solution)
         db.session.flush()
-        solution_extension.create_solution_environments(new_solution.id, envs)
+        if envs:
+            solution_extension.create_solution_environments(new_solution.id, envs)
         new_solution = solution_extension.expand_solution(new_solution)        
         schema = ExtendedSolutionSchema()
         data = schema.dump(new_solution)        
@@ -178,7 +180,7 @@ def update(oid, solutionDetails):
     :return:       updated solutions
     """
 
-    logger.debug(solutionDetails)
+    logger.debug("update::solutionDetails: %s", solutionDetails)
 
     # Does the solutions exist in solutions list?
     existing_solution = (
@@ -188,41 +190,23 @@ def update(oid, solutionDetails):
     # Does solutions exist?
 
     if existing_solution is not None:
+        solutionDetails['id'] = oid
         try:
-            envs = solutionDetails['environments']
+            envs = solutionDetails.get('environments')
             # Remove envs as it's processed separately, but in the same transaction.
             if "environments" in solutionDetails:
                 del solutionDetails["environments"]
-            solution_extension.create_solution_environments(oid, envs)
-
-            existing_solution.lastUpdated = ModelTools.get_utc_timestamp()
-            if solutionDetails.get("businessUnit"):
-                existing_solution.businessUnit = solutionDetails["businessUnit"]
-            if solutionDetails.get("cd"):
-                existing_solution.cd = solutionDetails["cd"]
-            if solutionDetails.get("ci"):
-                existing_solution.ci = solutionDetails["ci"]
-            if solutionDetails.get("costCentre"):
-                existing_solution.costCentre = solutionDetails["costCentre"]
-            if solutionDetails.get("description"):
-                existing_solution.description = solutionDetails["description"]
-            if solutionDetails.get("favourite"):
-                existing_solution.favourite = solutionDetails["favourite"]
-            if solutionDetails.get("isActive"):
-                existing_solution.isActive = solutionDetails["isActive"]
-            if solutionDetails.get("name"):
-                existing_solution.name = solutionDetails["name"]
-            if solutionDetails.get("sourceControl"):
-                existing_solution.sourceControl = solutionDetails["sourceControl"]
-            if solutionDetails.get("teamId"):
-                existing_solution.teamId = solutionDetails["teamId"]
-            db.session.merge(existing_solution)
+                solution_extension.create_solution_environments(oid, envs)
+            schema = SolutionSchema(many=False)
+            new_solution = schema.load(solutionDetails, session=db.session)
+            new_solution.lastUpdated = ModelTools.get_utc_timestamp()            
+            db.session.merge(new_solution)
             db.session.commit()
 
-            existing_solution = solution_extension.expand_solution(existing_solution)  
+            new_solution = solution_extension.expand_solution(new_solution)  
             # return the updted solutions in the response
             schema = ExtendedSolutionSchema(many=False)
-            data = schema.dump(existing_solution)
+            data = schema.dump(new_solution)
             logger.debug("data: %s", data)
             return data, 200
         except:
