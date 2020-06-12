@@ -218,16 +218,20 @@ def update(oid, solutionDetails):
                 existing_solution.teamId = solutionDetails["teamId"]
             db.session.merge(existing_solution)
             db.session.commit()
+
+            existing_solution = solution_extension.expand_solution(existing_solution)  
+            # return the updted solutions in the response
+            schema = ExtendedSolutionSchema(many=False)
+            data = schema.dump(existing_solution)
+            logger.debug("data: %s", data)
+            return data, 200
         except:
             db.session.rollback()
             raise
         finally:
             db.session.close()
 
-        # return the updted solutions in the response
-        schema = ExtendedSolutionSchema(many=False)
-        data = schema.dump(solutionDetails)
-        return data, 200
+
 
     # otherwise, nope, deployment doesn't exist, so that's an error
     else:

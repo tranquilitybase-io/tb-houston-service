@@ -1,4 +1,3 @@
-import json
 import logging
 from config import db
 from tb_houston_service.models import Application
@@ -18,6 +17,7 @@ def expand_solution(sol):
         .filter(
             SolutionEnvironment.solutionId == sol.id,
             SolutionEnvironment.environmentId == LZEnvironment.id,
+            SolutionEnvironment.isActive
         )
         .all()
     )
@@ -51,12 +51,41 @@ def expand_solution_for_dac(sol):
 
 
 def create_solution_environments(solutionId, list_of_env_ids):
+    """
+    Args:
+        solutionId ([int]): [The Solution id]
+        list_of_env_ids ([list]): [A list of LZEnvironment ids]
+
+        1. Logically delete all active solution environments for this solution
+        2. Reactivate the solution env relationship that are in this list: list_of_env_ids
+        3. Create the solution env that are not in this list.
+
+    """
+
+    # Inactivates the active solution environments for this Solution (solutionId)
+    envs = db.session.query(SolutionEnvironment).filter(
+        SolutionEnvironment.solutionId == solutionId,
+        SolutionEnvironment.isActive
+    ).all()
+    for env in envs:
+        env.isActive = False
+    db.session.flush()
+
     for env in list_of_env_ids:
-        new_env_solution = SolutionEnvironment(
-            solutionId = solutionId, 
-            environmentId = env,
-            lastUpdated = ModelTools.get_utc_timestamp(),
-            isActive = True
+        existing_sol_env = db.session.query(SolutionEnvironment).filter(
+            SolutionEnvironment.solutionId == solutionId,
+            SolutionEnvironment.environmentId == env
+        ).one_or_none()
+
+        if existing_sol_env:
+            existing_sol_env.isActive = True
+            db.session.merge(existing_sol_env)
+        else:
+            new_env_solution = SolutionEnvironment(
+                solutionId = solutionId, 
+                environmentId = env,
+                lastUpdated = ModelTools.get_utc_timestamp(),
+                isActive = True
             )
-        db.session.add(new_env_solution)
+            db.session.add(new_env_solution)
         logger.debug("Added solution environment: {new_env_solution} to transaction.")
