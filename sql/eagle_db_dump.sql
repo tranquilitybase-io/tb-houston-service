@@ -247,7 +247,7 @@ CREATE TABLE `landingzoneaction` (
   `locked` tinyint(1) NOT NULL DEFAULT '0',
   `routerLink` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -256,7 +256,7 @@ CREATE TABLE `landingzoneaction` (
 
 LOCK TABLES `landingzoneaction` WRITE;
 /*!40000 ALTER TABLE `landingzoneaction` DISABLE KEYS */;
-INSERT INTO `landingzoneaction` VALUES (1,'Environment','','environment',0,0,'/administration/landing-zone/environment'),(2,'WAN','Network Setup','network-setup',0,1,'/administration/landing-zone/wan'),(3,'DNS','Network Setup','network-setup',75,1,''),(4,'Internet access','Network Setup','network-setup',9,1,''),(5,'SSO','AD Integration','ad-integration',25,1,''),(6,'ADFS','AD Integration','ad-integration',0,1,''),(7,'Stackdriver','Logging','logging',50,1,''),(8,'Data Dog','Logging','logging',30,1,''),(9,'Cloud Health','Billing/Cost Management','billing-cost-management',19,1,''),(10,'Security','','security',13,1,''),(11,'Multizone setup','','multizone-setup',12,1,'');
+INSERT INTO `landingzoneaction` VALUES (1,'Environment','','environment',0,0,'/administration/landing-zone/environment'),(2,'WAN','Network Setup','network-setup',0,1,'/administration/landing-zone/wan'),(3,'DNS','Network Setup','network-setup',0,1,''),(4,'Internet access','Network Setup','network-setup',0,1,''),(5,'SSO','AD Integration','ad-integration',0,1,''),(6,'ADFS','AD Integration','ad-integration',0,1,''),(7,'Stackdriver','Logging','logging',0,1,''),(8,'Data Dog','Logging','logging',0,1,''),(9,'Cloud Health','Billing/Cost Management','billing-cost-management',0,1,''),(10,'Security','','security',0,1,''),(11,'Multizone setup','','multizone-setup',0,1,'');
 /*!40000 ALTER TABLE `landingzoneaction` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -272,7 +272,7 @@ CREATE TABLE `landingzoneprogressitem` (
   `label` varchar(255) DEFAULT NULL,
   `completed` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -281,7 +281,7 @@ CREATE TABLE `landingzoneprogressitem` (
 
 LOCK TABLES `landingzoneprogressitem` WRITE;
 /*!40000 ALTER TABLE `landingzoneprogressitem` DISABLE KEYS */;
-INSERT INTO `landingzoneprogressitem` VALUES (0,'Environment',0),(1,'WAN',0),(2,'DNS',0),(3,'ADFS',0),(4,'SSO',0),(5,'Logging',0),(6,'Billing',0);
+INSERT INTO `landingzoneprogressitem` VALUES (1,'Environment',0),(2,'WAN',0),(3,'DNS',0),(4,'ADFS',0),(5,'SSO',0),(6,'Logging',0),(7,'Billing',0);
 /*!40000 ALTER TABLE `landingzoneprogressitem` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -349,7 +349,7 @@ CREATE TABLE `lzenvironment` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
   UNIQUE KEY `name_UNIQUE` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -358,7 +358,7 @@ CREATE TABLE `lzenvironment` (
 
 LOCK TABLES `lzenvironment` WRITE;
 /*!40000 ALTER TABLE `lzenvironment` DISABLE KEYS */;
-INSERT INTO `lzenvironment` VALUES (1,'Development',1),(2,'Production',1),(3,'test-env',1);
+INSERT INTO `lzenvironment` VALUES (1,'Development',1),(2,'Production',1);
 /*!40000 ALTER TABLE `lzenvironment` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -427,7 +427,7 @@ CREATE TABLE `lzlanvpc` (
   `isActive` tinyint(4) DEFAULT '1',
   PRIMARY KEY (`id`),
   UNIQUE KEY `idlzlanvpc_UNIQUE` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -436,7 +436,7 @@ CREATE TABLE `lzlanvpc` (
 
 LOCK TABLES `lzlanvpc` WRITE;
 /*!40000 ALTER TABLE `lzlanvpc` DISABLE KEYS */;
-INSERT INTO `lzlanvpc` VALUES (1,'string',1),(2,'Development VPC',1),(3,'Production VPC',1),(4,'PoC VPC',0);
+INSERT INTO `lzlanvpc` VALUES (1,'Development',1),(2,'Production',1);
 /*!40000 ALTER TABLE `lzlanvpc` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -455,7 +455,7 @@ CREATE TABLE `lzlanvpc_environment` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
   UNIQUE KEY `unq_lzlanvpc_environment` (`lzlanvpcId`,`environmentId`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -464,7 +464,7 @@ CREATE TABLE `lzlanvpc_environment` (
 
 LOCK TABLES `lzlanvpc_environment` WRITE;
 /*!40000 ALTER TABLE `lzlanvpc_environment` DISABLE KEYS */;
-INSERT INTO `lzlanvpc_environment` VALUES (1,1,1,1),(2,2,1,1),(3,1,2,1),(4,0,0,1);
+INSERT INTO `lzlanvpc_environment` VALUES (1,1,1,1),(2,2,2,1);
 /*!40000 ALTER TABLE `lzlanvpc_environment` ENABLE KEYS */;
 UNLOCK TABLES;
 
