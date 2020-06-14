@@ -78,11 +78,11 @@ def logical_delete_all_active():
     objs = db.session.query(LZLanVpc).filter(LZLanVpc.isActive == True).all()
     for o in objs:
         o.isActive = False
-    db.session.add(o)
+        db.session.add(o)
     objs = db.session.query(LZLanVpcEnvironment).filter(LZLanVpcEnvironment.isActive == True).all()
     for o in objs:
         o.isActive = False
-    db.session.add(o)    
+        db.session.add(o)    
 
 
 def create_all(lzLanVpcListDetails, readActiveOnly=False, bulkDelete=False):

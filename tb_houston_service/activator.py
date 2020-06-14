@@ -23,6 +23,8 @@ logger = logging.getLogger("tb_houston_service.activator")
 
 
 def read_all(
+    isActive=None,
+    isFavourite=None,
     category=None,
     status=None,
     environment=None,
@@ -43,6 +45,9 @@ def read_all(
 
     # Create the list of activators from our data
 
+    logger.debug("Parameters: isActive: %s, isFavourite: %s, category: %s, status: %s, environment: %s, platform: %s, type: %s, source: %s, sensitivity: %s, page: %s, page_size: %s, sort: %s",
+     isActive, isFavourite, category, status, environment, platform, type, source, sensitivity, page, page_size, sort)
+
     # pre-process sort instructions
     if sort == None:
         activator_query = db.session.query(Activator).order_by(Activator.id)
@@ -62,7 +67,7 @@ def read_all(
                 literal_column(", ".join(orderby_arr))
             )
         except Exception as e:
-            print(e)
+            logger.warning(e)
             activator_query = db.session.query(Activator).order_by(Activator.id)
 
     activator_query = activator_query.filter(
@@ -73,6 +78,8 @@ def read_all(
         (type == None or Activator.type == type),
         (source == None or Activator.sourceControl.like('%"{}"%'.format(source))),
         (sensitivity == None or Activator.sensitivity == sensitivity),
+        (isActive == None or Activator.isActive == isActive),
+        (isFavourite == None or Activator.isFavourite == isFavourite),        
     )
 
     if page == None or page_size == None:
@@ -97,7 +104,9 @@ def read_one(oid):
     :return:              activator matching key
     """
 
-    act = db.session.query(Activator).filter(Activator.id == oid).one_or_none()
+    act = db.session.query(Activator).filter(
+        Activator.id == oid
+    ).one_or_none()
 
     if act is not None:
         # Serialize the data for the response
@@ -123,8 +132,6 @@ def create(activatorDetails):
 
     schema = ActivatorSchema()
     new_activator = schema.load(activatorDetails, session=db.session)
-    new_activator.lastUpdated = ModelTools.get_utc_timestamp()
-
     db.session.add(new_activator)
     db.session.commit()
 
@@ -163,7 +170,6 @@ def update(oid, activatorDetails):
     if existing_activator is not None:
         # schema = ActivatorSchema()
         activatorDetails["id"] = oid
-        activatorDetails["lastUpdated"] = ModelTools.get_utc_timestamp()
         logger.info("activatorDetails: %s", activatorDetails)
         schema = ActivatorSchema(many=False, session=db.session)
         updatedActivator = schema.load(activatorDetails)
@@ -193,7 +199,8 @@ def delete(oid):
 
     # if found?
     if existing_activator is not None:
-        db.session.delete(existing_activator)
+        existing_activator.isActive = False
+        db.session.merge(existing_activator)
         db.session.commit()
 
         return make_response(f"Activator id {oid} successfully deleted", 200)
@@ -213,7 +220,7 @@ def setActivatorStatus(activatorDetails):
     # Does the activator to delete exist?
     existing_activator = (
         db.session.query(Activator)
-        .filter(Activator.id == activatorDetails["id"])
+        .filter(Activator.id == activatorDetails["id"], Activator.isActive)
         .one_or_none()
     )
 
