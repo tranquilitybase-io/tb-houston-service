@@ -100,6 +100,7 @@ def create(lzenvDetails):
         else:
             # Just create a new object from the details
             app.logger.debug(f"lzmetadata_env::create: {lzenvDetails}")
+            lzenvDetails.pop("id", None)
             env_change = schema.load(lzenvDetails, session=db.session)
             db.session.add(env_change)
             db.session.commit()

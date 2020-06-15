@@ -6,7 +6,7 @@ lzlanvpc collection
 # 3rd party modules
 from pprint import pformat
 import logging
-from flask import make_response
+from flask import make_response, abort
 from config import db, app
 from tb_houston_service.models import LZLanVpc, LZLanVpcSchema
 from tb_houston_service.models import LZLanVpcEnvironment
@@ -66,7 +66,7 @@ def create(lzLanVpcDetails):
             .filter(LZLanVpc.id == lzLanVpcDetails["id"])
             .one_or_none()
         )
-        app.logger.debug("lzmetadata_env::create: %s, %s.", lzLanVpcDetails, existing_lanvpc)        
+        app.logger.debug("lzlanvpc::create: %s, %s.", lzLanVpcDetails, existing_lanvpc)        
         if existing_lanvpc is not None:
             updated_lanvpc = schema.load(lzLanVpcDetails, session=db.session)
             db.session.merge(updated_lanvpc)
@@ -77,13 +77,29 @@ def create(lzLanVpcDetails):
     if "id" in lzLanVpcDetails:
         del lzLanVpcDetails["id"] 
     else:
-        logger.debug("Create: id was missing so creating a new object.")
+        logger.debug("Create: id was missing so creating a new object instead.")
             
-    app.logger.debug(f"lzmetadata_env::create: {lzLanVpcDetails}")
-    lzlanvpc_change = schema.load(lzLanVpcDetails, session=db.session)
-    db.session.add(lzlanvpc_change)
-    db.session.flush()
-    lzlanvpc_extension.create_lzlanvpc_environments(lzlanvpc_change.id, envs) 
+    if "name" in lzLanVpcDetails:
+        existing_lanvpc = (
+            db.session.query(LZLanVpc)
+            .filter(LZLanVpc.name == lzLanVpcDetails.get("name"))
+            .first()
+        )
+        if existing_lanvpc:
+            app.logger.debug(f"lzlanvpc::create: {lzLanVpcDetails}")
+            lzLanVpcDetails["id"] = existing_lanvpc.id
+            lzlanvpc_change = schema.load(lzLanVpcDetails, session=db.session)
+            db.session.merge(lzlanvpc_change)
+            db.session.flush()
+            lzlanvpc_extension.create_lzlanvpc_environments(lzlanvpc_change.id, envs)
+        else:
+            app.logger.debug(f"lzlanvpc::create: {lzLanVpcDetails}")
+            lzlanvpc_new = schema.load(lzLanVpcDetails, session=db.session)
+            db.session.add(lzlanvpc_new)
+            db.session.flush()
+            lzlanvpc_extension.create_lzlanvpc_environments(lzlanvpc_new.id, envs)
+    else:
+        abort("Cannot create without the id or name.", 500)
 
 
 def logical_delete_all_active():
