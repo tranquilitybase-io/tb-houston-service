@@ -11,6 +11,8 @@ from sqlalchemy import literal_column
 
 from config import db, app
 from tb_houston_service.models import TeamMember, TeamMemberSchema
+from tb_houston_service.team_member_extension import expand_team_member
+from tb_houston_service.extendedSchemas import ExtendedTeamMemberFullSchema
 
 
 def read_all(
@@ -67,6 +69,62 @@ def read_all(
     return data
 
 
+def read_all_full_details(
+    userId=None, teamId=None, active=None, page=None, page_size=None, sort=None
+):
+    """
+    Gets the complete lists of team members
+    Responds to a request for /api/teammember
+
+    :return:        json string of list of team members
+    """
+
+    # Create the list of team members from our data
+    # pre-process sort instructions
+
+    if sort == None:
+        teammember_query = db.session.query(TeamMember).order_by(TeamMember.id)
+
+    else:
+        try:
+            sort_inst = [si.split(":") for si in sort]
+            orderby_arr = []
+            for si in sort_inst:
+                si1 = si[0]
+                if len(si) > 1:
+                    si2 = si[1]
+                else:
+                    si2 = "asc"
+                orderby_arr.append(f"{si1} {si2}")
+            # print("orderby: {}".format(orderby_arr))
+            teammember_query = db.session.query(TeamMember).order_by(
+                literal_column(", ".join(orderby_arr))
+            )
+        except Exception as e:
+            print(e)
+            teammember_query = db.session.query(TeamMember).order_by(TeamMember.id)
+
+    teammember_query = teammember_query.filter(
+        (userId == None or TeamMember.userId == userId),
+        (teamId == None or TeamMember.teamId == teamId),
+        (active == None or TeamMember.isActive == active),
+    )
+
+    if page == None or page_size == None:
+        teammembers = teammember_query.all()
+    else:
+        teammembers = teammember_query.limit(page_size).offset(page * page_size).all()
+
+    # Serialize the data for the response
+    for tm in teammembers:
+        expand_team_member(tm)
+    teammember_schema = ExtendedTeamMemberFullSchema(many=True)
+    data = teammember_schema.dump(teammembers)
+    app.logger.debug("team members data:")
+    app.logger.debug(pformat(data))
+    return data
+
+
 def read_one(oid):
     """
     Responds to a request for /api/teammember/{oid}
@@ -80,8 +138,9 @@ def read_one(oid):
 
     if teammember is not None:
         # Serialize the data for the response
-        team_member_schema = TeamMemberSchema()
-        data = team_member_schema.dump(teammember)
+        expand_team_member(teammember)
+        teammember_schema = ExtendedTeamMemberFullSchema(many=False)
+        data = teammember_schema.dump(teammember)
         return data
     else:
         abort(404, f"Team Member with id {oid} not found")

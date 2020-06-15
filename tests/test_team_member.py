@@ -10,8 +10,8 @@ from tests import pytest_lib
 LOG_LEVEL = logging.INFO  # DEBUG, INFO, WARNING, ERROR, CRITICAL
 
 HOUSTON_SERVICE_URL = os.environ["HOUSTON_SERVICE_URL"]
-url = f"http://{HOUSTON_SERVICE_URL}/api/teammember/"
-plural_url = f"http://{HOUSTON_SERVICE_URL}/api/teammembers/"
+url = f"http://{HOUSTON_SERVICE_URL}/api/teamMember/"
+plural_url = f"http://{HOUSTON_SERVICE_URL}/api/teamMembers/"
 
 
 # Additional headers.
