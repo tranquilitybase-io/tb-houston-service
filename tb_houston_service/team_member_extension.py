@@ -1,6 +1,6 @@
 import logging
 from config import db
-from tb_houston_service.models import Role, TeamMember, Team, User
+from tb_houston_service.models import Role, Team, User
 from tb_houston_service.team_extension import expand_team
 
 logger = logging.getLogger("tb_houston_service.teammember")
