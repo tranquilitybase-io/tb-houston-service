@@ -5,7 +5,7 @@ environment collection
 
 # 3rd party modules
 from pprint import pformat
-from flask import make_response
+from flask import make_response, abort
 from config import db, app
 from tb_houston_service.models import LZEnvironment, LZEnvironmentSchema
 from tb_houston_service.extendedSchemas import KeyValueSchema
@@ -57,40 +57,63 @@ def read_all_key_values():
 
 def create(lzenvDetails):
     app.logger.debug(f"lzmetadata_env::create: {lzenvDetails}")
-    # Remove the id
-    lzenvDetails.pop("id", None)
+
     # Does the environment exist in environment list?
-    existing_environment = (
-        db.session.query(LZEnvironment)
-        .filter(LZEnvironment.name == lzenvDetails["name"])
-        .one_or_none()
-    )
+
     schema = LZEnvironmentSchema()
 
     # Does environment exist?
-    if existing_environment is not None:
-        app.logger.debug(
-            f"lzmetadata_env::update: {lzenvDetails} {existing_environment}"
+    if lzenvDetails.get("id"):
+        existing_environment = (
+            db.session.query(LZEnvironment)
+            .filter(LZEnvironment.id == lzenvDetails["id"])
+            .one_or_none()
         )
-        existing_environment.isActive = lzenvDetails.get("isActive")
-        db.session.merge(existing_environment)
-        db.session.commit()
-        data = schema.dump(existing_environment)
-        return data, 201
-    else:
-        app.logger.debug(f"lzmetadata_env::create: {lzenvDetails}")
-        env_change = schema.load(lzenvDetails, session=db.session)
-        db.session.add(env_change)
-        db.session.commit()
-        data = schema.dump(env_change)
-        return data, 201
 
+        if existing_environment is not None:
+            app.logger.debug(
+                f"lzmetadata_env::update: {lzenvDetails} {existing_environment}"
+            )
+            updated_env = schema.load(lzenvDetails, session=db.session)
+            db.session.merge(updated_env)
+            db.session.commit()
+            data = schema.dump(updated_env)
+            return data, 201
+    
+    # Can't find without the id, so search using the name 
+    if lzenvDetails.get("name"):
+        existing_environment = (
+            db.session.query(LZEnvironment)
+            .filter(LZEnvironment.name == lzenvDetails["name"])
+            .one_or_none()
+        )
+        if existing_environment is not None:
+            app.logger.debug(
+                f"lzmetadata_env::update: {lzenvDetails} {existing_environment}"
+            )
+            updated_env = schema.load(lzenvDetails, session=db.session)
+            updated_env.id = existing_environment.id
+            db.session.merge(updated_env)
+            db.session.commit()
+            data = schema.dump(updated_env)
+            return data, 201
+        else:
+            # Just create a new object from the details
+            app.logger.debug(f"lzmetadata_env::create: {lzenvDetails}")
+            lzenvDetails.pop("id", None)
+            env_change = schema.load(lzenvDetails, session=db.session)
+            db.session.add(env_change)
+            db.session.commit()
+            data = schema.dump(env_change)
+            return data, 201
+    abort("Create: Unable to create without the id or name!", 500)
+ 
 
 def logical_delete_all_active():
     objs = db.session.query(LZEnvironment).filter(LZEnvironment.isActive == True).all()
     for o in objs:
         o.isActive = False
-    db.session.add(o)
+        db.session.add(o)
 
 
 def create_all(lzMetadataEnvListDetails, readActiveOnly=False, bulkDelete=False):
