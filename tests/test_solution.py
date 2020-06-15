@@ -2,6 +2,7 @@ import requests
 import json
 import os
 from pprint import pprint
+from tests import pytest_lib
 
 
 HOUSTON_SERVICE_URL = os.environ["HOUSTON_SERVICE_URL"]
@@ -14,14 +15,15 @@ id = 0
 
 def typestest(resp):
     assert isinstance(resp["isActive"], bool)
+    assert isinstance(resp["isFavourite"], bool)
+    assert isinstance(resp["lastUpdated"], str)
+    assert isinstance(resp["applications"], list)
     assert isinstance(resp["businessUnit"], str)
     assert isinstance(resp["ci"], str)
     assert isinstance(resp["cd"], str)
     assert isinstance(resp["costCentre"], str)
     assert isinstance(resp["description"], str)
-    assert isinstance(resp["favourite"], bool)
     assert isinstance(resp["id"], int)
-    assert isinstance(resp["lastUpdated"], str)
     assert isinstance(resp["name"], str)
     assert isinstance(resp["sourceControl"], str)
     assert isinstance(resp["teamId"], int)
@@ -31,14 +33,15 @@ def typestest(resp):
 def test_solution():
 
     # Testing POST request
-    id = post()
+    oid = post()
     # Testing PUT request
-    put(id)
+    put(oid)
     # Testing DELETE request
-    delete(id)
-    # Testing GETALL request
+    pytest_lib.logical_delete(url, oid)
+    # Test GETALL test
     get_all()
-    # Test GET Activator Meta
+    # Test GETONE test
+    get_one(oid)
 
 
 def post():
@@ -52,12 +55,12 @@ def post():
         "ci": "test",
         "costCentre": "test",
         "description": "test",
-        "favourite": True,
+        "isFavourite": True,
         "id": 0,
         "name": "test",
         "sourceControl": "test",
         "teamId": 1,
-        "environments": [1]
+        "environments": [1, 2, 3]
     }
 
     # convert dict to json by json.dumps() for body data.
@@ -77,6 +80,7 @@ def post():
     assert resp_json["name"] == "test"
     assert resp_json["businessUnit"] == "test"
     assert resp_json["description"] == "test"
+    assert len(resp_json["environments"]) == 3
     assert resp_headers["content-type"] == "application/json"
     typestest(resp_json)
     return id
@@ -85,20 +89,19 @@ def post():
 def put(id):
     print("Put Tests")
 
-    true = 1 == 1
     # Test Update Then get new value
     newpayload = {
         "id": int(id),
-        "isActive": true,
+        "isActive": True,
         "businessUnit": "test put",
         "cd": "test put",
         "ci": "test put",
         "costCentre": "test put",
         "description": "test put",
-        "favourite": true,
+        "isFavourite": True,
         "name": "test put",
         "sourceControl": "test put",
-        "environments": [1]
+        "environments": [1, 3]
     }
 
     resp = requests.put(
@@ -121,22 +124,8 @@ def put(id):
     assert resp_json["ci"] == "test put"
     assert resp_json["cd"] == "test put"
     assert resp_json["sourceControl"] == "test put"
+    assert len(resp_json["environments"]) == 2
     typestest(resp_json)
-
-
-def delete(id):
-    print("Delete Tests")
-
-    # Test Delete Then GET
-    resp = requests.delete(url + id, headers=headers)
-    # Validate Delete response
-    assert resp.status_code == 200
-
-    # Then GET request to check the item has been actully deleted
-    resp = requests.get(url + id, headers=headers)
-    # Validate Get response
-    # resp_json = resp.json()
-    assert resp.status_code == 404
 
 
 def get_all():
@@ -144,5 +133,22 @@ def get_all():
 
     url = f"http://{HOUSTON_SERVICE_URL}/api/solutions/"
     resp = requests.get(url, headers=headers)
+    resp_json = resp.json()
     # Validate Get All response
     assert resp.status_code == 200
+    for r in resp_json:
+        typestest(r)
+
+
+def get_one(oid):
+    print("get_one Test")
+
+    resp = requests.get(url+str(oid), headers=headers)
+    resp_json = resp.json()
+    # Validate Get One response
+    assert resp.status_code == 200
+    typestest(resp_json)
+
+
+if __name__ == "__main__":
+    test_solution()

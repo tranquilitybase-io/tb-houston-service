@@ -40,6 +40,7 @@ def logical_delete(url, oid):
     # Validate Get response
     assert resp.status_code == 200
     resp_json = resp.json()
+    print("resp_json: {resp_json}")
     assert resp_json.get("isActive") == False
 
 
@@ -56,6 +57,10 @@ def delete_error(url, oid):
 def typestest_activator(obj):
     accessRequestedBy = obj["accessRequestedBy"]
     assert isinstance(accessRequestedBy, dict) or accessRequestedBy is None
+    assert isinstance(obj["id"], int)
+    assert isinstance(obj["isActive"], bool)
+    assert isinstance(obj["lastUpdated"], str)
+    assert isinstance(obj["isFavourite"], bool)
     assert isinstance(obj["activator"], str)
     assert isinstance(obj["activatorLink"], str)
     assert isinstance(obj["apiManagement"], list)
@@ -67,8 +72,6 @@ def typestest_activator(obj):
     assert isinstance(obj["ci"], list)
     assert isinstance(obj["description"], str)
     assert isinstance(obj["hosting"], list)
-    assert isinstance(obj["id"], int)
-    assert isinstance(obj["lastUpdated"], str)
     assert isinstance(obj["name"], str)
     assert isinstance(obj["platforms"], list)
     assert isinstance(obj["regions"], list)
@@ -85,10 +88,12 @@ def typestest_activator(obj):
 
 def typestest_application(obj):
     assert isinstance(obj["id"], int)
+    assert isinstance(obj["isActive"], bool)
+    assert isinstance(obj["lastUpdated"], str)
+    assert isinstance(obj["isFavourite"], bool)
     assert isinstance(obj["activatorId"], int)
     assert isinstance(obj["description"], str)
     assert isinstance(obj["env"], str)
-    assert isinstance(obj["lastUpdated"], str)
     assert isinstance(obj["name"], str)
     assert isinstance(obj["resources"], list)
     assert isinstance(obj["solutionId"], int)
@@ -111,14 +116,14 @@ def typestest_team(obj):
 
 def typestest_solution(obj):
     assert isinstance(obj["isActive"], bool)
+    assert isinstance(obj["lastUpdated"], str)
+    assert isinstance(obj["isFavourite"], bool)
     assert isinstance(obj["businessUnit"], str)
     assert isinstance(obj["ci"], str)
     assert isinstance(obj["cd"], str)
     assert isinstance(obj["costCentre"], str)
     assert isinstance(obj["description"], str)
-    assert isinstance(obj["favourite"], bool)
     assert isinstance(obj["id"], int)
-    assert isinstance(obj["lastUpdated"], str)
     assert isinstance(obj["name"], str)
     assert isinstance(obj["sourceControl"], str)
     assert isinstance(obj["teamId"], int)

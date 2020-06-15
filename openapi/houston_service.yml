@@ -66,6 +66,14 @@ paths:
       description: Read the list of applications
       parameters:
         - in: query
+          name: isActive
+          schema:
+            type: boolean
+        - in: query
+          name: isFavourite
+          schema:
+            type: boolean                    
+        - in: query
           name: status
           schema:
             type: string
@@ -129,7 +137,7 @@ paths:
           description: oid of the application to get from the list
           required: true
           schema:
-            type: integer
+            type: integer          
       responses:
         "200":
           description: Successfully read an application from the list
@@ -1064,9 +1072,13 @@ paths:
       description: Read the list of solutions
       parameters:
         - in: query
-          name: active
+          name: isActive
           schema:
             type: boolean
+        - in: query            
+          name: isFavourite
+          schema:
+            type: boolean             
         - in: query
           name: namesonly
           schema:
@@ -1429,6 +1441,14 @@ paths:
       description: Read the list of activators
       parameters:
         - in: query
+          name: isActive
+          schema:
+            type: boolean   
+        - in: query
+          name: isFavourite
+          schema:
+            type: boolean                    
+        - in: query
           name: category
           schema:
             type: string
@@ -1507,7 +1527,7 @@ paths:
           description: key of the activator to get from the list
           required: true
           schema:
-            type: string
+            type: string           
       responses:
         "200":
           description: Successfully read an activator from the list
@@ -2751,6 +2771,12 @@ components:
         id:
           type: integer
           description: id
+        isActive:
+          type: boolean
+          description: is active
+        isFavourite:
+          type: boolean
+          description: is favourite
         name:
           type: string
           description: name
@@ -2852,6 +2878,15 @@ components:
         id:
           type: integer
           description: id
+        isActive:
+          type: boolean
+          description: is active
+        lastUpdated:
+          type: string
+          description: last updated datetime UTC
+        isFavourite:
+          type: boolean
+          description: is favourite
         solutionId:
           type: integer
           description: solutionId
@@ -3156,6 +3191,15 @@ components:
         id:
           type: integer
           description: The solution id
+        isActive:
+          type: boolean
+          description: active
+        isFavourite:
+          type: boolean
+          description: isFavourite      
+        lastUpdated:
+          type: string
+          description: "UTC/CUT last updated datetime stamp see: https://github.com/tranquilitybase-io/tb-houston-service/wiki/UTC-Timestamp"
         name:
           type: string
           description: name
@@ -3179,12 +3223,6 @@ components:
           description: sourceControl
           items:
             type: string
-        isActive:
-          type: boolean
-          description: active
-        favourite:
-          type: boolean
-          description: favourite
         teamId:
           type: integer
           description: teamId
@@ -3193,9 +3231,6 @@ components:
           items:
             type: integer
             description: environment ids
-        lastUpdated:
-          type: string
-          description: "UTC/CUT last updated datetime stamp see: https://github.com/tranquilitybase-io/tb-houston-service/wiki/UTC-Timestamp"
 
     SolutionDeployment:
       type: object

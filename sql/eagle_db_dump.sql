@@ -1,5 +1,3 @@
-use eagle_db;
-
 -- MySQL dump 10.13  Distrib 5.7.29, for macos10.14 (x86_64)
 --
 -- Host: localhost    Database: eagle_db
@@ -26,6 +24,9 @@ DROP TABLE IF EXISTS `activator`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `activator` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `isActive` tinyint(1) NOT NULL DEFAULT '1',
+  `lastUpdated` datetime DEFAULT NULL,
+  `isFavourite` tinyint(1) NOT NULL DEFAULT '0',
   `name` varchar(255) DEFAULT NULL,
   `category` varchar(255) DEFAULT NULL,
   `available` tinyint(1) DEFAULT NULL,
@@ -33,7 +34,6 @@ CREATE TABLE `activator` (
   `type` varchar(255) DEFAULT NULL,
   `envs` varchar(255) DEFAULT NULL,
   `platforms` varchar(255) DEFAULT NULL,
-  `lastUpdated` datetime DEFAULT NULL,
   `userCapacity` int(11) DEFAULT NULL,
   `serverCapacity` int(11) DEFAULT NULL,
   `regions` varchar(255) DEFAULT NULL,
@@ -62,7 +62,7 @@ CREATE TABLE `activator` (
 
 LOCK TABLES `activator` WRITE;
 /*!40000 ALTER TABLE `activator` DISABLE KEYS */;
-INSERT INTO `activator` VALUES (1,'CMS Web App','Web application',1,'Public','Tier 3','[\"POC\", \"DEV\"]','[\"GCP\"]','2020-05-12 08:29:07',1000,1200,'[\"UK\", \"DB\"]','[\"Appengine\"]','[\"ApiGee\"]','[\"Jenkins\", \"Travis\"]','[\"Codeship\", \"Option\"]','[\"JIRA\", \"Option\"]','FICC Business Unit','Sanjeev Gupta','s.gupta@company.name','Monthly: Eagle tier 3','Single Region Kubernetes','Available','Some very long description that I did not want to copy. Some very long description that I did not want to copy. Some very long description that I did not want to copy',0,'open',''),(2,'Multi region kubernetes','Micro-services',1,'Restricted','Tier 1','[\"POC\", \"AWS\", \"Other\", \"Fancy\"]','[\"GCP\"]','2020-05-07 08:38:56',1300,2000,'[\"UK\", \"DB\"]','[\"Appengine\"]','[\"ApiGee\"]','[\"Jenkins\", \"Travis\"]','[\"Codeship\", \"Option\"]','[\"JIRA\", \"Option\"]','M&A Business Unit','Nathanael Stoltenberg','Nathanael.Stoltenberg@yahoo.com','Monthly: Eagle tier 1','Multi Region Kubernetes','Deprecated','Some very long description that I did not want to copy. Some very long description that I did not want to copy. Some very long description that I did not want to copy',0,'open',''),(3,'SQL Single region kubernetes','Micro-services',1,'Restricted','Tier 2','[\"POC\", \"Prod\"]','[\"Azure\", \"GCP\", \"AWS\", \"Other\", \"Fancy\"]','2020-05-07 10:49:44',100,120,'[\"UK\", \"DB\"]','[\"Appengine\"]','[\"ApiGee\"]','[\"Jenkins\", \"Travis\"]','[\"Codeship\", \"Option\"]','[\"JIRA\", \"Option\"]','Equity Capital Business Unit','Brando Howell','Brando.Howell@hotmail.com','Monthly: Eagle tier 2','SQL Single region kubernetes','Deprecated','Some very long description that I did not want to copy. Some very long description that I did not want to copy. Some very long description that I did not want to copy',0,'open',''),(4,'CMS Web App','Tier 3',1,'Public','Web application','[\"POC\", \"DEV\", \"PRD\"]','[\"GCP\", \"Cloud Foundry\"]','2020-05-12 08:29:57',500,300,'[\"UK\", \"DB\"]','[\"Appengine\"]','[\"ApiGee\"]','[\"Jenkins\", \"Travis\"]','[\"Codeship\", \"Option\"]','[\"JIRA\", \"Option\"]','Debit Capital Business Unit','Mohammed Will PhD','Mohammed.Will@gmail.com','Monthly: Eagle tier 3','CMS Web App','Available','Some very long description that I did not want to copy. Some very long description that I did not want to copy. Some very long description that I did not want to copy',0,'thirdparty',''),(5,'Multi region kubernetes','Micro-services',1,'Restricted','Tier 1','[\"POC\", \"AWS\", \"Other\", \"Fancy\"]','[\"GCP\"]','2020-05-07 10:56:43',1600,2500,'[\"UK\", \"DB\"]','[\"Appengine\"]','[\"ApiGee\"]','[\"Jenkins\", \"Travis\"]','[\"Codeship\", \"Option\"]','[\"JIRA\", \"Option\"]','FICC Business Unit','Tressa Ullrich','Tressa97@yahoo.com','Monthly: Eagle tier 1','Multi region kubernetes','Locked','Some very long description that I did not want to copy. Some very long description that I did not want to copy. Some very long description that I did not want to copy',0,'thirdparty',''),(6,'SQL Single region kubernetes','Micro-services',1,'Restricted','Tier 2','[\"POC\", \"Prod\"]','[\"Azure\", \"GCP\", \"AWS\", \"Other\", \"Fancy\"]','2020-04-02 19:25:52',900,600,'[\"UK\", \"DB\", \"HK\", \"US\", \"AU\"]','[\"Appengine\"]','[\"ApiGee\"]','[\"Jenkins\", \"Travis\"]','[\"Codeship\", \"Option\"]','[\"JIRA\", \"Option\"]','M&A Business Unit','Rose Dickens Sr.','Rose.Dickens19@hotmail.com','Monthly: Eagle tier 2','SQL Single region kubernetes','Available','Some very long description that I did not want to copy. Some very long description that I did not want to copy. Some very long description that I did not want to copy',0,'internal',''),(7,'CMS Web App','Web application',1,'Public','Tier 3','[\"POC\", \"DEV\", \"PRD\"]','[\"GCP\"]','2020-04-07 13:39:47',1000,1200,'[\"UK\", \"DB\"]','[\"Appengine\"]','[\"ApiGee\"]','[\"Jenkins\", \"Travis\"]','[\"Codeship\", \"Option\"]','[\"JIRA\", \"Option\"]','FICC Business Unit','Sanjeev Gupta','s.gupta@company.name','Monthly: Eagle tier 3','Single Region Kubernetes','Available','Some very long description that I did not want to copy. Some very long description that I did not want to copy. Some very long description that I did not want to copy',0,'open',''),(8,'CMS Web App','Web application',1,'Public','Tier 3','[\"POC\", \"DEV\", \"PRD\"]','[\"GCP\"]','2020-04-07 13:38:22',1000,1200,'[\"UK\", \"DB\"]','[\"Appengine\"]','[\"ApiGee\"]','[\"Jenkins\", \"Travis\"]','[\"Codeship\", \"Option\"]','[\"JIRA\", \"Option\"]','FICC Business Unit','Sanjeev Gupta','s.gupta@company.name','Monthly: Eagle tier 3','Single Region Kubernetes','Available','Some very long description that I did not want to copy. Some very long description that I did not want to copy. Some very long description that I did not want to copy',0,'open',''),(9,'CMS Web App','Web application',1,'Public','Tier 3','[\"POC\", \"DEV\"]','[\"GCP\"]','2020-05-07 10:55:49',1000,1200,'[\"UK\", \"DB\"]','[\"Appengine\"]','[\"ApiGee\"]','[\"Jenkins\", \"Travis\"]','[\"Codeship\", \"Option\"]','[\"JIRA\", \"Option\"]','FICC Business Unit','Sanjeev Gupta','s.gupta@company.name','Monthly: Eagle tier 3','Single Region Kubernetes','Locked','Some very long description that I did not want to copy. Some very long description that I did not want to copy. Some very long description that I did not want to copy',0,'open','');
+INSERT INTO `activator` VALUES (1,1,'2020-05-12 08:29:07',0,'CMS Web App','Web application',1,'Public','Tier 3','[\"POC\", \"DEV\"]','[\"GCP\"]',1000,1200,'[\"UK\", \"DB\"]','[\"Appengine\"]','[\"ApiGee\"]','[\"Jenkins\", \"Travis\"]','[\"Codeship\", \"Option\"]','[\"JIRA\", \"Option\"]','FICC Business Unit','Sanjeev Gupta','s.gupta@company.name','Monthly: Eagle tier 3','Single Region Kubernetes','Available','Some very long description that I did not want to copy. Some very long description that I did not want to copy. Some very long description that I did not want to copy',0,'open',''),(2,1,'2020-05-07 08:38:56',0,'Multi region kubernetes','Micro-services',1,'Restricted','Tier 1','[\"POC\", \"AWS\", \"Other\", \"Fancy\"]','[\"GCP\"]',1300,2000,'[\"UK\", \"DB\"]','[\"Appengine\"]','[\"ApiGee\"]','[\"Jenkins\", \"Travis\"]','[\"Codeship\", \"Option\"]','[\"JIRA\", \"Option\"]','M&A Business Unit','Nathanael Stoltenberg','Nathanael.Stoltenberg@yahoo.com','Monthly: Eagle tier 1','Multi Region Kubernetes','Deprecated','Some very long description that I did not want to copy. Some very long description that I did not want to copy. Some very long description that I did not want to copy',0,'open',''),(3,1,'2020-05-07 10:49:44',0,'SQL Single region kubernetes','Micro-services',1,'Restricted','Tier 2','[\"POC\", \"Prod\"]','[\"Azure\", \"GCP\", \"AWS\", \"Other\", \"Fancy\"]',100,120,'[\"UK\", \"DB\"]','[\"Appengine\"]','[\"ApiGee\"]','[\"Jenkins\", \"Travis\"]','[\"Codeship\", \"Option\"]','[\"JIRA\", \"Option\"]','Equity Capital Business Unit','Brando Howell','Brando.Howell@hotmail.com','Monthly: Eagle tier 2','SQL Single region kubernetes','Deprecated','Some very long description that I did not want to copy. Some very long description that I did not want to copy. Some very long description that I did not want to copy',0,'open',''),(4,1,'2020-05-12 08:29:57',0,'CMS Web App','Tier 3',1,'Public','Web application','[\"POC\", \"DEV\", \"PRD\"]','[\"GCP\", \"Cloud Foundry\"]',500,300,'[\"UK\", \"DB\"]','[\"Appengine\"]','[\"ApiGee\"]','[\"Jenkins\", \"Travis\"]','[\"Codeship\", \"Option\"]','[\"JIRA\", \"Option\"]','Debit Capital Business Unit','Mohammed Will PhD','Mohammed.Will@gmail.com','Monthly: Eagle tier 3','CMS Web App','Available','Some very long description that I did not want to copy. Some very long description that I did not want to copy. Some very long description that I did not want to copy',0,'thirdparty',''),(5,1,'2020-05-07 10:56:43',0,'Multi region kubernetes','Micro-services',1,'Restricted','Tier 1','[\"POC\", \"AWS\", \"Other\", \"Fancy\"]','[\"GCP\"]',1600,2500,'[\"UK\", \"DB\"]','[\"Appengine\"]','[\"ApiGee\"]','[\"Jenkins\", \"Travis\"]','[\"Codeship\", \"Option\"]','[\"JIRA\", \"Option\"]','FICC Business Unit','Tressa Ullrich','Tressa97@yahoo.com','Monthly: Eagle tier 1','Multi region kubernetes','Locked','Some very long description that I did not want to copy. Some very long description that I did not want to copy. Some very long description that I did not want to copy',0,'thirdparty',''),(6,1,'2020-04-02 19:25:52',0,'SQL Single region kubernetes','Micro-services',1,'Restricted','Tier 2','[\"POC\", \"Prod\"]','[\"Azure\", \"GCP\", \"AWS\", \"Other\", \"Fancy\"]',900,600,'[\"UK\", \"DB\", \"HK\", \"US\", \"AU\"]','[\"Appengine\"]','[\"ApiGee\"]','[\"Jenkins\", \"Travis\"]','[\"Codeship\", \"Option\"]','[\"JIRA\", \"Option\"]','M&A Business Unit','Rose Dickens Sr.','Rose.Dickens19@hotmail.com','Monthly: Eagle tier 2','SQL Single region kubernetes','Available','Some very long description that I did not want to copy. Some very long description that I did not want to copy. Some very long description that I did not want to copy',0,'internal',''),(7,1,'2020-04-07 13:39:47',0,'CMS Web App','Web application',1,'Public','Tier 3','[\"POC\", \"DEV\", \"PRD\"]','[\"GCP\"]',1000,1200,'[\"UK\", \"DB\"]','[\"Appengine\"]','[\"ApiGee\"]','[\"Jenkins\", \"Travis\"]','[\"Codeship\", \"Option\"]','[\"JIRA\", \"Option\"]','FICC Business Unit','Sanjeev Gupta','s.gupta@company.name','Monthly: Eagle tier 3','Single Region Kubernetes','Available','Some very long description that I did not want to copy. Some very long description that I did not want to copy. Some very long description that I did not want to copy',0,'open',''),(8,1,'2020-04-07 13:38:22',0,'CMS Web App','Web application',1,'Public','Tier 3','[\"POC\", \"DEV\", \"PRD\"]','[\"GCP\"]',1000,1200,'[\"UK\", \"DB\"]','[\"Appengine\"]','[\"ApiGee\"]','[\"Jenkins\", \"Travis\"]','[\"Codeship\", \"Option\"]','[\"JIRA\", \"Option\"]','FICC Business Unit','Sanjeev Gupta','s.gupta@company.name','Monthly: Eagle tier 3','Single Region Kubernetes','Available','Some very long description that I did not want to copy. Some very long description that I did not want to copy. Some very long description that I did not want to copy',0,'open',''),(9,1,'2020-05-07 10:55:49',0,'CMS Web App','Web application',1,'Public','Tier 3','[\"POC\", \"DEV\"]','[\"GCP\"]',1000,1200,'[\"UK\", \"DB\"]','[\"Appengine\"]','[\"ApiGee\"]','[\"Jenkins\", \"Travis\"]','[\"Codeship\", \"Option\"]','[\"JIRA\", \"Option\"]','FICC Business Unit','Sanjeev Gupta','s.gupta@company.name','Monthly: Eagle tier 3','Single Region Kubernetes','Locked','Some very long description that I did not want to copy. Some very long description that I did not want to copy. Some very long description that I did not want to copy',0,'open','');
 /*!40000 ALTER TABLE `activator` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -75,17 +75,21 @@ DROP TABLE IF EXISTS `application`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `application` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `isActive` tinyint(1) NOT NULL DEFAULT '1',
+  `lastUpdated` datetime DEFAULT NULL,
+  `isFavourite` tinyint(1) NOT NULL DEFAULT '0',
   `solutionId` int(11) NOT NULL,
   `activatorId` int(11) NOT NULL,
   `name` varchar(255) DEFAULT NULL,
   `env` varchar(255) DEFAULT NULL,
   `status` varchar(255) DEFAULT NULL,
   `description` varchar(255) DEFAULT NULL,
-  `lastUpdated` datetime DEFAULT NULL,
   `resources` varchar(255) DEFAULT '[]',
   PRIMARY KEY (`id`),
-  CONSTRAINT `FK_application_solutionId` FOREIGN KEY (`solutionId`) REFERENCES `solution` (`id`),
-  CONSTRAINT `FK_application_activatorId` FOREIGN KEY (`activatorId`) REFERENCES `activator` (`id`)
+  KEY `FK_application_solutionId` (`solutionId`),
+  KEY `FK_application_activatorId` (`activatorId`),
+  CONSTRAINT `FK_application_activatorId` FOREIGN KEY (`activatorId`) REFERENCES `activator` (`id`),
+  CONSTRAINT `FK_application_solutionId` FOREIGN KEY (`solutionId`) REFERENCES `solution` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -95,7 +99,7 @@ CREATE TABLE `application` (
 
 LOCK TABLES `application` WRITE;
 /*!40000 ALTER TABLE `application` DISABLE KEYS */;
-INSERT INTO `application` VALUES (1,1,1,'Placeholder','DEV','Active','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et do','2020-04-16 17:58:21','[{\"ipAddress\": \"40.123.45.236\", \"name\": \"GKE Cluster\"}, {\"ipAddress\": \"40.123.45.236\", \"name\": \"Cloud SQL\"}]'),(2,1,2,'Other App','POC','Active','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et do','2020-04-02 00:00:00','[{\"name\": \"GKE Cluster\", \"ipAddress\": \"40.123.45.236\"}, {\"name\": \"Cloud SQL\", \"ipAddress\": \"40.123.45.236\"}]'),(3,2,3,'Other App','POC','Active','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et do','2020-04-02 00:00:00','[{\"name\": \"ITSO\", \"ipAddress\": \"40.123.45.236\"}, {\"name\": \"Cloud SQL\", \"ipAddress\": \"40.123.45.236\"}]'),(4,2,2,'Great App','Prod','Active','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et do','2020-04-02 00:00:00','[{\"name\": \"GKE Cluster\", \"ipAddress\": \"40.123.45.236\"}, {\"name\": \"Cloud SQL\", \"ipAddress\": \"40.123.45.236\"}]');
+INSERT INTO `application` VALUES (1,1,'2020-04-16 17:58:21',0,1,1,'Placeholder','DEV','Active','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et do','[{\"ipAddress\": \"40.123.45.236\", \"name\": \"GKE Cluster\"}, {\"ipAddress\": \"40.123.45.236\", \"name\": \"Cloud SQL\"}]'),(2,1,'2020-04-02 00:00:00',0,1,2,'Other App','POC','Active','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et do','[{\"name\": \"GKE Cluster\", \"ipAddress\": \"40.123.45.236\"}, {\"name\": \"Cloud SQL\", \"ipAddress\": \"40.123.45.236\"}]'),(3,1,'2020-04-02 00:00:00',0,2,3,'Other App','POC','Active','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et do','[{\"name\": \"ITSO\", \"ipAddress\": \"40.123.45.236\"}, {\"name\": \"Cloud SQL\", \"ipAddress\": \"40.123.45.236\"}]'),(4,1,'2020-04-02 00:00:00',0,2,2,'Great App','Prod','Active','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et do','[{\"name\": \"GKE Cluster\", \"ipAddress\": \"40.123.45.236\"}, {\"name\": \"Cloud SQL\", \"ipAddress\": \"40.123.45.236\"}]');
 /*!40000 ALTER TABLE `application` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -243,7 +247,7 @@ CREATE TABLE `landingzoneaction` (
   `locked` tinyint(1) NOT NULL DEFAULT '0',
   `routerLink` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -252,7 +256,7 @@ CREATE TABLE `landingzoneaction` (
 
 LOCK TABLES `landingzoneaction` WRITE;
 /*!40000 ALTER TABLE `landingzoneaction` DISABLE KEYS */;
-INSERT INTO `landingzoneaction` VALUES (1,'Environment','','environment',0,0,'/administration/landing-zone/environment'),(2,'WAN','Network Setup','network-setup',0,1,'/administration/landing-zone/wan'),(3,'DNS','Network Setup','network-setup',75,1,''),(4,'Internet access','Network Setup','network-setup',9,1,''),(5,'SSO','AD Integration','ad-integration',25,1,''),(6,'ADFS','AD Integration','ad-integration',0,1,''),(7,'Stackdriver','Logging','logging',50,1,''),(8,'Data Dog','Logging','logging',30,1,''),(9,'Cloud Health','Billing/Cost Management','billing-cost-management',19,1,''),(10,'Security','','security',13,1,''),(11,'Multizone setup','','multizone-setup',12,1,'');
+INSERT INTO `landingzoneaction` VALUES (1,'Environment','','environment',0,0,'/administration/landing-zone/environment'),(2,'WAN','Network Setup','network-setup',0,1,'/administration/landing-zone/wan'),(3,'DNS','Network Setup','network-setup',0,1,''),(4,'Internet access','Network Setup','network-setup',0,1,''),(5,'SSO','AD Integration','ad-integration',0,1,''),(6,'ADFS','AD Integration','ad-integration',0,1,''),(7,'Stackdriver','Logging','logging',0,1,''),(8,'Data Dog','Logging','logging',0,1,''),(9,'Cloud Health','Billing/Cost Management','billing-cost-management',0,1,''),(10,'Security','','security',0,1,''),(11,'Multizone setup','','multizone-setup',0,1,'');
 /*!40000 ALTER TABLE `landingzoneaction` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -268,7 +272,7 @@ CREATE TABLE `landingzoneprogressitem` (
   `label` varchar(255) DEFAULT NULL,
   `completed` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -277,7 +281,7 @@ CREATE TABLE `landingzoneprogressitem` (
 
 LOCK TABLES `landingzoneprogressitem` WRITE;
 /*!40000 ALTER TABLE `landingzoneprogressitem` DISABLE KEYS */;
-INSERT INTO `landingzoneprogressitem` VALUES (0,'Environment',0),(1,'WAN',0),(2,'DNS',0),(3,'ADFS',0),(4,'SSO',0),(5,'Logging',0),(6,'Billing',0);
+INSERT INTO `landingzoneprogressitem` VALUES (1,'Environment',0),(2,'WAN',0),(3,'DNS',0),(4,'ADFS',0),(5,'SSO',0),(6,'Logging',0),(7,'Billing',0);
 /*!40000 ALTER TABLE `landingzoneprogressitem` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -345,7 +349,7 @@ CREATE TABLE `lzenvironment` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
   UNIQUE KEY `name_UNIQUE` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -354,7 +358,7 @@ CREATE TABLE `lzenvironment` (
 
 LOCK TABLES `lzenvironment` WRITE;
 /*!40000 ALTER TABLE `lzenvironment` DISABLE KEYS */;
-INSERT INTO `lzenvironment` VALUES (1,'Development',1),(2,'Production',1),(3,'test-env',1);
+INSERT INTO `lzenvironment` VALUES (1,'Development',1),(2,'Production',1);
 /*!40000 ALTER TABLE `lzenvironment` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -423,7 +427,7 @@ CREATE TABLE `lzlanvpc` (
   `isActive` tinyint(4) DEFAULT '1',
   PRIMARY KEY (`id`),
   UNIQUE KEY `idlzlanvpc_UNIQUE` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -432,7 +436,7 @@ CREATE TABLE `lzlanvpc` (
 
 LOCK TABLES `lzlanvpc` WRITE;
 /*!40000 ALTER TABLE `lzlanvpc` DISABLE KEYS */;
-INSERT INTO `lzlanvpc` VALUES (1,'string',1),(2,'Development VPC',1),(3,'Production VPC',1),(4,'PoC VPC',0);
+INSERT INTO `lzlanvpc` VALUES (1,'Development',1),(2,'Production',1);
 /*!40000 ALTER TABLE `lzlanvpc` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -450,8 +454,8 @@ CREATE TABLE `lzlanvpc_environment` (
   `isActive` tinyint(4) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
-  CONSTRAINT unq_lzlanvpc_environment UNIQUE (lzlanvpcId, environmentId) 
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+  UNIQUE KEY `unq_lzlanvpc_environment` (`lzlanvpcId`,`environmentId`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -460,7 +464,7 @@ CREATE TABLE `lzlanvpc_environment` (
 
 LOCK TABLES `lzlanvpc_environment` WRITE;
 /*!40000 ALTER TABLE `lzlanvpc_environment` DISABLE KEYS */;
-INSERT INTO `lzlanvpc_environment` VALUES (1,1,1,1),(2,2,1,1),(3,1,2,1),(4,0,0,1);
+INSERT INTO `lzlanvpc_environment` VALUES (1,1,1,1),(2,2,2,1);
 /*!40000 ALTER TABLE `lzlanvpc_environment` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -504,7 +508,7 @@ CREATE TABLE `role` (
   `cloudIdentityGroup` varchar(200) NOT NULL,
   `description` varchar(200) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -516,6 +520,7 @@ LOCK TABLES `role` WRITE;
 INSERT INTO `role` VALUES (1,'admin','ecadmins@gftdevgcp.com','eagle console admin role'),(2,'user','ecusers@gftdevgcp.com','eagle console user role');
 /*!40000 ALTER TABLE `role` ENABLE KEYS */;
 UNLOCK TABLES;
+
 --
 -- Table structure for table `solution`
 --
@@ -525,6 +530,9 @@ DROP TABLE IF EXISTS `solution`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `solution` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `isActive` tinyint(1) NOT NULL DEFAULT '1',
+  `lastUpdated` datetime DEFAULT NULL,
+  `isFavourite` tinyint(1) NOT NULL DEFAULT '0',
   `name` varchar(255) DEFAULT NULL,
   `description` varchar(255) DEFAULT NULL,
   `businessUnit` varchar(255) DEFAULT NULL,
@@ -532,8 +540,6 @@ CREATE TABLE `solution` (
   `ci` varchar(255) DEFAULT NULL,
   `cd` varchar(255) DEFAULT NULL,
   `sourceControl` varchar(255) DEFAULT NULL,
-  `favourite` tinyint(1) DEFAULT NULL,
-  `lastUpdated` datetime DEFAULT NULL,
   `deployed` tinyint(4) NOT NULL DEFAULT '0',
   `deploymentState` varchar(45) NOT NULL,
   `statusId` int(11) DEFAULT NULL,
@@ -542,8 +548,8 @@ CREATE TABLE `solution` (
   `taskId` varchar(100) DEFAULT NULL,
   `teamId` int(11) DEFAULT NULL,
   `deploymentFolderId` varchar(50) DEFAULT NULL,
-  `isActive` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id`),
+  KEY `FK_solution_teamId` (`teamId`),
   CONSTRAINT `FK_solution_teamId` FOREIGN KEY (`teamId`) REFERENCES `team` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -554,7 +560,7 @@ CREATE TABLE `solution` (
 
 LOCK TABLES `solution` WRITE;
 /*!40000 ALTER TABLE `solution` DISABLE KEYS */;
-INSERT INTO `solution` VALUES (1,'Risk Engine','Solution for internal users to be able to process settlement for FX transactions','Modern Apps','XXX-123-456-YYY','Jenkins','Spinnaker','GitHub',1,'2020-06-09 11:12:31',1,'SUCCESS',200,'200','Solution deployment updated.','MOCKTASKID2',1,'MOCKFOLDERID5',1),(2,'Back Office Settlements','Solution for internal users to be able to process settlement for FX transactions','Modern Apps','XXX-111-444-YYY','Jenkins','Spinnaker','GitHub',0,'2020-03-08 23:07:00',0,'',NULL,NULL,NULL,NULL,1,NULL,1),(3,'FX Engine','Solution for internal users to be able to process settlement for FX transactions','Modern Apps','XXX-554-325-YYY','Jenkins','Spinnaker','GitHub',0,'2020-03-08 23:07:00',0,'',NULL,NULL,NULL,NULL,1,NULL,1),(11,'Portfolio Valuation','A portfolio valuation is done to determine and report alternative investments\' performance, which is often required for financial reporting and tax compliance, and also affects the investment manager\'s compensation.','Data','XXX-333-222-IUY','Bamboo','Screwdriver','Cloud native',1,'2020-03-18 21:02:02',0,'',NULL,NULL,NULL,NULL,1,NULL,1),(12,'Corporate Treasury','The treasury department occupies a central role in the finances of the modern corporation. It takes responsible for the company\'s liquidity—ensures that a company has enough cash available at all times to meet the needs of its primary business operations.','Modern Apps','XXX-333-222-IUY','Team City','Team City','GitHub',1,'2020-03-18 21:13:14',0,'',NULL,NULL,NULL,NULL,1,NULL,1),(13,'Internal Audit','Internal auditing is the independent and objective evaluation of an organisation\'s internal controls to effectively manage risk within its risk appetite. Internal audit should monitor that any weaknesses identified are also addressed.','Modern Apps','XXX-333-222-IUY','Travis','Screwdriver','Cloud native',1,'2020-03-18 21:15:22',0,'',NULL,NULL,NULL,NULL,1,NULL,1),(14,'Realtime Margin','Use real-time margin monitoring to see your current margin requirements at a glance, and to understand the margin implications of any transaction before you transmit an order. The Account window shows your account details.','Data','ABC-123-ABC-123','Cloud native','Spinnaker','Cloud native',1,'2020-03-18 21:19:58',0,'',NULL,NULL,NULL,NULL,1,NULL,1),(15,'Product Control','product control are a center of cost responsible for the daily PnL(Profit and Loss) and its explanation for a dedicated trading desk. The team is responsible to communicate this result within the bank and to the authority FED or ECB.','Data','dat-000-ser-322','Bamboo','Screwdriver','BitBucket',1,'2020-03-18 21:25:10',0,'',NULL,NULL,NULL,NULL,1,NULL,1),(16,'General Ledger','A general ledger (GL) is a set of numbered accounts a business uses to keep track of its financial transactions and to prepare financial reports. Each account is a unique record summarizing each type of asset, liability, equity, revenue and expense.','Data','ldf-343-sds-232','Cloud native','Team City','Cloud native',1,'2020-03-18 21:43:54',0,'',NULL,NULL,NULL,NULL,1,NULL,1),(17,'Corporate Finance','Corporate finance is the division of finance that deals with financing, capital structuring, and investment decisions. Corporate finance is primarily concerned with maximizing shareholder value throug','Modern Apps','ASD-456-FFH-234','Bamboo','Screwdriver','Cloud native',1,'2020-03-19 23:41:59',0,'',NULL,NULL,NULL,NULL,1,NULL,1);
+INSERT INTO `solution` VALUES (1,1,'2020-06-09 11:12:31',1,'Risk Engine','Solution for internal users to be able to process settlement for FX transactions','Modern Apps','XXX-123-456-YYY','Jenkins','Spinnaker','GitHub',1,'SUCCESS',200,'200','Solution deployment updated.','MOCKTASKID2',1,'MOCKFOLDERID5'),(2,1,'2020-03-08 23:07:00',0,'Back Office Settlements','Solution for internal users to be able to process settlement for FX transactions','Modern Apps','XXX-111-444-YYY','Jenkins','Spinnaker','GitHub',0,'',NULL,NULL,NULL,NULL,1,NULL),(3,1,'2020-03-08 23:07:00',0,'FX Engine','Solution for internal users to be able to process settlement for FX transactions','Modern Apps','XXX-554-325-YYY','Jenkins','Spinnaker','GitHub',0,'',NULL,NULL,NULL,NULL,1,NULL),(11,1,'2020-03-18 21:02:02',1,'Portfolio Valuation','A portfolio valuation is done to determine and report alternative investments\' performance, which is often required for financial reporting and tax compliance, and also affects the investment manager\'s compensation.','Data','XXX-333-222-IUY','Bamboo','Screwdriver','Cloud native',0,'',NULL,NULL,NULL,NULL,1,NULL),(12,1,'2020-03-18 21:13:14',1,'Corporate Treasury','The treasury department occupies a central role in the finances of the modern corporation. It takes responsible for the company\'s liquidity—ensures that a company has enough cash available at all times to meet the needs of its primary business operations.','Modern Apps','XXX-333-222-IUY','Team City','Team City','GitHub',0,'',NULL,NULL,NULL,NULL,1,NULL),(13,1,'2020-03-18 21:15:22',1,'Internal Audit','Internal auditing is the independent and objective evaluation of an organisation\'s internal controls to effectively manage risk within its risk appetite. Internal audit should monitor that any weaknesses identified are also addressed.','Modern Apps','XXX-333-222-IUY','Travis','Screwdriver','Cloud native',0,'',NULL,NULL,NULL,NULL,1,NULL),(14,1,'2020-03-18 21:19:58',1,'Realtime Margin','Use real-time margin monitoring to see your current margin requirements at a glance, and to understand the margin implications of any transaction before you transmit an order. The Account window shows your account details.','Data','ABC-123-ABC-123','Cloud native','Spinnaker','Cloud native',0,'',NULL,NULL,NULL,NULL,1,NULL),(15,1,'2020-03-18 21:25:10',1,'Product Control','product control are a center of cost responsible for the daily PnL(Profit and Loss) and its explanation for a dedicated trading desk. The team is responsible to communicate this result within the bank and to the authority FED or ECB.','Data','dat-000-ser-322','Bamboo','Screwdriver','BitBucket',0,'',NULL,NULL,NULL,NULL,1,NULL),(16,1,'2020-03-18 21:43:54',1,'General Ledger','A general ledger (GL) is a set of numbered accounts a business uses to keep track of its financial transactions and to prepare financial reports. Each account is a unique record summarizing each type of asset, liability, equity, revenue and expense.','Data','ldf-343-sds-232','Cloud native','Team City','Cloud native',0,'',NULL,NULL,NULL,NULL,1,NULL),(17,1,'2020-03-19 23:41:59',1,'Corporate Finance','Corporate finance is the division of finance that deals with financing, capital structuring, and investment decisions. Corporate finance is primarily concerned with maximizing shareholder value throug','Modern Apps','ASD-456-FFH-234','Bamboo','Screwdriver','Cloud native',0,'',NULL,NULL,NULL,NULL,1,NULL);
 /*!40000 ALTER TABLE `solution` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -573,7 +579,8 @@ CREATE TABLE `solutionenvironment` (
   `isActive` tinyint(4) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
-  CONSTRAINT unq_solution_environment UNIQUE (solutionId, environmentId),
+  KEY `FK_solutionenvironment_environmentId` (`environmentId`),
+  KEY `FK_solutionenvironment_solutionId` (`solutionId`),
   CONSTRAINT `FK_solutionenvironment_environmentId` FOREIGN KEY (`environmentId`) REFERENCES `lzenvironment` (`id`),
   CONSTRAINT `FK_solutionenvironment_solutionId` FOREIGN KEY (`solutionId`) REFERENCES `solution` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
@@ -731,9 +738,12 @@ CREATE TABLE `teammember` (
   `isTeamAdmin` tinyint(1) NOT NULL DEFAULT '1',
   `isActive` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
-  CONSTRAINT `FK_teammember_userId` FOREIGN KEY (`userId`) REFERENCES `user` (`id`),
+  KEY `FK_teammember_userId` (`userId`),
+  KEY `FK_teammember_teamId` (`teamId`),
+  KEY `FK_teammember_roleId` (`roleId`),
+  CONSTRAINT `FK_teammember_roleId` FOREIGN KEY (`roleId`) REFERENCES `role` (`id`),
   CONSTRAINT `FK_teammember_teamId` FOREIGN KEY (`teamId`) REFERENCES `team` (`id`),
-  CONSTRAINT `FK_teammember_roleId` FOREIGN KEY (`roleId`) REFERENCES `role` (`id`)
+  CONSTRAINT `FK_teammember_userId` FOREIGN KEY (`userId`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -810,4 +820,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-06-12 15:27:32
+-- Dump completed on 2020-06-12 12:09:57
