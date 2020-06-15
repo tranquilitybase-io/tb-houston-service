@@ -5,6 +5,7 @@ from tb_houston_service.models import TeamSchema
 from tb_houston_service.models import BusinessUnitSchema
 from tb_houston_service.models import LZEnvironmentSchema
 from tb_houston_service.models import LZLanVpcSchema
+from tb_houston_service.models import RoleSchema
 
 logger = logging.getLogger("tb_houston_service.extendedSchemas")
 
@@ -173,6 +174,19 @@ class ExtendedTeamMemberSchema(Schema):
     id = fields.Int()
     user = fields.Nested(ExtendedUserSchema(many=False))
     role = fields.Str()
+
+class ExtendedTeamMemberFullSchema(Schema):
+    id = fields.Int()
+    isActive = fields.Boolean()
+    isTeamAdmin = fields.Boolean()
+    roleId = fields.Int()
+    role = fields.Nested(RoleSchema(many=False))
+    teamId = fields.Int()
+    team = fields.Nested(ExtendedTeamSchema(many=False))
+    userId= fields.Int()
+    user = fields.Nested(ExtendedUserSchema(many=False))
+    class Meta:
+        ordered = True
 
 
 class ExtendedTeamDACSchema(Schema):
