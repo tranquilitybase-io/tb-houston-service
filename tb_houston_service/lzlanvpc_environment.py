@@ -39,9 +39,6 @@ def create(lzLanVpcEnvironmentListDetail):
         lzlanvpc_env_change = schema.load(
             lzLanVpcEnvironmentListDetail, session=db.session
         )
-        lzlanvpc_env_change.isActive = lzLanVpcEnvironmentListDetail.get(
-            "isActive", True
-        )
         db.session.add(lzlanvpc_env_change)
 
 

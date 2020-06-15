@@ -6,7 +6,7 @@ lzlanvpc collection
 # 3rd party modules
 from pprint import pformat
 import logging
-from flask import make_response
+from flask import make_response, abort
 from config import db, app
 from tb_houston_service.models import LZLanVpc, LZLanVpcSchema
 from tb_houston_service.models import LZLanVpcEnvironment
@@ -44,14 +44,8 @@ def read(readActiveOnly=None):
 
 def create(lzLanVpcDetails):
     app.logger.debug(f"lzmetadata_env::create: {lzLanVpcDetails}")
-    # Remove the id
-    lzLanVpcDetails.pop("id", None)
     # Does the environment exist in environment list?
-    existing_lanvpc = (
-        db.session.query(LZLanVpc)
-        .filter(LZLanVpc.name == lzLanVpcDetails["name"])
-        .one_or_none()
-    )
+
     schema = LZLanVpcSchema()
 
     # Store for use later
@@ -60,18 +54,52 @@ def create(lzLanVpcDetails):
     if "environments" in lzLanVpcDetails:
         del lzLanVpcDetails["environments"]
 
+    oid = lzLanVpcDetails.get("id")
+    logger.debug("Create: obj is %s", lzLanVpcDetails)    
+    logger.debug("Create: oid is %s", oid)
+
     # Does lanvpc exist?
-    if existing_lanvpc is not None:
-        app.logger.debug(f"lzmetadata_env::update: {lzLanVpcDetails} {existing_lanvpc}")
-        existing_lanvpc.isActive = lzLanVpcDetails.get("isActive")
-        db.session.merge(existing_lanvpc)
-        lzlanvpc_extension.create_lzlanvpc_environments(existing_lanvpc.id, envs)         
+    if lzLanVpcDetails.get("id"):
+        logger.debug("create::Existing id is: %s", lzLanVpcDetails.get("id"))
+        existing_lanvpc = (
+            db.session.query(LZLanVpc)
+            .filter(LZLanVpc.id == lzLanVpcDetails["id"])
+            .one_or_none()
+        )
+        app.logger.debug("lzlanvpc::create: %s, %s.", lzLanVpcDetails, existing_lanvpc)        
+        if existing_lanvpc is not None:
+            updated_lanvpc = schema.load(lzLanVpcDetails, session=db.session)
+            db.session.merge(updated_lanvpc)
+            lzlanvpc_extension.create_lzlanvpc_environments(updated_lanvpc.id, envs)
+            return
+    
+    # id (if populated) doesn't exist, so remove it and create a new object
+    if "id" in lzLanVpcDetails:
+        del lzLanVpcDetails["id"] 
     else:
-        app.logger.debug(f"lzmetadata_env::create: {lzLanVpcDetails}")
-        lzlanvpc_change = schema.load(lzLanVpcDetails, session=db.session)
-        db.session.add(lzlanvpc_change)
-        db.session.flush()
-        lzlanvpc_extension.create_lzlanvpc_environments(lzlanvpc_change.id, envs) 
+        logger.debug("Create: id was missing so creating a new object instead.")
+            
+    if "name" in lzLanVpcDetails:
+        existing_lanvpc = (
+            db.session.query(LZLanVpc)
+            .filter(LZLanVpc.name == lzLanVpcDetails.get("name"))
+            .first()
+        )
+        if existing_lanvpc:
+            app.logger.debug(f"lzlanvpc::create: {lzLanVpcDetails}")
+            lzLanVpcDetails["id"] = existing_lanvpc.id
+            lzlanvpc_change = schema.load(lzLanVpcDetails, session=db.session)
+            db.session.merge(lzlanvpc_change)
+            db.session.flush()
+            lzlanvpc_extension.create_lzlanvpc_environments(lzlanvpc_change.id, envs)
+        else:
+            app.logger.debug(f"lzlanvpc::create: {lzLanVpcDetails}")
+            lzlanvpc_new = schema.load(lzLanVpcDetails, session=db.session)
+            db.session.add(lzlanvpc_new)
+            db.session.flush()
+            lzlanvpc_extension.create_lzlanvpc_environments(lzlanvpc_new.id, envs)
+    else:
+        abort("Cannot create without the id or name.", 500)
 
 
 def logical_delete_all_active():
@@ -94,7 +122,7 @@ def create_all(lzLanVpcListDetails, readActiveOnly=False, bulkDelete=False):
     :return:       updated lzlanvpc
     """
 
-    app.logger.debug(pformat(lzLanVpcListDetails))
+    app.logger.debug("create_all: %s", pformat(lzLanVpcListDetails))
 
     try:
         if bulkDelete:

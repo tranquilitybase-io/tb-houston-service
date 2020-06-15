@@ -3357,6 +3357,9 @@ components:
     LZLanVpc:
       type: object
       properties:
+        id:
+          type: integer
+          description: object id
         name:
           type: string
           description: LAN VPC name

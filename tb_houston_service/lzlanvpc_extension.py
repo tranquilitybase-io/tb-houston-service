@@ -34,7 +34,9 @@ def create_lzlanvpc_environments(lzlanvpc_id, list_of_env_ids):
                 isActive = True
                 )
             db.session.add(new_lzlanvpc_env)
+            logger.debug("Added lzlanvpc environment: %s to transaction.", new_lzlanvpc_env)
         else:
             lzlanvpc_env.isActive = True
             db.session.merge(lzlanvpc_env)
-    logger.debug("Added lzlanvpc environment: {new_lzlanvpc_env} to transaction.")
+            logger.debug("Added lzlanvpc environment: %s to transaction.", lzlanvpc_env)
+
