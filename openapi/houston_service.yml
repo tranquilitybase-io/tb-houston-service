@@ -514,7 +514,7 @@ paths:
           description: id of the team member to get from the list
           required: true
           schema:
-            type: string
+            type: integer
       responses:
               "200":
                 description: Successfully read an team member from the list
@@ -534,7 +534,7 @@ paths:
           description: id of the team member to update
           required: true
           schema:
-            type: string
+            type: integer
       requestBody:
         $ref: "#/components/requestBodies/teammember.teamMemberDetails"
       responses:
@@ -553,7 +553,7 @@ paths:
           description: id of the team member to delete
           required: true
           schema:
-            type: string
+            type: integer
       responses:
         "200":
           description: Successfully deleted a teammember
