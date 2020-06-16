@@ -18,7 +18,7 @@ def typestest(resp):
     assert isinstance(resp["isFavourite"], bool)
     assert isinstance(resp["lastUpdated"], str)
     assert isinstance(resp["applications"], list)
-    assert isinstance(resp["businessUnit"], str)
+    assert isinstance(resp["businessUnitId"], int)
     assert isinstance(resp["ci"], str)
     assert isinstance(resp["cd"], str)
     assert isinstance(resp["costCentre"], str)
@@ -50,7 +50,7 @@ def post():
     # Body
     payload = {
         "isActive": True,
-        "businessUnit": "test",
+        "businessUnitId": 1,
         "cd": "test",
         "ci": "test",
         "costCentre": "test",
@@ -78,7 +78,7 @@ def post():
     # Validate response
     assert resp.status_code == 200
     assert resp_json["name"] == "test"
-    assert resp_json["businessUnit"] == "test"
+    assert resp_json["businessUnitId"] == 1
     assert resp_json["description"] == "test"
     assert len(resp_json["environments"]) == 3
     assert resp_headers["content-type"] == "application/json"
@@ -93,7 +93,7 @@ def put(id):
     newpayload = {
         "id": int(id),
         "isActive": True,
-        "businessUnit": "test put",
+        "businessUnitId": 2,
         "cd": "test put",
         "ci": "test put",
         "costCentre": "test put",
@@ -120,7 +120,7 @@ def put(id):
     assert resp.status_code == 200
     assert resp_json["name"] == "test put"
     assert resp_json["description"] == "test put"
-    assert resp_json["businessUnit"] == "test put"
+    assert resp_json["businessUnitId"] == 2
     assert resp_json["ci"] == "test put"
     assert resp_json["cd"] == "test put"
     assert resp_json["sourceControl"] == "test put"

@@ -2,6 +2,7 @@ import logging
 from config import db
 from tb_houston_service.models import Application
 from tb_houston_service.models import Team
+from tb_houston_service.models import BusinessUnit
 from tb_houston_service.models import LZEnvironment
 from tb_houston_service.models import SolutionEnvironment
 from tb_houston_service.tools import ModelTools
@@ -35,6 +36,8 @@ def expand_solution(sol):
     for ap in sol.applications:
         ap = application_extension.expand_application(ap)
 
+    if sol.businessUnitId:
+        sol.businessUnit = db.session.query(BusinessUnit).filter(BusinessUnit.id == sol.businessUnitId, BusinessUnit.isActive).one_or_none()
     return sol
 
 
@@ -50,6 +53,13 @@ def expand_solution_for_dac(sol):
     sol.environments = environments
     a_team = db.session.query(Team).filter(Team.id == sol.teamId).one_or_none()
     sol.team = team_extension.expand_team_with_users(a_team)
+
+    if sol.businessUnitId:
+        businessUnit = db.session.query(BusinessUnit).filter(BusinessUnit.id == sol.businessUnitId, BusinessUnit.isActive).one_or_none()
+        if businessUnit:
+            sol.businessUnit = businessUnit.name
+        else:
+            sol.businessUnit = ""
     return sol
 
 

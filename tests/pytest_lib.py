@@ -118,7 +118,7 @@ def typestest_solution(obj):
     assert isinstance(obj["isActive"], bool)
     assert isinstance(obj["lastUpdated"], str)
     assert isinstance(obj["isFavourite"], bool)
-    assert isinstance(obj["businessUnit"], str)
+    assert isinstance(obj["businessUnitId"], int)
     assert isinstance(obj["ci"], str)
     assert isinstance(obj["cd"], str)
     assert isinstance(obj["costCentre"], str)

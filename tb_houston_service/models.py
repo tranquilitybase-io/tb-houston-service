@@ -121,6 +121,23 @@ class ApplicationSchema(SQLAlchemyAutoSchema):
         return data        
 
 
+# ApplicationDeployment
+class ApplicationDeployment(Base):
+    __tablename__ = "applicationDeployment"
+    applicationId = db.Column(db.Integer, primary_key=True)
+    solutionId = db.Column(db.Integer, primary_key=True)
+    deploymentState = db.Column(db.String)
+    taskId = db.Column(db.String)
+    lastUpdated = db.Column(db.String(20))
+
+
+class ApplicationDeploymentSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = ApplicationDeployment
+        include_fk = True
+        load_instance = True
+
+
 # BusinessUnit
 class BusinessUnit(Base):
     __tablename__ = "businessunit"
@@ -445,7 +462,7 @@ class Solution(Base):
     isFavourite = db.Column(db.Boolean)    
     name = db.Column(db.String(255))
     description = db.Column(db.String(255))
-    businessUnit = db.Column(db.String(255))
+    businessUnitId = db.Column(db.Integer())
     costCentre = db.Column(db.String(255))
     ci = db.Column(db.String(255))
     cd = db.Column(db.String(255))

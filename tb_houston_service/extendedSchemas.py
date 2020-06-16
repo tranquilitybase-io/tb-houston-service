@@ -162,7 +162,7 @@ class ExtendedSolutionSchema(Schema):
     isFavourite = fields.Boolean()      
     name = fields.Str()
     description = fields.Str()
-    businessUnit = fields.Str()
+    businessUnitId = fields.Int()
     costCentre = fields.Str()
     ci = fields.Str()
     cd = fields.Str()
@@ -173,6 +173,7 @@ class ExtendedSolutionSchema(Schema):
     applications = fields.Nested(ExtendedApplicationSchema(many=True))
     team = fields.Nested(ExtendedTeamSchema(many=False))
     deploymentFolderId = fields.Str()
+    businessUnit = fields.Nested(BusinessUnitSchema(many=False))
 
 
 class ExtendedTeamMemberSchema(Schema):
@@ -352,3 +353,18 @@ class ExtendedLZLanVpcSchema(Schema):
     name = fields.Str()
     isActive = fields.Boolean()
     environments = fields.Nested(LZEnvironmentSchema(many=True))
+
+
+class ExtendedApplicationDeploymentSchema(Schema):
+    __envelope__ = {"single": "applicationdeployment", "many": "applicationdeployments"}
+
+    id = fields.Int()
+    deploymentState = fields.Str()
+    taskId = fields.Str()
+
+
+class ExtendedApplicationForDACSchema(Schema):
+    id = fields.Int()
+    name = fields.Str()
+    description = fields.Str()
+    solutionId = fields.Int()
