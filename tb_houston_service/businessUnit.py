@@ -52,6 +52,30 @@ def read_keyvalues():
     return keyValues
 
 
+def read_keyValues():
+    """
+    Responds to a request for /api/keyValues/businessUnit
+    with the complete lists of BusinessUnits
+    :return:        json string of list of key value pairs
+    """
+
+    # Create the list of BusinessUnits from our data
+    businessUnit = db.session.query(BusinessUnit).order_by(BusinessUnit.id).all()
+    app.logger.debug(pformat(businessUnit))
+    # Serialize the data for the response
+    businessUnit_schema = BusinessUnitSchema(many=True)
+    data = businessUnit_schema.dump(businessUnit)
+    app.logger.debug(data)
+    keyValues = []
+    for d in data:
+        keyValuePair = {}
+        keyValuePair["key"] = d.get("id")
+        keyValuePair["value"] = d.get("name")
+        keyValues.append(keyValuePair)
+    print(keyValues)
+    return keyValues
+
+
 def read_one(oid):
     """
     Responds to a request for /api/businessunit/{id}

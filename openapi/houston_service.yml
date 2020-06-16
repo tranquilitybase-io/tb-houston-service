@@ -314,7 +314,7 @@ paths:
 
   /keyValues/team/:
     get:
-      operationId: tb_houston_service.team.read_keyvalues
+      operationId: tb_houston_service.team.read_keyValues
       tags:
         - team
       summary: Read the entire list of teams and return them as key value pairs
@@ -956,7 +956,7 @@ paths:
 
   /keyValues/businessUnit/:
     get:
-      operationId: tb_houston_service.businessUnit.read_keyvalues
+      operationId: tb_houston_service.businessUnit.read_keyValues
       tags:
         - businessUnit
       summary: Read the entire list of business units and return them as key value pairs
@@ -971,8 +971,8 @@ paths:
                 items:
                   properties:
                     key:
-                      type: string
-                      description: key
+                      type: int
+                      description: id
                     value:
                       type: string
                       description: value
@@ -1192,6 +1192,38 @@ paths:
       responses:
         "200":
           description: Successfully deleted a solution
+
+
+  /applicationDeployments/:
+    get:
+      operationId: tb_houston_service.application_deployment.deployment_read_all
+      tags:
+        - application
+      summary: Read the entire list of deployed applications
+      description: Read the list of deployed applications
+      responses:
+        "200":
+          description: Successfully read applications list operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ApplicationDeployment"
+
+  /applicationDeployment/:
+    post:
+      operationId: tb_houston_service.application_deployment.deployment_create
+      tags:
+        - application
+      summary: receive application id from the Eagle Console and then post the complete Application to the DaC
+      description: receive application id from the Eagle Console and then post the complete Application to the DaC
+      requestBody:
+        $ref: "#/components/requestBodies/application.applicationDeploymentPostDetails"
+      responses:
+        "201":
+          description: Successfully created an Application Deployment
+
 
   /solutiondeployments/:
     get:
@@ -2454,6 +2486,17 @@ components:
       description: The application to create
       required: true
 
+    application.applicationDeploymentPostDetails:
+      content:
+        application/json:
+          schema:
+            x-body-name: applicationDeploymentDetails
+            type: object
+            properties:
+              id:
+                type: integer
+                description: The id of the application that is being deployed      
+
     activator.activatorDetails:
       content:
         application/json:
@@ -2916,6 +2959,23 @@ components:
               name:
                 type: string
                 description: name
+
+    ApplicationDeployment:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The application id
+        deployed:
+          type: boolean
+          description: Has the solution been deployed?
+        deploymentState:
+          type: string
+          description: Deployment state
+        taskId:
+          type: string
+          nullable: true
+          description: task id
 
     Team:
       type: object

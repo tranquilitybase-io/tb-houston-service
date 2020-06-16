@@ -233,3 +233,28 @@ def read_list_by_user_id(userId):
         return data, 200
     else:
         return abort(teams_resp[0], "Error reading key / values by user id.")
+
+
+def read_keyValues():
+    """
+    Responds to a request for /api/keyValues/team
+    with the complete lists of teams
+    :return:        json string of list of teams
+    """
+
+    # Create the list of teams from our data
+    team = db.session.query(Team).order_by(Team.id).all()
+    app.logger.debug(pformat(team))
+    # Serialize the data for the response
+    team_schema = TeamSchema(many=True)
+    data = team_schema.dump(team)
+    app.logger.debug(data)
+    # Convert the data to keyvalue pairs of id and name column
+    keyValues = []
+    for d in data:
+        keyValuePair = {}
+        keyValuePair["key"] = d.get("id")
+        keyValuePair["value"] = d.get("name")
+        keyValues.append(keyValuePair)
+    print(keyValues)
+    return keyValues
