@@ -11,7 +11,6 @@ from tb_houston_service.models import ApplicationDeployment, ApplicationDeployme
 from tb_houston_service.tools import ModelTools
 from tb_houston_service.extendedSchemas import ExtendedApplicationDeploymentSchema
 from tb_houston_service.extendedSchemas import ExtendedApplicationForDACSchema
-from tb_houston_service import application_extension
 
 
 logger = logging.getLogger("tb_houston_service.application_deployment")
@@ -81,7 +80,7 @@ def deployment_read_all():
                 response = get_application_results_from_the_dac(oid, task_id)
                 logger.debug(pformat(response))
         app_dep.id = app_dep.applicationId
-        
+
     schema = ExtendedApplicationDeploymentSchema(many=True)
     data = schema.dump(app_deployments)
 
