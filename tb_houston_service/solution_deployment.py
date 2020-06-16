@@ -5,6 +5,7 @@ solutions collection
 
 # 3rd party modules
 from pprint import pformat
+import time
 import os
 import json
 import logging
@@ -12,7 +13,7 @@ from http import HTTPStatus
 import requests
 from flask import make_response, abort
 
-from config import db
+from config import db, executor
 from tb_houston_service.models import Solution, SolutionSchema
 from tb_houston_service.DeploymentStatus import DeploymentStatus
 from tb_houston_service.tools import ModelTools
@@ -47,24 +48,6 @@ def deployment_read_all():
     logger.debug("deployment_read_all")
 
     solutions = db.session.query(Solution).filter(Solution.deploymentState != "").all()
-    # Loop through solutions, if not a SUCCESS
-    #   - send folders
-    #   - once folders are sent send solution deployment
-    for sol in solutions:
-        logger.debug(
-            "deployment_read_all::sol.deploymentState: %s", sol.deploymentState
-        )
-        if sol.deploymentState != DeploymentStatus.SUCCESS:
-            oid = sol.id
-            task_id = sol.taskId
-            if task_id is None or task_id == "":
-                response = deploy_folders_and_solution(sol)
-                logger.debug(pformat(response))
-            else:
-                logger.debug("oid: %s task_id: %s", oid, task_id)
-                response = get_solution_results_from_the_dac(oid, task_id)
-                logger.debug(pformat(response))
-
     schema = SolutionDeploymentSchema(many=True)
     data = schema.dump(solutions)
 
@@ -92,6 +75,35 @@ def deployment_read_one(oid):
         return data, 200
     else:
         abort(404, f"Solution with id {oid} not found".format(id=oid))
+
+
+def start_deployment(solutionId):
+    print("start_deployment")
+    deployment_complete = False 
+    while deployment_complete == False:
+        sol = db.session.query(Solution).filter(Solution.id == solutionId).one_or_none()
+        if sol:
+            if sol.deploymentState == DeploymentStatus.SUCCESS:
+                deployment_complete = True
+                logger.debug("start_deployment::deployment complete for Solution: %s", sol.id)                
+            else:
+                oid = sol.id
+                task_id = sol.taskId
+                logger.debug("start_deployment: deploymentState: %s, oid: %s, task_id %s", sol.deploymentState, oid, task_id)
+                if task_id is None or task_id == "":
+                    response = deploy_folders_and_solution(sol)
+                    logger.debug("start_deployment::deploy_folders_and_solution: oid: %s", oid)
+                    logger.debug(pformat(response))
+                else:
+                    logger.debug("start_deployment::polling_results_from_the_DaC: oid: %s task_id: %s", oid, task_id)
+                    response = get_solution_results_from_the_dac(oid, task_id)
+                    logger.debug(pformat(response))
+                print("Sleep 5")
+                time.sleep(5)
+        else:
+            logger.debug("start_deployment::deployment Solution not found: %s", sol.id)            
+    db.session.close()
+    return True
 
 
 def deployment_create(solutionDeploymentDetails):
@@ -124,8 +136,10 @@ def deployment_create(solutionDeploymentDetails):
         db.session.merge(update_solution)
         db.session.commit()
         resp_json = {"id": oid, "deploymentState": update_solution.deploymentState}
+        # This step is in a separate thread.
+        db.session.close()        
+        executor.submit(start_deployment, sol.id)
 
-    db.session.close()
     return make_response(resp_json, 200)
 
 
@@ -254,7 +268,7 @@ def create_folder(folderId, folderName):
 
 # Return SUCCESS if all folders have been created on the DB and DAC
 def create_folders(solution):
-    logger.debug("solution: %s", pformat(solution))
+    logger.debug("create_folders::solution: %s", pformat(solution))
     resp = gcp_dac_folder_deployment.metadata()
     logger.debug("resp_json: {resp.json()}")
     dac_metadata = resp.json()
@@ -286,6 +300,7 @@ def create_folders(solution):
 
 #
 def deploy_folders_and_solution(sol_deployment):
+    logger.debug("deploy_folders_and_solution")
     solution = solution_extension.expand_solution(sol_deployment)
     create_folders_resp = create_folders(solution)
     deploymentFolderId = create_folders_resp.get("deploymentFolderId")

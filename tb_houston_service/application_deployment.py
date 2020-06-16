@@ -1,10 +1,11 @@
 import json
+import time
 import logging
 import requests
 import os
 from pprint import pformat
 from flask import make_response, abort
-from config import db
+from config import db, executor
 from tb_houston_service.DeploymentStatus import DeploymentStatus
 from tb_houston_service.models import Application
 from tb_houston_service.models import ApplicationDeployment, ApplicationDeploymentSchema
@@ -22,6 +23,35 @@ deployment_create_result_url = (
 headers = {"Content-Type": "application/json"}
 
 
+def start_deployment(applicationId):
+    print("start_deployment")
+    deployment_complete = False 
+    while deployment_complete == False:
+        app_dep = db.session.query(ApplicationDeployment).filter(ApplicationDeployment.applicationId == applicationId).one_or_none()
+        if app_dep:
+            if app_dep.deploymentState == DeploymentStatus.SUCCESS:
+                deployment_complete = True
+                logger.debug("start_deployment::deployment complete for Application: %s", app_dep.applicationId)                
+            else:
+                oid = app_dep.applicationId
+                task_id = app_dep.taskId
+                logger.debug("start_deployment: deploymentState: %s, oid: %s, task_id %s", app_dep.deploymentState, oid, task_id)
+                if task_id is None or task_id == "":
+                    response = deploy_application(app_dep)
+                    logger.debug("start_deployment::deploy_application: oid: %s", oid)
+                    logger.debug(pformat(response))
+                else:
+                    logger.debug("start_deployment::polling_results_from_the_DaC: oid: %s task_id: %s", oid, task_id)
+                    response = get_application_results_from_the_dac(oid, task_id)
+                    logger.debug(pformat(response))
+                print("Sleep 5")
+                time.sleep(5)
+        else:
+            logger.debug("start_deployment::deployment Solution not found: %s", app_dep.applicationId)            
+    db.session.close()
+    return True
+
+
 def deployment_create(applicationDeploymentDetails):
     """
     This function queries a application forwards the request to the DaC
@@ -32,7 +62,7 @@ def deployment_create(applicationDeploymentDetails):
     :               500 if other failure
     """
 
-    logger.debug(pformat(applicationDeploymentDetails))
+    logger.debug("deployment_create: %s", pformat(applicationDeploymentDetails))
     oid = applicationDeploymentDetails["id"]
     app = db.session.query(Application).filter(Application.id == oid).one_or_none()
     app_deployment = db.session.query(ApplicationDeployment).filter(ApplicationDeployment.applicationId == oid).one_or_none()
@@ -58,6 +88,7 @@ def deployment_create(applicationDeploymentDetails):
       resp_json = {"id": oid, "deploymentState": app_deployment.deploymentState}
 
     db.session.close()
+    executor.submit(start_deployment, app_deployment.applicationId)
     return make_response(resp_json, 200)
 
 
@@ -65,22 +96,6 @@ def deployment_read_all():
     app_deployments = (
         db.session.query(ApplicationDeployment).filter(ApplicationDeployment.deploymentState != "").all()
     )
-    for app_dep in app_deployments:
-        logger.debug(
-            "deployment_read_all::applicationDeployment.deploymentState: %s", app_dep.deploymentState
-        )
-        if app_dep.deploymentState != DeploymentStatus.SUCCESS:
-            oid = app_dep.applicationId
-            task_id = app_dep.taskId
-            if task_id is None or task_id == "":
-                response = deploy_application(app_dep)
-                logger.debug(pformat(response))
-            else:
-                logger.debug("oid: %s task_id: %s", oid, task_id)
-                response = get_application_results_from_the_dac(oid, task_id)
-                logger.debug(pformat(response))
-        app_dep.id = app_dep.applicationId
-
     schema = ExtendedApplicationDeploymentSchema(many=True)
     data = schema.dump(app_deployments)
 
@@ -108,7 +123,9 @@ def deployment_update(oid, applicationDeploymentDetails):
     # Does the application deployment exist?
     if existing_application_deployment is not None:
         schema = ApplicationDeploymentSchema(many=False)       
-        applicationDeploymentDetails['applicationId'] = oid     
+        applicationDeploymentDetails['applicationId'] = oid
+        if "id" in applicationDeploymentDetails:
+            del applicationDeploymentDetails["id"]
         app = db.session.query(Application).filter(Application.id == oid).one_or_none()
         if app:
           applicationDeploymentDetails['solutionId'] = app.solutionId      
@@ -130,8 +147,8 @@ def deployment_update(oid, applicationDeploymentDetails):
         abort(404, f"Solution {oid} not found")
 
 
-def deploy_application(app):
-    return send_application_deployment_to_the_dac(app)
+def deploy_application(app_deployment):
+    return send_application_deployment_to_the_dac(app_deployment)
 
 
 # Send the application to the DAC

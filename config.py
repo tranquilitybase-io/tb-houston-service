@@ -3,6 +3,8 @@ import sys
 import connexion
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
+from flask_executor import Executor
+
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 # print("basedir: {}".format(basedir))
@@ -12,6 +14,9 @@ connex_app = connexion.App(__name__, specification_dir=basedir + "/openapi")
 
 # Get the underlying Flask app instance
 app = connex_app.app
+
+# We want to see all background exceptions
+app.config['EXECUTOR_PROPAGATE_EXCEPTIONS'] = True 
 
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["SQLALCHEMY_DATABASE_URI"]
 app.config["SQLALCHEMY_ECHO"] = os.environ["SQLALCHEMY_ECHO"].lower() == "True".lower()
@@ -37,3 +42,6 @@ db = SQLAlchemy(app)
 
 # Initialize Marshmallow
 ma = Marshmallow(app)
+
+# For running background tasks
+executor = Executor(app)
