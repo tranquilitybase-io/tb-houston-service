@@ -269,7 +269,7 @@ def create_folders(solution):
     if folder.APPLICATIONS in folder_meta:
         (folder_id, status) = create_folder(root_folder_id, folder.APPLICATIONS)
     if status == DeploymentStatus.SUCCESS and folder.BUSINESS_UNIT in folder_meta:
-        (folder_id, status) = create_folder(folder_id, solution.businessUnit)
+        (folder_id, status) = create_folder(folder_id, solution.businessUnit.name)
     if status == DeploymentStatus.SUCCESS and folder.TEAM in folder_meta:
         oteam = team.read_one(solution.teamId)
         logger.debug("team: %s", oteam)
@@ -286,7 +286,8 @@ def create_folders(solution):
 
 #
 def deploy_folders_and_solution(sol_deployment):
-    create_folders_resp = create_folders(sol_deployment)
+    solution = solution_extension.expand_solution(sol_deployment)
+    create_folders_resp = create_folders(solution)
     deploymentFolderId = create_folders_resp.get("deploymentFolderId")
     status = create_folders_resp.get("status")
     logger.debug(
@@ -295,8 +296,8 @@ def deploy_folders_and_solution(sol_deployment):
         status,
     )
     if deploymentFolderId and status == DeploymentStatus.SUCCESS:
-        sol_deployment.deploymentFolderId = deploymentFolderId
-        status = send_solution_deployment_to_the_dac(sol_deployment)
+        solution.deploymentFolderId = deploymentFolderId
+        status = send_solution_deployment_to_the_dac(solution)
     return status, 200
 
 
