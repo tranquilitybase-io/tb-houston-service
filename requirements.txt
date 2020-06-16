@@ -21,9 +21,9 @@ filelock==3.0.12
 flake8==3.7.9
 Flask==1.1.1
 Flask-Cors==3.0.8
+Flask-Executor==0.9.3
 flask-marshmallow==0.11.0
 Flask-SQLAlchemy==2.3.2
-# flatten-json: The unflatten function is buggy in version 0.1.7, hence the reason we're using 0.1.6.
 flatten-json==0.1.6
 google-api-python-client==1.7.11
 google-auth==1.11.2
