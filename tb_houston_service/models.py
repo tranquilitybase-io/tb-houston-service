@@ -39,9 +39,10 @@ class Activator(Base):
     activator = db.Column(db.String(255))
     status = db.Column(db.String(255))
     description = db.Column(db.String(255))
-    accessRequestedBy = db.Column(db.Integer, db.ForeignKey("user.id"))
+    accessRequestedById = db.Column(db.Integer, db.ForeignKey("user.id")) 
     source = db.Column(db.String(100))
     activatorLink = db.Column(db.String(255))
+
 
     def __repr__(self):
         return "<Activator(id={self.id!r}, name={self.name!r})>".format(self=self)
@@ -93,8 +94,8 @@ class Application(Base):
     env = db.Column(db.String(64))
     status = db.Column(db.String(64))
     description = db.Column(db.String(255))
- 
     resources = db.Column(db.String(255))
+    activator = db.relationship("Activator")
 
     def __repr__(self):
         return "<Application(id={self.id!r}, name={self.name!r})>".format(self=self)

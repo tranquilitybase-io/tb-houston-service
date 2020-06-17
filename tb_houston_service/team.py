@@ -155,31 +155,6 @@ def delete(oid):
 
 
 # Other queries
-def read_keyvalues():
-    """
-    Responds to a request for /api/keyValues/team
-    with the complete lists of teams
-    :return:        json string of list of teams
-    """
-
-    # Create the list of teams from our data
-    team = db.session.query(Team).order_by(Team.id).all()
-    app.logger.debug(pformat(team))
-    # Serialize the data for the response
-    team_schema = TeamSchema(many=True)
-    data = team_schema.dump(team)
-    app.logger.debug(data)
-    # Convert the data to keyvalue pairs of id and name column
-    keyValues = []
-    for d in data:
-        keyValuePair = {}
-        keyValuePair["key"] = str(d.get("name"))
-        keyValuePair["value"] = d.get("name")
-        keyValues.append(keyValuePair)
-    print(keyValues)
-    return keyValues
-
-
 def read_all_by_user_id(userId):
     teams = (
         db.session.query(Team)
