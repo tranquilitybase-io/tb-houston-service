@@ -63,7 +63,6 @@ class TestApplicationDeployment(unittest.TestCase):
         )
 
         # Validate response headers and body contents, e.g. status code.
-        resp_json = resp.json()
         print(pformat(resp.json()))
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.headers["content-type"], "application/json")
