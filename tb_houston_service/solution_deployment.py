@@ -27,9 +27,9 @@ from tb_houston_service import solutionresourcejson
 
 logger = logging.getLogger("tb_houston_service.solution_deployment")
 
-deployment_create_url = f"http://{os.environ['GCP_DAC_URL']}/api/solution_async/"
+deployment_create_url = f"http://{os.environ['GCP_DAC_URL']}/dac/solution_async/"
 deployment_create_result_url = (
-    f"http://{os.environ['GCP_DAC_URL']}/api/solution_async/result/create/"
+    f"http://{os.environ['GCP_DAC_URL']}/dac/solution_async/result/create/"
 )
 headers = {"Content-Type": "application/json"}
 

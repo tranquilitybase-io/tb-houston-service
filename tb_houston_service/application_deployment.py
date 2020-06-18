@@ -16,9 +16,9 @@ from tb_houston_service.extendedSchemas import ExtendedApplicationForDACSchema
 
 logger = logging.getLogger("tb_houston_service.application_deployment")
 
-deployment_create_url = f"http://{os.environ['GCP_DAC_URL']}/api/application_async/"
+deployment_create_url = f"http://{os.environ['GCP_DAC_URL']}/dac/application_async/"
 deployment_create_result_url = (
-    f"http://{os.environ['GCP_DAC_URL']}/api/application_async/result/create/"
+    f"http://{os.environ['GCP_DAC_URL']}/dac/application_async/result/create/"
 )
 headers = {"Content-Type": "application/json"}
 

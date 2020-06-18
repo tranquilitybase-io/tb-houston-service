@@ -14,10 +14,10 @@ from config import app
 
 gcp_dac_url = f"http://{os.environ['GCP_DAC_URL']}"
 headers = {"Content-Type": "application/json"}
-folder_url = f"{gcp_dac_url}/api/folder_async"
-metadata_url = f"{gcp_dac_url}/api/metadata"
-create_folder_result_url = f"{gcp_dac_url}/api/folder_async/result/create/"
-delete_folder_result_url = f"{gcp_dac_url}/api/folder_async/result/delete/"
+folder_url = f"{gcp_dac_url}/dac/folder_async"
+metadata_url = f"{gcp_dac_url}/dac/metadata"
+create_folder_result_url = f"{gcp_dac_url}/dac/folder_async/result/create/"
+delete_folder_result_url = f"{gcp_dac_url}/dac/folder_async/result/delete/"
 
 folderid_regex = re.compile(r"folders/(?P<folder>\w+)")
 
