@@ -6,7 +6,6 @@ from tb_houston_service.models import BusinessUnitSchema
 from tb_houston_service.models import LZEnvironmentSchema
 from tb_houston_service.models import LZLanVpcSchema
 from tb_houston_service.models import RoleSchema
-from config import db
 
 
 logger = logging.getLogger("tb_houston_service.extendedSchemas")
