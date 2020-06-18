@@ -14,8 +14,8 @@ logger = logging.getLogger('tb_houston_service.GCP_DAC_Deployment')
 
 class GCP_DAC_Deployment:
     def __init__(self, deployment_type):
-        self.create_url = f"{os.environ['GCP_DAC_URL']}/api/{deployment_type}_async/"
-        self.create_result_url = f"http://{os.environ['GCP_DAC_URL']}/api/{deployment_type}_async/result/create/"
+        self.create_url = f"{os.environ['GCP_DAC_URL']}/dac/{deployment_type}_async/"
+        self.create_result_url = f"http://{os.environ['GCP_DAC_URL']}/dac/{deployment_type}_async/result/create/"
         self.headers = {"Content-Type": "application/json"}
 
     # Send the payload to the DAC
