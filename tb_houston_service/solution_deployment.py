@@ -205,6 +205,7 @@ def create_folder(folderId, folderName):
     # retrieve+create folder from folder table
     # Returns folderId and Deployment Status
     # folderId is used as the parentFolderId for new folders
+    logger.debug("create_folder: %s, %s", folderId, folderName)
     resp = folder.read_or_create_by_parent_folder_id_and_folder_name(
         folderId, folderName
     )
@@ -274,14 +275,14 @@ def create_folders(solution):
     dac_metadata = resp.json()
     logger.debug("dac_metadata: %s", dac_metadata)
     root_folder_id = dac_metadata["root_folder_id"]
-    folder_id = None
-    status = None
+    folder_id = root_folder_id
+    status = DeploymentStatus.SUCCESS
 
     folder_meta = folder.get_folder_meta()
     logger.debug("solution_deployment::folder_meta: %s", folder_meta)
 
-    if folder.APPLICATIONS in folder_meta:
-        (folder_id, status) = create_folder(root_folder_id, folder.APPLICATIONS)
+    if status == DeploymentStatus.SUCCESS and folder.APPLICATIONS in folder_meta:
+        (folder_id, status) = create_folder(folder_id, folder.APPLICATIONS)
     if status == DeploymentStatus.SUCCESS and folder.BUSINESS_UNIT in folder_meta:
         (folder_id, status) = create_folder(folder_id, solution.businessUnit.name)
     if status == DeploymentStatus.SUCCESS and folder.TEAM in folder_meta:

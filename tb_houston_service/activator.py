@@ -13,13 +13,28 @@ from sqlalchemy import literal_column
 
 from config import db
 from tb_houston_service.models import Activator, ActivatorSchema
+from tb_houston_service.models import User
 from tb_houston_service.tools import ModelTools
-from tb_houston_service.extendedSchemas import ExtendedActivatorSchema
+from tb_houston_service.extendedSchemas import ExtendedActivatorPatchedSchema
 from tb_houston_service.extendedSchemas import ExtendedActivatorCategorySchema
+from tb_houston_service.extendedSchemas import ExtendedUserSchema
 from tb_houston_service import activator_extension
 
 
 logger = logging.getLogger("tb_houston_service.activator")
+
+
+def expand_access_requested_by_patch(act):
+    # update accessRequestedBy, this need refactoring and done properly, see comment above.
+    auser = db.session.query(User).filter(act['accessRequestedBy'] == User.id).one_or_none()
+    logger.debug("auser: %s", auser)
+    if auser:
+        user_schema = ExtendedUserSchema()
+        user_data = user_schema.dump(auser)
+        act['accessRequestedBy'] = user_data
+    else:
+        act['accessRequestedBy'] = None
+    return act
 
 
 def read_all(
@@ -87,9 +102,20 @@ def read_all(
     else:
         activators = activator_query.limit(page_size).offset(page * page_size).all()
 
+
+    # This is a better way of doing it, but doesn't work because we can't assign an object 
+    #  to accessRequested because it's an integer 
+    # for act in activators:
+    #     act = activator_extension.expand_activator(act)
     # Serialize the data for the response
-    activator_schema = ExtendedActivatorSchema(many=True)
+
+    activator_schema = ExtendedActivatorPatchedSchema(many=True)
     data = activator_schema.dump(activators)
+
+    for act in data:
+        act = expand_access_requested_by_patch(act)
+
+
     logger.debug("read_all")
     logger.debug(pformat(data))
     return data, 200
@@ -109,9 +135,14 @@ def read_one(oid):
     ).one_or_none()
 
     if act is not None:
+        # Should be expected here, but because we're changing the type of accessRequestedBy from integer to an object,
+        # The SQLAlchemy complains with: "_mysql_connector.MySQLInterfaceError: Python type User cannot be converted"
+        # act = activator_extension.expand_activator(act)
         # Serialize the data for the response
-        activator_schema = ExtendedActivatorSchema(many=False)
-        data = activator_schema.dump(act)
+        schema = ExtendedActivatorPatchedSchema(many=False)
+        data = schema.dump(act)
+        data = expand_access_requested_by_patch(data)
+                
         return data, 200
     else:
         abort(404, f"Activator with id {oid} not found".format(id=oid))
@@ -137,8 +168,9 @@ def create(activatorDetails):
 
     # Serialize and return the newly created deployment
     # in the response
-    schema = ExtendedActivatorSchema(many=False)
+    schema = ExtendedActivatorPatchedSchema(many=False)
     data = schema.dump(new_activator)
+    data = expand_access_requested_by_patch(data)
     return data, 201
 
 
@@ -177,8 +209,9 @@ def update(oid, activatorDetails):
         db.session.merge(updatedActivator)
         db.session.commit()
         # return the updated activator in the response
-        schema = ExtendedActivatorSchema(many=False)
+        schema = ExtendedActivatorPatchedSchema(many=False)
         data = schema.dump(updatedActivator)
+        data = expand_access_requested_by_patch(data)
         return data, 200
     # otherwise, nope, deployment doesn't exist, so that's an error
     else:
@@ -238,8 +271,9 @@ def setActivatorStatus(activatorDetails):
         db.session.commit()
 
         activator = activator_extension.expand_activator(existing_activator)
-        activator_schema = ExtendedActivatorSchema()
+        activator_schema = ExtendedActivatorPatchedSchema()
         data = activator_schema.dump(activator)
+        data = expand_access_requested_by_patch(data)
         return data, 200
 
     # Otherwise, nope, activator to update was not found

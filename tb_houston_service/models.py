@@ -39,7 +39,7 @@ class Activator(Base):
     activator = db.Column(db.String(255))
     status = db.Column(db.String(255))
     description = db.Column(db.String(255))
-    accessRequestedBy = db.Column(db.Integer)
+    accessRequestedBy = db.Column(db.Integer, db.ForeignKey("user.id"))
     source = db.Column(db.String(100))
     activatorLink = db.Column(db.String(255))
 
@@ -76,7 +76,7 @@ class ActivatorSchema(SQLAlchemyAutoSchema):
         if 'cd' in data:            
             data['cd'] = json.dumps(data['cd'])
         if 'sourceControl' in data:
-            data['sourceControl'] = json.dumps(data['sourceControl'])        
+            data['sourceControl'] = json.dumps(data['sourceControl'])
         return data
 
 

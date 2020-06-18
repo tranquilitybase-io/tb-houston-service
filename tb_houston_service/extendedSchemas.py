@@ -50,6 +50,69 @@ class ExtendedUserSchema(Schema):
     role = fields.Str()
 
 
+class ExtendedActivatorPatchedSchema(Schema):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    id = fields.Int()
+    isActive = fields.Boolean()
+    lastUpdated = fields.Str()
+    isFavourite = fields.Boolean()   
+    name = fields.Str()
+    type = fields.Str()
+    available = fields.Boolean()
+    sensitivity = fields.Str()
+    category = fields.Str()
+    envs = fields.List(fields.Str())
+    platforms = fields.List(fields.Str())
+    userCapacity = fields.Int()
+    serverCapacity = fields.Int()
+    regions = fields.List(fields.Str())
+    hosting = fields.List(fields.Str())
+    apiManagement = fields.List(fields.Str())
+    ci = fields.List(fields.Str())
+    cd = fields.List(fields.Str())
+    sourceControl = fields.List(fields.Str())
+    businessUnit = fields.Str()
+    technologyOwner = fields.Str()
+    technologyOwnerEmail = fields.Str()
+    billing = fields.Str()
+    activator = fields.Str()
+    status = fields.Str()
+    description = fields.Str()
+    accessRequestedBy = fields.Int()
+    source = fields.Str()
+    activatorLink = fields.Str()
+
+    @post_load(pass_original=True)
+    def deserialize_post_load(self, data, original_data, **kwargs):
+        logger.debug("ExtendedActivatorSchema::pre_load::serialize_post_load: %s", data)
+        data["envs"] = json.dumps(original_data.envs)
+        data["platforms"] = json.dumps(original_data.platforms)
+        data["regions"] = json.dumps(original_data.regions)
+        data["hosting"] = json.dumps(original_data.hosting)
+        data["apiManagement"] = json.dumps(original_data.apiManagement)
+        data["ci"] = json.dumps(original_data.ci)
+        data["cd"] = json.dumps(original_data.cd)
+        data["sourceControl"] = json.dumps(original_data.sourceControl)
+        return data
+
+    @post_dump(pass_original=True)
+    def deserialize_post_dump(self, data, original_data, **kwargs):
+        logger.debug("ExtendedActivatorSchema::post_dump %s", original_data)
+        data["envs"] = json.loads(original_data.envs)
+        data["platforms"] = json.loads(original_data.platforms)
+        data["regions"] = json.loads(original_data.regions)
+        data["hosting"] = json.loads(original_data.hosting)
+        data["apiManagement"] = json.loads(original_data.apiManagement)
+        data["ci"] = json.loads(original_data.ci)
+        data["cd"] = json.loads(original_data.cd)
+        data["sourceControl"] = json.loads(original_data.sourceControl)
+        if not original_data.accessRequestedBy:
+            data["accessRequestedBy"] = None
+        logger.debug("accessRequestedBy: %s", original_data.accessRequestedBy)
+        return data
+
 class ExtendedActivatorSchema(Schema):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
