@@ -83,7 +83,7 @@ def start_deployment(solutionId):
     while deployment_complete == False:
         sol = db.session.query(Solution).filter(Solution.id == solutionId).one_or_none()
         if sol:
-            if sol.deploymentState == DeploymentStatus.SUCCESS:
+            if sol.deploymentState == DeploymentStatus.SUCCESS or sol.deploymentState == DeploymentStatus.FAILURE:
                 deployment_complete = True
                 logger.debug("start_deployment::deployment complete for Solution: %s", sol.id)                
             else:

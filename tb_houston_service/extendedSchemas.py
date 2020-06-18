@@ -89,7 +89,7 @@ class ExtendedActivatorSchema(Schema):
 
     @post_load(pass_original=True)
     def deserialize_post_load(self, data, original_data, **kwargs):
-        logger.debug("ExtendedActivatorSchema::pre_load::serialize_post_load: %s", data)
+        logger.debug("ExtendedActivatorSchema::post_load::serialize_post_load: %s", data)
         data["envs"] = json.dumps(original_data.envs)
         data["platforms"] = json.dumps(original_data.platforms)
         data["regions"] = json.dumps(original_data.regions)
@@ -361,6 +361,13 @@ class ExtendedApplicationDeploymentSchema(Schema):
     id = fields.Int()
     deploymentState = fields.Str()
     taskId = fields.Str()
+    lastUpdated = fields.Str()
+
+    @post_dump(pass_original=True)
+    def deserialize_post_dump(self, data, original_data, **kwargs):
+        logger.debug("ExtendedActivatorSchema::post_dump %s", original_data)
+        data["id"] = original_data.applicationId
+        return data        
 
 
 class ExtendedApplicationForDACSchema(Schema):

@@ -2966,9 +2966,6 @@ components:
         id:
           type: integer
           description: The application id
-        deployed:
-          type: boolean
-          description: Has the solution been deployed?
         deploymentState:
           type: string
           description: Deployment state

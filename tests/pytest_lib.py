@@ -132,3 +132,6 @@ def typestest_solution(obj):
     for app in obj["applications"]:
         typestest_application(app)
     print(f"obj: {pformat(obj)}")
+
+
+    
