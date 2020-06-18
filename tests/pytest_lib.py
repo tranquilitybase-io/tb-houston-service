@@ -55,8 +55,7 @@ def delete_error(url, oid):
 
 
 def typestest_activator(obj):
-    accessRequestedBy = obj["accessRequestedBy"]
-    assert isinstance(accessRequestedBy, dict) or accessRequestedBy is None
+    assert isinstance(obj["accessRequestedBy"], dict) or obj["accessRequestedBy"] is None
     assert isinstance(obj["id"], int)
     assert isinstance(obj["isActive"], bool)
     assert isinstance(obj["lastUpdated"], str)
@@ -132,6 +131,3 @@ def typestest_solution(obj):
     for app in obj["applications"]:
         typestest_application(app)
     print(f"obj: {pformat(obj)}")
-
-
-    

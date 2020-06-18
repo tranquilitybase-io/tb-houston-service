@@ -1,6 +1,7 @@
 import logging
 from tb_houston_service.models import Activator
 from config import db
+from tb_houston_service import activator_extension
 
 logger = logging.getLogger("tb_houston_service.application_extension")
 
@@ -12,4 +13,5 @@ def expand_application(app):
             Activator.isActive
         ).one_or_none()
     )
+    activator_extension.expand_activator(app.activator)
     return app
