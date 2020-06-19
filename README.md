@@ -45,4 +45,3 @@ gcr.io/eagle-console-resources/tb-houston-mysql57:mock
 <https://cloud.google.com/sql/docs/mysql/configure-private-ip>
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/32de36097c284849b9b95ba94f6f982f)](https://www.codacy.com/gh/tranquilitybase-io/tb-houston-service?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=tranquilitybase-io/tb-houston-service&amp;utm_campaign=Badge_Grade)
-

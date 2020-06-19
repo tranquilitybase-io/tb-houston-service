@@ -2517,7 +2517,7 @@ components:
                 type: integer
               status:
                 type: string
-              accessRequestedBy:
+              accessRequestedById:
                 type: integer
       required: true
 
@@ -2904,10 +2904,10 @@ components:
         description:
           type: string
           description: description
-        accessRequestedBy:
+        accessRequestedById:
           type: integer
           nullable: True
-          description: accessRequestedBy
+          description: accessRequestedById
         source:
           type: string
           description: source
@@ -2966,9 +2966,6 @@ components:
         id:
           type: integer
           description: The application id
-        deployed:
-          type: boolean
-          description: Has the solution been deployed?
         deploymentState:
           type: string
           description: Deployment state

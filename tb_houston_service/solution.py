@@ -161,7 +161,7 @@ def create(solutionDetails):
         new_solution = solution_extension.expand_solution(new_solution)        
         schema = ExtendedSolutionSchema()
         data = schema.dump(new_solution)        
-        db.session.commit()
+        db.session.commit()      
     except:
         db.session.rollback()
         raise

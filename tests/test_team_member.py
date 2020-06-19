@@ -52,7 +52,7 @@ def post():
         "id": 0,
         "userId": 1000,
         "teamId": 1000,
-        "roleId": 1,
+        "roleId": 1000,
         "isTeamAdmin": True,
         "isActive": True,
     }
@@ -87,7 +87,7 @@ def put(id):
         "id": int(id),
         "userId": 1000,
         "teamId": 1000,
-        "roleId": 1,
+        "roleId": 1000,
         "isTeamAdmin": True,
         "isActive": False,
     }
@@ -123,3 +123,7 @@ def get_all_params():
 
     # Validate Get All response
     assert resp.status_code == 200
+
+
+if __name__ == "__main__":
+    test_teammember()

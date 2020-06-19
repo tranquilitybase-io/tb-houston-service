@@ -49,7 +49,7 @@ CREATE TABLE `activator` (
   `activator` varchar(255) DEFAULT NULL,
   `status` varchar(255) DEFAULT NULL,
   `description` varchar(255) DEFAULT NULL,
-  `accessRequestedBy` int(11) DEFAULT NULL,
+  `accessRequestedById` int(11) DEFAULT NULL,
   `source` varchar(100) DEFAULT NULL,
   `activatorLink` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
@@ -557,7 +557,7 @@ CREATE TABLE `solution` (
   `isActive` tinyint(1) NOT NULL DEFAULT '1',
   `lastUpdated` datetime DEFAULT NULL,
   `isFavourite` tinyint(1) NOT NULL DEFAULT '0',
-  `name` varchar(255) DEFAULT NULL,
+  `name` varchar(30) DEFAULT NULL,
   `description` varchar(255) DEFAULT NULL,
   `costCentre` varchar(255) DEFAULT NULL,
   `ci` varchar(255) DEFAULT NULL,

@@ -29,7 +29,7 @@ def start_deployment(applicationId):
     while deployment_complete == False:
         app_dep = db.session.query(ApplicationDeployment).filter(ApplicationDeployment.applicationId == applicationId).one_or_none()
         if app_dep:
-            if app_dep.deploymentState == DeploymentStatus.SUCCESS:
+            if app_dep.deploymentState == DeploymentStatus.SUCCESS or app_dep.deploymentState == DeploymentStatus.FAILURE:
                 deployment_complete = True
                 logger.debug("start_deployment::deployment complete for Application: %s", app_dep.applicationId)                
             else:
@@ -70,10 +70,7 @@ def deployment_create(applicationDeploymentDetails):
     if not app:
       abort("This application doesn't exist.", 404)
 
-    resp_json = {}
-    if app_deployment:
-        resp_json = {"id": oid, "deploymentState": app_deployment.deploymentState}
-    else:
+    if not app_deployment:
       schema = ApplicationDeploymentSchema(many=False)
       app_deployment_dict = {}
       app_deployment_dict["applicationId"] = oid
@@ -85,11 +82,12 @@ def deployment_create(applicationDeploymentDetails):
   
       db.session.add(app_deployment)
       db.session.commit()
-      resp_json = {"id": oid, "deploymentState": app_deployment.deploymentState}
 
-    db.session.close()
     executor.submit(start_deployment, app_deployment.applicationId)
-    return make_response(resp_json, 200)
+    ext_schema = ExtendedApplicationDeploymentSchema()
+    data = ext_schema.dump(app_deployment)
+    db.session.close()
+    return data, 200
 
 
 def deployment_read_all():

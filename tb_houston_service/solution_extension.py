@@ -50,7 +50,10 @@ def expand_solution_for_dac(sol):
         )
         .all()
     )
+
+    # 20200607 - DaC can only support a list of string
     sol.environments = [ env.name for env in environments ]
+
     a_team = db.session.query(Team).filter(Team.id == sol.teamId).one_or_none()
     sol.team = team_extension.expand_team_with_users(a_team)
 

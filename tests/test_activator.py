@@ -17,6 +17,7 @@ def typestest(resp):
     assert isinstance(resp["isActive"], bool)
     assert isinstance(resp["isFavourite"], bool)
     assert isinstance(resp["lastUpdated"], str)
+    assert isinstance(resp["accessRequestedById"], int)
     assert isinstance(resp["accessRequestedBy"], dict) or resp["accessRequestedBy"] is None
     assert isinstance(resp["activator"], str)
     assert isinstance(resp["activatorLink"], str)
@@ -67,7 +68,7 @@ def post():
     # Test POST Then GET
     # Body
     payload = {
-        "accessRequestedBy": 0,
+        "accessRequestedById": 1,
         "activator": "test-activator",
         "activatorLink": "test-post-",
         "apiManagement": [
@@ -140,7 +141,8 @@ def post():
     assert resp.status_code == 200
     assert resp_json["activator"] == "test-activator"
     assert resp_headers["content-type"] == "application/json"
-    assert isinstance(resp_json["accessRequestedBy"], type(None))
+    assert isinstance(resp_json["accessRequestedById"], int)
+    assert isinstance(resp_json["accessRequestedBy"], dict)
     typestest(resp_json)
     return resp_json
 
@@ -148,7 +150,7 @@ def post():
 def set_activator_status(oid):
 
     url = url = f"http://{HOUSTON_SERVICE_URL}/api/setactivatorstatus/"
-    payload = {"accessRequestedBy": 0, "id": oid, "status": "Locked"}
+    payload = {"accessRequestedById": 1, "id": oid, "status": "Locked"}
     resp = requests.post(url, headers=headers, data=json.dumps(payload, indent=4))
     resp_json = resp.json()
     # Validate response body for updated values
@@ -162,7 +164,7 @@ def put(oid):
     # Test Update Then get new value
     newpayload = {
         "activator": "new-test-activator",
-        "accessRequestedBy": 0,
+        "accessRequestedById": 2,
         "activatorLink": "test-put-",
         "apiManagement": ["test-put-6", "test-put-7", "test-put-8"],
         "available": False,

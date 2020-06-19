@@ -39,9 +39,10 @@ class Activator(Base):
     activator = db.Column(db.String(255))
     status = db.Column(db.String(255))
     description = db.Column(db.String(255))
-    accessRequestedBy = db.Column(db.Integer, db.ForeignKey("user.id"))
+    accessRequestedById = db.Column(db.Integer, db.ForeignKey("user.id")) 
     source = db.Column(db.String(100))
     activatorLink = db.Column(db.String(255))
+
 
     def __repr__(self):
         return "<Activator(id={self.id!r}, name={self.name!r})>".format(self=self)
@@ -77,6 +78,9 @@ class ActivatorSchema(SQLAlchemyAutoSchema):
             data['cd'] = json.dumps(data['cd'])
         if 'sourceControl' in data:
             data['sourceControl'] = json.dumps(data['sourceControl'])
+        if data.get('accessRequestedById') == 0:
+            data['accessRequestedById'] = None
+
         return data
 
 
@@ -93,8 +97,8 @@ class Application(Base):
     env = db.Column(db.String(64))
     status = db.Column(db.String(64))
     description = db.Column(db.String(255))
- 
     resources = db.Column(db.String(255))
+    activator = db.relationship("Activator")
 
     def __repr__(self):
         return "<Application(id={self.id!r}, name={self.name!r})>".format(self=self)
@@ -460,7 +464,7 @@ class Solution(Base):
     isActive = db.Column(db.Boolean)
     lastUpdated = db.Column(db.String(20))
     isFavourite = db.Column(db.Boolean)    
-    name = db.Column(db.String(255))
+    name = db.Column(db.String(30))
     description = db.Column(db.String(255))
     businessUnitId = db.Column(db.Integer())
     costCentre = db.Column(db.String(255))
@@ -494,7 +498,8 @@ class SolutionSchema(SQLAlchemyAutoSchema):
         if 'isActive' not in data:
             data['isActive'] = True
         if 'isFavourite' not in data:
-            data['isFavourite'] = False    
+            data['isFavourite'] = False
+        data['name'] = data['name'][:Solution.name.type.length]
         return data         
 
 
