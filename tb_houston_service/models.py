@@ -498,7 +498,9 @@ class SolutionSchema(SQLAlchemyAutoSchema):
         if 'isActive' not in data:
             data['isActive'] = True
         if 'isFavourite' not in data:
-            data['isFavourite'] = False    
+            data['isFavourite'] = False
+        name_length = Solution.name.type.length
+        data['name'] = data['name'][:name_length] if len(data.get('name')) > name_length else data['name']
         return data         
 
 
