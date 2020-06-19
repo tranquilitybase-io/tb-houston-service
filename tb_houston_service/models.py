@@ -78,6 +78,9 @@ class ActivatorSchema(SQLAlchemyAutoSchema):
             data['cd'] = json.dumps(data['cd'])
         if 'sourceControl' in data:
             data['sourceControl'] = json.dumps(data['sourceControl'])
+        if data.get('accessRequestedById') == 0:
+            data['accessRequestedById'] = None
+
         return data
 
 
