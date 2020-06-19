@@ -464,7 +464,7 @@ class Solution(Base):
     isActive = db.Column(db.Boolean)
     lastUpdated = db.Column(db.String(20))
     isFavourite = db.Column(db.Boolean)    
-    name = db.Column(db.String(255))
+    name = db.Column(db.String(30))
     description = db.Column(db.String(255))
     businessUnitId = db.Column(db.Integer())
     costCentre = db.Column(db.String(255))

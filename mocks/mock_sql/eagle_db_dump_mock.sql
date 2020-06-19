@@ -80,7 +80,7 @@ CREATE TABLE `application` (
   `isFavourite` tinyint(1) NOT NULL DEFAULT '0',
   `solutionId` int(11) NOT NULL,
   `activatorId` int(11) NOT NULL,
-  `name` varchar(255) DEFAULT NULL,
+  `name` varchar(30) DEFAULT NULL,
   `env` varchar(255) DEFAULT NULL,
   `status` varchar(255) DEFAULT NULL,
   `description` varchar(255) DEFAULT NULL,
