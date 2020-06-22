@@ -14,19 +14,18 @@ plural_url = f"http://{HOUSTON_SERVICE_URL}/api/roles/"
 
 # Additional headers.
 headers = {"Content-Type": "application/json"}
-id = 0
 
 
 def test_role():
 
     # Testing POST request
-    id = post()
+    oid = post()
     # Testing PUT request
-    put(id)
+    put(oid)
     # Test GET all teammbers with parameters
     get_all_params()
     # Testing DELETE request
-    pytest_lib.delete(url, str(id))
+    pytest_lib.delete(url, str(oid))
     # Testing DELETE Request Error
     pytest_lib.delete_error(url, "-1")
     # Testing GETALL request
@@ -58,10 +57,10 @@ def post():
     # Validate response headers and body contents, e.g. status code.
     resp_json = resp.json()
     assert resp.status_code == 201
-    id = str(resp_json["id"])
+    oid = resp_json["id"]
 
     # Get Request to check Post has created item as expected
-    resp = requests.get(url + id, headers=headers)
+    resp = requests.get(url + str(oid), headers=headers)
     resp_json = resp.json()
     resp_headers = resp.headers
     # Validate response
@@ -70,35 +69,35 @@ def post():
     assert resp_json["cloudIdentityGroup"] == "test@gftdevgcp.com"
     assert resp_headers["content-type"] == "application/json"
     typestest(resp_json)
-    return id
+    return oid
 
 
-def put(id):
+def put(oid):
     print("Put Tests")
 
     # Test Update Then get new value
     newpayload = {
-        "id": int(id),
-        "cloudIdentityGroup": "test-change@gftdevgcp.com",
+        "id": oid,
+        "cloudIdentityGroup": f"test{str(oid)}@gftdevgcp.com",
         "description": "eagle console test role changed",
         "name": "test",
     }
 
     resp = requests.put(
-        url + id, headers=headers, data=json.dumps(newpayload, indent=4)
+        url + str(oid), headers=headers, data=json.dumps(newpayload, indent=4)
     )
 
     # Validate update/Put response
     assert resp.status_code == 200
 
     # Get Request to get updated values
-    resp = requests.get(url + id, headers=headers)
+    resp = requests.get(url + str(oid), headers=headers)
     resp_json = resp.json()
 
     # Validate response body for updated values
     assert resp.status_code == 200
     assert resp_json["description"] == "eagle console test role changed"
-    assert resp_json["cloudIdentityGroup"] == "test-change@gftdevgcp.com"
+    assert resp_json["cloudIdentityGroup"] == f"test{str(oid)}@gftdevgcp.com"
 
     typestest(resp_json)
 

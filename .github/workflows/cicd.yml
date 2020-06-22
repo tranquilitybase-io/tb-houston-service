@@ -35,13 +35,6 @@ jobs:
         username: '_json_key'
         password: ${{ secrets.GCP_SA_KEY }}
 
-    - name: Build Houston MYSQL57 Image
-      shell: bash
-      run: |
-        cd ${GITHUB_WORKSPACE}/tb-houston-service/sql
-        docker build -t gcr.io/eagle-console-resources/tb-houston-mysql57:ci .
-        docker push gcr.io/eagle-console-resources/tb-houston-mysql57:ci
-
     - name: Build Houston Service Image
       shell: bash
       run: |

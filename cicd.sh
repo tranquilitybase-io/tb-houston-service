@@ -60,7 +60,7 @@ if [ "$1" == "run" ]; then
     sleep 30
     docker-compose -f docker_compose_cicd.yml ps 
     current_epoch="$(date -u +%s)"
-    elapsed_seconds="$(($current_epoch-$start_epoch))"
+    elapsed_seconds="$((current_epoch-start_epoch))"
     echo "Elapsed seconds: ${elapsed_seconds}"
   done
 

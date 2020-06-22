@@ -9,8 +9,7 @@ LOG_LEVEL = logging.INFO  # DEBUG, INFO, WARNING, ERROR, CRITICAL
 
 HOUSTON_SERVICE_URL = os.environ["HOUSTON_SERVICE_URL"]
 url = f"http://{HOUSTON_SERVICE_URL}/api/user/"
-plural_url = f"http://{HOUSTON_SERVICE_URL}/api/users/"
-test_email_account = "test@test.com"
+urls = f"http://{HOUSTON_SERVICE_URL}/api/users/"
 
 # Additional headers.
 headers = {"Content-Type": "application/json"}
@@ -28,27 +27,25 @@ def typestest(resp):
 
 
 def test_user():
-
     # Testing POST request
-    id = post()
+    oid = post()
     # Testing PUT request
-    put(id)
+    put(oid)
     # Testing logical DELETE request
-    pytest_lib.logical_delete(url, str(id))
+    pytest_lib.logical_delete(url, str(oid))
     # Testing DELETE Request Error
     pytest_lib.delete_error(url, str(-1))
     # Testing GETALL request
-    pytest_lib.get_all(plural_url)
+    pytest_lib.get_all(urls)
 
 def post():
     print("Post Tests")
     # Test POST Then GET
     # Body
     payload = {
-        "id": 0,
         "firstName": "test",
         "lastName": "test",
-        "email": test_email_account,
+        "email": "test_email_account",
         "isActive": True,
         "isAdmin": True,
         "showWelcome": True,
@@ -59,53 +56,62 @@ def post():
 
     # Validate response headers and body contents, e.g. status code.
     resp_json = resp.json()
+    print(f"resp_json: {resp_json}")    
     assert resp.status_code == 201
-    id = resp_json["id"]
+    oid = resp_json["id"]
 
     # Get Request to check Post has created item as expected
-    resp = requests.get(url + str(id), headers=headers)
+    resp = requests.get(url + str(oid), headers=headers)
     resp_json = resp.json()
     resp_headers = resp.headers
+
+    print(f"resp_json: {resp_json}")
     # Validate response
     assert resp.status_code == 200
     assert resp_json["firstName"] == "test"
     assert resp_json["lastName"] == "test"
-    assert resp_json["email"] == test_email_account
+    assert resp_json["email"] == "test_email_account"
     assert resp_json["isActive"] == True
     assert resp_headers["content-type"] == "application/json"
     typestest(resp_json)
-    return id
+    return oid
 
 
-def put(id):
+def put(oid):
     print("Put Tests")
 
     # Test Update Then get new value
     newpayload = {
-        "id": id,
-        "firstName": "test",
+        "id": oid,
+        "firstName": f"test{str(oid)}",
         "lastName": "test",
-        "email": "test@test.com",
+        "email": f"test{str(oid)}@test.com",
         "isActive": False,
         "isAdmin": True,
-        "showWelcome": True,
+        "showWelcome": True
     }
 
     resp = requests.put(
-        url + str(id), headers=headers, data=json.dumps(newpayload, indent=4)
+        url + str(oid), headers=headers, data=json.dumps(newpayload, indent=4)
     )
+
+    # Get Request to get updated values
+    resp = requests.get(url + str(oid), headers=headers)
+    resp_json = resp.json()    
+    print(f"resp_json: {resp_json}")    
 
     # Validate update/Put response
     assert resp.status_code == 200
 
-    # Get Request to get updated values
-    resp = requests.get(url + str(id), headers=headers)
-    resp_json = resp.json()
-    id = resp_json["id"]
-
     # Validate response body for updated values
     assert resp.status_code == 200
-    assert resp_json["firstName"] == "test"
+    assert resp_json["firstName"] == f"test{str(oid)}"
+    assert resp_json["lastName"] == "test"    
     assert resp_json["isActive"] == False
+    assert resp_json["email"] == f"test{str(oid)}@test.com"
 
     typestest(resp_json)
+
+
+if __name__ == "__main__":
+    test_user()

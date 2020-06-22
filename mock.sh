@@ -2,17 +2,6 @@
 # Script for building, testing and running of mock images
 ROOTDIR=$(pwd)
 
-if [ "$1" == "build" ]; then
-  cd "${ROOTDIR}/mocks/mock_sql/"
-  docker build -t gcr.io/eagle-console-resources/tb-houston-mysql57:mock .
-  docker push gcr.io/eagle-console-resources/tb-houston-mysql57:mock
-
-  cd "${ROOTDIR}"
-  docker build -f Dockerfile -t gcr.io/eagle-console-resources/tb-houston-service:mock .
-  docker push gcr.io/eagle-console-resources/tb-houston-service:mock
-  exit 0
-fi
-
 if [ "$1" == "pull" ]; then
   docker-compose -f docker_compose_mock.yml pull
   exit 0
@@ -70,16 +59,6 @@ if [ "$1" == "run" ]; then
   cd "${ROOTDIR}"
   read  -n 1 -p "Press any key to shutdown? "
   docker-compose -f docker_compose_mock.yml down
-  exit 0
-fi
-
-if [ "$1" == "deploy" ]; then
-  docker image tag gcr.io/eagle-console-resources/tb-gcp-dac:mock gcr.io/tranquility-base-images/tb-gcp-dac:mock 
-  docker push gcr.io/tranquility-base-images/tb-gcp-dac:mock 
-  docker image tag gcr.io/eagle-console-resources/tb-houston-mysql57:mock gcr.io/tranquility-base-images/tb-houston-mysql57:mock 
-  docker push gcr.io/tranquility-base-images/tb-houston-mysql57:mock 
-  docker image tag gcr.io/eagle-console-resources/tb-houston-service:mock gcr.io/tranquility-base-images/tb-houston-service:mock 
-  docker push gcr.io/tranquility-base-images/tb-houston-service:mock 
   exit 0
 fi
 

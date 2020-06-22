@@ -5,19 +5,22 @@ import logging
 import os
 from pprint import pprint
 from tests import pytest_lib
+from tests import test_team
+from tests import test_user
+from tests import test_role
 
 
 LOG_LEVEL = logging.INFO  # DEBUG, INFO, WARNING, ERROR, CRITICAL
 
 HOUSTON_SERVICE_URL = os.environ["HOUSTON_SERVICE_URL"]
-url = f"http://{HOUSTON_SERVICE_URL}/api/teamMember/"
-plural_url = f"http://{HOUSTON_SERVICE_URL}/api/teamMembers/"
+user_url = f"http://{HOUSTON_SERVICE_URL}/api/user/"
+team_member_url = f"http://{HOUSTON_SERVICE_URL}/api/teamMember/"
+team_members_url = f"http://{HOUSTON_SERVICE_URL}/api/teamMembers/"
 
 
 # Additional headers.
 headers = {"Content-Type": "application/json"}
-id = 0
-
+test_email_account = "new_team@test.com"
 
 def typestest(resp):
     assert isinstance(resp["userId"], int)
@@ -31,95 +34,101 @@ def typestest(resp):
 def test_teammember():
 
     # Testing POST request
-    id = post()
+    user_id = test_user.post()
+    test_user.put(user_id)
+    role_id = test_role.post()    
+    team_id = test_team.post() 
+
+    team_member_id = post_team_member(userId = user_id, roleId = role_id, teamId = team_id)
     # Testing PUT request
-    put(id)
+    put_team_member(teamMemberId = team_member_id, userId = user_id, roleId = role_id, teamId = team_id)
     # Test GET all teammbers with parameters
-    get_all_params()
+    get_all_params(userId = user_id, teamId = team_id)
     # Testing DELETE request
-    pytest_lib.logical_delete(url, str(id))
+    pytest_lib.logical_delete(team_member_url, str(team_member_id))
     # Testing DELETE Request Error
-    pytest_lib.delete_error(url, "-1")
+    pytest_lib.delete_error(team_member_url, "-1")
     # Testing GETALL request
-    pytest_lib.get_all(plural_url)
+    pytest_lib.get_all(team_members_url)
 
 
-def post():
+def post_team_member(userId, roleId, teamId):
     print("Post Tests")
     # Test POST Then GET
     # Body
     payload = {
         "id": 0,
-        "userId": 1000,
-        "teamId": 1000,
-        "roleId": 1000,
+        "userId": userId,
+        "teamId": teamId,
+        "roleId": roleId,
         "isTeamAdmin": True,
         "isActive": True,
     }
 
     # convert dict to json by json.dumps() for body data.
-    resp = requests.post(url, headers=headers, data=json.dumps(payload, indent=4))
+    resp = requests.post(team_member_url, headers=headers, data=json.dumps(payload, indent=4))
 
     # Validate response headers and body contents, e.g. status code.
     resp_json = resp.json()
     assert resp.status_code == 201
-    id = str(resp_json["id"])
+    oid = resp_json["id"]
 
     # Get Request to check Post has created item as expected
-    resp = requests.get(url + id, headers=headers)
+    resp = requests.get(team_member_url + str(oid), headers=headers)
     resp_json = resp.json()
     resp_headers = resp.headers
     # Validate response
     assert resp.status_code == 200
-    assert resp_json["userId"] == 1000
-    assert resp_json["teamId"] == 1000
-    # assert resp_json['roleId'] == 'Admin'
+    assert resp_json["userId"] == userId
+    assert resp_json["roleId"] == roleId
+    assert resp_json["teamId"] == teamId
     assert resp_headers["content-type"] == "application/json"
     typestest(resp_json)
-    return id
+    return oid
 
 
-def put(id):
+def put_team_member(teamMemberId, userId, roleId, teamId):
     print("Put Tests")
 
     # Test Update Then get new value
     newpayload = {
-        "id": int(id),
-        "userId": 1000,
-        "teamId": 1000,
-        "roleId": 1000,
+        "id": teamMemberId,
+        "userId": userId,
+        "teamId": teamId,
+        "roleId": roleId,
         "isTeamAdmin": True,
         "isActive": False,
     }
 
     resp = requests.put(
-        url + id, headers=headers, data=json.dumps(newpayload, indent=4)
+        team_member_url + str(teamMemberId), headers=headers, data=json.dumps(newpayload, indent=4)
     )
 
     # Validate update/Put response
     assert resp.status_code == 200
 
     # Get Request to get updated values
-    resp = requests.get(url + id, headers=headers)
+    resp = requests.get(team_member_url + str(teamMemberId), headers=headers)
     resp_json = resp.json()
-    id = resp_json["id"]
+    #id = resp_json["id"]
 
     # Validate response body for updated values
     assert resp.status_code == 200
-    assert resp_json["userId"] == 1000
-    assert resp_json["teamId"] == 1000
+    assert resp_json["userId"] == userId
+    assert resp_json["teamId"] == teamId
+    assert resp_json["roleId"] == roleId    
     assert resp_json["isActive"] == False
 
     typestest(resp_json)
 
 
-def get_all_params():
+def get_all_params(userId, teamId):
     print("get_all Tests with parameters")
 
     # defining a params dict for the parameters to be sent to the API
-    params = {"userId": 1000, "teamId": 1000}
+    params = {"userId": userId, "teamId": teamId}
 
-    resp = requests.get(plural_url, headers=headers, params=params)
+    resp = requests.get(team_members_url, headers=headers, params=params)
 
     # Validate Get All response
     assert resp.status_code == 200
