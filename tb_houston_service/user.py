@@ -104,17 +104,9 @@ def update(oid, userDetails):
     # Does user exist?
 
     if existing_user is not None:
+        userDetails['id'] = oid
         schema = UserSchema()
         update_user = schema.load(userDetails, session=db.session)
-        update_user.id = oid
-        update_user.email = userDetails.get("email", existing_user.email)
-        update_user.firstName = userDetails.get("firstName", existing_user.firstName)
-        update_user.lastName = userDetails.get("lastName", existing_user.lastName)
-        update_user.isAdmin = userDetails.get("isAdmin", existing_user.isAdmin)
-        update_user.isActive = userDetails.get("isActive", existing_user.isActive)
-        update_user.showWelcome = userDetails.get(
-            "showWelcome", existing_user.showWelcome
-        )
         db.session.merge(update_user)
         db.session.commit()
 
