@@ -17,7 +17,7 @@ def typestest(resp):
     assert isinstance(resp["isActive"], bool)
     assert isinstance(resp["isFavourite"], bool)
     assert isinstance(resp["lastUpdated"], str)
-    assert isinstance(resp["accessRequestedById"], int) or resp["accessRequestedBy"] is None
+    assert isinstance(resp["accessRequestedById"], int) or resp["accessRequestedById"] is None
     assert isinstance(resp["accessRequestedBy"], dict) or resp["accessRequestedBy"] is None
     assert isinstance(resp["activator"], str)
     assert isinstance(resp["activatorLink"], str)
