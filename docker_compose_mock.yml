@@ -1,10 +1,23 @@
 version: '3.1'
 
+version: '2'
+volumes:
+  mysql-data:
+    driver: local
+  mysql-log:
+    driver: local
+  mysql-conf:
+    driver: local
+
 services:
   mysql57:
-    image: gcr.io/tranquility-base-images/tb-houston-mysql57:mock
+    image: gcr.io/tranquility-base-images/tb-db:integration
     command: --default-authentication-plugin=mysql_native_password
     restart: always
+#    volumes:
+#     - "mysql-data:/var/lib/mysql"
+#     - "mysql-log:/var/log/mysql"
+#     - "mysql-conf:/etc/mysql/conf.d"
     environment:
       MYSQL_ROOT_PASSWORD: my-secret-pw
       MYSQL_USER: eagle-user
