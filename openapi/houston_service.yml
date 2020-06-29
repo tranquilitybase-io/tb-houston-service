@@ -2475,7 +2475,7 @@ paths:
           description: Successfully deleted a folder
 
 
-  "/notifications":
+  "/notifications/":
     post:
       operationId: tb_houston_service.notification.create_all
       tags:

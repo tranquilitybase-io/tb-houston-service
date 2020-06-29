@@ -377,11 +377,12 @@ class ExtendedApplicationForDACSchema(Schema):
 class ExtendedNotificationActivatorSchema(Schema):
     id = fields.Int()
     isActive = fields.Bool()
-    lastIpdate = fields.Str()
+    lastUpdated = fields.Str()
     toUserId = fields.Int()
     fromUserId = fields.Int()
     importance = fields.Int()
     message = fields.Str()
     isRead = fields.Boolean()
     typeId = fields.Int()
+    activatorId = fields.Int()
 

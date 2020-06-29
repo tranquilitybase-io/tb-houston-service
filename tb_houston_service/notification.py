@@ -50,7 +50,9 @@ def read_all(typeId, toUserId = None, isRead = None, isActive = None, sort = Non
 
         if typeId == 1:
             for notif in notifications:
-                notif = dbs.query(NotificationActivator).filter(NotificationActivator.notificationId == notif.id).one_or_none()
+                activator_notification = dbs.query(NotificationActivator).filter(NotificationActivator.notificationId == notif.id).one_or_none()
+                if activator_notification:
+                    notif.activatorId = activator_notification.activatorId
             schema = ExtendedNotificationActivatorSchema(many=True)
             data = schema.dump(notifications)
             return data, 200
@@ -83,6 +85,9 @@ def create(notification, typeId):
                 notificationActivator["isActive"] = True                                            
                 new_na = naSchema.load(notificationActivator, session=dbs)
                 dbs.add(new_na)
+            else:
+                logger.error("typeId or activatorId is missing, the transaction will be rolled back for this notification!")
+                dbs.rollback()
         else:
             # Update
             aSchema = NotificationSchema()
@@ -97,7 +102,10 @@ def create(notification, typeId):
                 notificationActivator["lastUpdated"] = ModelTools.get_utc_timestamp()
                 notificationActivator["isActive"] = notification.get('isActive', True)   
                 updated_na = naSchema.load(notificationActivator, session=dbs)
-                dbs.merge(updated_na)                   
+                dbs.merge(updated_na)    
+            else:
+                logger.error("typeId or activatorId is missing, the transaction will be rolled back for this notification!")
+                dbs.rollback()           
     logger.debug("processed: %s", notification)
     return notification
 
