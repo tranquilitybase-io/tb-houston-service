@@ -16,6 +16,9 @@ info:
     name: "Apache 2.0"
     url: "https://www.apache.org/licenses/LICENSE-2.0.html"
 
+servers:
+  - url: /api
+
 paths:
   /login:
     post:
@@ -2471,8 +2474,88 @@ paths:
         "200":
           description: Successfully deleted a folder
 
-servers:
-  - url: /api
+
+  "/notifications":
+    post:
+      operationId: tb_houston_service.notification.create_all
+      tags:
+        - notification
+      summary: Create or update notifications
+      description: Create or update notifications
+      parameters:
+        - in: query
+          name: typeId
+          schema:
+            type: integer
+          required: true
+        - in: query          
+          name: toUserId
+          schema:
+            type: integer        
+        - in: query
+          name: isRead
+          schema:
+            type: boolean
+        - in: query
+          name: isActive
+          schema:
+            type: boolean
+        - in: query
+          name: sort
+          schema:
+            type: array
+            items:
+              type: string      
+      requestBody:
+        $ref: "#/components/requestBodies/notification.notificationListDetails"
+      responses:
+        "201":
+          description: Successfully created notifications
+          content:
+            application/json:
+              schema:                
+                oneOf:
+                  - $ref: "#/components/schemas/NotificationActivatorList"
+    
+    get:
+      operationId: tb_houston_service.notification.read_all
+      tags:
+        - notification
+      summary: Read notifications
+      description: Read notifications
+      parameters:
+        - in: query
+          name: typeId
+          schema:
+            type: integer
+          required: true
+        - in: query             
+          name: toUserId
+          schema:
+            type: integer                
+        - in: query
+          name: isRead
+          schema:
+            type: boolean
+        - in: query
+          name: isActive
+          schema:
+            type: boolean
+        - in: query
+          name: sort
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        "200":
+          description: Successfully read notifications
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/NotificationActivatorList" 
+
 
 components:
 
@@ -2806,6 +2889,15 @@ components:
       description: the folder to create
       required: true
 
+    notification.notificationListDetails:
+      content:
+        application/json:
+          schema:      
+            x-body-name: notificationListDetails    
+            oneOf:
+              - $ref: "#/components/schemas/NotificationActivatorList"                         
+      description: the notifications to create
+      required: true
 
   schemas:
     Activator:
@@ -3471,6 +3563,40 @@ components:
       type: array
       items:
         $ref: "#/components/schemas/LZMetaDataEnv"
+
+    NotificationActivator:
+      type: object
+      properties:
+        id:
+          type: integer
+        isActive:
+          type: boolean
+        fromUserId:
+          type: integer
+        toUserId:
+          type: integer
+        importance:
+          type: integer
+        message:
+          type: string
+        isRead:
+          type: boolean
+        activatorId:
+          type: integer
+      example:
+        id: 1
+        isActive: true
+        toUserId: 1
+        fromUserId: 0
+        importance: 1
+        message: User 1 would like access to Activator 1
+        isRead: false
+      
+    NotificationActivatorList:
+      type: array
+      items:
+        $ref: "#/components/schemas/NotificationActivator" 
+
 
     Folder:
       type: object
