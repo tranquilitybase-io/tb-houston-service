@@ -13,5 +13,6 @@ def expand_application(app):
             Activator.isActive
         ).one_or_none()
     )
-    activator_extension.expand_activator(app.activator)
+    if app.activator:
+        activator_extension.expand_activator(app.activator)
     return app

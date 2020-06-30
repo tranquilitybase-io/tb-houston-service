@@ -6,7 +6,7 @@ from flask_marshmallow import Marshmallow
 from flask_executor import Executor
 
 
-basedir = os.path.abspath(os.path.dirname(__file__))
+basedir = os.path.join(os.path.dirname(__file__), "..")
 # print("basedir: {}".format(basedir))
 
 # Create the connexion application instance

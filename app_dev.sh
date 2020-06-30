@@ -8,7 +8,7 @@
 # NOTSET 0
 
 LOGLEVEL=10
-NUMBER_OF_WORKERS=5
+NUMBER_OF_WORKERS=1
 PORT=3000
 
 if [ ! -z "${1}" ]; then

@@ -441,6 +441,65 @@ class LZMetadataSchema(SQLAlchemyAutoSchema):
         load_instance = True
 
 
+class NotificationType(Base):
+    __tablename__ = "notificationType"
+    id = db.Column(db.Integer, primary_key=True)
+    isActive = db.Column(db.Boolean)
+    lastUpdated = db.Column(db.String(20))
+    name = db.Column(db.String(45))
+
+    def __repr__(self):
+        return "<NotificationType(id={self.id!r})>".format(self=self)
+
+
+class NotificationTypeSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = NotificationType
+        include_fk = True
+        load_instance = True        
+
+
+class Notification(Base):
+    __tablename__ = "notification"
+    id = db.Column(db.Integer(), primary_key=True)
+    isActive = db.Column(db.Boolean())
+    lastUpdated = db.Column(db.String(20))
+    toUserId = db.Column(db.Integer(), db.ForeignKey("user.id"))
+    fromUserId = db.Column(db.Integer, db.ForeignKey("user.id"))
+    importance = db.Column(db.Integer())
+    message = db.Column(db.String(255))
+    isRead = db.Column(db.Boolean())
+    typeId = db.Column(db.Integer(), db.ForeignKey("notificationType.id"))
+
+    def __repr__(self):
+        return "<Notification(id={self.id!r})>".format(self=self)
+
+
+class NotificationSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = Notification
+        include_fk = True
+        load_instance = True
+
+
+class NotificationActivator(Base):
+    __tablename__ = "notificationActivator"
+    isActive = db.Column(db.Boolean())
+    lastUpdated = db.Column(db.String(20))
+    notificationId = db.Column(db.Integer(), db.ForeignKey("notification.id"), primary_key=True)
+    activatorId = db.Column(db.Integer(), db.ForeignKey("activator.id"), primary_key=True)
+
+    def __repr__(self):
+        return "<NotificationActivator(id={self.id!r})>".format(self=self)
+
+
+class NotificationActivatorSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = NotificationActivator
+        include_fk = True
+        load_instance = True
+
+
 # Role
 class Role(Base):
     __tablename__ = "role"
