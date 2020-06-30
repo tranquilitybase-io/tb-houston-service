@@ -68,10 +68,15 @@ def create(notification, typeId):
         oid = notification.get("id", None)
         activatorId = notification.pop("activatorId", None)
         notification['typeId'] = typeId        
-        notification["lastUpdated"] = ModelTools.get_utc_timestamp()  
+        notification["lastUpdated"] = ModelTools.get_utc_timestamp()
+
         if not oid:
             # Insert
             notification.pop('id', None)
+            if notification.get('isActive', None) == None:
+              notification["isActive"] = True
+            if notification.get('isRead', None) == None:
+              notification["isRead"] = False
             aSchema = NotificationSchema()
             new_notification = aSchema.load(notification, session=dbs)
             dbs.add(new_notification)
@@ -82,7 +87,7 @@ def create(notification, typeId):
                 notificationActivator["notificationId"] = new_notification.id
                 notificationActivator["activatorId"] = activatorId   
                 notificationActivator["lastUpdated"] = ModelTools.get_utc_timestamp()    
-                notificationActivator["isActive"] = True                                            
+                notificationActivator["isActive"] = notification.get("isActive", True)                                            
                 new_na = naSchema.load(notificationActivator, session=dbs)
                 dbs.add(new_na)
             else:
