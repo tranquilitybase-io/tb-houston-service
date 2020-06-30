@@ -13,6 +13,6 @@ def expand_activator(act):
     """
     logger.debug("expand_activator: %s", act)
     act.accessRequestedBy = (
-        db.session.query(User).filter(User.id == act.accessRequestedById, act.isActive).one_or_none()
+        db.session.query(User).filter(User.id == act.accessRequestedById).one_or_none()
     )
     return act
