@@ -373,6 +373,14 @@ class ExtendedApplicationForDACSchema(Schema):
     name = fields.Str()
     description = fields.Str()
     solutionId = fields.Int()
+    lastUpdated = fields.Str(20)
+    workspaceProjectId = fields.Str()
+    activatorGitUrl = fields.Str()
+    deploymentEnvironment = fields.Str()
+    deploymentProjectId = fields.Str()
+    mandatoryVariables = fields.List(fields.Dict())
+    optionalVariables = fields.List(fields.Dict())
+
 
 class ExtendedNotificationActivatorSchema(Schema):
     id = fields.Int()

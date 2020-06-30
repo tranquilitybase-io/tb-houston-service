@@ -8,11 +8,13 @@ from flask import make_response, abort
 from config import db, executor
 from tb_houston_service.DeploymentStatus import DeploymentStatus
 from tb_houston_service.models import Application
+from tb_houston_service.models import Activator
 from tb_houston_service.models import ApplicationDeployment, ApplicationDeploymentSchema
+from tb_houston_service.models import SolutionResource
 from tb_houston_service.tools import ModelTools
 from tb_houston_service.extendedSchemas import ExtendedApplicationDeploymentSchema
 from tb_houston_service.extendedSchemas import ExtendedApplicationForDACSchema
-
+from config.db_list import db_session
 
 logger = logging.getLogger("tb_houston_service.application_deployment")
 
@@ -146,6 +148,26 @@ def deployment_update(oid, applicationDeploymentDetails):
 
 
 def deploy_application(app_deployment):
+    # expand fields for DaC application deployment
+    with db_session() as dbs:
+        ws_key = "project-id-workspace"
+        sol_res_ws = dbs.query(SolutionResource).filter(SolutionResource.solutionId == app_deployment.id and SolutionResource.key == ws_key).one_or_none()
+        app = dbs.query(Application).filter(Application.id == app_deployment.applicationId).one_or_none()
+        
+        if sol_res_ws: 
+            app_deployment.workspaceProjectId = sol_res_ws.value()
+
+        if app:
+            act = dbs.query(Activator).filter(Activator.id == app.activatorId).one_or_none()
+            if act:
+                app_deployment.activatorGitUrl = act.activatorLink()
+
+    deploymentEnvironment = app.env()
+    deploymentProjectIdKey = "project-id-" + deploymentEnvironment
+    sol_res_pi = dbs.query(SolutionResource).filter(SolutionResource.solutionId == app_deployment.id and SolutionResource.key == deploymentProjectIdKey).one_or_none()
+    deploymentProjectId = sol_res_pi.value()
+    mandatoryVariables = []
+    optionalVariables = []
     return send_application_deployment_to_the_dac(app_deployment)
 
 
