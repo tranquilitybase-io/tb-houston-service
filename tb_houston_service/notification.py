@@ -94,17 +94,14 @@ def create(notification, typeId):
             updated_notification = aSchema.load(notification, session=dbs)
             dbs.merge(updated_notification)   
             dbs.flush()
-            if notification.get("typeId") == 1 and activatorId:
+            if notification.get("typeId") == 1:
                 naSchema = NotificationActivatorSchema()
-                notificationActivator = {}
-                notificationActivator["notificationId"] = updated_notification.id
-                notificationActivator["activatorId"] = notification.get("activatorId") 
-                notificationActivator["lastUpdated"] = ModelTools.get_utc_timestamp()
-                notificationActivator["isActive"] = notification.get('isActive', True)   
-                updated_na = naSchema.load(notificationActivator, session=dbs)
-                dbs.merge(updated_na)    
+                notificationActivator = dbs.query(NotificationActivator).filter(NotificationActivator.notificationId == updated_notification.id).one()
+                notificationActivator.lastUpdated = ModelTools.get_utc_timestamp()
+                notificationActivator.isActive = notification.get('isActive', True)
+                dbs.merge(notificationActivator)
             else:
-                logger.error("typeId or activatorId is missing, the transaction will be rolled back for this notification!")
+                logger.error("typeId is missing, the transaction will be rolled back for this notification!")
                 dbs.rollback()           
     logger.debug("processed: %s", notification)
     return notification
