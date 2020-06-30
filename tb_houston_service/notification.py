@@ -76,7 +76,7 @@ def create(notification, typeId):
             if notification.get('isActive', None) == None:
               notification["isActive"] = True
             if notification.get('isRead', None) == None:
-              notification["isRead"] = False
+              notification["isRead"] = False            
             aSchema = NotificationSchema()
             new_notification = aSchema.load(notification, session=dbs)
             dbs.add(new_notification)

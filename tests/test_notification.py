@@ -18,7 +18,7 @@ def typestest(resp):
     assert isinstance(resp["lastUpdated"], str)
     assert isinstance(resp["toUserId"], int)
     assert isinstance(resp["fromUserId"], int) or resp["fromUserId"] is None
-    assert isinstance(resp["importance"], int)
+    assert isinstance(resp["importance"], int) or resp["importance"] is None
     assert isinstance(resp["message"], str)
     assert isinstance(resp["isRead"], bool)
     assert isinstance(resp["typeId"], int)
