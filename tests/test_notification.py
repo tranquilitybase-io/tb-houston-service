@@ -2,7 +2,6 @@ import requests
 import json
 import os
 from pprint import pprint
-from tests import pytest_lib
 
 
 HOUSTON_SERVICE_URL = os.environ["HOUSTON_SERVICE_URL"]
@@ -83,7 +82,7 @@ def update(oid):
 
     resp = requests.post(url + "?typeId=1&isActive=true&isRead=false&sort=importance:asc", headers=headers, data=json.dumps(payload, indent=4))
     # Validate response headers and body contents, e.g. status code.
-    resp_json = resp.json()
+    #resp_json = resp.json()
     assert resp.status_code == 201
 
 

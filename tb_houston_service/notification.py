@@ -1,4 +1,3 @@
-from pprint import pformat
 import logging
 from sqlalchemy import literal_column
 from flask import abort
