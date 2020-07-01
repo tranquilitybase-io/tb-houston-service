@@ -373,7 +373,7 @@ class ExtendedApplicationForDACSchema(Schema):
     name = fields.Str()
     description = fields.Str()
     solutionId = fields.Int()
-    lastUpdated = fields.Str(20)
+    lastUpdated = fields.Str()
     workspaceProjectId = fields.Str()
     activatorGitUrl = fields.Str()
     deploymentEnvironment = fields.Str()

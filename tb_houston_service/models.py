@@ -134,6 +134,9 @@ class ApplicationDeployment(Base):
     taskId = db.Column(db.String)
     lastUpdated = db.Column(db.String(20))
 
+    def __repr__(self):
+        return "<ApplicationDeployment(applicationId={self.applicationId!r}, solutionId={self.solutionId!r})>".format(self=self)
+
 
 class ApplicationDeploymentSchema(SQLAlchemyAutoSchema):
     class Meta:

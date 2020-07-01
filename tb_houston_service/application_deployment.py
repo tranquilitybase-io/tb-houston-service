@@ -10,11 +10,12 @@ from tb_houston_service.DeploymentStatus import DeploymentStatus
 from tb_houston_service.models import Application
 from tb_houston_service.models import Activator
 from tb_houston_service.models import ApplicationDeployment, ApplicationDeploymentSchema
+from tb_houston_service.models import Solution
 from tb_houston_service.models import SolutionResource
 from tb_houston_service.tools import ModelTools
 from tb_houston_service.extendedSchemas import ExtendedApplicationDeploymentSchema
 from tb_houston_service.extendedSchemas import ExtendedApplicationForDACSchema
-from config.db_list import db_session
+from config.db_lib import db_session
 
 logger = logging.getLogger("tb_houston_service.application_deployment")
 
@@ -26,7 +27,9 @@ headers = {"Content-Type": "application/json"}
 
 
 def start_deployment(applicationId):
-    print("start_deployment")
+    logger.info("start_deployment::applicationId: %s", applicationId)
+    # can only deploy an application if the solution it belong's to has already been
+    # deployed successfully.
     deployment_complete = False 
     while deployment_complete == False:
         app_dep = db.session.query(ApplicationDeployment).filter(ApplicationDeployment.applicationId == applicationId).one_or_none()
@@ -72,6 +75,15 @@ def deployment_create(applicationDeploymentDetails):
     if not app:
       abort("This application doesn't exist.", 404)
 
+    sol = db.session.query(Solution).filter(
+        ApplicationDeployment.applicationId == oid, 
+        ApplicationDeployment.applicationId == Application.id,
+        Application.solutionId == Solution.id
+        ).one_or_none()
+    if sol and sol.deploymentState != DeploymentStatus.SUCCESS:
+        logger.warning("Cannot deploy an application if the solution deployment has not completed successfully.")
+        abort(400, "Cannot deploy an application if the solution deployment has not completed successfully.")
+
     if not app_deployment:
       schema = ApplicationDeploymentSchema(many=False)
       app_deployment_dict = {}
@@ -84,6 +96,12 @@ def deployment_create(applicationDeploymentDetails):
   
       db.session.add(app_deployment)
       db.session.commit()
+    else:
+      # Allow re-deployment of a previously unsuccessful deployment
+      if app_deployment.deploymentState != DeploymentStatus.SUCCESS:
+        app_deployment.deploymentState = DeploymentStatus.PENDING
+        app_deployment.taskId = None
+        db.session.commit()
 
     executor.submit(start_deployment, app_deployment.applicationId)
     ext_schema = ExtendedApplicationDeploymentSchema()
@@ -148,27 +166,31 @@ def deployment_update(oid, applicationDeploymentDetails):
 
 
 def deploy_application(app_deployment):
+    logger.debug("app_deployment: %s", app_deployment)
     # expand fields for DaC application deployment
     with db_session() as dbs:
         ws_key = "project-id-workspace"
-        sol_res_ws = dbs.query(SolutionResource).filter(SolutionResource.solutionId == app_deployment.id and SolutionResource.key == ws_key).one_or_none()
+        sol_res_ws = dbs.query(SolutionResource).filter(SolutionResource.solutionId == app_deployment.solutionId, SolutionResource.key == ws_key).one_or_none()
         app = dbs.query(Application).filter(Application.id == app_deployment.applicationId).one_or_none()
         
         if sol_res_ws: 
-            app_deployment.workspaceProjectId = sol_res_ws.value()
+            app_deployment.workspaceProjectId = sol_res_ws.value
 
         if app:
             act = dbs.query(Activator).filter(Activator.id == app.activatorId).one_or_none()
             if act:
-                app_deployment.activatorGitUrl = act.activatorLink()
-
-    deploymentEnvironment = app.env()
-    deploymentProjectIdKey = "project-id-" + deploymentEnvironment
-    sol_res_pi = dbs.query(SolutionResource).filter(SolutionResource.solutionId == app_deployment.id and SolutionResource.key == deploymentProjectIdKey).one_or_none()
-    deploymentProjectId = sol_res_pi.value()
-    mandatoryVariables = []
-    optionalVariables = []
-    return send_application_deployment_to_the_dac(app_deployment)
+                app_deployment.activatorGitUrl = act.activatorLink
+                app_deployment.deploymentEnvironment = app.env
+                deploymentProjectIdKey = "project-id-" + app_deployment.deploymentEnvironment
+                sol_res_pi = dbs.query(SolutionResource).filter(SolutionResource.solutionId == app_deployment.solutionId, SolutionResource.key == deploymentProjectIdKey).one_or_none()
+                if sol_res_pi:
+                    app_deployment.deploymentProjectId = sol_res_pi.value
+                else:
+                    abort(400, "Solution deployment project id is missing in SolutionResources.")
+                app_deployment.mandatoryVariables = []
+                app_deployment.optionalVariables = []
+                return send_application_deployment_to_the_dac(app_deployment)
+    return abort(500, "Unable to deploy application!")
 
 
 # Send the application to the DAC

@@ -173,7 +173,8 @@ def read_or_create_by_parent_folder_id_and_folder_name(parentFolderId, folderNam
         .filter(
             Folder.parentFolderId == parentFolderId, Folder.folderName == folderName
         )
-        .one_or_none()
+        .order_by(Folder.id.desc())
+        .first()
     )
 
     if fdr is not None:
