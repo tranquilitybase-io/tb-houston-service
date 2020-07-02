@@ -2500,6 +2500,14 @@ paths:
           name: isActive
           schema:
             type: boolean
+        - in: query 
+          name: page
+          schema:
+            type: integer
+        - in: query 
+          name: page_size
+          schema:
+            type: integer            
         - in: query
           name: sort
           schema:
@@ -2541,6 +2549,14 @@ paths:
           name: isActive
           schema:
             type: boolean
+        - in: query 
+          name: page
+          schema:
+            type: integer
+        - in: query 
+          name: page_size
+          schema:
+            type: integer            
         - in: query
           name: sort
           schema:

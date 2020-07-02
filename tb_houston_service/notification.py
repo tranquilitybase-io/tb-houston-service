@@ -14,7 +14,7 @@ from tb_houston_service.tools import ModelTools
 logger = logging.getLogger("tb_houston_service.notification")
 
 
-def read_all(typeId, toUserId = None, isRead = None, isActive = None, sort = None):
+def read_all(typeId, toUserId = None, isRead = None, isActive = None, page = None, page_size = None, sort = None):
     logger.debug("read_all: %s", typeId)    
     with db_session() as dbs:
         # pre-process sort instructions
@@ -45,7 +45,11 @@ def read_all(typeId, toUserId = None, isRead = None, isActive = None, sort = Non
             (isActive == None or Notification.isActive == isActive)
         )
 
-        notifications = notifications_query.all()
+        # do limit and offset last
+        if page == None or page_size == None:
+            notifications = notifications_query.all()
+        else:
+            notifications = notifications_query.limit(page_size).offset(page * page_size)
 
         if typeId == 1:
             for notif in notifications:
@@ -111,12 +115,12 @@ def create(notification, typeId):
     return notification
 
 
-def create_all(notificationListDetails, typeId, toUserId = None, isRead = None, isActive = None, sort = None):
+def create_all(notificationListDetails, typeId, toUserId = None, isRead = None, isActive = None, page = None, page_size = None, sort = None):
     logger.debug("create_all: %s", notificationListDetails)    
     for n in notificationListDetails:
         create(n, typeId)
 
-    (data, resp_code) = read_all(typeId, toUserId = toUserId, isRead = isRead, isActive = isActive, sort = sort)
+    (data, resp_code) = read_all(typeId, toUserId = toUserId, isRead = isRead, isActive = isActive, page = page, page_size = page_size, sort = sort)
     logger.debug("data: %s, resp_code: %s", data, resp_code)
     return data, 201
 
