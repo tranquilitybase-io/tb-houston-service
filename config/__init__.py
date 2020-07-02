@@ -23,7 +23,12 @@ app.config["SQLALCHEMY_ECHO"] = os.environ["SQLALCHEMY_ECHO"].lower() == "True".
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = (
     os.environ["SQLALCHEMY_TRACK_MODIFICATIONS"].lower() == "True".lower()
 )
-app.config["SQLALCHEMY_ENGINE_OPTIONS"] = { "pool_pre_ping": True, "pool_recycle": 300, }
+app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
+        "pool_size": 10,
+        "max_overflow": 5,
+        "pool_pre_ping": True,
+        "pool_recycle": 1200,
+}
 
 if app.config["SQLALCHEMY_DATABASE_URI"] is None:
     print("SQLALCHEMY_DATABASE_URI is not set")
