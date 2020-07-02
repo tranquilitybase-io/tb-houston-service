@@ -125,3 +125,20 @@ def create_all(notificationListDetails, typeId, toUserId = None, isRead = None, 
     return data, 201
 
 
+def meta(typeId, toUserId = None, isRead = None, isActive = None):
+    """
+    Responds to a request for /api/notificationsMeta/.
+
+    :param activator:
+    :return:              total count of notifications
+    """
+
+    with db_session() as dbs:
+        count = dbs.query(Notification).filter(
+            Notification.typeId == typeId,
+            (toUserId == None or Notification.toUserId == toUserId),
+            (isRead == None or Notification.isRead == isRead),
+            (isActive == None or Notification.isActive == isActive)        
+        ).count()
+        data = { "count": count }
+        return data, 200

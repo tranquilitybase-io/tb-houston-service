@@ -2572,6 +2572,42 @@ paths:
                 oneOf:
                   - $ref: "#/components/schemas/NotificationActivatorList" 
 
+  "/notificationsMeta/":
+    get:
+      operationId: tb_houston_service.notification.meta
+      tags:
+        - notification
+      summary: Read notications meta
+      description: Read notifications meta
+      parameters:
+        - in: query
+          name: typeId
+          schema:
+            type: integer
+          required: true
+        - in: query             
+          name: toUserId
+          schema:
+            type: integer
+        - in: query
+          name: isRead
+          schema:
+            type: boolean
+        - in: query
+          name: isActive
+          schema:
+            type: boolean                                
+      responses:
+        "200":
+          description: Successfully read notifications metadata
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+
 
 components:
 
