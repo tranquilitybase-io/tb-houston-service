@@ -698,6 +698,11 @@ class UserSchema(SQLAlchemyAutoSchema):
         include_fk = True
         load_instance = True
 
+    @pre_load()
+    def serialize_pre_load(self, data, **kwargs):
+        logger.debug("UserSchema::pre_load::serialize_pre_load: %s", data)
+        data["lastUpdated"] = ModelTools.get_utc_timestamp()
+        return data     
 
 # VPNOnPremiseVendor
 class VPNOnPremiseVendor(Base):
