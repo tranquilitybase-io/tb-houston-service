@@ -1,5 +1,5 @@
 import logging 
-from tb_houston_service.models import User, Team, TeamMember, Role
+from tb_houston_service.models import Team, TeamMember, Role
 from tb_houston_service import team_member_extension
 from config import db
 
