@@ -6,6 +6,7 @@ from tb_houston_service.models import BusinessUnitSchema
 from tb_houston_service.models import LZEnvironmentSchema
 from tb_houston_service.models import LZLanVpcSchema
 from tb_houston_service.models import RoleSchema
+from tb_houston_service.models import CISchema, CDSchema, SourceControlSchema
 
 
 logger = logging.getLogger("tb_houston_service.extendedSchemas")
@@ -162,9 +163,9 @@ class ExtendedSolutionSchema(Schema):
     description = fields.Str()
     businessUnitId = fields.Int()
     costCentre = fields.Str()
-    ci = fields.Str()
-    cd = fields.Str()
-    sourceControl = fields.Str()
+    ci = fields.Nested(CISchema(many=False))
+    cd = fields.Nested(CDSchema(many=False))
+    sourceControl = fields.Nested(SourceControlSchema(many=False))
     environments = fields.Nested(LZEnvironmentSchema(many=True))
     favourite = fields.Boolean()
     teamId = fields.Int()

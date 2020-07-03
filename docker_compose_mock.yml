@@ -11,7 +11,7 @@ volumes:
 
 services:
   mysql57:
-    image: gcr.io/tranquility-base-images/tb-db:mock
+    image: gcr.io/tranquility-base-images/tb-db-test
     command: --default-authentication-plugin=mysql_native_password
     restart: always
 #    volumes:

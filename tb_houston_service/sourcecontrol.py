@@ -21,7 +21,7 @@ def read_all():
     """
 
     # Create the list of sourceControls from our data
-    sourceControl = db.session.query(SourceControl).order_by(SourceControl.key).all()
+    sourceControl = db.session.query(SourceControl).order_by(SourceControl.id).all()
     app.logger.debug(pformat(sourceControl))
     # Serialize the data for the response
     sourceControl_schema = SourceControlSchema(many=True)
@@ -29,17 +29,17 @@ def read_all():
     return data
 
 
-def read_one(key):
+def read_one(id):
     """
-    This function responds to a request for /api/sourceControl/{key}
+    This function responds to a request for /api/sourceControl/{id}
     with one matching sourceControl from sourceControls
 
-    :param application:   key of sourceControl to find
-    :return:              sourceControl matching key
+    :param application:   id of sourceControl to find
+    :return:              sourceControl matching id
     """
 
     sourceControl = (
-        db.session.query(SourceControl).filter(SourceControl.key == key).one_or_none()
+        db.session.query(SourceControl).filter(SourceControl.id == id).one_or_none()
     )
 
     if sourceControl is not None:
@@ -48,7 +48,7 @@ def read_one(key):
         data = sourceControl_schema.dump(sourceControl)
         return data
     else:
-        abort(404, "SourceControl with key {key} not found".format(key=key))
+        abort(404, "SourceControl with id {id} not found".format(id=id))
 
 
 def create(sourceControlDetails):
@@ -59,12 +59,12 @@ def create(sourceControlDetails):
     :param sourceControl:  sourceControl to create in sourceControl structure
     :return:        201 on success, 406 on sourceControl exists
     """
-    key = sourceControlDetails.get("key", None)
+    id = sourceControlDetails.get("id", None)
     # value = sourceControlDetails.get("value", None)
 
     # Does the sourceControl exist already?
     existing_sourceControl = (
-        db.session.query(SourceControl).filter(SourceControl.key == key).one_or_none()
+        db.session.query(SourceControl).filter(SourceControl.id == id).one_or_none()
     )
 
     if existing_sourceControl is None:
@@ -84,23 +84,23 @@ def create(sourceControlDetails):
         abort(406, "SourceControl already exists")
 
 
-def update(key, sourceControlDetails):
+def update(id, sourceControlDetails):
     """
     This function updates an existing sourceControl in the sourceControl list
 
-    :param key:    key of the sourceControl to update in the sourceControl list
+    :param id:    id of the sourceControl to update in the sourceControl list
     :param sourceControl:   sourceControl to update
     :return:       updated sourceControl
     """
 
     app.logger.debug(pformat(sourceControlDetails))
 
-    if sourceControlDetails["key"] != key:
+    if sourceControlDetails["id"] != id:
         abort(400, "Key mismatch in path and body")
 
     # Does the sourceControl exist in sourceControl list?
     existing_sourceControl = (
-        db.session.query(SourceControl).filter(SourceControl.key == key).one_or_none()
+        db.session.query(SourceControl).filter(SourceControl.id == id).one_or_none()
     )
 
     # Does sourceControl exist?
@@ -108,7 +108,7 @@ def update(key, sourceControlDetails):
     if existing_sourceControl is not None:
         schema = SourceControlSchema()
         update_sourceControl = schema.load(sourceControlDetails, session=db.session)
-        update_sourceControl.key = sourceControlDetails["key"]
+        update_sourceControl.id = sourceControlDetails["id"]
 
         db.session.merge(update_sourceControl)
         db.session.commit()
@@ -122,16 +122,16 @@ def update(key, sourceControlDetails):
         abort(404, "SourceControl not found")
 
 
-def delete(key):
+def delete(id):
     """
     This function deletes a sourceControl from the sourceControls list
 
-    :param key: key of the sourceControl to delete
+    :param id: id of the sourceControl to delete
     :return:    200 on successful delete, 404 if not found
     """
     # Does the sourceControl to delete exist?
     existing_sourceControl = (
-        db.session.query(SourceControl).filter(SourceControl.key == key).one_or_none()
+        db.session.query(SourceControl).filter(SourceControl.id == id).one_or_none()
     )
 
     # if found?
@@ -139,8 +139,8 @@ def delete(key):
         db.session.delete(existing_sourceControl)
         db.session.commit()
 
-        return make_response(f"SourceControl {key} successfully deleted", 200)
+        return make_response(f"SourceControl {id} successfully deleted", 200)
 
     # Otherwise, nope, sourceControl to delete not found
     else:
-        abort(404, f"SourceControl {key} not found")
+        abort(404, f"SourceControl {id} not found")

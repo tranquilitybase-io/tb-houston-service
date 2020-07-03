@@ -182,7 +182,7 @@ class BGPRoutingModeSchema(SQLAlchemyAutoSchema):
 # CD
 class CD(Base):
     __tablename__ = "cd"
-    key = db.Column(db.String(255), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.String(255))
 
     def __repr__(self):
@@ -199,7 +199,7 @@ class CDSchema(SQLAlchemyAutoSchema):
 # CI
 class CI(Base):
     __tablename__ = "ci"
-    key = db.Column(db.String(255), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.String(255))
 
     def __repr__(self):
@@ -617,7 +617,7 @@ class SolutionResourceJSONSchema(SQLAlchemyAutoSchema):
 # SourceControl
 class SourceControl(Base):
     __tablename__ = "sourcecontrol"
-    key = db.Column(db.String(255), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.String(255))
 
 

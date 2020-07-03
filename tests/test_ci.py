@@ -6,82 +6,96 @@ import os
 LOG_LEVEL = logging.INFO  # DEBUG, INFO, WARNING, ERROR, CRITICAL
 
 HOUSTON_SERVICE_URL = os.environ["HOUSTON_SERVICE_URL"]
-url = f"http://{HOUSTON_SERVICE_URL}/api/keyValues/ci/"
+url = f"http://{HOUSTON_SERVICE_URL}/api/ci/"
 
 # Additional headers.
 headers = {"Content-Type": "application/json"}
 
 # key = 'test/'
 
+def test_ci():
+    # Testing POST request
+    resp_json = post()
+    id = str(resp_json["id"])
+    # Testing PUT request
+    put(id)
+    # Testing DELETE request
+    delete(id)
+    # Testing DELETE Request Error
+    delete_error(id)
+    # Testing GETALL request
+    get_all()
 
-def test_post():
+def post():
 
     # Test POST Then GET
     # Body
-    payload = {"key": "test-ci", "value": "test-post-value"}
+    payload = {"id": 10000, "value": "test-post-value"}
     # convert dict to json by json.dumps() for body data.
     resp = requests.post(url, headers=headers, data=json.dumps(payload, indent=4))
 
     # Validate response headers and body contents, e.g. status code.
     resp_json = resp.json()
     assert resp.status_code == 201
-    assert resp_json["key"] == "test-ci"
+    assert resp_json["id"] == 10000
     assert resp_json["value"] == "test-post-value"
+    id = str(resp_json["id"])
 
     # Get Request to check Post has created item as expected
-    resp = requests.get(url + "test-ci", headers=headers)
+    resp = requests.get(url +id, headers=headers)
     resp_json = resp.json()
     resp_headers = resp.headers
     # Validate response
     assert resp.status_code == 200
-    assert resp_json["key"] == "test-ci"
+    assert resp_json["id"] == 10000
     assert resp_json["value"] == "test-post-value"
     assert resp_headers["content-type"] == "application/json"
+    return resp_json
 
 
-def test_put():
+def put(id):
 
     # Test Update Then get new value
-    newpayload = {"key": "test-ci", "value": "new-test-value"}
+    newpayload = {"id": id, "value": "new-test-value"}
     resp = requests.put(
-        url + "test-ci", headers=headers, data=json.dumps(newpayload, indent=4)
+        url + id, headers=headers, data=json.dumps(newpayload, indent=4)
     )
 
     # Validate update/Put response
     assert resp.status_code == 200
 
     # Get Request to get updated values
-    resp = requests.get(url + "test-ci", headers=headers)
+    resp = requests.get(url + id, headers=headers)
     resp_json = resp.json()
 
     # Validate response body for updated values
     assert resp.status_code == 200
-    assert resp_json["key"] == "test-ci"
+    assert resp_json["id"] == 1
     assert resp_json["value"] == "new-test-value"
 
 
-def test_delete():
+def delete(id):
 
     # Test Delete Then GET
-    resp = requests.delete(url + "test-ci", headers=headers)
+    resp = requests.delete(url + id, headers=headers)
     assert resp.status_code == 200
 
 
-def test_delete_error():
+def delete_error(id):
 
     # Test Delete for an non existing item
-    resp = requests.delete(url + "test-ci", headers=headers)
+    resp = requests.delete(url + id, headers=headers)
     assert resp.status_code == 404
 
 
-def test_get_error():
+def get_error(id):
 
-    resp = requests.get(url + "test-ci", headers=headers)
+    resp = requests.get(url + id, headers=headers)
     # resp_json = resp.json()
     assert resp.status_code == 404
 
 
-def test_get_all():
+def get_all():
 
     resp = requests.get(url, headers=headers)
     assert resp.status_code == 200
