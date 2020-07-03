@@ -98,7 +98,7 @@ class Application(Base):
     status = db.Column(db.String(64))
     description = db.Column(db.String(255))
     resources = db.Column(db.String(255))
-    activator = db.relationship("Activator")
+    #activator = db.relationship("Activator")
 
     def __repr__(self):
         return "<Application(id={self.id!r}, name={self.name!r})>".format(self=self)
@@ -538,7 +538,7 @@ class Solution(Base):
     statusMessage = db.Column(db.String(255))
     taskId = db.Column(db.String(100))
     deploymentFolderId = db.Column(db.String(50))
-    applications = db.relationship("Application")
+    #applications = db.relationship("Application")
 
     def __repr__(self):
         return "<Solution(id={self.id!r}, name={self.name!r})>".format(self=self)
