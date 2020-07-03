@@ -1,7 +1,6 @@
 import logging
 from config import db
 from tb_houston_service.models import User
-from config import db
 
 logger = logging.getLogger("tb_houston_service.activator_extension")
 
