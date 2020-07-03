@@ -678,6 +678,25 @@ paths:
                       type: string
                       description: value
 
+  /keyValues/ci/:
+    get:
+      operationId: tb_houston_service.ci.read_keyValues
+      tags:
+        - ci
+      summary: Read  ci list in key value pairs
+      description: Read  ci list in key value pairs
+      responses:
+        "200":
+          description: Successfully read an ci from the list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  key:
+                    type: integer
+                  value:
+                    type: string
   /ci/:
     get:
       operationId: tb_houston_service.ci.read_all
@@ -694,7 +713,7 @@ paths:
                 type: array
                 items:
                   properties:
-                    key:
+                    id:
                       type: integer
                       description: id
                     value:
@@ -711,33 +730,8 @@ paths:
       responses:
         "201":
           description: Successfully created an ci
+
   "/ci/{id}":
-    get:
-      operationId: tb_houston_service.ci.read_one
-      tags:
-        - ci
-      summary: Read one ci from the list
-      description: Read one ci from the list
-      parameters:
-        - name: id
-          in: path
-          description: id of the ci to get from the list
-          required: true
-          schema:
-            type: integer
-      responses:
-        "200":
-          description: Successfully read an ci from the list
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                  value:
-                    type: string
-    "/ci/{id}":
     get:
       operationId: tb_houston_service.ci.read_one
       tags:
@@ -796,6 +790,27 @@ paths:
       responses:
         "200":
           description: Successfully deleted an CI
+  
+
+  /keyValues/cd/:
+    get:
+      operationId: tb_houston_service.cd.read_keyValues
+      tags:
+        - cd
+      summary: Read  cd list in key value pairs
+      description: Read  cd list in key value pairs
+      responses:
+        "200":
+          description: Successfully read an cd from the list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  key:
+                    type: integer
+                  value:
+                    type: string
   /cd/:
     get:
       operationId: tb_houston_service.cd.read_all
@@ -889,6 +904,28 @@ paths:
         "200":
           description: Successfully deleted a continuous deployment
 
+  /keyValues/sourceControl/:
+    get:
+      operationId: tb_houston_service.sourcecontrol.read_keyValues
+      tags:
+        - sourcecontrol
+      summary: Read the entire list of source control types
+      description: Read the list of source control types
+      responses:
+        "200":
+          description: Successfully read source control type list operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties:
+                    key:
+                      type: integer
+                      description: id of the source control
+                    value:
+                      type: string
+                      description: name of the source control
   /sourceControl/:
     get:
       operationId: tb_houston_service.sourcecontrol.read_all
@@ -907,10 +944,10 @@ paths:
                   properties:
                     id:
                       type: integer
-                      description: id
+                      description: id of the source control
                     value:
                       type: string
-                      description: value
+                      description: name of the source control
     post:
       operationId: tb_houston_service.sourcecontrol.create
       tags:
@@ -3387,15 +3424,15 @@ components:
         costCentre:
           type: string
           description: costCentre
-        ci:
-          type: string
-          description: ci
-        cd:
-          type: string
-          description: cd
-        sourceControl:
-          type: string
-          description: sourceControl
+        ciId:
+          type: integer
+          description: Id of ci
+        cdId:
+          type: integer
+          description: Id of cd
+        sourceControlId:
+          type: integer
+          description: Id ofsourceControl
           items:
             type: string
         teamId:

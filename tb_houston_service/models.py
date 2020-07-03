@@ -186,7 +186,7 @@ class CD(Base):
     value = db.Column(db.String(255))
 
     def __repr__(self):
-        return "<CD(id={self.key!r}, name={self.key!r})>".format(self=self)
+        return "<CD(id={self.id!r}, name={self.id!r})>".format(self=self)
 
 
 class CDSchema(SQLAlchemyAutoSchema):
@@ -203,7 +203,7 @@ class CI(Base):
     value = db.Column(db.String(255))
 
     def __repr__(self):
-        return "<CI(id={self.key!r}, name={self.key!r})>".format(self=self)
+        return "<CI(id={self.id!r}, name={self.id!r})>".format(self=self)
 
 
 class CISchema(SQLAlchemyAutoSchema):
@@ -527,9 +527,9 @@ class Solution(Base):
     description = db.Column(db.String(255))
     businessUnitId = db.Column(db.Integer())
     costCentre = db.Column(db.String(255))
-    ci = db.Column(db.String(255))
-    cd = db.Column(db.String(255))
-    sourceControl = db.Column(db.String(255))
+    ciId = db.Column(db.Integer())
+    cdId = db.Column(db.Integer())
+    sourceControlId = db.Column(db.Integer())
     teamId = db.Column(db.Integer())
     deployed = db.Column(db.Boolean())
     deploymentState = db.Column(db.String(45))

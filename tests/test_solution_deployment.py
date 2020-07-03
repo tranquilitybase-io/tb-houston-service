@@ -133,13 +133,13 @@ class TestSolutionDeployment(unittest.TestCase):
         payload = {
             "isActive": True,
             "businessUnitId": 1,
-            "cd": "test",
-            "ci": "test",
+            "cdId": 1,
+            "ciId": 1,
             "costCentre": "test",
             "description": "test",
             "isFavourite": True,
             "name": "test solution",
-            "sourceControl": "test",
+            "sourceControlId": 1,
             "teamId": 1,
             "environments": [1, 2]
         }

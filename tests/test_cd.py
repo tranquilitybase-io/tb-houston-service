@@ -53,7 +53,7 @@ def post():
 def put(id):
 
     # Test Update Then get new value
-    newpayload = {"id": id, "value": "new-test-value"}
+    newpayload = {"id": int(id), "value": "new-test-value"}
     resp = requests.put(
         url + id, headers=headers, data=json.dumps(newpayload, indent=4)
     )
@@ -77,6 +77,11 @@ def delete(id):
     resp = requests.delete(url + id, headers=headers)
     assert resp.status_code == 200
 
+def delete_error(id):
+
+    # Test Delete for an non existing item
+    resp = requests.delete(url + id, headers=headers)
+    assert resp.status_code == 404
 
 def get_error():
 

@@ -45,7 +45,6 @@ def post():
     resp_headers = resp.headers
     # Validate response
     assert resp.status_code == 200
-    assert resp_json["id"] == id
     assert resp_json["value"] == "test-post-value"
     assert resp_headers["content-type"] == "application/json"
     return resp_json
@@ -68,7 +67,6 @@ def put(id):
     resp_json = resp.json()
     # Validate response body for updated values
     assert resp.status_code == 200
-    assert resp_json["id"] == id
     assert resp_json["value"] == "new-test-value"
 
 

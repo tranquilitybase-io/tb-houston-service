@@ -28,6 +28,28 @@ def read_all():
     data = sourceControl_schema.dump(sourceControl)
     return data
 
+def read_keyValues():
+    """
+    This function responds to a request for /keyValues/sourceControl
+    with the complete lists of SourceControls 
+
+    :return:        json string of list of SourceControls 
+    """
+
+    # Create the list of SourceControls from our data
+    sourceControl = db.session.query(SourceControl).order_by(SourceControl.id).all()
+    app.logger.debug(pformat(sourceControl))
+    # Serialize the data for the response
+    sourceControl_schema = SourceControlSchema(many=True)
+    data = sourceControl_schema.dump(sourceControl)
+    keyValues = []
+    for d in data:
+        keyValuePair = {}
+        keyValuePair["key"] = d.get("id")
+        keyValuePair["value"] = d.get("value")
+        keyValues.append(keyValuePair)
+    print(keyValues)
+    return keyValues
 
 def read_one(id):
     """

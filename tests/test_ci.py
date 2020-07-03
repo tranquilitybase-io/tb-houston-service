@@ -56,7 +56,7 @@ def post():
 def put(id):
 
     # Test Update Then get new value
-    newpayload = {"id": id, "value": "new-test-value"}
+    newpayload = {"id": int(id), "value": "new-test-value"}
     resp = requests.put(
         url + id, headers=headers, data=json.dumps(newpayload, indent=4)
     )
@@ -70,7 +70,7 @@ def put(id):
 
     # Validate response body for updated values
     assert resp.status_code == 200
-    assert resp_json["id"] == 1
+    assert resp_json["id"] == 10000
     assert resp_json["value"] == "new-test-value"
 
 

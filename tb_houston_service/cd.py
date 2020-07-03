@@ -27,6 +27,29 @@ def read_all():
     return data
 
 
+def read_keyValues():
+    """
+    This function responds to a request for /keyValues/cd
+    with the complete lists of CDs 
+
+    :return:        json string of list of CDs 
+    """
+
+    # Create the list of CDs from our data
+    cd = db.session.query(CD).order_by(CD.id).all()
+    app.logger.debug(pformat(cd))
+    # Serialize the data for the response
+    cd_schema = CDSchema(many=True)
+    data = cd_schema.dump(cd)
+    keyValues = []
+    for d in data:
+        keyValuePair = {}
+        keyValuePair["key"] = d.get("id")
+        keyValuePair["value"] = d.get("value")
+        keyValues.append(keyValuePair)
+    print(keyValues)
+    return keyValues
+
 def read_one(id):
     """
     This function responds to a request for /api/cd/{id}

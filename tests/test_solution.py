@@ -19,13 +19,13 @@ def typestest(resp):
     assert isinstance(resp["lastUpdated"], str)
     assert isinstance(resp["applications"], list)
     assert isinstance(resp["businessUnitId"], int)
-    assert isinstance(resp["ci"], str)
-    assert isinstance(resp["cd"], str)
+    assert isinstance(resp["ciId"], int)
+    assert isinstance(resp["cdId"], int)
     assert isinstance(resp["costCentre"], str)
     assert isinstance(resp["description"], str)
     assert isinstance(resp["id"], int)
     assert isinstance(resp["name"], str)
-    assert isinstance(resp["sourceControl"], str)
+    assert isinstance(resp["sourceControlId"], int)
     assert isinstance(resp["teamId"], int)
     pprint(resp)
 
@@ -51,14 +51,14 @@ def post():
     payload = {
         "isActive": True,
         "businessUnitId": 1,
-        "cd": "test",
-        "ci": "test",
+        "cdId": 1,
+        "ciId": 1,
         "costCentre": "test",
         "description": "test",
         "isFavourite": True,
         "id": 0,
         "name": "test",
-        "sourceControl": "test",
+        "sourceControlId": 1,
         "teamId": 1,
         "environments": [1, 2, 3]
     }
@@ -94,13 +94,13 @@ def put(id):
         "id": int(id),
         "isActive": True,
         "businessUnitId": 2,
-        "cd": "test put",
-        "ci": "test put",
+        "cdId": 2,
+        "ciId": 2,
         "costCentre": "test put",
         "description": "test put",
         "isFavourite": True,
         "name": "test put",
-        "sourceControl": "test put",
+        "sourceControlId": 2,
         "environments": [1, 3]
     }
 
@@ -121,9 +121,9 @@ def put(id):
     assert resp_json["name"] == "test put"
     assert resp_json["description"] == "test put"
     assert resp_json["businessUnitId"] == 2
-    assert resp_json["ci"] == "test put"
-    assert resp_json["cd"] == "test put"
-    assert resp_json["sourceControl"] == "test put"
+    assert resp_json["ciId"] == 2
+    assert resp_json["cdId"] == 2
+    assert resp_json["sourceControlId"] == 2
     assert len(resp_json["environments"]) == 2
     typestest(resp_json)
 
