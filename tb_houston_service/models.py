@@ -689,6 +689,7 @@ class User(Base):
     isAdmin = db.Column(db.Boolean())
     isActive = db.Column(db.Boolean())
     showWelcome = db.Column(db.Boolean())
+    lastUpdated = db.Column(db.String(20))
 
 
 class UserSchema(SQLAlchemyAutoSchema):

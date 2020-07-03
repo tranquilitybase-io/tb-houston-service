@@ -48,6 +48,8 @@ class ExtendedUserSchema(Schema):
     showWelcome = fields.Boolean()
     role = fields.Str()
     isActive = fields.Boolean()
+    lastUpdated = fields.Str()
+    teamCount = fields.Int()
 
 
 class ExtendedActivatorSchema(Schema):
@@ -203,6 +205,20 @@ class ExtendedTeamDACSchema(Schema):
     lastUpdated = fields.Str()
     teamMembers = fields.Nested(ExtendedTeamMemberSchema(many=True))
 
+
+
+class ExtendedUserTeamsSchema(Schema):
+    id = fields.Int()
+    email = fields.Str()
+    firstName = fields.Str()
+    lastName = fields.Str()
+    isAdmin = fields.Boolean()
+    showWelcome = fields.Boolean()
+    role = fields.Str()
+    isActive = fields.Boolean()
+    lastUpdated = fields.Str()
+    teamMembers = fields.Nested(ExtendedTeamMemberFullSchema(many=True))
+    
 
 class ExtendedSolutionForDACSchema(Schema):
     __envelope__ = {"single": "solution", "many": "solutions"}
