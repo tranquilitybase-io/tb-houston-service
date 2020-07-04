@@ -172,6 +172,7 @@ class ExtendedSolutionSchema(Schema):
     team = fields.Nested(ExtendedTeamSchema(many=False))
     deploymentFolderId = fields.Str()
     businessUnit = fields.Nested(BusinessUnitSchema(many=False))
+    deploymentState = fields.Str()
 
 
 class ExtendedTeamMemberSchema(Schema):
