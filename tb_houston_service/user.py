@@ -10,7 +10,9 @@ from flask import make_response, abort
 
 from config import db, app
 from tb_houston_service.models import User, UserSchema
-
+from tb_houston_service.extendedSchemas import ExtendedUserSchema
+from tb_houston_service.extendedSchemas import ExtendedUserTeamsSchema
+from tb_houston_service import user_extension
 
 def read_all():
     """
@@ -20,11 +22,13 @@ def read_all():
     """
 
     # Create the list of users from our data
-    user = db.session.query(User).order_by(User.id).all()
-    app.logger.debug(pformat(user))
+    users = db.session.query(User).order_by(User.id).all()
+    for user in users:
+        user = user_extension.expand_user(user)
+    app.logger.debug(pformat(users))
     # Serialize the data for the response
-    user_schema = UserSchema(many=True)
-    data = user_schema.dump(user)
+    user_schema = ExtendedUserSchema(many=True)
+    data = user_schema.dump(users)
     return data, 200
 
 
@@ -40,8 +44,9 @@ def read_one(oid):
     user = db.session.query(User).filter(User.id == oid).one_or_none()
 
     if user is not None:
+        user = user_extension.expand_user_with_teams(user)
         # Serialize the data for the response
-        user_schema = UserSchema()
+        user_schema = ExtendedUserTeamsSchema()
         data = user_schema.dump(user)
         return data, 200
     return abort(404, f"User with id {oid} not found")

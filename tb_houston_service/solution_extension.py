@@ -28,11 +28,10 @@ def expand_solution(sol):
     a_team = db.session.query(Team).filter(Team.id == sol.teamId).one_or_none()
     sol.team = team_extension.expand_team(a_team)
 
-    if sol.applications is None:
-       sol.applications = db.session.query(Application).filter(
-           Application.solutionId == sol.id,
-           Application.isActive
-       ).all()
+    sol.applications = db.session.query(Application).filter(
+        Application.solutionId == sol.id,
+        Application.isActive
+    ).all()
 
     for ap in sol.applications:
         ap = application_extension.expand_application(ap)
