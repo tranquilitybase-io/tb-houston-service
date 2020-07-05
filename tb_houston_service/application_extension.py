@@ -1,7 +1,8 @@
 import logging
 from tb_houston_service.models import Application, Activator, ApplicationDeployment
-from config import db
 from tb_houston_service import activator_extension
+from config import db
+
 
 logger = logging.getLogger("tb_houston_service.application_extension")
 
