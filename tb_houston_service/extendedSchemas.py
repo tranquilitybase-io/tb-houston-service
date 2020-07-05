@@ -46,7 +46,7 @@ class ExtendedUserSchema(Schema):
     lastName = fields.Str()
     isAdmin = fields.Boolean()
     showWelcome = fields.Boolean()
-    role = fields.Str()
+    role = fields.Nested(RoleSchema(many=False))
     isActive = fields.Boolean()
 
 
