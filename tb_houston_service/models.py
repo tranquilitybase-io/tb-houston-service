@@ -98,7 +98,7 @@ class Application(Base):
     status = db.Column(db.String(64))
     description = db.Column(db.String(255))
     resources = db.Column(db.String(255))
-    activator = db.relationship("Activator")
+    #activator = db.relationship("Activator")
 
     def __repr__(self):
         return "<Application(id={self.id!r}, name={self.name!r})>".format(self=self)
@@ -538,7 +538,7 @@ class Solution(Base):
     statusMessage = db.Column(db.String(255))
     taskId = db.Column(db.String(100))
     deploymentFolderId = db.Column(db.String(50))
-    applications = db.relationship("Application")
+    #applications = db.relationship("Application")
 
     def __repr__(self):
         return "<Solution(id={self.id!r}, name={self.name!r})>".format(self=self)
@@ -689,6 +689,7 @@ class User(Base):
     isAdmin = db.Column(db.Boolean())
     isActive = db.Column(db.Boolean())
     showWelcome = db.Column(db.Boolean())
+    lastUpdated = db.Column(db.String(20))
 
 
 class UserSchema(SQLAlchemyAutoSchema):
@@ -697,6 +698,11 @@ class UserSchema(SQLAlchemyAutoSchema):
         include_fk = True
         load_instance = True
 
+    @pre_load()
+    def serialize_pre_load(self, data, **kwargs):
+        logger.debug("UserSchema::pre_load::serialize_pre_load: %s", data)
+        data["lastUpdated"] = ModelTools.get_utc_timestamp()
+        return data     
 
 # VPNOnPremiseVendor
 class VPNOnPremiseVendor(Base):
