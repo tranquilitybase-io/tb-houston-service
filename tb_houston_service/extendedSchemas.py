@@ -127,6 +127,7 @@ class ExtendedApplicationSchema(Schema):
     description = fields.Str()
     resources = fields.Nested(ResourceSchema(many=True))
     activator = fields.Nested(ExtendedActivatorSchema(many=False))
+    deploymentState = fields.Str()
 
     @post_load(pass_original=True)
     def serialize_post_load(self, data, original_data, **kwargs):
@@ -174,6 +175,7 @@ class ExtendedSolutionSchema(Schema):
     team = fields.Nested(ExtendedTeamSchema(many=False))
     deploymentFolderId = fields.Str()
     businessUnit = fields.Nested(BusinessUnitSchema(many=False))
+    deploymentState = fields.Str()
 
 
 class ExtendedTeamMemberSchema(Schema):
