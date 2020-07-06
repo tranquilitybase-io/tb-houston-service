@@ -75,13 +75,19 @@ def expand_solution_for_dac(sol):
             sol.businessUnit = ""
         
         if sol.ciId:
-            sol.ci = db.session.query(CI).filter(CI.id == sol.ciId).one_or_none()
+            ci = db.session.query(CI).filter(CI.id == sol.ciId).one_or_none()
+            if ci:
+                sol.ci = ci.value
     
         if sol.cdId:
-            sol.cd = db.session.query(CD).filter(CD.id == sol.cdId).one_or_none()
+            cd = db.session.query(CD).filter(CD.id == sol.cdId).one_or_none()
+            if cd:
+                sol.cd = cd.value
     
         if sol.sourceControlId:
-            sol.sourceControl = db.session.query(SourceControl).filter(SourceControl.id == sol.sourceControlId).one_or_none()
+            sourceControl = db.session.query(SourceControl).filter(SourceControl.id == sol.sourceControlId).one_or_none()
+            if sourceControl:
+               sol.sourceControl = sourceControl.value 
     
     return sol
 
