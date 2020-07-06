@@ -6,7 +6,10 @@
 # INFO 20
 # DEBUG 10
 # NOTSET 0
-LOGLEVEL=20
+if [ -z "${LOGLEVEL}" ]; then
+	LOGLEVEL=20
+fi
+
 NUMBER_OF_WORKERS=5
 PORT=3000
 DB_SERVER_IP=localhost
@@ -14,6 +17,7 @@ DB_SERVER_IP=localhost
 if [ ! -z "${1}" ]; then
 	PORT=${1}
 fi
+echo "Using LOGLEVEL: ${LOGLEVEL}"
 echo "Using port: ${PORT}"
 echo "Using DB server IP: ${DB_SERVER_IP}"
 echo "SH SQLALCHEMY_DATABASE_URI: ${SQLALCHEMY_DATABASE_URI}"

@@ -189,6 +189,9 @@ def deploy_application(app_deployment):
                     abort(400, "Solution deployment project id is missing in SolutionResources.")
                 app_deployment.mandatoryVariables = []
                 app_deployment.optionalVariables = []
+                app_deployment.id = app.id
+                app_deployment.name = app.name
+                app_deployment.description = app.description
                 return send_application_deployment_to_the_dac(app_deployment)
     return abort(500, "Unable to deploy application!")
 

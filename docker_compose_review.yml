@@ -28,6 +28,7 @@ services:
       SQLALCHEMY_ECHO: "False"
       SQLALCHEMY_TRACK_MODIFICATIONS: "False"
       GCP_DAC_URL: "gcp-dac:3100"
+      LOGLEVEL: 10
     depends_on:
       - mysql57
       - gcp-dac
