@@ -1,6 +1,6 @@
 import logging
 from config import db
-from tb_houston_service.models import BusinessUnit, TeamMember, User
+from tb_houston_service.models import BusinessUnit, TeamMember, User, Role
 
 logger = logging.getLogger("tb_houston_service.solution")
 
@@ -66,5 +66,7 @@ def expand_team_with_users(a_team):
     )
     for tm in team_members:
         tm.user = user_dict.get(tm.userId)
+        role = db.session.query(Role).filter(Role.id == tm.roleId).one_or_none()
+        tm.role = role
     a_team.teamMembers = team_members
     return a_team
