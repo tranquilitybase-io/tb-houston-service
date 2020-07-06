@@ -30,14 +30,13 @@ def post():
 
     # Test POST Then GET
     # Body
-    payload = {"id": 10000, "value": "test-post-value"}
+    payload = {"id": 0, "value": "test-post-value"}
     # convert dict to json by json.dumps() for body data.
     resp = requests.post(url, headers=headers, data=json.dumps(payload, indent=4))
 
     # Validate response headers and body contents, e.g. status code.
     resp_json = resp.json()
     assert resp.status_code == 201
-    assert resp_json["id"] == 10000
     assert resp_json["value"] == "test-post-value"
     id = str(resp_json["id"])
 
@@ -47,7 +46,6 @@ def post():
     resp_headers = resp.headers
     # Validate response
     assert resp.status_code == 200
-    assert resp_json["id"] == 10000
     assert resp_json["value"] == "test-post-value"
     assert resp_headers["content-type"] == "application/json"
     return resp_json
@@ -70,7 +68,7 @@ def put(id):
 
     # Validate response body for updated values
     assert resp.status_code == 200
-    assert resp_json["id"] == 10000
+    assert resp_json["id"] == id
     assert resp_json["value"] == "new-test-value"
 
 
