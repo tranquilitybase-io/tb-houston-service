@@ -6,6 +6,7 @@ from tb_houston_service.models import BusinessUnitSchema
 from tb_houston_service.models import LZEnvironmentSchema
 from tb_houston_service.models import LZLanVpcSchema
 from tb_houston_service.models import RoleSchema
+from tb_houston_service.models import CISchema, CDSchema, SourceControlSchema
 
 
 logger = logging.getLogger("tb_houston_service.extendedSchemas")
@@ -46,8 +47,10 @@ class ExtendedUserSchema(Schema):
     lastName = fields.Str()
     isAdmin = fields.Boolean()
     showWelcome = fields.Boolean()
-    role = fields.Str()
+    role = fields.Nested(RoleSchema(many=False))
     isActive = fields.Boolean()
+    lastUpdated = fields.Str()
+    teamCount = fields.Int()
 
 
 class ExtendedActivatorSchema(Schema):
@@ -125,6 +128,7 @@ class ExtendedApplicationSchema(Schema):
     description = fields.Str()
     resources = fields.Nested(ResourceSchema(many=True))
     activator = fields.Nested(ExtendedActivatorSchema(many=False))
+    deploymentState = fields.Str()
 
     @post_load(pass_original=True)
     def serialize_post_load(self, data, original_data, **kwargs):
@@ -162,9 +166,12 @@ class ExtendedSolutionSchema(Schema):
     description = fields.Str()
     businessUnitId = fields.Int()
     costCentre = fields.Str()
-    ci = fields.Str()
-    cd = fields.Str()
-    sourceControl = fields.Str()
+    ciId =fields.Int()
+    ci = fields.Nested(CISchema(many=False))
+    cdId = fields.Int()
+    cd = fields.Nested(CDSchema(many=False))
+    sourceControlId =fields.Int()
+    sourceControl = fields.Nested(SourceControlSchema(many=False))
     environments = fields.Nested(LZEnvironmentSchema(many=True))
     favourite = fields.Boolean()
     teamId = fields.Int()
@@ -172,6 +179,7 @@ class ExtendedSolutionSchema(Schema):
     team = fields.Nested(ExtendedTeamSchema(many=False))
     deploymentFolderId = fields.Str()
     businessUnit = fields.Nested(BusinessUnitSchema(many=False))
+    deploymentState = fields.Str()
 
 
 class ExtendedTeamMemberSchema(Schema):
@@ -203,6 +211,20 @@ class ExtendedTeamDACSchema(Schema):
     lastUpdated = fields.Str()
     teamMembers = fields.Nested(ExtendedTeamMemberSchema(many=True))
 
+
+
+class ExtendedUserTeamsSchema(Schema):
+    id = fields.Int()
+    email = fields.Str()
+    firstName = fields.Str()
+    lastName = fields.Str()
+    isAdmin = fields.Boolean()
+    showWelcome = fields.Boolean()
+    role = fields.Str()
+    isActive = fields.Boolean()
+    lastUpdated = fields.Str()
+    teamMembers = fields.Nested(ExtendedTeamMemberFullSchema(many=True))
+    
 
 class ExtendedSolutionForDACSchema(Schema):
     __envelope__ = {"single": "solution", "many": "solutions"}

@@ -5,6 +5,7 @@ from tb_houston_service.models import Team
 from tb_houston_service.models import BusinessUnit
 from tb_houston_service.models import LZEnvironment
 from tb_houston_service.models import SolutionEnvironment
+from tb_houston_service.models import CI,CD,SourceControl
 from tb_houston_service.tools import ModelTools
 from tb_houston_service import application_extension
 from tb_houston_service import team_extension
@@ -27,17 +28,26 @@ def expand_solution(sol):
     a_team = db.session.query(Team).filter(Team.id == sol.teamId).one_or_none()
     sol.team = team_extension.expand_team(a_team)
 
-    if sol.applications is None:
-       sol.applications = db.session.query(Application).filter(
-           Application.solutionId == sol.id,
-           Application.isActive
-       ).all()
+    sol.applications = db.session.query(Application).filter(
+        Application.solutionId == sol.id,
+        Application.isActive
+    ).all()
 
     for ap in sol.applications:
         ap = application_extension.expand_application(ap)
 
     if sol.businessUnitId:
         sol.businessUnit = db.session.query(BusinessUnit).filter(BusinessUnit.id == sol.businessUnitId, BusinessUnit.isActive).one_or_none()
+
+    if sol.ciId:
+        sol.ci = db.session.query(CI).filter(CI.id == sol.ciId).one_or_none()
+    
+    if sol.cdId:
+        sol.cd = db.session.query(CD).filter(CD.id == sol.cdId).one_or_none()
+    
+    if sol.sourceControlId:
+        sol.sourceControl = db.session.query(SourceControl).filter(SourceControl.id == sol.sourceControlId).one_or_none()
+    
     return sol
 
 

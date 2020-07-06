@@ -98,7 +98,7 @@ class Application(Base):
     status = db.Column(db.String(64))
     description = db.Column(db.String(255))
     resources = db.Column(db.String(255))
-    activator = db.relationship("Activator")
+    #activator = db.relationship("Activator")
 
     def __repr__(self):
         return "<Application(id={self.id!r}, name={self.name!r})>".format(self=self)
@@ -185,11 +185,11 @@ class BGPRoutingModeSchema(SQLAlchemyAutoSchema):
 # CD
 class CD(Base):
     __tablename__ = "cd"
-    key = db.Column(db.String(255), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.String(255))
 
     def __repr__(self):
-        return "<CD(id={self.key!r}, name={self.key!r})>".format(self=self)
+        return "<CD(id={self.id!r}, name={self.id!r})>".format(self=self)
 
 
 class CDSchema(SQLAlchemyAutoSchema):
@@ -202,11 +202,11 @@ class CDSchema(SQLAlchemyAutoSchema):
 # CI
 class CI(Base):
     __tablename__ = "ci"
-    key = db.Column(db.String(255), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.String(255))
 
     def __repr__(self):
-        return "<CI(id={self.key!r}, name={self.key!r})>".format(self=self)
+        return "<CI(id={self.id!r}, name={self.id!r})>".format(self=self)
 
 
 class CISchema(SQLAlchemyAutoSchema):
@@ -530,9 +530,9 @@ class Solution(Base):
     description = db.Column(db.String(255))
     businessUnitId = db.Column(db.Integer())
     costCentre = db.Column(db.String(255))
-    ci = db.Column(db.String(255))
-    cd = db.Column(db.String(255))
-    sourceControl = db.Column(db.String(255))
+    ciId = db.Column(db.Integer())
+    cdId = db.Column(db.Integer())
+    sourceControlId = db.Column(db.Integer())
     teamId = db.Column(db.Integer())
     deployed = db.Column(db.Boolean())
     deploymentState = db.Column(db.String(45))
@@ -541,7 +541,7 @@ class Solution(Base):
     statusMessage = db.Column(db.String(255))
     taskId = db.Column(db.String(100))
     deploymentFolderId = db.Column(db.String(50))
-    applications = db.relationship("Application")
+    #applications = db.relationship("Application")
 
     def __repr__(self):
         return "<Solution(id={self.id!r}, name={self.name!r})>".format(self=self)
@@ -620,7 +620,7 @@ class SolutionResourceJSONSchema(SQLAlchemyAutoSchema):
 # SourceControl
 class SourceControl(Base):
     __tablename__ = "sourcecontrol"
-    key = db.Column(db.String(255), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.String(255))
 
 
@@ -692,6 +692,7 @@ class User(Base):
     isAdmin = db.Column(db.Boolean())
     isActive = db.Column(db.Boolean())
     showWelcome = db.Column(db.Boolean())
+    lastUpdated = db.Column(db.String(20))
 
 
 class UserSchema(SQLAlchemyAutoSchema):
@@ -700,6 +701,11 @@ class UserSchema(SQLAlchemyAutoSchema):
         include_fk = True
         load_instance = True
 
+    @pre_load()
+    def serialize_pre_load(self, data, **kwargs):
+        logger.debug("UserSchema::pre_load::serialize_pre_load: %s", data)
+        data["lastUpdated"] = ModelTools.get_utc_timestamp()
+        return data     
 
 # VPNOnPremiseVendor
 class VPNOnPremiseVendor(Base):

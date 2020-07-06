@@ -6,7 +6,6 @@ application collection
 # 3rd party modules
 from flask import make_response, abort
 import logging
-import json
 from pprint import pformat
 from sqlalchemy import literal_column
 from sqlalchemy.exc import SQLAlchemyError
@@ -16,6 +15,7 @@ from tb_houston_service.models import Application, ApplicationSchema
 from tb_houston_service.extendedSchemas import ExtendedApplicationSchema
 from tb_houston_service.tools import ModelTools
 from tb_houston_service import application_extension
+from config.db_lib import db_session
 
 
 logger = logging.getLogger("tb_houston_service.application")
@@ -98,25 +98,24 @@ def read_one(oid):
     :return:              application matching the id
     """
 
-    application = (
-        db.session.query(Application).filter(Application.id == oid).one_or_none()
-    )
+    with db_session() as dbs:
+        application = (
+            dbs.query(Application).filter(Application.id == oid).one_or_none()
+        )
 
-    db.session.close()
-
-    logger.debug("application data:")
-    logger.debug(pformat(application))
-
-    if application is not None:
-        application = application_extension.expand_application(application)
-        # Serialize the data for the response
-        application_schema = ExtendedApplicationSchema()
-        data = application_schema.dump(application)
         logger.debug("application data:")
-        logger.debug(pformat(data))
-        return data
-    else:
-        abort(404, f"Application with id {oid} not found".format(id=oid))
+        logger.debug(pformat(application))
+
+        if application is not None:
+            application = application_extension.expand_application(application)
+            # Serialize the data for the response
+            application_schema = ExtendedApplicationSchema()
+            data = application_schema.dump(application)
+            logger.debug("application data:")
+            logger.debug(pformat(data))
+            return data
+        else:
+            abort(404, f"Application with id {oid} not found".format(id=oid))
 
 
 def create(applicationDetails):
@@ -128,21 +127,22 @@ def create(applicationDetails):
     :return:             201 on success, 406 on application exists
     """
 
-    # Remove id as it's created automatically
-    if "id" in applicationDetails:
-        del applicationDetails["id"]
+    with db_session() as dbs:
+        # Remove id as it's created automatically
+        if "id" in applicationDetails:
+            del applicationDetails["id"]
 
-    schema = ApplicationSchema()
-    new_application = schema.load(applicationDetails, session=db.session)
-    new_application.lastUpdated = ModelTools.get_utc_timestamp()
-    db.session.add(new_application)
-    db.session.commit()
+        schema = ApplicationSchema()
+        new_application = schema.load(applicationDetails, session=dbs)
+        new_application.lastUpdated = ModelTools.get_utc_timestamp()
+        dbs.add(new_application)
+        dbs.commit()
 
-    schema = ExtendedApplicationSchema()
-    data = schema.dump(new_application)
-    logger.debug("application data:")
-    logger.debug(pformat(data))
-    return data, 201
+        schema = ExtendedApplicationSchema()
+        data = schema.dump(new_application)
+        logger.debug("application data:")
+        logger.debug(pformat(data))
+        return data, 201
 
 
 def update(oid, applicationDetails):
@@ -154,31 +154,31 @@ def update(oid, applicationDetails):
     :return: updated application
     """
 
-    logger.debug("application: ")
-    logger.debug(pformat(applicationDetails))
+    with db_session() as dbs:
+        logger.debug("application: ")
+        logger.debug(pformat(applicationDetails))
 
-    # Does the application exist in applications?
-    existing_application = (
-        db.session.query(Application).filter(Application.id == oid).one_or_none()
-    )
+        # Does the application exist in applications?
+        existing_application = (
+            dbs.query(Application).filter(Application.id == oid).one_or_none()
+        )
 
-    # Does application exist?
-    if existing_application is not None:
-        schema = ApplicationSchema()
-        applicationDetails['id'] = oid
-        schema.load(applicationDetails, session=db.session)
-        db.session.merge(existing_application)
-        db.session.commit()
+        # Does application exist?
+        if existing_application is not None:
+            schema = ApplicationSchema()
+            applicationDetails['id'] = oid
+            schema.load(applicationDetails, session=db.session)
+            dbs.merge(existing_application)
+            dbs.commit()
 
-        # return the updated application in the response
-        schema = ExtendedApplicationSchema()
-        data = schema.dump(existing_application)
-        return data, 200
+            # return the updated application in the response
+            schema = ExtendedApplicationSchema()
+            data = schema.dump(existing_application)
+            return data, 200
 
-    # otherwise, nope, application doesn't exist, so that's an error
-    else:
-        db.session.close()
-        abort(404, f"Application {oid} not found")
+        # otherwise, nope, application doesn't exist, so that's an error
+        else:
+            abort(404, f"Application {oid} not found")
 
 
 def delete(oid):
@@ -188,20 +188,21 @@ def delete(oid):
     :param id: id of the application to delete
     :return:             200 on successful delete, 404 if not found
     """
-    # Does the application to delete exist?
-    existing_application = (
-        db.session.query(Application).filter(Application.id == oid).one_or_none()
-    )
 
-    # if found?
-    if existing_application is not None:
-        existing_application.isActive = False
-        db.session.merge(existing_application)
-        db.session.commit()
+    with db_session() as dbs:
+        # Does the application to delete exist?
+        existing_application = (
+            dbs.query(Application).filter(Application.id == oid).one_or_none()
+        )
 
-        return make_response(f"Application id {oid} successfully deleted", 200)
+        # if found?
+        if existing_application is not None:
+            existing_application.isActive = False
+            dbs.merge(existing_application)
+            dbs.commit()
 
-    # Otherwise, nope, application to delete not found
-    else:
-        db.session.close()
-        abort(404, f"Application id {oid} not found")
+            return make_response(f"Application id {oid} successfully deleted", 200)
+
+        # Otherwise, nope, application to delete not found
+        else:
+            abort(404, f"Application id {oid} not found")

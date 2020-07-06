@@ -680,6 +680,25 @@ paths:
 
   /keyValues/ci/:
     get:
+      operationId: tb_houston_service.ci.read_keyValues
+      tags:
+        - ci
+      summary: Read  ci list in key value pairs
+      description: Read  ci list in key value pairs
+      responses:
+        "200":
+          description: Successfully read an ci from the list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  key:
+                    type: integer
+                  value:
+                    type: string
+  /ci/:
+    get:
       operationId: tb_houston_service.ci.read_all
       tags:
         - ci
@@ -694,9 +713,9 @@ paths:
                 type: array
                 items:
                   properties:
-                    key:
-                      type: string
-                      description: key
+                    id:
+                      type: integer
+                      description: id
                     value:
                       type: string
                       description: value
@@ -711,7 +730,8 @@ paths:
       responses:
         "201":
           description: Successfully created an ci
-  "/keyValues/ci/{key}":
+
+  "/ci/{id}":
     get:
       operationId: tb_houston_service.ci.read_one
       tags:
@@ -719,12 +739,12 @@ paths:
       summary: Read one ci from the list
       description: Read one ci from the list
       parameters:
-        - name: key
+        - name: id
           in: path
-          description: key of the ci to get from the list
+          description: id of the ci to get from the list
           required: true
           schema:
-            type: string
+            type: integer
       responses:
         "200":
           description: Successfully read an ci from the list
@@ -733,8 +753,8 @@ paths:
               schema:
                 type: object
                 properties:
-                  key:
-                    type: string
+                  id:
+                    type: integer
                   value:
                     type: string
     put:
@@ -744,12 +764,12 @@ paths:
       summary: Update an ci in the list
       description: Update an ci in the list
       parameters:
-        - name: key
+        - name: id
           in: path
-          description: key of the ci to update
+          description: id of the ci to update
           required: true
           schema:
-            type: string
+            type: integer
       requestBody:
         $ref: "#/components/requestBodies/ci.ciDetails"
       responses:
@@ -762,15 +782,36 @@ paths:
       summary: Delete an CI from the list
       description: Delete an CI
       parameters:
-        - name: key
+        - name: id
           in: path
           required: true
           schema:
-            type: string
+            type: integer
       responses:
         "200":
           description: Successfully deleted an CI
+  
+
   /keyValues/cd/:
+    get:
+      operationId: tb_houston_service.cd.read_keyValues
+      tags:
+        - cd
+      summary: Read  cd list in key value pairs
+      description: Read  cd list in key value pairs
+      responses:
+        "200":
+          description: Successfully read an cd from the list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  key:
+                    type: integer
+                  value:
+                    type: string
+  /cd/:
     get:
       operationId: tb_houston_service.cd.read_all
       tags:
@@ -786,9 +827,9 @@ paths:
                 type: array
                 items:
                   properties:
-                    key:
-                      type: string
-                      description: key
+                    id:
+                      type: integer
+                      description: id
                     value:
                       type: string
                       description: value
@@ -803,7 +844,7 @@ paths:
       responses:
         "201":
           description: Successfully created an continuous deployment
-  "/keyValues/cd/{key}":
+  "/cd/{id}":
     get:
       operationId: tb_houston_service.cd.read_one
       tags:
@@ -811,12 +852,12 @@ paths:
       summary: Read one continuous deployment from the list
       description: Read one continuous deployment from the list
       parameters:
-        - name: key
+        - name: id
           in: path
           description: key of the continuous deployment to get from the list
           required: true
           schema:
-            type: string
+            type: integer
       responses:
         "200":
           description: Successfully read an continuous deployment from the list
@@ -825,8 +866,8 @@ paths:
               schema:
                 type: object
                 properties:
-                  key:
-                    type: string
+                  id:
+                    type: integer
                   value:
                     type: string
     put:
@@ -836,12 +877,12 @@ paths:
       summary: Update an cd in the list
       description: Update an cd in the list
       parameters:
-        - name: key
+        - name: id
           in: path
           description: key of the cd to update
           required: true
           schema:
-            type: string
+            type: integer
       requestBody:
         $ref: "#/components/requestBodies/cd.cdDetails"
       responses:
@@ -854,16 +895,38 @@ paths:
       summary: Delete a continuous deployment from the list
       description: Delete a continuous deployment
       parameters:
-        - name: key
+        - name: id
           in: path
           required: true
           schema:
-            type: string
+            type: integer
       responses:
         "200":
           description: Successfully deleted a continuous deployment
 
   /keyValues/sourceControl/:
+    get:
+      operationId: tb_houston_service.sourcecontrol.read_keyValues
+      tags:
+        - sourcecontrol
+      summary: Read the entire list of source control types
+      description: Read the list of source control types
+      responses:
+        "200":
+          description: Successfully read source control type list operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties:
+                    key:
+                      type: integer
+                      description: id of the source control
+                    value:
+                      type: string
+                      description: name of the source control
+  /sourceControl/:
     get:
       operationId: tb_houston_service.sourcecontrol.read_all
       tags:
@@ -879,12 +942,12 @@ paths:
                 type: array
                 items:
                   properties:
-                    key:
-                      type: string
-                      description: key
+                    id:
+                      type: integer
+                      description: id of the source control
                     value:
                       type: string
-                      description: value
+                      description: name of the source control
     post:
       operationId: tb_houston_service.sourcecontrol.create
       tags:
@@ -897,7 +960,7 @@ paths:
         "201":
           description: Successfully created a source control type
 
-  "/keyValues/sourceControl/{key}":
+  "/sourceControl/{id}":
     get:
       operationId: tb_houston_service.sourcecontrol.read_one
       tags:
@@ -905,12 +968,12 @@ paths:
       summary: Read one source control type from the list
       description: Read one source control type from the list
       parameters:
-        - name: key
+        - name: id
           in: path
           description: key of the source control to get from the list
           required: true
           schema:
-            type: string
+            type: integer
       responses:
         "200":
           description: Successfully read an source control from the list
@@ -919,8 +982,8 @@ paths:
               schema:
                 type: object
                 properties:
-                  key:
-                    type: string
+                  id:
+                    type: integer
                   value:
                     type: string
     put:
@@ -930,12 +993,12 @@ paths:
       summary: Update a source control in the list
       description: Update an source control in the list
       parameters:
-        - name: key
+        - name: id
           in: path
           description: key of the source control to update
           required: true
           schema:
-            type: string
+            type: integer
       requestBody:
         $ref: "#/components/requestBodies/sourceControl.sourceControlDetails"
       responses:
@@ -948,11 +1011,11 @@ paths:
       summary: Delete an source control from the list
       description: Delete an source control
       parameters:
-        - name: key
+        - name: id
           in: path
           required: true
           schema:
-            type: string
+            type: integer
       responses:
         "200":
           description: Successfully deleted a source control
@@ -2500,6 +2563,14 @@ paths:
           name: isActive
           schema:
             type: boolean
+        - in: query 
+          name: page
+          schema:
+            type: integer
+        - in: query 
+          name: page_size
+          schema:
+            type: integer            
         - in: query
           name: sort
           schema:
@@ -2541,6 +2612,14 @@ paths:
           name: isActive
           schema:
             type: boolean
+        - in: query 
+          name: page
+          schema:
+            type: integer
+        - in: query 
+          name: page_size
+          schema:
+            type: integer            
         - in: query
           name: sort
           schema:
@@ -2555,6 +2634,42 @@ paths:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/NotificationActivatorList" 
+
+  "/notificationsMeta/":
+    get:
+      operationId: tb_houston_service.notification.meta
+      tags:
+        - notification
+      summary: Read notications meta
+      description: Read notifications meta
+      parameters:
+        - in: query
+          name: typeId
+          schema:
+            type: integer
+          required: true
+        - in: query             
+          name: toUserId
+          schema:
+            type: integer
+        - in: query
+          name: isRead
+          schema:
+            type: boolean
+        - in: query
+          name: isActive
+          schema:
+            type: boolean                                
+      responses:
+        "200":
+          description: Successfully read notifications metadata
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
 
 
 components:
@@ -3209,9 +3324,9 @@ components:
     CI:
       type: object
       properties:
-        key:
-          type: string
-          description: key
+        id:
+          type: integer
+          description: id
         value:
           type: string
           description: value
@@ -3219,9 +3334,9 @@ components:
     CD:
       type: object
       properties:
-        key:
-          type: string
-          description: key
+        id:
+          type: integer
+          description: id of the CI
         value:
           type: string
           description: value
@@ -3229,9 +3344,9 @@ components:
     SourceControl:
       type: object
       properties:
-        key:
-          type: string
-          description: key
+        id:
+          type: integer
+          description: id of the CI
         value:
           type: string
           description: value
@@ -3361,15 +3476,15 @@ components:
         costCentre:
           type: string
           description: costCentre
-        ci:
-          type: string
-          description: ci
-        cd:
-          type: string
-          description: cd
-        sourceControl:
-          type: string
-          description: sourceControl
+        ciId:
+          type: integer
+          description: Id of ci
+        cdId:
+          type: integer
+          description: Id of cd
+        sourceControlId:
+          type: integer
+          description: Id ofsourceControl
           items:
             type: string
         teamId:
