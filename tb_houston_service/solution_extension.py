@@ -5,6 +5,7 @@ from tb_houston_service.models import Team
 from tb_houston_service.models import BusinessUnit
 from tb_houston_service.models import LZEnvironment
 from tb_houston_service.models import SolutionEnvironment
+from tb_houston_service.models import CI,CD,SourceControl
 from tb_houston_service.tools import ModelTools
 from tb_houston_service import application_extension
 from tb_houston_service import team_extension
@@ -37,6 +38,16 @@ def expand_solution(sol):
 
     if sol.businessUnitId:
         sol.businessUnit = db.session.query(BusinessUnit).filter(BusinessUnit.id == sol.businessUnitId, BusinessUnit.isActive).one_or_none()
+
+    if sol.ciId:
+        sol.ci = db.session.query(CI).filter(CI.id == sol.ciId).one_or_none()
+    
+    if sol.cdId:
+        sol.cd = db.session.query(CD).filter(CD.id == sol.cdId).one_or_none()
+    
+    if sol.sourceControlId:
+        sol.sourceControl = db.session.query(SourceControl).filter(SourceControl.id == sol.sourceControlId).one_or_none()
+    
     return sol
 
 
@@ -62,6 +73,22 @@ def expand_solution_for_dac(sol):
             sol.businessUnit = businessUnit.name
         else:
             sol.businessUnit = ""
+        
+        if sol.ciId:
+            ci = db.session.query(CI).filter(CI.id == sol.ciId).one_or_none()
+            if ci:
+                sol.ci = ci.value
+    
+        if sol.cdId:
+            cd = db.session.query(CD).filter(CD.id == sol.cdId).one_or_none()
+            if cd:
+                sol.cd = cd.value
+    
+        if sol.sourceControlId:
+            sourceControl = db.session.query(SourceControl).filter(SourceControl.id == sol.sourceControlId).one_or_none()
+            if sourceControl:
+               sol.sourceControl = sourceControl.value 
+    
     return sol
 
 

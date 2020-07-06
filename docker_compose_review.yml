@@ -2,7 +2,7 @@ version: "3.1"
 
 services:
   gcp-dac:
-    image: gcr.io/tranquility-base-images/tb-gcp-dac:mock
+    image: gcr.io/tranquility-base-images/tb-gcp-dac-mock:latest
     environment:
       HOUSTON_SERVICE_URL: "houston-service:3000"
     ports:
@@ -28,6 +28,7 @@ services:
       SQLALCHEMY_ECHO: "False"
       SQLALCHEMY_TRACK_MODIFICATIONS: "False"
       GCP_DAC_URL: "gcp-dac:3100"
+      LOGLEVEL: 10
     depends_on:
       - mysql57
       - gcp-dac

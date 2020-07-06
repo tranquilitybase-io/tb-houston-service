@@ -6,6 +6,7 @@ from tb_houston_service.models import BusinessUnitSchema
 from tb_houston_service.models import LZEnvironmentSchema
 from tb_houston_service.models import LZLanVpcSchema
 from tb_houston_service.models import RoleSchema
+from tb_houston_service.models import CISchema, CDSchema, SourceControlSchema
 
 
 logger = logging.getLogger("tb_houston_service.extendedSchemas")
@@ -165,9 +166,12 @@ class ExtendedSolutionSchema(Schema):
     description = fields.Str()
     businessUnitId = fields.Int()
     costCentre = fields.Str()
-    ci = fields.Str()
-    cd = fields.Str()
-    sourceControl = fields.Str()
+    ciId =fields.Int()
+    ci = fields.Nested(CISchema(many=False))
+    cdId = fields.Int()
+    cd = fields.Nested(CDSchema(many=False))
+    sourceControlId =fields.Int()
+    sourceControl = fields.Nested(SourceControlSchema(many=False))
     environments = fields.Nested(LZEnvironmentSchema(many=True))
     favourite = fields.Boolean()
     teamId = fields.Int()
@@ -233,8 +237,11 @@ class ExtendedSolutionForDACSchema(Schema):
     description = fields.Str()
     businessUnit = fields.Str()
     costCentre = fields.Str()
+    ciId =fields.Int()
     ci = fields.Str()
+    cdId = fields.Int()
     cd = fields.Str()
+    sourceControlId =fields.Int()
     sourceControl = fields.Str()
     environments = fields.List(fields.Str())
     teamId = fields.Int()
@@ -391,6 +398,14 @@ class ExtendedApplicationForDACSchema(Schema):
     name = fields.Str()
     description = fields.Str()
     solutionId = fields.Int()
+    lastUpdated = fields.Str()
+    workspaceProjectId = fields.Str()
+    activatorGitUrl = fields.Str()
+    deploymentEnvironment = fields.Str()
+    deploymentProjectId = fields.Str()
+    mandatoryVariables = fields.List(fields.Dict())
+    optionalVariables = fields.List(fields.Dict())
+
 
 class ExtendedNotificationActivatorSchema(Schema):
     id = fields.Int()

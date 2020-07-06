@@ -72,6 +72,18 @@ def create_solution_resources(resources_dict):
         sr["key"] = f"project-id-{env}"
         solutionresource.create(sr)
 
+    # workspace
+    ws_proj = resources.get("workspace_project")
+    if ws_proj:
+        ws_value = ws_proj.get("value")
+        wc_project_id_value = ws_value.get("project_id")
+        ws = {
+            "solutionId": solutionId,
+            "key": "project-id-workspace",
+            "value": wc_project_id_value
+        }
+        solutionresource.create(ws)
+
 
 def create(solutionResourceJSONDetails):
     """

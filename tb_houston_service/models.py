@@ -134,6 +134,9 @@ class ApplicationDeployment(Base):
     taskId = db.Column(db.String)
     lastUpdated = db.Column(db.String(20))
 
+    def __repr__(self):
+        return "<ApplicationDeployment(applicationId={self.applicationId!r}, solutionId={self.solutionId!r})>".format(self=self)
+
 
 class ApplicationDeploymentSchema(SQLAlchemyAutoSchema):
     class Meta:
@@ -182,11 +185,11 @@ class BGPRoutingModeSchema(SQLAlchemyAutoSchema):
 # CD
 class CD(Base):
     __tablename__ = "cd"
-    key = db.Column(db.String(255), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.String(255))
 
     def __repr__(self):
-        return "<CD(id={self.key!r}, name={self.key!r})>".format(self=self)
+        return "<CD(id={self.id!r}, name={self.id!r})>".format(self=self)
 
 
 class CDSchema(SQLAlchemyAutoSchema):
@@ -199,11 +202,11 @@ class CDSchema(SQLAlchemyAutoSchema):
 # CI
 class CI(Base):
     __tablename__ = "ci"
-    key = db.Column(db.String(255), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.String(255))
 
     def __repr__(self):
-        return "<CI(id={self.key!r}, name={self.key!r})>".format(self=self)
+        return "<CI(id={self.id!r}, name={self.id!r})>".format(self=self)
 
 
 class CISchema(SQLAlchemyAutoSchema):
@@ -527,9 +530,9 @@ class Solution(Base):
     description = db.Column(db.String(255))
     businessUnitId = db.Column(db.Integer())
     costCentre = db.Column(db.String(255))
-    ci = db.Column(db.String(255))
-    cd = db.Column(db.String(255))
-    sourceControl = db.Column(db.String(255))
+    ciId = db.Column(db.Integer())
+    cdId = db.Column(db.Integer())
+    sourceControlId = db.Column(db.Integer())
     teamId = db.Column(db.Integer())
     deployed = db.Column(db.Boolean())
     deploymentState = db.Column(db.String(45))
@@ -617,7 +620,7 @@ class SolutionResourceJSONSchema(SQLAlchemyAutoSchema):
 # SourceControl
 class SourceControl(Base):
     __tablename__ = "sourcecontrol"
-    key = db.Column(db.String(255), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.String(255))
 
 
