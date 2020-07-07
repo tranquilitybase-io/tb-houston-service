@@ -185,7 +185,7 @@ class ExtendedSolutionSchema(Schema):
 class ExtendedTeamMemberSchema(Schema):
     id = fields.Int()
     user = fields.Nested(ExtendedUserSchema(many=False))
-    role = fields.Str()
+    role = fields.Nested(RoleSchema(many=False))
 
 class ExtendedTeamMemberFullSchema(Schema):
     id = fields.Int()
