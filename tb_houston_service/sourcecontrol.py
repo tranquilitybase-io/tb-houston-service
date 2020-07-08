@@ -81,13 +81,12 @@ def create(sourceControlDetails):
     :param sourceControl:  sourceControl to create in sourceControl structure
     :return:        201 on success, 406 on sourceControl exists
     """
-    id = sourceControlDetails.get("id", None)
-    # value = sourceControlDetails.get("value", None)
-
+    # Remove id as it's created automatically
+    if 'id' in sourceControlDetails:
+        del sourceControlDetails['id']
     # Does the sourceControl exist already?
-    existing_sourceControl = (
-        db.session.query(SourceControl).filter(SourceControl.id == id).one_or_none()
-    )
+    existing_sourceControl = db.session.query(SourceControl).filter(SourceControl.value == sourceControlDetails["value"]).one_or_none()
+
 
     if existing_sourceControl is None:
         schema = SourceControlSchema()
