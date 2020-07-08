@@ -79,10 +79,11 @@ def create(ciDetails):
     :param ci: ci to create in ci structure
     :return:        201 on success, 406 on ci exists
     """
-    id = ciDetails.get("id", None)
-
+    # Remove id as it's created automatically
+    if 'id' in ciDetails:
+        del ciDetails['id']
     # Does the ci exist already?
-    existing_ci = db.session.query(CI).filter(CI.id == id).one_or_none()
+    existing_ci = db.session.query(CI).filter(CI.value == ciDetails["value"]).one_or_none()
 
     if existing_ci is None:
         schema = CISchema()

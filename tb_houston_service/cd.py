@@ -78,10 +78,11 @@ def create(cdDetails):
     :param cd: cd to create in cd structure
     :return:        201 on success, 406 on cd exists
     """
-    id = cdDetails.get("id", None)
-
+    # Remove id as it's created automatically
+    if 'id' in cdDetails:
+        del cdDetails['id']
     # Does the cd exist already?
-    existing_cd = db.session.query(CD).filter(CD.id == id).one_or_none()
+    existing_cd = db.session.query(CD).filter(CD.value == cdDetails["value"]).one_or_none()
 
     if existing_cd is None:
         schema = CDSchema()

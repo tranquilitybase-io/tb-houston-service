@@ -67,7 +67,7 @@ def put(id):
 
     # Validate response body for updated values
     assert resp.status_code == 200
-    assert resp_json["id"] == id
+    assert resp_json["id"] == int(id)
     assert resp_json["value"] == "new-test-value"
 
 
