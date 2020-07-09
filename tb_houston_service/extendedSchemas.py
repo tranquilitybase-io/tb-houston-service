@@ -73,7 +73,7 @@ class ExtendedActivatorSchema(Schema):
     regions = fields.List(fields.Str())
     hosting = fields.List(fields.Str())
     apiManagement = fields.List(fields.Str())
-    ci = fields.List(fields.Str())
+    ci = fields.List(fields.Int())
     cd = fields.List(fields.Str())
     sourceControl = fields.List(fields.Str())
     businessUnit = fields.Str()
@@ -185,7 +185,7 @@ class ExtendedSolutionSchema(Schema):
 class ExtendedTeamMemberSchema(Schema):
     id = fields.Int()
     user = fields.Nested(ExtendedUserSchema(many=False))
-    role = fields.Nested(RoleSchema(many=False))
+    role = fields.Str()
 
 class ExtendedTeamMemberFullSchema(Schema):
     id = fields.Int()
@@ -238,11 +238,11 @@ class ExtendedSolutionForDACSchema(Schema):
     businessUnit = fields.Str()
     costCentre = fields.Str()
     ciId =fields.Int()
-    ci = fields.Str()
+    ci = fields.Nested(CISchema(many=False))
     cdId = fields.Int()
-    cd = fields.Str()
+    cd = fields.Nested(CDSchema(many=False))
     sourceControlId =fields.Int()
-    sourceControl = fields.Str()
+    sourceControl = fields.Nested(SourceControlSchema(many=False))
     environments = fields.List(fields.Str())
     teamId = fields.Int()
     team = fields.Nested(ExtendedTeamDACSchema(many=False))
@@ -398,14 +398,6 @@ class ExtendedApplicationForDACSchema(Schema):
     name = fields.Str()
     description = fields.Str()
     solutionId = fields.Int()
-    lastUpdated = fields.Str()
-    workspaceProjectId = fields.Str()
-    activatorGitUrl = fields.Str()
-    deploymentEnvironment = fields.Str()
-    deploymentProjectId = fields.Str()
-    mandatoryVariables = fields.List(fields.Dict())
-    optionalVariables = fields.List(fields.Dict())
-
 
 class ExtendedNotificationActivatorSchema(Schema):
     id = fields.Int()

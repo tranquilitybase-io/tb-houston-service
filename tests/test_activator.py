@@ -84,7 +84,7 @@ def post():
         "businessUnit": "test-post-",
         "category": "test-post-",
         "cd": ["test-post-1", "test-post-2", "test-post-3"],
-        "ci": ["test-post-1", "test-post-2"],
+        "ci": [ 3,5 ],
         "description": "test-post-test-post-test-post-test-post-test-post-test-post-test-post-test-post-",
         "envs": ["dev", "prd", "poc"],
         "hosting": [
@@ -172,7 +172,7 @@ def put(oid):
         "businessUnit": "businessUnit",
         "category": "category",
         "cd": ["test-put-4", "test-put-5", "test-put-6"],
-        "ci": ["test-put-7", "test-put-8"],
+        "ci": [3,5],
         "description": "TheQuickBrownFoxJumpedOverTheLazyDogs",
         "envs": ["dev", "Prd", "Poc"],
         "hosting": [

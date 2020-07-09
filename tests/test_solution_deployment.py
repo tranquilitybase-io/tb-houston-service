@@ -22,7 +22,7 @@ class TestSolutionDeployment(unittest.TestCase):
 
 
     # Main tests are prefix with test_
-    def test_solution_deployment(self):
+    def disabled_test_solution_deployment(self):
         # Testing POST request
         self.oid = self.post_solution()
 
