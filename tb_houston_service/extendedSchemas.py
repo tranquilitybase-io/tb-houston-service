@@ -73,7 +73,7 @@ class ExtendedActivatorSchema(Schema):
     regions = fields.List(fields.Str())
     hosting = fields.List(fields.Str())
     apiManagement = fields.List(fields.Str())
-    ci = fields.List(fields.Int())
+    ci = fields.List(fields.Str())
     cd = fields.List(fields.Str())
     sourceControl = fields.List(fields.Str())
     businessUnit = fields.Str()

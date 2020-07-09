@@ -84,7 +84,7 @@ def post():
         "businessUnit": "test-post-",
         "category": "test-post-",
         "cd": ["test-post-1", "test-post-2", "test-post-3"],
-        "ci": [ 3,5 ],
+        "ci": [3,5],
         "description": "test-post-test-post-test-post-test-post-test-post-test-post-test-post-test-post-",
         "envs": ["dev", "prd", "poc"],
         "hosting": [

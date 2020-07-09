@@ -16,6 +16,7 @@ from tb_houston_service.models import Activator, ActivatorSchema
 from tb_houston_service.tools import ModelTools
 from tb_houston_service.extendedSchemas import ExtendedActivatorSchema
 from tb_houston_service.extendedSchemas import ExtendedActivatorCategorySchema
+from tb_houston_service  import activator_extension
 
 
 logger = logging.getLogger("tb_houston_service.activator")
@@ -91,6 +92,8 @@ def read_all(
     # for act in activators:
     #     act = activator_extension.expand_activator(act)
     # Serialize the data for the response
+    for act in activators:
+        act = activator_extension.expand_ci(act)
 
     Activator.accessRequestedBy = db.relationship("User", primaryjoin="and_(Activator.accessRequestedById==User.id, User.isActive)")
     activator_schema = ExtendedActivatorSchema(many=True)
