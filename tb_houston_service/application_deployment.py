@@ -181,12 +181,13 @@ def deploy_application(app_deployment):
             if act:
                 app_deployment.activatorGitUrl = act.activatorLink
                 app_deployment.deploymentEnvironment = app.env
-                deploymentProjectIdKey = "project-id-" + app_deployment.deploymentEnvironment
+                deploymentProjectIdKey = "project-id-" + app_deployment.deploymentEnvironment.lower()
                 sol_res_pi = dbs.query(SolutionResource).filter(SolutionResource.solutionId == app_deployment.solutionId, SolutionResource.key == deploymentProjectIdKey).one_or_none()
                 if sol_res_pi:
                     app_deployment.deploymentProjectId = sol_res_pi.value
                 else:
-                    abort(400, "Solution deployment project id is missing in SolutionResources.")
+                    app_deployment.deploymentProjectId = ""
+
                 app_deployment.mandatoryVariables = []
                 app_deployment.optionalVariables = []
                 app_deployment.id = app.id
