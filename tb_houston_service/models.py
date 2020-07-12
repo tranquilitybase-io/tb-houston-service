@@ -490,7 +490,7 @@ class NotificationActivator(Base):
     activatorId = db.Column(db.Integer(), db.ForeignKey("activator.id"), primary_key=True)
 
     def __repr__(self):
-        return "<NotificationActivator(id={self.id!r})>".format(self=self)
+        return "<NotificationActivator(notificationId={self.notificationId!r}, activatorId={self.activatorId!r})>".format(self=self)
 
 
 class NotificationActivatorSchema(SQLAlchemyAutoSchema):

@@ -2599,7 +2599,6 @@ paths:
           name: typeId
           schema:
             type: integer
-          required: true
         - in: query             
           name: toUserId
           schema:
