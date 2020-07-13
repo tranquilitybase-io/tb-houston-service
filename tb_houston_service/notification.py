@@ -8,7 +8,6 @@ from tb_houston_service.extendedSchemas import ExtendedNotificationSchema
 from tb_houston_service.models import Activator
 from config.db_lib import db_session
 from tb_houston_service.tools import ModelTools
-from pprint import pprint
 
 
 logger = logging.getLogger("tb_houston_service.notification")
@@ -53,7 +52,6 @@ def read_all(typeId = None, toUserId = None, isRead = None, isActive = None, pag
             notifications = notifications_query.limit(page_size).offset(page * page_size)
 
         for n in notifications:
-            ## pprint(n)
             if n.typeId == 1:
                 activator = dbs.query(Activator).filter(
                     n.id == NotificationActivator.notificationId,            

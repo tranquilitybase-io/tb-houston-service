@@ -15,7 +15,6 @@ from config import db
 from config.db_lib import db_session
 from tb_houston_service.models import Activator, ActivatorSchema
 from tb_houston_service.models import User
-from tb_houston_service.models import Notification, NotificationActivator
 from tb_houston_service import notification
 from tb_houston_service.tools import ModelTools
 from tb_houston_service.extendedSchemas import ExtendedActivatorSchema
