@@ -63,11 +63,18 @@ def create(userDetails):
     # Remove id as it's created automatically
     if "id" in userDetails:
         del userDetails["id"]
+
+    # remove these fields as we want them to be defaulted by the database
+    if "showWelcome" in userDetails:
+        abort(400, "Unable to set isWelcome in POST operation.")
+
+    if "isAdmin" in userDetails:
+        abort(400, "Unable to set isAdmin in POST operation.")
+
     # Does the user exist already?
     existing_user = (
         db.session.query(User)
-        .filter(User.firstName == userDetails["firstName"])
-        .filter(User.lastName == userDetails["lastName"])
+        .filter(User.email == userDetails["email"])
         .one_or_none()
     )
 
