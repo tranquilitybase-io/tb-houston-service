@@ -55,10 +55,13 @@ def read_all(typeId = None, toUserId = None, isRead = None, isActive = None, pag
         for n in notifications:
             ## pprint(n)
             if n.typeId == 1:
-                n.activator = dbs.query(Activator).filter(
+                activator = dbs.query(Activator).filter(
                     n.id == NotificationActivator.notificationId,            
                     Activator.id == NotificationActivator.activatorId 
                 ).one_or_none()
+                if activator:
+                    n.activatorId = activator.id
+                    n.activator = activator
 
         schema = ExtendedNotificationSchema(many=True)
         data = schema.dump(notifications)

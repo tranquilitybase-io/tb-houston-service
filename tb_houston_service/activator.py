@@ -146,7 +146,7 @@ def create(activatorDetails):
         schema = ActivatorSchema()
         new_activator = schema.load(activatorDetails, session=dbs)
         dbs.add(new_activator)
-
+        dbs.commit()
         # Serialize and return the newly created deployment
         # in the response
         schema = ExtendedActivatorSchema(many=False)
