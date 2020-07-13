@@ -3211,9 +3211,9 @@ components:
         activatorLink:
           type: string
           description: activatorLink
-          gitRepoUrl:
-            type: string
-            description: gitRepoUrl
+        gitRepoUrl:
+          type: string
+          description: gitRepoUrl
 
     Application:
       type: object
