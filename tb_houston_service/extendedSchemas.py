@@ -421,7 +421,7 @@ class ExtendedNotificationActivatorSchema(Schema):
     isRead = fields.Boolean()
     typeId = fields.Int()
     activatorId = fields.Int()
-    activator = fields.Nested(ActivatorSchema)    
+    activator = fields.Nested(ExtendedActivatorSchema)    
 
 
 class ExtendedNotificationSchema(OneOfSchema):
