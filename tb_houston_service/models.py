@@ -42,6 +42,7 @@ class Activator(Base):
     accessRequestedById = db.Column(db.Integer, db.ForeignKey("user.id")) 
     source = db.Column(db.String(100))
     activatorLink = db.Column(db.String(255))
+    gitRepoUrl = db.Column(db.String(255))
 
 
     def __repr__(self):

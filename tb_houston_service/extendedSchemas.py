@@ -89,6 +89,7 @@ class ExtendedActivatorSchema(Schema):
     accessRequestedBy = fields.Nested(ExtendedUserSchema(many=False))
     source = fields.Str()
     activatorLink = fields.Str()
+    gitRepoUrl = fields.Str()
 
     @post_load(pass_original=True)
     def deserialize_post_load(self, data, original_data, **kwargs):
