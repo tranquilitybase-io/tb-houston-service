@@ -64,7 +64,7 @@ def create(userDetails):
     if "id" in userDetails:
         del userDetails["id"]
 
-    # remove these fields as we want them to be defaulted by the database
+    # abort if these fields are set
     if "showWelcome" in userDetails:
         abort(400, "Unable to set isWelcome in POST operation.")
 
