@@ -684,12 +684,12 @@ class TeamMemberSchema(SQLAlchemyAutoSchema):
 class User(Base):
     __tablename__ = "user"
     id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(100))
+    email = db.Column(db.String(100), unique=True)
     firstName = db.Column(db.String(100))
     lastName = db.Column(db.String(100))
-    isAdmin = db.Column(db.Boolean())
+    isAdmin = db.Column(db.Boolean(), default=0)
     isActive = db.Column(db.Boolean())
-    showWelcome = db.Column(db.Boolean())
+    showWelcome = db.Column(db.Boolean(), default=1)
     lastUpdated = db.Column(db.String(20))
 
 

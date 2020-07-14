@@ -46,9 +46,7 @@ def post():
         "firstName": "test",
         "lastName": "test",
         "email": "test_email_account",
-        "isActive": True,
-        "isAdmin": True,
-        "showWelcome": True,
+        "isActive": True
     }
 
     # convert dict to json by json.dumps() for body data.
@@ -87,7 +85,6 @@ def put(oid):
         "lastName": "test",
         "email": f"test{str(oid)}@test.com",
         "isActive": False,
-        "isAdmin": True,
         "showWelcome": True
     }
 
