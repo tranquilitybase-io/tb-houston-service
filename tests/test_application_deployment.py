@@ -104,7 +104,7 @@ class TestApplicationDeployment(unittest.TestCase):
         payload = {
             "activatorId": 1,
             "description": "New Application",
-            "env": "Development",
+            "env": "development",
             "isActive": True,
             "isFavourite": True,
             "lastUpdated": "",
