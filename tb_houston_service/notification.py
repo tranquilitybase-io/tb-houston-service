@@ -1,12 +1,11 @@
 import logging
 from sqlalchemy import literal_column
-from flask import abort
 from sqlalchemy.exc import SQLAlchemyError
-from tb_houston_service.models import Notification
-from tb_houston_service.models import NotificationSchema
+from tb_houston_service.models import Notification, NotificationSchema
 from tb_houston_service.models import NotificationActivator
 from tb_houston_service.models import NotificationActivatorSchema
-from tb_houston_service.extendedSchemas import ExtendedNotificationActivatorSchema
+from tb_houston_service.extendedSchemas import ExtendedNotificationSchema
+from tb_houston_service.models import Activator
 from config.db_lib import db_session
 from tb_houston_service.tools import ModelTools
 
@@ -14,7 +13,7 @@ from tb_houston_service.tools import ModelTools
 logger = logging.getLogger("tb_houston_service.notification")
 
 
-def read_all(typeId, toUserId = None, isRead = None, isActive = None, page = None, page_size = None, sort = None):
+def read_all(typeId = None, toUserId = None, isRead = None, isActive = None, page = None, page_size = None, sort = None):
     logger.debug("read_all: %s", typeId)    
     with db_session() as dbs:
         # pre-process sort instructions
@@ -40,6 +39,7 @@ def read_all(typeId, toUserId = None, isRead = None, isActive = None, page = Non
                 notifications_query = dbs.query(Notification).order_by(Notification.lastUodated + " desc")
 
         notifications_query = notifications_query.filter(
+            (typeId == None or Notification.typeId == typeId),            
             (toUserId == None or Notification.toUserId == toUserId),
             (isRead == None or Notification.isRead == isRead),
             (isActive == None or Notification.isActive == isActive)
@@ -51,16 +51,19 @@ def read_all(typeId, toUserId = None, isRead = None, isActive = None, page = Non
         else:
             notifications = notifications_query.limit(page_size).offset(page * page_size)
 
-        if typeId == 1:
-            for notif in notifications:
-                activator_notification = dbs.query(NotificationActivator).filter(NotificationActivator.notificationId == notif.id).one_or_none()
-                if activator_notification:
-                    notif.activatorId = activator_notification.activatorId
-            schema = ExtendedNotificationActivatorSchema(many=True)
-            data = schema.dump(notifications)
-            return data, 200
-        abort("Unknown typeId", 500)
+        for n in notifications:
+            if n.typeId == 1:
+                activator = dbs.query(Activator).filter(
+                    n.id == NotificationActivator.notificationId,            
+                    Activator.id == NotificationActivator.activatorId 
+                ).one_or_none()
+                if activator:
+                    n.activatorId = activator.id
+                    n.activator = activator
 
+        schema = ExtendedNotificationSchema(many=True)
+        data = schema.dump(notifications)
+        return data, 200
 
 
 def create(notification, typeId):
