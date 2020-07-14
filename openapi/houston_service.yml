@@ -16,6 +16,18 @@ info:
     name: "Apache 2.0"
     url: "https://www.apache.org/licenses/LICENSE-2.0.html"
 
+# Define the security scheme type (HTTP bearer)
+components:
+  securitySchemes:
+    bearerAuth: # arbotrary name for the security scheme
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+# Apply the security globally to all operations
+security:
+  - bearerAuth: []
+
 servers:
   - url: /api
 
