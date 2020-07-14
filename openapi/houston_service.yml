@@ -2672,6 +2672,88 @@ paths:
                     type: integer
 
 
+  "/getGCPProjectURL/{projectId}":
+    get:
+      operationId: tb_houston_service.lzmetadata.get_gcp_project_id
+      tags:
+        - lzmetadata
+      summary: Read the GCP Project URL
+      description: Read the GCP Project URL
+      parameters:
+        - name: projectId
+          in: path
+          description: the gcp project id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successfully read the gcp project url
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KeyValue"
+
+
+  "/lzmetadata/":
+    post:
+      operationId: tb_houston_service.lzmetadata.create
+      tags:
+        - lzmetadata
+      summary: Create a new lzmetadata
+      description: Create a new lzmetadata
+      requestBody:
+        $ref: "#/components/requestBodies/generic.keyValueDetails"
+      responses:
+        "201":
+          description: Successfully updated a lzmetadata
+
+  "/lzmetadata/{key}":
+    put:
+      operationId: tb_houston_service.lzmetadata.update
+      tags:
+        - lzmetadata
+      summary: Update a lzmetadata from the list
+      description: Update a lzmetadata from the list
+      parameters:
+        - name: key
+          in: path
+          description: key of the lzmetadata to update
+          required: true
+          schema:
+            type: string
+      requestBody:
+        $ref: "#/components/requestBodies/generic.keyValueDetails"             
+      responses:
+        "200":
+          description: Successfully update a lzmetadata from the list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KeyValue"
+
+    get:
+      operationId: tb_houston_service.lzmetadata.read
+      tags:
+        - lzmetadata
+      summary: Read one lzmetadata from the list
+      description: Read one lzmetadata from the list
+      parameters:
+        - name: key
+          in: path
+          description: id of the lzmetadata to get from the list
+          required: true
+          schema:
+            type: string         
+      responses:
+        "200":
+          description: Successfully read a lzmetadata from the list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KeyValue"
+
+
 components:
 
   requestBodies:
@@ -3012,6 +3094,15 @@ components:
             oneOf:
               - $ref: "#/components/schemas/NotificationActivatorList"                         
       description: the notifications to create
+      required: true
+
+    generic.keyValueDetails:
+      content:
+        application/json:
+          schema:      
+            x-body-name: keyValueDetails    
+            $ref: "#/components/schemas/KeyValue"                         
+      description: the key value to create
       required: true
 
   schemas:
@@ -3782,5 +3873,15 @@ components:
                             name:
                               type: string
 
+    KeyValue:
+      type: object
+      properties:
+        key:
+          type: string
+          description: The key
+        value: 
+          type: string
+          description: The value
+                       
 
 

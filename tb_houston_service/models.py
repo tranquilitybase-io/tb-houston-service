@@ -430,11 +430,8 @@ class LZLanVpcEnvironmentSchema(SQLAlchemyAutoSchema):
 # LZLANVPCMeta
 class LZMetadata(Base):
     __tablename__ = "lzmetadata"
-    group = db.Column(db.String, primary_key=True)
-    name = db.Column(db.String, primary_key=True)
-    value = db.Column(db.String)
-    description = db.Column(db.String)
-    isActive = db.Column(db.Boolean)
+    key = db.Column(db.String(), primary_key=True)
+    value = db.Column(db.String())
 
 
 class LZMetadataSchema(SQLAlchemyAutoSchema):
