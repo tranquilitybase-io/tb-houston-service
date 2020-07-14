@@ -3681,9 +3681,6 @@ components:
         lastName:
           type: string
           description: The user's last name
-        isAdmin:
-          type: boolean
-          description: Is the user an administrator?
         showWelcome:
           type: boolean
           description: Show the welcome screen?
