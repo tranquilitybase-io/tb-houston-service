@@ -28,7 +28,9 @@ def generate_token(user_id):
 def decode_token(token):
     logger.debug("decode_token: %s", token)
     try:
-        return jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+        payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+        logger.debug("payload sub: %s", payload["sub"])
+        return payload
     except JWTError as e:
         six.raise_from(Unauthorized, e)
 
