@@ -73,7 +73,8 @@ class ExtendedActivatorSchema(Schema):
     regions = fields.List(fields.Str())
     hosting = fields.List(fields.Str())
     apiManagement = fields.List(fields.Str())
-    ci = fields.List(fields.Str())
+    #ci = fields.List(fields.Nested(CISchema(many=True)))
+    ci = fields.Nested(CISchema(many=True))
     cd = fields.List(fields.Str())
     sourceControl = fields.List(fields.Str())
     businessUnit = fields.Str()
@@ -96,7 +97,7 @@ class ExtendedActivatorSchema(Schema):
         data["regions"] = json.dumps(original_data.regions)
         data["hosting"] = json.dumps(original_data.hosting)
         data["apiManagement"] = json.dumps(original_data.apiManagement)
-        data["ci"] = json.dumps(original_data.ci)
+        #data["ci"] = json.dumps(original_data.ci)
         data["cd"] = json.dumps(original_data.cd)
         data["sourceControl"] = json.dumps(original_data.sourceControl)
         return data
@@ -109,7 +110,7 @@ class ExtendedActivatorSchema(Schema):
         data["regions"] = json.loads(original_data.regions)
         data["hosting"] = json.loads(original_data.hosting)
         data["apiManagement"] = json.loads(original_data.apiManagement)
-        data["ci"] = json.loads(original_data.ci)
+        #data["ci"] = json.loads(original_data.ci)
         data["cd"] = json.loads(original_data.cd)
         data["sourceControl"] = json.loads(original_data.sourceControl)
         return data
