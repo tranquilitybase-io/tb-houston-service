@@ -11,8 +11,10 @@ from sqlalchemy import literal_column
 from sqlalchemy.exc import SQLAlchemyError
 
 
+
 from config import db
-from tb_houston_service.models import Activator, ActivatorSchema
+from config.db_lib import db_session
+from tb_houston_service.models import Activator, ActivatorSchema, ActivatorCI, ActivatorCISchema
 from tb_houston_service.tools import ModelTools
 from tb_houston_service.extendedSchemas import ExtendedActivatorSchema
 from tb_houston_service.extendedSchemas import ExtendedActivatorCategorySchema
@@ -119,6 +121,7 @@ def read_one(oid):
 
     if act is not None:
         Activator.accessRequestedBy = db.relationship("User", primaryjoin="and_(Activator.accessRequestedById==User.id, User.isActive)")
+        act = activator_extension.expand_ci(act)
         schema = ExtendedActivatorSchema(many=False)
         data = schema.dump(act)
         return data, 200
@@ -138,17 +141,36 @@ def create(activatorDetails):
     # Remove id as it's created automatically
     if "id" in activatorDetails:
         del activatorDetails["id"]
+    
+    if "ci" in activatorDetails:
+        ci_list = activatorDetails["ci"]   
+        del activatorDetails["ci"] 
+    with db_session() as dbs:
+        schema = ActivatorSchema()
+        new_activator = schema.load(activatorDetails, session=db.session)
+        dbs.add(new_activator)
+        dbs.flush()    
 
-    schema = ActivatorSchema()
-    new_activator = schema.load(activatorDetails, session=db.session)
-    db.session.add(new_activator)
-    db.session.commit()
+        if ci_list:
+            for ci in ci_list:
+                activatorCISchema = ActivatorCISchema()
+                activatorCI = {}
+                activatorCI["activatorId"] = new_activator.id
+                activatorCI["ciId"] = ci   
+                activatorCI["lastUpdated"] = ModelTools.get_utc_timestamp()    
+                activatorCI["isActive"] = True                                            
+                new_activator_ci = activatorCISchema.load(activatorCI, session=db.session)
+                dbs.add(new_activator_ci)
+        else:
+            logger.error("ci details in activator are missing, the transaction will be rolled back for this activator!")
+            dbs.rollback()
 
     # Serialize and return the newly created deployment
     # in the response
-    schema = ExtendedActivatorSchema(many=False)
-    data = schema.dump(new_activator)
-    return data, 201
+        new_activator = activator_extension.expand_ci(new_activator)
+        schema = ExtendedActivatorSchema(many=False)
+        data = schema.dump(new_activator)
+        return data, 201
 
 
 def update(oid, activatorDetails):
@@ -180,16 +202,40 @@ def update(oid, activatorDetails):
         # schema = ActivatorSchema()
         activatorDetails["id"] = oid
         logger.info("activatorDetails: %s", activatorDetails)
-        schema = ActivatorSchema(many=False, session=db.session)
-        updatedActivator = schema.load(activatorDetails)
-        logger.info("updatedActivator: %s", updatedActivator)
-        db.session.merge(updatedActivator)
-        db.session.commit()
-        # return the updated activator in the response
-        Activator.accessRequestedBy = db.relationship("User", primaryjoin="and_(Activator.accessRequestedById==User.id, User.isActive)")      
-        schema = ExtendedActivatorSchema(many=False)
-        data = schema.dump(updatedActivator)
-        return data, 200
+        
+        if "ci" in activatorDetails:
+            ci_list = activatorDetails["ci"]   
+            del activatorDetails["ci"] 
+       
+        with db_session() as dbs:
+            
+            schema = ActivatorSchema(many=False, session=db.session)
+            updatedActivator = schema.load(activatorDetails)
+            logger.info("updatedActivator: %s", updatedActivator)
+            dbs.merge(updatedActivator)
+            #Update CI list in activatorCI table
+            # return the updated activator in the response
+            dbs.flush()    
+
+            if ci_list:
+                for ci in ci_list:
+                    activatorCISchema = ActivatorCISchema()
+                    activatorCI = {}
+                    activatorCI["activatorId"] = new_activator.id
+                    activatorCI["ciId"] = ci   
+                    activatorCI["lastUpdated"] = ModelTools.get_utc_timestamp()    
+                    activatorCI["isActive"] = True                                            
+                    new_activator_ci = activatorCISchema.load(activatorCI, session=db.session)
+                    dbs.merge(new_activator_ci)
+            else:
+                logger.error("ci details in activator are missing, the transaction will be rolled back for this activator!")
+                dbs.rollback()
+
+            Activator.accessRequestedBy = db.relationship("User", primaryjoin="and_(Activator.accessRequestedById==User.id, User.isActive)")      
+            updatedActivator = activator_extension.expand_ci(updatedActivator)
+            schema = ExtendedActivatorSchema(many=False)
+            data = schema.dump(updatedActivator)
+            return data, 200
     # otherwise, nope, deployment doesn't exist, so that's an error
     else:
         abort(404, f"Activator id {oid} not found")
@@ -243,6 +289,7 @@ def setActivatorStatus(activatorDetails):
         db.session.commit()
 
         Activator.accessRequestedBy = db.relationship("User", primaryjoin="and_(Activator.accessRequestedById==User.id, User.isActive)")
+        updated_activator = activator_extension.expand_ci(updated_activator)
         activator_schema = ExtendedActivatorSchema()
         data = activator_schema.dump(updated_activator)
         return data, 200

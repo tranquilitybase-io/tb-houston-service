@@ -1,7 +1,7 @@
 import logging
 from config import db
 from tb_houston_service.models import User
-from tb_houston_service.models import CI
+from tb_houston_service.models import CI, ActivatorCI
 import json
 
 
@@ -21,11 +21,13 @@ def expand_activator(act):
     return act
 
 def expand_ci(act):
-    ciList = json.loads(act.ci)
+    act_ci_list = (db.session.query(ActivatorCI).filter(ActivatorCI.activatorId == act.id).all())
+    print(act_ci_list)
     newList =[]
-    for id in ciList:
-        name = db.session.query(CI).filter(CI.id == int(id) ).one_or_none()
+    for act_ci in act_ci_list:
+        name = db.session.query(CI).filter(CI.id == act_ci.ciId).one_or_none()
         newList.append(name.value)
+    print(newList)
     act.ci = json.dumps(newList)
     print(act.ci)
     return act

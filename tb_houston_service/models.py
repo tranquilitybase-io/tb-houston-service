@@ -29,7 +29,6 @@ class Activator(Base):
     regions = db.Column(db.String(255))
     hosting = db.Column(db.String(255))
     apiManagement = db.Column(db.String(255))
-    ci = db.Column(db.String(255))
     cd = db.Column(db.String(255))
     sourceControl = db.Column(db.String(255))
     businessUnit = db.Column(db.String(255))
@@ -72,8 +71,6 @@ class ActivatorSchema(SQLAlchemyAutoSchema):
             data['hosting'] = json.dumps(data['hosting'])
         if 'apiManagement' in data:       
             data['apiManagement'] = json.dumps(data['apiManagement'])
-        if 'ci' in data:
-            data['ci'] = json.dumps(data['ci'])
         if 'cd' in data:            
             data['cd'] = json.dumps(data['cd'])
         if 'sourceControl' in data:
@@ -82,6 +79,27 @@ class ActivatorSchema(SQLAlchemyAutoSchema):
             data['accessRequestedById'] = None
 
         return data
+# SolutionEnvironment
+class ActivatorCI(Base):
+    __tablename__ = "activatorCI"
+    id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
+    activatorId = db.Column(db.Integer(), ForeignKey("activator.id"))
+    ciId = db.Column(db.Integer(), ForeignKey("ci.id"))
+    lastUpdated = db.Column(db.String(20))
+    isActive = db.Column(db.Boolean())
+
+    def __repr__(self):
+        return "<Activator(id={self.id!r}, activatorId={self.activatorId!r}, activatorId={self.ciId!r})>".format(
+            self=self
+        )
+
+
+class ActivatorCISchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = ActivatorCI
+        include_fk = True
+        load_instance = True
+
 
 
 # Application
