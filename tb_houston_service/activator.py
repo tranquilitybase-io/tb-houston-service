@@ -11,17 +11,22 @@ from sqlalchemy import literal_column
 from sqlalchemy.exc import SQLAlchemyError
 
 
-
 from config import db
 from config.db_lib import db_session
-from tb_houston_service.models import Activator, ActivatorSchema, ActivatorCI, ActivatorCISchema
+from tb_houston_service.models import (
+    Activator,
+    ActivatorSchema,
+    ActivatorCI,
+    ActivatorCISchema,
+)
 from tb_houston_service.tools import ModelTools
 from tb_houston_service.extendedSchemas import ExtendedActivatorSchema
 from tb_houston_service.extendedSchemas import ExtendedActivatorCategorySchema
-from tb_houston_service  import activator_extension
-from tb_houston_service  import activator_ci
+from tb_houston_service import activator_extension
+from tb_houston_service import activator_ci
 
 logger = logging.getLogger("tb_houston_service.activator")
+
 
 def read_all(
     isActive=None,
@@ -46,8 +51,21 @@ def read_all(
 
     # Create the list of activators from our data
 
-    logger.debug("Parameters: isActive: %s, isFavourite: %s, category: %s, status: %s, environment: %s, platform: %s, type: %s, source: %s, sensitivity: %s, page: %s, page_size: %s, sort: %s",
-     isActive, isFavourite, category, status, environment, platform, type, source, sensitivity, page, page_size, sort)
+    logger.debug(
+        "Parameters: isActive: %s, isFavourite: %s, category: %s, status: %s, environment: %s, platform: %s, type: %s, source: %s, sensitivity: %s, page: %s, page_size: %s, sort: %s",
+        isActive,
+        isFavourite,
+        category,
+        status,
+        environment,
+        platform,
+        type,
+        source,
+        sensitivity,
+        page,
+        page_size,
+        sort,
+    )
 
     # pre-process sort instructions
     if sort == None:
@@ -80,7 +98,7 @@ def read_all(
         (source == None or Activator.sourceControl.like('%"{}"%'.format(source))),
         (sensitivity == None or Activator.sensitivity == sensitivity),
         (isActive == None or Activator.isActive == isActive),
-        (isFavourite == None or Activator.isFavourite == isFavourite),        
+        (isFavourite == None or Activator.isFavourite == isFavourite),
     )
 
     if page == None or page_size == None:
@@ -88,16 +106,18 @@ def read_all(
     else:
         activators = activator_query.limit(page_size).offset(page * page_size).all()
 
-
-    # This is a better way of doing it, but doesn't work because we can't assign an object 
-    #  to accessRequested because it's an integer 
+    # This is a better way of doing it, but doesn't work because we can't assign an object
+    #  to accessRequested because it's an integer
     # for act in activators:
     #     act = activator_extension.expand_activator(act)
     # Serialize the data for the response
     for act in activators:
         act = activator_ci.expand_ci(act)
 
-    Activator.accessRequestedBy = db.relationship("User", primaryjoin="and_(Activator.accessRequestedById==User.id, User.isActive)")
+    Activator.accessRequestedBy = db.relationship(
+        "User",
+        primaryjoin="and_(Activator.accessRequestedById==User.id, User.isActive)",
+    )
     activator_schema = ExtendedActivatorSchema(many=True)
     data = activator_schema.dump(activators)
 
@@ -115,12 +135,13 @@ def read_one(oid):
     :return:              activator matching key
     """
 
-    act = db.session.query(Activator).filter(
-        Activator.id == oid
-    ).one_or_none()
+    act = db.session.query(Activator).filter(Activator.id == oid).one_or_none()
 
     if act is not None:
-        Activator.accessRequestedBy = db.relationship("User", primaryjoin="and_(Activator.accessRequestedById==User.id, User.isActive)")
+        Activator.accessRequestedBy = db.relationship(
+            "User",
+            primaryjoin="and_(Activator.accessRequestedById==User.id, User.isActive)",
+        )
         act = activator_ci.expand_ci(act)
         schema = ExtendedActivatorSchema(many=False)
         data = schema.dump(act)
@@ -141,24 +162,26 @@ def create(activatorDetails):
     # Remove id as it's created automatically
     if "id" in activatorDetails:
         del activatorDetails["id"]
-    
+
     if "ci" in activatorDetails:
-        act_ci_list = activatorDetails["ci"]   
-        del activatorDetails["ci"] 
+        act_ci_list = activatorDetails["ci"]
+        del activatorDetails["ci"]
     with db_session() as dbs:
         schema = ActivatorSchema()
         new_activator = schema.load(activatorDetails, session=db.session)
         dbs.add(new_activator)
-        dbs.flush()    
+        dbs.flush()
 
         if act_ci_list:
-            activator_ci.create_activator_ci(new_activator.id,act_ci_list,dbs)
+            activator_ci.create_activator_ci(new_activator.id, act_ci_list, dbs)
         else:
-            logger.error("ci details in activator are missing, the transaction will be rolled back for this activator!")
+            logger.error(
+                "ci details in activator are missing, the transaction will be rolled back for this activator!"
+            )
             dbs.rollback()
 
-    # Serialize and return the newly created deployment
-    # in the response
+        # Serialize and return the newly created deployment
+        # in the response
         new_activator = activator_ci.expand_ci(new_activator)
         schema = ExtendedActivatorSchema(many=False)
         data = schema.dump(new_activator)
@@ -194,28 +217,33 @@ def update(oid, activatorDetails):
         # schema = ActivatorSchema()
         activatorDetails["id"] = oid
         logger.info("activatorDetails: %s", activatorDetails)
-        
+
         if "ci" in activatorDetails:
-            act_ci_list = activatorDetails["ci"]   
-            del activatorDetails["ci"] 
-       
+            act_ci_list = activatorDetails["ci"]
+            del activatorDetails["ci"]
+
         with db_session() as dbs:
-            
+
             schema = ActivatorSchema(many=False, session=db.session)
             updatedActivator = schema.load(activatorDetails)
             logger.info("updatedActivator: %s", updatedActivator)
             dbs.merge(updatedActivator)
-            #Update CI list in activatorCI table
+            # Update CI list in activatorCI table
             # return the updated activator in the response
-            dbs.flush()    
+            dbs.flush()
 
             if act_ci_list:
                 activator_ci.create_activator_ci(updatedActivator.id, act_ci_list, dbs)
             else:
-                logger.error("ci details in activator are missing, the transaction will be rolled back for this activator!")
+                logger.error(
+                    "ci details in activator are missing, the transaction will be rolled back for this activator!"
+                )
                 dbs.rollback()
 
-            Activator.accessRequestedBy = db.relationship("User", primaryjoin="and_(Activator.accessRequestedById==User.id, User.isActive)")      
+            Activator.accessRequestedBy = db.relationship(
+                "User",
+                primaryjoin="and_(Activator.accessRequestedById==User.id, User.isActive)",
+            )
             updatedActivator = activator_ci.expand_ci(updatedActivator)
             schema = ExtendedActivatorSchema(many=False)
             data = schema.dump(updatedActivator)
@@ -272,7 +300,10 @@ def setActivatorStatus(activatorDetails):
         db.session.merge(updated_activator)
         db.session.commit()
 
-        Activator.accessRequestedBy = db.relationship("User", primaryjoin="and_(Activator.accessRequestedById==User.id, User.isActive)")
+        Activator.accessRequestedBy = db.relationship(
+            "User",
+            primaryjoin="and_(Activator.accessRequestedById==User.id, User.isActive)",
+        )
         updated_activator = activator_ci.expand_ci(updated_activator)
         activator_schema = ExtendedActivatorSchema()
         data = activator_schema.dump(updated_activator)

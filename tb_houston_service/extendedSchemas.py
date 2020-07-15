@@ -11,6 +11,7 @@ from tb_houston_service.models import CISchema, CDSchema, SourceControlSchema
 
 logger = logging.getLogger("tb_houston_service.extendedSchemas")
 
+
 class IdSchema(Schema):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -60,7 +61,7 @@ class ExtendedActivatorSchema(Schema):
     id = fields.Int()
     isActive = fields.Boolean()
     lastUpdated = fields.Str()
-    isFavourite = fields.Boolean()   
+    isFavourite = fields.Boolean()
     name = fields.Str()
     type = fields.Str()
     available = fields.Boolean()
@@ -73,7 +74,7 @@ class ExtendedActivatorSchema(Schema):
     regions = fields.List(fields.Str())
     hosting = fields.List(fields.Str())
     apiManagement = fields.List(fields.Str())
-    #ci = fields.List(fields.Nested(CISchema(many=True)))
+    # ci = fields.List(fields.Nested(CISchema(many=True)))
     ci = fields.Nested(CISchema(many=True))
     cd = fields.List(fields.Str())
     sourceControl = fields.List(fields.Str())
@@ -91,13 +92,15 @@ class ExtendedActivatorSchema(Schema):
 
     @post_load(pass_original=True)
     def deserialize_post_load(self, data, original_data, **kwargs):
-        logger.debug("ExtendedActivatorSchema::post_load::serialize_post_load: %s", data)
+        logger.debug(
+            "ExtendedActivatorSchema::post_load::serialize_post_load: %s", data
+        )
         data["envs"] = json.dumps(original_data.envs)
         data["platforms"] = json.dumps(original_data.platforms)
         data["regions"] = json.dumps(original_data.regions)
         data["hosting"] = json.dumps(original_data.hosting)
         data["apiManagement"] = json.dumps(original_data.apiManagement)
-        #data["ci"] = json.dumps(original_data.ci)
+        # data["ci"] = json.dumps(original_data.ci)
         data["cd"] = json.dumps(original_data.cd)
         data["sourceControl"] = json.dumps(original_data.sourceControl)
         return data
@@ -110,7 +113,7 @@ class ExtendedActivatorSchema(Schema):
         data["regions"] = json.loads(original_data.regions)
         data["hosting"] = json.loads(original_data.hosting)
         data["apiManagement"] = json.loads(original_data.apiManagement)
-        #data["ci"] = json.loads(original_data.ci)
+        # data["ci"] = json.loads(original_data.ci)
         data["cd"] = json.loads(original_data.cd)
         data["sourceControl"] = json.loads(original_data.sourceControl)
         return data
@@ -122,7 +125,7 @@ class ExtendedApplicationSchema(Schema):
     activatorId = fields.Int()
     isActive = fields.Boolean()
     lastUpdated = fields.Str()
-    isFavourite = fields.Boolean()      
+    isFavourite = fields.Boolean()
     name = fields.Str()
     env = fields.Str()
     status = fields.Str()
@@ -134,15 +137,15 @@ class ExtendedApplicationSchema(Schema):
     @post_load(pass_original=True)
     def serialize_post_load(self, data, original_data, **kwargs):
         logger.debug("ExtendedApplicationSchema::post_load: %s", data)
-        logger.debug("serialize_resources_original data: %s", original_data)            
-        data['resources'] = json.dumps(original_data.resources)
+        logger.debug("serialize_resources_original data: %s", original_data)
+        data["resources"] = json.dumps(original_data.resources)
         return data
 
     @post_dump(pass_original=True)
     def deserialize_post_dump(self, data, original_data, **kwargs):
         logger.debug("ExtendedApplicationSchema::post_dump: %s", original_data)
         logger.debug("deserialize_resources_original data: %s", original_data)
-        data['resources'] = json.loads(original_data.resources)
+        data["resources"] = json.loads(original_data.resources)
         return data
 
 
@@ -156,22 +159,23 @@ class ExtendedTeamSchema(Schema):
     lastUpdated = fields.Str()
     userCount = fields.Int()
 
+
 class ExtendedSolutionSchema(Schema):
     __envelope__ = {"single": "solution", "many": "solutions"}
 
     id = fields.Int()
     isActive = fields.Boolean()
     lastUpdated = fields.Str()
-    isFavourite = fields.Boolean()      
+    isFavourite = fields.Boolean()
     name = fields.Str()
     description = fields.Str()
     businessUnitId = fields.Int()
     costCentre = fields.Str()
-    ciId =fields.Int()
+    ciId = fields.Int()
     ci = fields.Nested(CISchema(many=False))
     cdId = fields.Int()
     cd = fields.Nested(CDSchema(many=False))
-    sourceControlId =fields.Int()
+    sourceControlId = fields.Int()
     sourceControl = fields.Nested(SourceControlSchema(many=False))
     environments = fields.Nested(LZEnvironmentSchema(many=True))
     favourite = fields.Boolean()
@@ -188,6 +192,7 @@ class ExtendedTeamMemberSchema(Schema):
     user = fields.Nested(ExtendedUserSchema(many=False))
     role = fields.Str()
 
+
 class ExtendedTeamMemberFullSchema(Schema):
     id = fields.Int()
     isActive = fields.Boolean()
@@ -196,8 +201,9 @@ class ExtendedTeamMemberFullSchema(Schema):
     role = fields.Nested(RoleSchema(many=False))
     teamId = fields.Int()
     team = fields.Nested(ExtendedTeamSchema(many=False))
-    userId= fields.Int()
+    userId = fields.Int()
     user = fields.Nested(ExtendedUserSchema(many=False))
+
     class Meta:
         ordered = True
 
@@ -213,7 +219,6 @@ class ExtendedTeamDACSchema(Schema):
     teamMembers = fields.Nested(ExtendedTeamMemberSchema(many=True))
 
 
-
 class ExtendedUserTeamsSchema(Schema):
     id = fields.Int()
     email = fields.Str()
@@ -225,7 +230,7 @@ class ExtendedUserTeamsSchema(Schema):
     isActive = fields.Boolean()
     lastUpdated = fields.Str()
     teamMembers = fields.Nested(ExtendedTeamMemberFullSchema(many=True))
-    
+
 
 class ExtendedSolutionForDACSchema(Schema):
     __envelope__ = {"single": "solution", "many": "solutions"}
@@ -233,16 +238,16 @@ class ExtendedSolutionForDACSchema(Schema):
     id = fields.Int()
     isActive = fields.Boolean()
     lastUpdated = fields.Str()
-    isFavourite = fields.Boolean()      
+    isFavourite = fields.Boolean()
     name = fields.Str()
     description = fields.Str()
     businessUnit = fields.Str()
     costCentre = fields.Str()
-    ciId =fields.Int()
+    ciId = fields.Int()
     ci = fields.Nested(CISchema(many=False))
     cdId = fields.Int()
     cd = fields.Nested(CDSchema(many=False))
-    sourceControlId =fields.Int()
+    sourceControlId = fields.Int()
     sourceControl = fields.Nested(SourceControlSchema(many=False))
     environments = fields.List(fields.Str())
     teamId = fields.Int()
@@ -391,7 +396,7 @@ class ExtendedApplicationDeploymentSchema(Schema):
     def deserialize_post_dump(self, data, original_data, **kwargs):
         logger.debug("ExtendedActivatorSchema::post_dump %s", original_data)
         data["id"] = original_data.applicationId
-        return data        
+        return data
 
 
 class ExtendedApplicationForDACSchema(Schema):
@@ -399,6 +404,7 @@ class ExtendedApplicationForDACSchema(Schema):
     name = fields.Str()
     description = fields.Str()
     solutionId = fields.Int()
+
 
 class ExtendedNotificationActivatorSchema(Schema):
     id = fields.Int()
@@ -411,4 +417,3 @@ class ExtendedNotificationActivatorSchema(Schema):
     isRead = fields.Boolean()
     typeId = fields.Int()
     activatorId = fields.Int()
-
