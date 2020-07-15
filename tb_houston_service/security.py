@@ -1,41 +1,31 @@
-import time
-import connexion
 import logging
 import os
 import six
 from werkzeug.exceptions import Unauthorized
-from jose import JWTError, jwt
+from google.oauth2 import id_token
+from google.auth.transport import requests
 
-JWT_ISSUER="com.zalando.connexion"
-JWT_SECRET = os.environ.get("JWT_SECRET")
-JWT_LIFETIME_SECONDS = 600
-JWT_ALGORITHM = 'HS256'
+CLIENT_ID = os.environ.get("CLIENT_ID")
 
 logger = logging.getLogger("security")
-
-def generate_token(user_id):
-    timestamp = _current_timestamp()
-    payload = {
-        "iss": JWT_ISSUER,
-        "iat": int(timestamp),
-        "exp": int(timestamp + JWT_LIFETIME_SECONDS),
-        "sub": str(user_id),
-    }
-
-    return jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
-
 
 def decode_token(token):
     logger.debug("decode_token: %s", token)
     try:
-        payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
-        logger.debug("payload sub: %s", payload["sub"])
-        return payload
-    except JWTError as e:
+        # Specify the CLIENT_ID of the app that accesses the backend:
+        idinfo = id_token.verify_oauth2_token(token, requests.Request(), CLIENT_ID)
+
+        # Or, if multiple clients access the backend server:
+        # idinfo = id_token.verify_oauth2_token(token, requests.Request())
+        # if idinfo['aud'] not in [CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]:
+        #     raise ValueError('Could not verify audience.')
+
+        # If auth request is from a G Suite domain:
+        # if idinfo['hd'] != GSUITE_DOMAIN_NAME:
+        #     raise ValueError('Wrong hosted domain.')
+
+        # ID token is valid. Get the user's Google Account ID from the decoded token.
+        logger.debug("payload sub: %s", idinfo)
+        return idinfo
+    except ValueError as e:
         six.raise_from(Unauthorized, e)
-
-def _current_timestamp() -> int:
-    return int(time.time())
-
-if __name__ == "__main__": 
-    print(generate_token("karwoo.tang@gft.com"))
