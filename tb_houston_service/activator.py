@@ -13,11 +13,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from config import db
 from config.db_lib import db_session
-from tb_houston_service.models import (
-    Activator,
-    ActivatorSchema,
-    ActivatorCISchema,
-)
+from tb_houston_service.models import Activator,ActivatorSchema,ActivatorCISchema,
 from tb_houston_service.tools import ModelTools
 from tb_houston_service.extendedSchemas import ExtendedActivatorSchema
 from tb_houston_service.extendedSchemas import ExtendedActivatorCategorySchema
