@@ -16,13 +16,11 @@ from config.db_lib import db_session
 from tb_houston_service.models import (
     Activator,
     ActivatorSchema,
-    ActivatorCI,
     ActivatorCISchema,
 )
 from tb_houston_service.tools import ModelTools
 from tb_houston_service.extendedSchemas import ExtendedActivatorSchema
 from tb_houston_service.extendedSchemas import ExtendedActivatorCategorySchema
-from tb_houston_service import activator_extension
 from tb_houston_service import activator_ci
 
 logger = logging.getLogger("tb_houston_service.activator")

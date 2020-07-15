@@ -1,6 +1,5 @@
 import logging
 
-from config.db_lib import db_session
 from config import db
 from tb_houston_service.tools import ModelTools
 from tb_houston_service.models import ActivatorCI, CI
