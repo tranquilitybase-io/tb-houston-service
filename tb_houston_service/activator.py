@@ -13,7 +13,9 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from config import db
 from config.db_lib import db_session
-from tb_houston_service.models import Activator,ActivatorSchema
+from tb_houston_service.models import Activator, ActivatorSchema
+from tb_houston_service.models import User
+from tb_houston_service import notification
 from tb_houston_service.tools import ModelTools
 from tb_houston_service.extendedSchemas import ExtendedActivatorSchema
 from tb_houston_service.extendedSchemas import ExtendedActivatorCategorySchema
@@ -60,28 +62,29 @@ def read_all(
         page_size,
         sort,
     )
-
+    
+    with db_session() as dbs:
     # pre-process sort instructions
-    if sort == None:
-        activator_query = db.session.query(Activator).order_by(Activator.id)
-    else:
-        try:
-            sort_inst = [si.split(":") for si in sort]
-            orderby_arr = []
-            for si in sort_inst:
-                si1 = si[0]
-                if len(si) > 1:
-                    si2 = si[1]
-                else:
-                    si2 = "asc"
-                orderby_arr.append(f"{si1} {si2}")
-            # print("orderby: {}".format(orderby_arr))
-            activator_query = db.session.query(Activator).order_by(
-                literal_column(", ".join(orderby_arr))
-            )
-        except SQLAlchemyError as e:
-            logger.warning(e)
+        if sort == None:
             activator_query = db.session.query(Activator).order_by(Activator.id)
+        else:
+            try:
+                sort_inst = [si.split(":") for si in sort]
+                orderby_arr = []
+                for si in sort_inst:
+                    si1 = si[0]
+                    if len(si) > 1:
+                        si2 = si[1]
+                    else:
+                        si2 = "asc"
+                    orderby_arr.append(f"{si1} {si2}")
+                # print("orderby: {}".format(orderby_arr))
+                activator_query = db.session.query(Activator).order_by(
+                    literal_column(", ".join(orderby_arr))
+                )
+            except SQLAlchemyError as e:
+                logger.warning(e)
+                activator_query = db.session.query(Activator).order_by(Activator.id)
 
     activator_query = activator_query.filter(
         (category == None or Activator.category == category),
@@ -128,20 +131,20 @@ def read_one(oid):
     :param application:   key of activator to find
     :return:              activator matching key
     """
-
-    act = db.session.query(Activator).filter(Activator.id == oid).one_or_none()
-
-    if act is not None:
-        Activator.accessRequestedBy = db.relationship(
-            "User",
-            primaryjoin="and_(Activator.accessRequestedById==User.id, User.isActive)",
-        )
-        act = activator_ci.expand_ci(act)
-        schema = ExtendedActivatorSchema(many=False)
-        data = schema.dump(act)
-        return data, 200
-    else:
-        abort(404, f"Activator with id {oid} not found".format(id=oid))
+    with db_session() as dbs:
+        
+        act = dbs.query(Activator).filter(Activator.id == oid).one_or_none()
+        if act is not None:
+            Activator.accessRequestedBy = db.relationship(
+                "User",
+                primaryjoin="and_(Activator.accessRequestedById==User.id, User.isActive)",
+            )
+            act = activator_ci.expand_ci(act)
+            schema = ExtendedActivatorSchema(many=False)
+            data = schema.dump(act)
+            return data, 200
+        else:
+            abort(404, f"Activator with id {oid} not found".format(id=oid))
 
 
 def create(activatorDetails):
@@ -152,34 +155,32 @@ def create(activatorDetails):
     :param activator:  activator to create in activator list
     :return:        201 on success, 406 on activator exists
     """
-
-    # Remove id as it's created automatically
-    if "id" in activatorDetails:
-        del activatorDetails["id"]
-
-    if "ci" in activatorDetails:
-        act_ci_list = activatorDetails["ci"]
-        del activatorDetails["ci"]
     with db_session() as dbs:
-        schema = ActivatorSchema()
-        new_activator = schema.load(activatorDetails, session=db.session)
-        dbs.add(new_activator)
-        dbs.flush()
 
-        if act_ci_list:
-            activator_ci.create_activator_ci(new_activator.id, act_ci_list, dbs)
-        else:
-            logger.error(
-                "ci details in activator are missing, the transaction will be rolled back for this activator!"
-            )
-            dbs.rollback()
+        # Remove id as it's created automatically
+        if "id" in activatorDetails:
+            del activatorDetails["id"]
 
-        # Serialize and return the newly created deployment
-        # in the response
-        new_activator = activator_ci.expand_ci(new_activator)
-        schema = ExtendedActivatorSchema(many=False)
-        data = schema.dump(new_activator)
-        return data, 201
+        if "ci" in activatorDetails:
+            act_ci_list = activatorDetails["ci"]
+            del activatorDetails["ci"]
+            schema = ActivatorSchema()
+            new_activator = schema.load(activatorDetails, session=dbs)
+            dbs.add(new_activator)
+            dbs.flush()
+
+            if act_ci_list:
+                activator_ci.create_activator_ci(new_activator.id, act_ci_list, dbs)
+            else:
+                logger.error(
+                    "ci details in activator are missing, the transaction will be rolled back for this activator!"
+                )
+                dbs.rollback()
+
+            # Serialize and return the newly created deployment
+            # in the response
+            new_activator = activator_ci.expand_ci(new_activator)
+        
 
 
 def update(oid, activatorDetails):
@@ -199,52 +200,52 @@ def update(oid, activatorDetails):
 
     if "id" in activatorDetails and activatorDetails["id"] != oid:
         abort(400, "Key mismatch in path and body")
+    
+    with db_session() as dbs:
+        # Does the activators exist in activators list?
+        existing_activator = (
+            dbs.query(Activator).filter(Activator.id == oid).one_or_none()
+        )
 
-    # Does the activators exist in activators list?
-    existing_activator = (
-        db.session.query(Activator).filter(Activator.id == oid).one_or_none()
-    )
+        # Does activator exist?
 
-    # Does activator exist?
+        if existing_activator is not None:
+            # schema = ActivatorSchema()
+            activatorDetails["id"] = oid
+            logger.info("activatorDetails: %s", activatorDetails)
 
-    if existing_activator is not None:
-        # schema = ActivatorSchema()
-        activatorDetails["id"] = oid
-        logger.info("activatorDetails: %s", activatorDetails)
+            if "ci" in activatorDetails:
+                act_ci_list = activatorDetails["ci"]
+                del activatorDetails["ci"]
 
-        if "ci" in activatorDetails:
-            act_ci_list = activatorDetails["ci"]
-            del activatorDetails["ci"]
 
-        with db_session() as dbs:
+                schema = ActivatorSchema(many=False, session=dbs)
+                updatedActivator = schema.load(activatorDetails)
+                logger.info("updatedActivator: %s", updatedActivator)
+                dbs.merge(updatedActivator)
+                # Update CI list in activatorCI table
+                # return the updated activator in the response
+                dbs.flush()
 
-            schema = ActivatorSchema(many=False, session=db.session)
-            updatedActivator = schema.load(activatorDetails)
-            logger.info("updatedActivator: %s", updatedActivator)
-            dbs.merge(updatedActivator)
-            # Update CI list in activatorCI table
-            # return the updated activator in the response
-            dbs.flush()
+                if act_ci_list:
+                    activator_ci.create_activator_ci(updatedActivator.id, act_ci_list, dbs)
+                else:
+                    logger.error(
+                        "ci details in activator are missing, the transaction will be rolled back for this activator!"
+                    )
+                    dbs.rollback()
 
-            if act_ci_list:
-                activator_ci.create_activator_ci(updatedActivator.id, act_ci_list, dbs)
-            else:
-                logger.error(
-                    "ci details in activator are missing, the transaction will be rolled back for this activator!"
+                Activator.accessRequestedBy = db.relationship(
+                    "User",
+                    primaryjoin="and_(Activator.accessRequestedById==User.id, User.isActive)",
                 )
-                dbs.rollback()
-
-            Activator.accessRequestedBy = db.relationship(
-                "User",
-                primaryjoin="and_(Activator.accessRequestedById==User.id, User.isActive)",
-            )
-            updatedActivator = activator_ci.expand_ci(updatedActivator)
-            schema = ExtendedActivatorSchema(many=False)
-            data = schema.dump(updatedActivator)
-            return data, 200
-    # otherwise, nope, deployment doesn't exist, so that's an error
-    else:
-        abort(404, f"Activator id {oid} not found")
+                updatedActivator = activator_ci.expand_ci(updatedActivator)
+                schema = ExtendedActivatorSchema(many=False)
+                data = schema.dump(updatedActivator)
+                return data, 200
+        # otherwise, nope, deployment doesn't exist, so that's an error
+        else:
+            abort(404, f"Activator id {oid} not found")
 
 
 def delete(oid):
@@ -254,15 +255,14 @@ def delete(oid):
     :param key: key of the activator to delete
     :return:    200 on successful delete, 404 if not found
     """
+    with db_session() as dbs:
+        # Does the activator to delete exist?
+        existing_activator = (
+            dbs.query(Activator).filter(Activator.id == oid).one_or_none()
+        )
 
-    # Does the activator to delete exist?
-    existing_activator = (
-        db.session.query(Activator).filter(Activator.id == oid).one_or_none()
-    )
-
-    # if found?
-    if existing_activator is not None:
-        with db_session() as dbs:
+        # if found?
+        if existing_activator is not None:
             existing_activator.isActive = False
             dbs.merge(existing_activator)
             dbs.flush()
@@ -272,9 +272,36 @@ def delete(oid):
             
             return make_response(f"Activator id {oid} successfully deleted", 200)
 
-    # Otherwise, nope, activator to delete not found
-    else:
-        abort(404, f"Activator id {oid} not found")
+            # Otherwise, nope, activator to delete not found
+        else:
+            abort(404, f"Activator id {oid} not found")
+
+
+def notify_user(message, activatorId, toUserId, importance = 1):
+    # Notify all user 
+    notification_payload = { 
+        "activatorId": activatorId,
+        "message": message,
+        "toUserId": toUserId,
+        "importance": importance
+    }
+    notification.create(notification_payload, typeId = 1)
+
+
+def notify_admins(message, activatorId, importance = 1):
+    # Notify all admins 
+    notification_payload = { 
+        "activatorId": activatorId,
+        "message": message,
+        "toUserId": 0,
+        "importance": importance
+    }
+
+    with db_session() as dbs:
+        admins = dbs.query(User).filter(User.isAdmin, User.isActive).all()
+        for admin in admins:
+            notification_payload["toUserId"] = admin.id
+            notification.create(notification_payload, typeId = 1)
 
 
 def setActivatorStatus(activatorDetails):
@@ -284,35 +311,44 @@ def setActivatorStatus(activatorDetails):
     """
 
     logger.info(pformat(activatorDetails))
-    # Does the activator to delete exist?
-    existing_activator = (
-        db.session.query(Activator)
-        .filter(Activator.id == activatorDetails["id"], Activator.isActive)
-        .one_or_none()
-    )
 
-    # if found?
-    if existing_activator is not None:
-        schema = ActivatorSchema()
-        updated_activator = schema.load(activatorDetails, session=db.session)
-        updated_activator.lastUpdated = ModelTools.get_utc_timestamp()
-        db.session.merge(updated_activator)
-        db.session.commit()
-
-        Activator.accessRequestedBy = db.relationship(
-            "User",
-            primaryjoin="and_(Activator.accessRequestedById==User.id, User.isActive)",
+    with db_session() as dbs:
+        # Does the activator to delete exist?
+        existing_activator = (
+            dbs.query(Activator)
+            .filter(Activator.id == activatorDetails["id"], Activator.isActive)
+            .one_or_none()
         )
-        updated_activator = activator_ci.expand_ci(updated_activator)
-        activator_schema = ExtendedActivatorSchema()
-        data = activator_schema.dump(updated_activator)
-        return data, 200
 
-    # Otherwise, nope, activator to update was not found
-    else:
-        db.session.close()
-        actid = activatorDetails["id"]
-        abort(404, f"Activator id {actid} not found")
+        # if found?
+        if existing_activator is not None:
+            schema = ActivatorSchema()
+            updated_activator = schema.load(activatorDetails, session=dbs)
+            updated_activator.lastUpdated = ModelTools.get_utc_timestamp()
+            dbs.merge(updated_activator)
+
+            Activator.accessRequestedBy = db.relationship("User", primaryjoin="and_(Activator.accessRequestedById==User.id, User.isActive)")
+            updated_activator = activator_ci.expand_ci(updated_activator)
+            activator_schema = ExtendedActivatorSchema()
+            data = activator_schema.dump(updated_activator)
+
+            # Create notifications
+            if updated_activator.status != "Available" and updated_activator.accessRequestedById:            
+                full_name = (updated_activator.accessRequestedBy.firstName or "") + " "  + (updated_activator.accessRequestedBy.lastName or "") 
+                activator_name = f"Activator {updated_activator.id} ({updated_activator.name})"
+                message = f"{full_name} has requested access to {activator_name}"
+                notify_admins(message = message, activatorId = updated_activator.id)
+            elif updated_activator.status == "Available" and updated_activator.accessRequestedById:
+                activator_name = f"Activator {updated_activator.id} ({updated_activator.name})"
+                message = f"Access to {activator_name} has been granted."
+                notify_user(message, activatorId = updated_activator.id, toUserId = updated_activator.accessRequestedById)                
+
+            return data, 200
+
+        # Otherwise, nope, activator to update was not found
+        else:
+            actid = activatorDetails["id"]
+            abort(404, f"Activator id {actid} not found")
 
 
 def categories():
@@ -320,13 +356,13 @@ def categories():
     :return:        distinct list of activator categories.
     """
 
-    sql = "select category from activator group by category"
-    rs = db.session.execute(sql)
-    categories_arr = []
-    for row in rs:
-        categories_arr.append({"category": row["category"]})
+    with db_session() as dbs:
+        sql = "select category from activator group by category"
+        rs = dbs.execute(sql)
+        categories_arr = []
+        for row in rs:
+            categories_arr.append({"category": row["category"]})
 
-    schema = ExtendedActivatorCategorySchema(many=True)
-    data = schema.dump(categories_arr)
-    db.session.close()
-    return data, 200
+        schema = ExtendedActivatorCategorySchema(many=True)
+        data = schema.dump(categories_arr)
+        return data, 200

@@ -26,6 +26,7 @@ def typestest(resp):
     )
     assert isinstance(resp["activator"], str)
     assert isinstance(resp["activatorLink"], str)
+    assert isinstance(resp["gitRepoUrl"], str)
     assert isinstance(resp["apiManagement"], list)
     assert isinstance(resp["available"], bool)
     assert isinstance(resp["billing"], str)
@@ -53,6 +54,7 @@ def test_activators():
     # Testing POST request
     resp_json = post()
     oid = str(resp_json["id"])
+    pprint(f"oid: {oid}")
     # Testing Set Activator Status
     set_activator_status(resp_json["id"])
     # Testing PUT request
@@ -76,6 +78,7 @@ def post():
         "accessRequestedById": 1,
         "activator": "test-activator",
         "activatorLink": "test-post-",
+        "gitRepoUrl": "test-post-",
         "apiManagement": [
             "test-post-",
             "test-post-1",
@@ -133,6 +136,7 @@ def post():
 
     # Validate response headers and body contents, e.g. status code.
     resp_json = resp.json()
+    pprint(f"resp_json: {resp_json}")
     assert resp.status_code == 201
     assert resp_json["activator"] == "test-activator"
     # Validate activator CI relationship
@@ -142,7 +146,7 @@ def post():
     assert ci_list[1]["id"] == 5
     isinstance(ci_list[1]["value"], str)
     oid = resp_json["id"]
-    print(oid)
+    print(f"oid: {oid}")
 
     resp = requests.get(url + str(oid), headers=headers)
     resp_json = resp.json()
@@ -177,6 +181,7 @@ def put(oid):
         "activator": "new-test-activator",
         "accessRequestedById": 2,
         "activatorLink": "test-put-",
+        "gitRepoUrl": "test-put-",
         "apiManagement": ["test-put-6", "test-put-7", "test-put-8"],
         "available": False,
         "billing": "billing",

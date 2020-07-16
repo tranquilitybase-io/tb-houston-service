@@ -7,6 +7,7 @@ from tb_houston_service.models import LZEnvironmentSchema
 from tb_houston_service.models import LZLanVpcSchema
 from tb_houston_service.models import RoleSchema
 from tb_houston_service.models import CISchema, CDSchema, SourceControlSchema
+from marshmallow_oneofschema import OneOfSchema
 
 
 logger = logging.getLogger("tb_houston_service.extendedSchemas")
@@ -88,6 +89,7 @@ class ExtendedActivatorSchema(Schema):
     accessRequestedBy = fields.Nested(ExtendedUserSchema(many=False))
     source = fields.Str()
     activatorLink = fields.Str()
+    gitRepoUrl = fields.Str()
 
     @post_load(pass_original=True)
     def deserialize_post_load(self, data, original_data, **kwargs):
@@ -414,3 +416,15 @@ class ExtendedNotificationActivatorSchema(Schema):
     isRead = fields.Boolean()
     typeId = fields.Int()
     activatorId = fields.Int()
+    activator = fields.Nested(ExtendedActivatorSchema)    
+
+
+class ExtendedNotificationSchema(OneOfSchema):
+    type_schemas = {"ACTIVATOR_ACCESS": ExtendedNotificationActivatorSchema}
+
+    def get_obj_type(self, obj):
+        if hasattr(obj, "activator"):
+            return "ACTIVATOR_ACCESS"
+        else:
+            raise Exception("Unknown object type: {}".format(obj.__class__.__name__))    
+
