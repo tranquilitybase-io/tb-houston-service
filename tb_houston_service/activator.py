@@ -254,6 +254,7 @@ def delete(oid):
     :param key: key of the activator to delete
     :return:    200 on successful delete, 404 if not found
     """
+
     # Does the activator to delete exist?
     existing_activator = (
         db.session.query(Activator).filter(Activator.id == oid).one_or_none()
@@ -261,11 +262,15 @@ def delete(oid):
 
     # if found?
     if existing_activator is not None:
-        existing_activator.isActive = False
-        db.session.merge(existing_activator)
-        db.session.commit()
-
-        return make_response(f"Activator id {oid} successfully deleted", 200)
+        with db_session() as dbs:
+            existing_activator.isActive = False
+            dbs.merge(existing_activator)
+            dbs.flush()
+            
+            # Delete entires Activator-CI relationship table
+            activator_ci.delete_activator_ci(existing_activator.id, dbs)
+            
+            return make_response(f"Activator id {oid} successfully deleted", 200)
 
     # Otherwise, nope, activator to delete not found
     else:
