@@ -11,9 +11,13 @@ logger = logging.getLogger("security")
 
 def decode_token(token):
     logger.debug("decode_token: %s", token)
+    logger.debug("CLIENT_ID: %s", CLIENT_ID)    
     try:
         # Specify the CLIENT_ID of the app that accesses the backend:
         idinfo = id_token.verify_oauth2_token(token, requests.Request(), CLIENT_ID)
+
+        if not CLIENT_ID:
+            raise ValueError('CLIENT_ID is not set.')
 
         # Or, if multiple clients access the backend server:
         # idinfo = id_token.verify_oauth2_token(token, requests.Request())
