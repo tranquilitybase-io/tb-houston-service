@@ -2605,7 +2605,6 @@ paths:
           name: typeId
           schema:
             type: integer
-          required: true
         - in: query             
           name: toUserId
           schema:
@@ -3226,6 +3225,9 @@ components:
         activatorLink:
           type: string
           description: activatorLink
+        gitRepoUrl:
+          type: string
+          description: gitRepoUrl
 
     Application:
       type: object
@@ -3695,9 +3697,6 @@ components:
         lastName:
           type: string
           description: The user's last name
-        isAdmin:
-          type: boolean
-          description: Is the user an administrator?
         showWelcome:
           type: boolean
           description: Show the welcome screen?

@@ -42,6 +42,7 @@ class Activator(Base):
     accessRequestedById = db.Column(db.Integer, db.ForeignKey("user.id")) 
     source = db.Column(db.String(100))
     activatorLink = db.Column(db.String(255))
+    gitRepoUrl = db.Column(db.String(255))
 
 
     def __repr__(self):
@@ -490,7 +491,7 @@ class NotificationActivator(Base):
     activatorId = db.Column(db.Integer(), db.ForeignKey("activator.id"), primary_key=True)
 
     def __repr__(self):
-        return "<NotificationActivator(id={self.id!r})>".format(self=self)
+        return "<NotificationActivator(notificationId={self.notificationId!r}, activatorId={self.activatorId!r})>".format(self=self)
 
 
 class NotificationActivatorSchema(SQLAlchemyAutoSchema):
@@ -683,7 +684,7 @@ class TeamMemberSchema(SQLAlchemyAutoSchema):
 class User(Base):
     __tablename__ = "user"
     id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(100))
+    email = db.Column(db.String(100), unique=True)
     firstName = db.Column(db.String(100))
     lastName = db.Column(db.String(100))
     isAdmin = db.Column(db.Boolean(), default=False)

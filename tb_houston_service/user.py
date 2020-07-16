@@ -63,11 +63,19 @@ def create(userDetails):
     # Remove id as it's created automatically
     if "id" in userDetails:
         del userDetails["id"]
+
+    # abort if these fields are set
+    if "showWelcome" in userDetails:
+        abort(400, "Unable to set isWelcome in POST operation.")
+
+    # Only the original admin can be admin (#303)
+    if "isAdmin" in userDetails:
+        abort(400, "Unable to set isAdmin in POST operation.")
+
     # Does the user exist already?
     existing_user = (
         db.session.query(User)
-        .filter(User.firstName == userDetails["firstName"])
-        .filter(User.lastName == userDetails["lastName"])
+        .filter(User.email == userDetails["email"])
         .one_or_none()
     )
 
@@ -102,6 +110,10 @@ def update(oid, userDetails):
 
     if userDetails.get("id") and userDetails.get("id") != oid:
         abort(400, f"Id {oid} mismatch in path and body")
+
+    # Only the original admin can be admin (#303)
+    if "isAdmin" in userDetails:
+        abort(400, "Unable to set isAdmin in PUT operation.")
 
     # Does the user exist in user list?
     existing_user = db.session.query(User).filter(User.id == oid).one_or_none()
