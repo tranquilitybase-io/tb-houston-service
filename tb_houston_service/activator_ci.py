@@ -81,12 +81,9 @@ def expand_ci(act):
         .filter(ActivatorCI.activatorId == act.id, ActivatorCI.isActive)
         .all()
     )
-    print(act_ci_list)
     newList = []
     for act_ci in act_ci_list:
         ci_object = db.session.query(CI).filter(CI.id == act_ci.ciId).one_or_none()
         newList.append(ci_object)
-    print(newList)
     act.ci = newList
-    print(act.ci)
     return act
