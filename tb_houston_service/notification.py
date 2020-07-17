@@ -4,8 +4,11 @@ from sqlalchemy.exc import SQLAlchemyError
 from tb_houston_service.models import Notification, NotificationSchema
 from tb_houston_service.models import NotificationActivator
 from tb_houston_service.models import NotificationActivatorSchema
+from tb_houston_service.models import NotificationTeam
+from tb_houston_service.models import NotificationTeamSchema
 from tb_houston_service.extendedSchemas import ExtendedNotificationSchema
 from tb_houston_service.models import Activator
+from tb_houston_service.models import Team
 from config.db_lib import db_session
 from tb_houston_service.tools import ModelTools
 
@@ -36,7 +39,7 @@ def read_all(typeId = None, toUserId = None, isRead = None, isActive = None, pag
                 )
             except SQLAlchemyError as e:
                 logger.warning("Exception: %s", e)
-                notifications_query = dbs.query(Notification).order_by(Notification.lastUodated + " desc")
+                notifications_query = dbs.query(Notification).order_by(Notification.lastUpdated + " desc")
 
         notifications_query = notifications_query.filter(
             (typeId == None or Notification.typeId == typeId),            
@@ -60,6 +63,14 @@ def read_all(typeId = None, toUserId = None, isRead = None, isActive = None, pag
                 if activator:
                     n.activatorId = activator.id
                     n.activator = activator
+            if n.typeId == 2:
+                team = dbs.query(Team).filter(
+                    n.id == NotificationTeam.notificationId,            
+                    Team.id == NotificationTeam.teamId 
+                ).one_or_none()
+                if team:
+                    n.teamId = team.id
+                    n.team = team                    
 
         schema = ExtendedNotificationSchema(many=True)
         data = schema.dump(notifications)
@@ -72,7 +83,6 @@ def create(notification, typeId):
         # if id is zero or None (null), we create a a new notification otherwise
         #  we update an existing notification.
         oid = notification.get("id", None)
-        activatorId = notification.pop("activatorId", None)
         notification['typeId'] = typeId        
         notification["lastUpdated"] = ModelTools.get_utc_timestamp()
 
@@ -83,34 +93,63 @@ def create(notification, typeId):
               notification["isActive"] = True
             if notification.get('isRead', None) == None:
               notification["isRead"] = False            
-            aSchema = NotificationSchema()
-            new_notification = aSchema.load(notification, session=dbs)
-            dbs.add(new_notification)
-            dbs.flush()            
-            if notification.get("typeId") == 1 and activatorId:
+        
+            if notification.get("typeId") == 1:
+                activatorId = notification.pop("activatorId", None) 
+                aSchema = NotificationSchema()                
+                new_notification = aSchema.load(notification, session=dbs)
+                dbs.add(new_notification)  
+                dbs.flush()
                 naSchema = NotificationActivatorSchema()
                 notificationActivator = {}
                 notificationActivator["notificationId"] = new_notification.id
-                notificationActivator["activatorId"] = activatorId   
+                notificationActivator["activatorId"] =  activatorId
                 notificationActivator["lastUpdated"] = ModelTools.get_utc_timestamp()    
                 notificationActivator["isActive"] = notification.get("isActive", True)                                            
                 new_na = naSchema.load(notificationActivator, session=dbs)
                 dbs.add(new_na)
+                notification["activatorId"] = activatorId                       
+            elif notification.get("typeId") == 2:
+                teamId = notification.pop("teamId", None)  
+                aSchema = NotificationSchema()                
+                new_notification = aSchema.load(notification, session=dbs)                
+                dbs.add(new_notification)         
+                dbs.flush()               
+                naSchema = NotificationTeamSchema()
+                notificationTeam = {}
+                notificationTeam["notificationId"] = new_notification.id
+                notificationTeam["teamId"] = teamId
+                notificationTeam["lastUpdated"] = ModelTools.get_utc_timestamp()    
+                notificationTeam["isActive"] = notification.get("isActive", True)                                            
+                new_na = naSchema.load(notificationTeam, session=dbs)
+                dbs.add(new_na)
+                notification["teamId"] = teamId               
             else:
-                logger.error("typeId or activatorId is missing, the transaction will be rolled back for this notification!")
+                logger.error("Unknown notification type, the transaction will be rolled back for this notification!")
                 dbs.rollback()
         else:
             # Update
             aSchema = NotificationSchema()
-            updated_notification = aSchema.load(notification, session=dbs)
-            dbs.merge(updated_notification)   
-            dbs.flush()
             if notification.get("typeId") == 1:
+                activatorId = notification.pop("activatorId", None)                 
+                updated_notification = aSchema.load(notification, session=dbs)
+                dbs.merge(updated_notification)   
+                dbs.flush()                
                 naSchema = NotificationActivatorSchema()
                 notificationActivator = dbs.query(NotificationActivator).filter(NotificationActivator.notificationId == updated_notification.id).one()
                 notificationActivator.lastUpdated = ModelTools.get_utc_timestamp()
                 notificationActivator.isActive = notification.get('isActive', True)
+                notification.activatorId = activatorId
                 dbs.merge(notificationActivator)
+                notification["activatorId"] = activatorId                
+            elif notification.get("typeId") == 2:
+                teamId = notification.pop("teamId", None)                 
+                naSchema = NotificationTeamSchema()
+                notificationTeam = dbs.query(NotificationTeam).filter(NotificationTeam.notificationId == updated_notification.id).one()
+                notificationTeam.lastUpdated = ModelTools.get_utc_timestamp()
+                notificationTeam.isActive = notification.get('isActive', True)
+                dbs.merge(notificationTeam)                
+                notification["teamId"] = teamId                               
             else:
                 logger.error("typeId is missing, the transaction will be rolled back for this notification!")
                 dbs.rollback()           

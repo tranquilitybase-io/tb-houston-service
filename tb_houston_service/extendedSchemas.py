@@ -423,12 +423,30 @@ class ExtendedNotificationActivatorSchema(Schema):
     activator = fields.Nested(ExtendedActivatorSchema)    
 
 
+class ExtendedNotificationTeamSchema(Schema):
+    id = fields.Int()
+    isActive = fields.Bool()
+    lastUpdated = fields.Str()
+    toUserId = fields.Int()
+    fromUserId = fields.Int()
+    importance = fields.Int()
+    message = fields.Str()
+    isRead = fields.Boolean()
+    typeId = fields.Int()
+    teamId = fields.Int()
+    team = fields.Nested(ExtendedTeamSchema)    
+
+
 class ExtendedNotificationSchema(OneOfSchema):
-    type_schemas = {"ACTIVATOR_ACCESS": ExtendedNotificationActivatorSchema}
+    type_schemas = {
+        "ACTIVATOR_ACCESS": ExtendedNotificationActivatorSchema,
+        "TEAM_ACCESS": ExtendedNotificationTeamSchema        
+    }
 
     def get_obj_type(self, obj):
         if hasattr(obj, "activator"):
             return "ACTIVATOR_ACCESS"
+        elif hasattr(obj, "team"):
+            return "TEAM_ACCESS"
         else:
             raise Exception("Unknown object type: {}".format(obj.__class__.__name__))    
-

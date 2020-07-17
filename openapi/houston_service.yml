@@ -2582,11 +2582,7 @@ paths:
       responses:
         "201":
           description: Successfully created notifications
-          content:
-            application/json:
-              schema:                
-                oneOf:
-                  - $ref: "#/components/schemas/NotificationActivatorList"
+            
     
     get:
       operationId: tb_houston_service.notification.read_all
@@ -2631,8 +2627,7 @@ paths:
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: "#/components/schemas/NotificationActivatorList" 
+                $ref: "#/components/schemas/NotificationList"            
 
   "/notificationsMeta/":
     get:
@@ -3087,10 +3082,9 @@ components:
     notification.notificationListDetails:
       content:
         application/json:
-          schema:      
-            x-body-name: notificationListDetails    
-            oneOf:
-              - $ref: "#/components/schemas/NotificationActivatorList"                         
+          schema:       
+            x-body-name: notificationListDetails             
+            $ref: "#/components/schemas/NotificationList"                 
       description: the notifications to create
       required: true
 
@@ -3787,20 +3781,35 @@ components:
           type: boolean
         activatorId:
           type: integer
-      example:
-        id: 1
-        isActive: true
-        toUserId: 1
-        fromUserId: 0
-        importance: 1
-        message: User 1 would like access to Activator 1
-        isRead: false
-      
-    NotificationActivatorList:
+
+
+    NotificationTeam:
+      type: object
+      properties:
+        id:
+          type: integer
+        isActive:
+          type: boolean
+        fromUserId:
+          type: integer
+        toUserId:
+          type: integer
+        importance:
+          type: integer
+        message:
+          type: string
+        isRead:
+          type: boolean
+        teamId:
+          type: integer
+  
+
+    NotificationList:
       type: array
       items:
-        $ref: "#/components/schemas/NotificationActivator" 
-
+        anyOf:
+          - $ref: "#/components/schemas/NotificationActivator"                
+          - $ref: "#/components/schemas/NotificationTeam"         
 
     Folder:
       type: object
