@@ -90,9 +90,9 @@ def create(notification, typeId):
             # Insert
             notification.pop('id', None)
             if notification.get('isActive', None) == None:
-              notification["isActive"] = True
+                notification["isActive"] = True
             if notification.get('isRead', None) == None:
-              notification["isRead"] = False            
+                notification["isRead"] = False            
         
             if notification.get("typeId") == 1:
                 activatorId = notification.pop("activatorId", None) 
