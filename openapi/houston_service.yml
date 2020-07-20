@@ -3309,6 +3309,10 @@ components:
         isActive:
           type: boolean
           description: to activate/deactivate the team
+        accessRequestedById:
+          type: integer
+          description: User who requested access to the team
+     
 
     TeamMember:
       type: object

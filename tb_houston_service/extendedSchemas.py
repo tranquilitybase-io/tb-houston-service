@@ -156,6 +156,8 @@ class ExtendedTeamSchema(Schema):
     businessUnit = fields.Nested(BusinessUnitSchema(many=False))
     lastUpdated = fields.Str()
     userCount = fields.Int()
+    accessRequestedById = fields.Int()
+    accessRequestedBy = fields.Nested(ExtendedUserSchema(many=False))
 
 class ExtendedSolutionSchema(Schema):
     __envelope__ = {"single": "solution", "many": "solutions"}

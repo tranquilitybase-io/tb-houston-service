@@ -66,24 +66,19 @@ def create(teamDetails):
     # Remove id as it's created automatically
     if "id" in teamDetails:
         del teamDetails["id"]
-    # Does the team exist already?
-    existing_team = (
-        db.session.query(Team).filter(Team.name == teamDetails["name"]).one_or_none()
-    )
 
-    if existing_team is None:        
-        schema = TeamSchema(many=False)
-        new_team = schema.load(teamDetails, session=db.session)
-        new_team.lastUpdated = ModelTools.get_utc_timestamp()
-        app.logger.debug(f"new_team: {new_team} type: {type(new_team)}")
-        db.session.add(new_team)
-        db.session.commit()
+    schema = TeamSchema(many=False)
+    new_team = schema.load(teamDetails, session=db.session)
+    new_team.lastUpdated = ModelTools.get_utc_timestamp()
+    app.logger.debug(f"new_team: {new_team} type: {type(new_team)}")
+    db.session.add(new_team)
+    db.session.commit()
 
-        # Serialize and return the newly created deployment
-        # in the response
-        data = schema.dump(new_team)
+    # Serialize and return the newly created deployment
+    # in the response
+    data = schema.dump(new_team)
 
-        return data, 201
+    return data, 201
 
     # Otherwise, it already exists, that's an error
     abort(406, "Team already exists")
@@ -117,6 +112,9 @@ def update(oid, teamDetails):
         )
         update_team.businessUnitId = teamDetails.get(
             "businessUnitId", existing_team.businessUnitId
+        )
+        update_team.accessRequestedById = teamDetails.get(
+            "accessRequestedById", existing_team.accessRequestedById
         )
         update_team.lastUpdated = ModelTools.get_utc_timestamp()
         update_team.isActive = teamDetails.get("isActive", existing_team.isActive)

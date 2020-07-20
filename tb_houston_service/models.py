@@ -653,6 +653,8 @@ class Team(Base):
     businessUnitId = db.Column(db.Integer)
     lastUpdated = db.Column(db.String(20))
     isActive = db.Column(db.Boolean())
+    accessRequestedById = db.Column(db.Integer, db.ForeignKey("user.id")) 
+
 
 
 class TeamSchema(SQLAlchemyAutoSchema):
@@ -660,6 +662,19 @@ class TeamSchema(SQLAlchemyAutoSchema):
         model = Team
         include_fk = True
         load_instance = True
+
+    @pre_load()
+    def serialize_pre_load(self, data, **kwargs):
+        logger.debug("TeamSchem::pre_load::serialize_pre_load: %s", data) 
+        data["lastUpdated"] = ModelTools.get_utc_timestamp()        
+        if 'isActive' not in data:
+            data['isActive'] = True
+        if data.get('accessRequestedById') == 0:
+            data['accessRequestedById'] = None
+
+        return data
+
+
 
 
 # Team Member
@@ -671,6 +686,7 @@ class TeamMember(Base):
     roleId = db.Column(db.Integer)
     isTeamAdmin = db.Column(db.Boolean())    
     isActive = db.Column(db.Boolean())
+
 
 
 class TeamMemberSchema(SQLAlchemyAutoSchema):
