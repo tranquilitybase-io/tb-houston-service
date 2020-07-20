@@ -2,6 +2,7 @@ import logging
 from config import db
 from tb_houston_service.models import User
 
+
 logger = logging.getLogger("tb_houston_service.activator_extension")
 
 def expand_activator(act):
@@ -16,3 +17,7 @@ def expand_activator(act):
         db.session.query(User).filter(User.id == act.accessRequestedById).one_or_none()
     )
     return act
+
+
+
+
