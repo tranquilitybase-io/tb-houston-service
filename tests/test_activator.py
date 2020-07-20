@@ -17,8 +17,13 @@ def typestest(resp):
     assert isinstance(resp["isActive"], bool)
     assert isinstance(resp["isFavourite"], bool)
     assert isinstance(resp["lastUpdated"], str)
-    assert isinstance(resp["accessRequestedById"], int) or resp["accessRequestedById"] is None
-    assert isinstance(resp["accessRequestedBy"], dict) or resp["accessRequestedBy"] is None
+    assert (
+        isinstance(resp["accessRequestedById"], int)
+        or resp["accessRequestedById"] is None
+    )
+    assert (
+        isinstance(resp["accessRequestedBy"], dict) or resp["accessRequestedBy"] is None
+    )
     assert isinstance(resp["activator"], str)
     assert isinstance(resp["activatorLink"], str)
     assert isinstance(resp["gitRepoUrl"], str)
@@ -87,7 +92,7 @@ def post():
         "businessUnit": "test-post-",
         "category": "test-post-",
         "cd": ["test-post-1", "test-post-2", "test-post-3"],
-        "ci": ["test-post-1", "test-post-2"],
+        "ci": [3, 5],
         "description": "test-post-test-post-test-post-test-post-test-post-test-post-test-post-test-post-",
         "envs": ["dev", "prd", "poc"],
         "hosting": [
@@ -134,6 +139,12 @@ def post():
     pprint(f"resp_json: {resp_json}")
     assert resp.status_code == 201
     assert resp_json["activator"] == "test-activator"
+    # Validate activator CI relationship
+    ci_list = resp_json["ci"]
+    assert ci_list[0]["id"] == 3
+    isinstance(ci_list[0]["value"], str)
+    assert ci_list[1]["id"] == 5
+    isinstance(ci_list[1]["value"], str)
     oid = resp_json["id"]
     print(f"oid: {oid}")
 
@@ -177,7 +188,7 @@ def put(oid):
         "businessUnit": "businessUnit",
         "category": "category",
         "cd": ["test-put-4", "test-put-5", "test-put-6"],
-        "ci": ["test-put-7", "test-put-8"],
+        "ci": [1, 2],
         "description": "TheQuickBrownFoxJumpedOverTheLazyDogs",
         "envs": ["dev", "Prd", "Poc"],
         "hosting": [
@@ -225,6 +236,11 @@ def put(oid):
     resp = requests.get(url + oid, headers=headers)
     resp_json = resp.json()
     oid = resp_json["id"]
+    ci_list = resp_json["ci"]
+    assert ci_list[0]["id"] == 1
+    isinstance(ci_list[0]["value"], str)
+    assert ci_list[1]["id"] == 2
+    isinstance(ci_list[1]["value"], str)
 
     # Validate response body for updated values
     assert resp.status_code == 200
@@ -238,7 +254,7 @@ def get_all():
     geturl = f"http://{HOUSTON_SERVICE_URL}/api/activators/"
     resp = requests.get(geturl, headers=headers)
     resp_json = resp.json()
-    print(resp_json)
+    # print(resp_json)
     assert resp.status_code == 200
     for j in resp_json:
         typestest(j)
@@ -247,7 +263,7 @@ def get_all():
 def get_one(oid):
     print(f"get_one Test: {oid}")
 
-    resp = requests.get(url+str(oid), headers=headers)
+    resp = requests.get(url + str(oid), headers=headers)
     resp_json = resp.json()
     # Validate Get One response
     assert resp.status_code == 200
