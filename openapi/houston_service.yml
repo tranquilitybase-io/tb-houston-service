@@ -16,6 +16,10 @@ info:
     name: "Apache 2.0"
     url: "https://www.apache.org/licenses/LICENSE-2.0.html"
 
+# Apply the security globally to all operations
+#security:
+#  - bearerAuth: []
+
 servers:
   - url: /api
 
@@ -26,7 +30,7 @@ paths:
       tags:
         - login
       summary: login credentials check
-      description: This endpoint is used to check login credentials.
+      description: This endpoint is used to check login credentials.   
       requestBody:
         $ref: "#/components/requestBodies/login.loginDetails"
       responses:
@@ -49,6 +53,8 @@ paths:
                   isAdmin:
                     type: boolean
                     description: is the user an admin user?
+
+                                      
   /health:
     get:
       operationId: tb_houston_service.health.check
@@ -2754,6 +2760,14 @@ paths:
 
 
 components:
+
+  # Define the security scheme type (HTTP bearer)
+  securitySchemes:
+    bearerAuth: # arbotrary name for the security scheme
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      x-bearerInfoFunc: tb_houston_service.security.decode_token
 
   requestBodies:
     application.applicationDetails:
