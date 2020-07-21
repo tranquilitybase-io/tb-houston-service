@@ -181,7 +181,8 @@ def deploy_application(app_deployment):
             if act:
                 app_deployment.activatorGitUrl = act.activatorLink
                 app_deployment.deploymentEnvironment = app.env
-                deploymentProjectIdKey = "project-id-" + app_deployment.deploymentEnvironment.lower()
+                #deploymentProjectIdKey = "project-id-" + app_deployment.deploymentEnvironment.lower()
+                deploymentProjectIdKey = "project-id-development".lower()
                 sol_res_pi = dbs.query(SolutionResource).filter(SolutionResource.solutionId == app_deployment.solutionId, SolutionResource.key == deploymentProjectIdKey).one_or_none()
                 if sol_res_pi:
                     app_deployment.deploymentProjectId = sol_res_pi.value
