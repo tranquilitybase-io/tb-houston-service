@@ -140,7 +140,6 @@ def create(notification, typeId, dbsession):
             notificationActivator = dbs.query(NotificationActivator).filter(NotificationActivator.notificationId == updated_notification.id).one()
             notificationActivator.lastUpdated = ModelTools.get_utc_timestamp()
             notificationActivator.isActive = notification.get('isActive', True)
-            notification.activatorId = activatorId
             dbs.merge(notificationActivator)
             notification["activatorId"] = activatorId                
         elif notification.get("typeId") == 2:
