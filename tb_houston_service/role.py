@@ -56,24 +56,16 @@ def create(roleDetails):
 
    # Remove id as it's created automatically
     if 'id' in roleDetails:
-        del roleDetails['id']
-    # Does the role exist already?
-    existing_role = (
-        db.session.query(Role).filter(Role.name == roleDetails["name"]).one_or_none()
-    )
+        del roleDetails['id']    
 
-    if existing_role is None:
-        schema = RoleSchema()
-        new_role = schema.load(roleDetails, session=db.session)
-        db.session.add(new_role)
-        db.session.commit()
+    schema = RoleSchema()
+    new_role = schema.load(roleDetails, session=db.session)
+    db.session.add(new_role)
+    db.session.commit()
 
-        data = schema.dump(new_role)
-        return data, 201
+    data = schema.dump(new_role)
+    return data, 201
 
-    # Otherwise, it already exists, that's an error
-    else:
-        abort(406, f"Role already exists")
 
 
 def update(id, roleDetails):
