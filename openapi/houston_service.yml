@@ -3176,7 +3176,7 @@ components:
           type: array
           description: ci
           items:
-            type: string
+            type: integer
         cd:
           type: array
           description: cd

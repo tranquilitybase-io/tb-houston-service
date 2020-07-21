@@ -29,7 +29,6 @@ class Activator(Base):
     regions = db.Column(db.String(255))
     hosting = db.Column(db.String(255))
     apiManagement = db.Column(db.String(255))
-    ci = db.Column(db.String(255))
     cd = db.Column(db.String(255))
     sourceControl = db.Column(db.String(255))
     businessUnit = db.Column(db.String(255))
@@ -39,11 +38,10 @@ class Activator(Base):
     activator = db.Column(db.String(255))
     status = db.Column(db.String(255))
     description = db.Column(db.String(255))
-    accessRequestedById = db.Column(db.Integer, db.ForeignKey("user.id")) 
+    accessRequestedById = db.Column(db.Integer, db.ForeignKey("user.id"))
     source = db.Column(db.String(100))
     activatorLink = db.Column(db.String(255))
     gitRepoUrl = db.Column(db.String(255))
-
 
     def __repr__(self):
         return "<Activator(id={self.id!r}, name={self.name!r})>".format(self=self)
@@ -57,32 +55,52 @@ class ActivatorSchema(SQLAlchemyAutoSchema):
 
     @pre_load()
     def serialize_pre_load(self, data, **kwargs):
-        logger.debug("ActivatorSchema::pre_load::serialize_pre_load: %s", data) 
-        data["lastUpdated"] = ModelTools.get_utc_timestamp()        
-        if 'isActive' not in data:
-            data['isActive'] = True
-        if 'isFavourite' not in data:
-            data['isFavourite'] = False        
-        if 'envs' in data:
-            data['envs'] = json.dumps(data['envs'])
-        if 'platforms' in data:        
-            data['platforms'] = json.dumps(data['platforms'])
-        if 'regions' in data:            
-            data['regions'] = json.dumps(data['regions'])
-        if 'hosting' in data:
-            data['hosting'] = json.dumps(data['hosting'])
-        if 'apiManagement' in data:       
-            data['apiManagement'] = json.dumps(data['apiManagement'])
-        if 'ci' in data:
-            data['ci'] = json.dumps(data['ci'])
-        if 'cd' in data:            
-            data['cd'] = json.dumps(data['cd'])
-        if 'sourceControl' in data:
-            data['sourceControl'] = json.dumps(data['sourceControl'])
-        if data.get('accessRequestedById') == 0:
-            data['accessRequestedById'] = None
+        logger.debug("ActivatorSchema::pre_load::serialize_pre_load: %s", data)
+        data["lastUpdated"] = ModelTools.get_utc_timestamp()
+        if "isActive" not in data:
+            data["isActive"] = True
+        if "isFavourite" not in data:
+            data["isFavourite"] = False
+        if "envs" in data:
+            data["envs"] = json.dumps(data["envs"])
+        if "platforms" in data:
+            data["platforms"] = json.dumps(data["platforms"])
+        if "regions" in data:
+            data["regions"] = json.dumps(data["regions"])
+        if "hosting" in data:
+            data["hosting"] = json.dumps(data["hosting"])
+        if "apiManagement" in data:
+            data["apiManagement"] = json.dumps(data["apiManagement"])
+        if "cd" in data:
+            data["cd"] = json.dumps(data["cd"])
+        if "sourceControl" in data:
+            data["sourceControl"] = json.dumps(data["sourceControl"])
+        if data.get("accessRequestedById") == 0:
+            data["accessRequestedById"] = None
 
         return data
+
+
+# SolutionEnvironment
+class ActivatorCI(Base):
+    __tablename__ = "activatorCI"
+    id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
+    activatorId = db.Column(db.Integer(), ForeignKey("activator.id"))
+    ciId = db.Column(db.Integer(), ForeignKey("ci.id"))
+    lastUpdated = db.Column(db.String(20))
+    isActive = db.Column(db.Boolean())
+
+    def __repr__(self):
+        return "<Activator(id={self.id!r}, activatorId={self.activatorId!r}, activatorId={self.ciId!r})>".format(
+            self=self
+        )
+
+
+class ActivatorCISchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = ActivatorCI
+        include_fk = True
+        load_instance = True
 
 
 # Application
@@ -99,7 +117,7 @@ class Application(Base):
     status = db.Column(db.String(64))
     description = db.Column(db.String(255))
     resources = db.Column(db.String(255))
-    #activator = db.relationship("Activator")
+    # activator = db.relationship("Activator")
 
     def __repr__(self):
         return "<Application(id={self.id!r}, name={self.name!r})>".format(self=self)
@@ -115,15 +133,15 @@ class ApplicationSchema(SQLAlchemyAutoSchema):
     def serialize_pre_load(self, data, **kwargs):
         logger.debug("ApplicationSchema::pre_load::serialize_pre_load: %s", data)
         data["lastUpdated"] = ModelTools.get_utc_timestamp()
-        if 'isActive' not in data:
-            data['isActive'] = True
-        if 'isFavourite' not in data:
-            data['isFavourite'] = False   
-        if 'resources' in data:
-            data['resources'] = json.dumps(data['resources'])   
+        if "isActive" not in data:
+            data["isActive"] = True
+        if "isFavourite" not in data:
+            data["isFavourite"] = False
+        if "resources" in data:
+            data["resources"] = json.dumps(data["resources"])
         else:
-            data['resources'] = "[]"    
-        return data        
+            data["resources"] = "[]"
+        return data
 
 
 # ApplicationDeployment
@@ -136,7 +154,9 @@ class ApplicationDeployment(Base):
     lastUpdated = db.Column(db.String(20))
 
     def __repr__(self):
-        return "<ApplicationDeployment(applicationId={self.applicationId!r}, solutionId={self.solutionId!r})>".format(self=self)
+        return "<ApplicationDeployment(applicationId={self.applicationId!r}, solutionId={self.solutionId!r})>".format(
+            self=self
+        )
 
 
 class ApplicationDeploymentSchema(SQLAlchemyAutoSchema):
@@ -155,7 +175,7 @@ class BusinessUnit(Base):
     isActive = db.Column(db.Boolean())
 
     def __repr__(self):
-        return "<BusinessUnit(id={self.id!r}, name={self.name!r})>".format(self=self)    
+        return "<BusinessUnit(id={self.id!r}, name={self.name!r})>".format(self=self)
 
 
 class BusinessUnitSchema(SQLAlchemyAutoSchema):
@@ -224,8 +244,9 @@ class CloudAccount(Base):
     name = db.Column(db.String(100))
     userId = db.Column(db.Integer)
     isActive = db.Column(db.Boolean())
+
     def __repr__(self):
-        return "<CloudAccount(id={self.id!r}, name={self.name!r})>".format(self=self)    
+        return "<CloudAccount(id={self.id!r}, name={self.name!r})>".format(self=self)
 
 
 class CloudAccountSchema(SQLAlchemyAutoSchema):
@@ -244,8 +265,9 @@ class Folder(Base):
     folderName = db.Column(db.String(100))
     status = db.Column(db.String(50))
     taskId = db.Column(db.String(50))
+
     def __repr__(self):
-        return "<Folder(id={self.id!r}, name={self.folderName!r})>".format(self=self)    
+        return "<Folder(id={self.id!r}, name={self.folderName!r})>".format(self=self)
 
 
 class FolderSchema(SQLAlchemyAutoSchema):
@@ -265,8 +287,11 @@ class LandingZoneAction(Base):
     completionRate = db.Column(db.Integer)
     locked = db.Column(db.Boolean())
     routerLink = db.Column(db.String)
+
     def __repr__(self):
-        return "<LandingZoneAction(id={self.id!r}, name={self.title!r})>".format(self=self)    
+        return "<LandingZoneAction(id={self.id!r}, name={self.title!r})>".format(
+            self=self
+        )
 
 
 class LandingZoneActionSchema(SQLAlchemyAutoSchema):
@@ -282,8 +307,11 @@ class LandingZoneProgressItem(Base):
     id = db.Column(db.Integer, primary_key=True)
     label = db.Column(db.String)
     completed = db.Column(db.Boolean())
+
     def __repr__(self):
-        return "<LandingZoneProgressItem(id={self.id!r}, name={self.label!r})>".format(self=self)    
+        return "<LandingZoneProgressItem(id={self.id!r}, name={self.label!r})>".format(
+            self=self
+        )
 
 
 class LandingZoneProgressItemSchema(SQLAlchemyAutoSchema):
@@ -345,6 +373,7 @@ class LZEnvironment(Base):
         return "<LZEnvironment(id={self.id!r}, name={self.name!r}, isActive={self.isActive!r})>".format(
             self=self
         )
+
 
 class LZEnvironmentSchema(SQLAlchemyAutoSchema):
     class Meta:
@@ -457,7 +486,7 @@ class NotificationTypeSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = NotificationType
         include_fk = True
-        load_instance = True        
+        load_instance = True
 
 
 class Notification(Base):
@@ -487,8 +516,12 @@ class NotificationActivator(Base):
     __tablename__ = "notificationActivator"
     isActive = db.Column(db.Boolean())
     lastUpdated = db.Column(db.String(20))
-    notificationId = db.Column(db.Integer(), db.ForeignKey("notification.id"), primary_key=True)
-    activatorId = db.Column(db.Integer(), db.ForeignKey("activator.id"), primary_key=True)
+    notificationId = db.Column(
+        db.Integer(), db.ForeignKey("notification.id"), primary_key=True
+    )
+    activatorId = db.Column(
+        db.Integer(), db.ForeignKey("activator.id"), primary_key=True
+    )
 
     def __repr__(self):
         return "<NotificationActivator(notificationId={self.notificationId!r}, activatorId={self.activatorId!r})>".format(self=self)
@@ -524,7 +557,7 @@ class Role(Base):
     __tablename__ = "role"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
-    cloudIdentityGroup = db.Column(db.String(200)) 
+    cloudIdentityGroup = db.Column(db.String(200))
     description = db.Column(db.String(200))
 
 
@@ -541,7 +574,7 @@ class Solution(Base):
     id = db.Column(db.Integer(), primary_key=True)
     isActive = db.Column(db.Boolean)
     lastUpdated = db.Column(db.String(20))
-    isFavourite = db.Column(db.Boolean)    
+    isFavourite = db.Column(db.Boolean)
     name = db.Column(db.String(30))
     description = db.Column(db.String(255))
     businessUnitId = db.Column(db.Integer())
@@ -557,7 +590,7 @@ class Solution(Base):
     statusMessage = db.Column(db.String(255))
     taskId = db.Column(db.String(100))
     deploymentFolderId = db.Column(db.String(50))
-    #applications = db.relationship("Application")
+    # applications = db.relationship("Application")
 
     def __repr__(self):
         return "<Solution(id={self.id!r}, name={self.name!r})>".format(self=self)
@@ -573,13 +606,13 @@ class SolutionSchema(SQLAlchemyAutoSchema):
     def serialize_pre_load(self, data, **kwargs):
         logger.debug("SolutionSchema::pre_load::serialize_pre_load: %s", data)
         data["lastUpdated"] = ModelTools.get_utc_timestamp()
-        if 'isActive' not in data:
-            data['isActive'] = True
-        if 'isFavourite' not in data:
-            data['isFavourite'] = False
-        if 'name' in data:
-            data['name'] = data['name'][:Solution.name.type.length]
-        return data         
+        if "isActive" not in data:
+            data["isActive"] = True
+        if "isFavourite" not in data:
+            data["isFavourite"] = False
+        if "name" in data:
+            data["name"] = data["name"][: Solution.name.type.length]
+        return data
 
 
 # SolutionEnvironment
@@ -687,7 +720,7 @@ class TeamMember(Base):
     userId = db.Column(db.Integer)
     teamId = db.Column(db.Integer)
     roleId = db.Column(db.Integer)
-    isTeamAdmin = db.Column(db.Boolean())    
+    isTeamAdmin = db.Column(db.Boolean())
     isActive = db.Column(db.Boolean())
 
 
@@ -721,7 +754,8 @@ class UserSchema(SQLAlchemyAutoSchema):
     def serialize_pre_load(self, data, **kwargs):
         logger.debug("UserSchema::pre_load::serialize_pre_load: %s", data)
         data["lastUpdated"] = ModelTools.get_utc_timestamp()
-        return data     
+        return data
+
 
 # VPNOnPremiseVendor
 class VPNOnPremiseVendor(Base):
