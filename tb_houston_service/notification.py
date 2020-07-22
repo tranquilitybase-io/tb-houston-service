@@ -79,7 +79,6 @@ def read_all(typeId = None, toUserId = None, isRead = None, isActive = None, pag
 
 def create(notification, typeId, dbsession):
     logger.debug("create: %s", notification)
-
     dbs = dbsession or db_session()
     # if id is zero or None (null), we create a a new notification otherwise
     #  we update an existing notification.
@@ -159,11 +158,12 @@ def create(notification, typeId, dbsession):
 
 def create_all(notificationListDetails, typeId, toUserId = None, isRead = None, isActive = None, page = None, page_size = None, sort = None):
     logger.debug("create_all: %s", notificationListDetails)    
+
     with db_session() as dbs:
         for n in notificationListDetails:
-            create(n, typeId, dbs)
+            create(n, typeId, dbsession = dbs)
 
-    (data, resp_code) = read_all(typeId, toUserId = toUserId, isRead = isRead, isActive = isActive, page = page, page_size = page_size, sort = sort)
+    (data, resp_code) = read_all(typeId = typeId, toUserId = toUserId, isRead = isRead, isActive = isActive, page = page, page_size = page_size, sort = sort)
     logger.debug("data: %s, resp_code: %s", data, resp_code)
     return data, 201
 

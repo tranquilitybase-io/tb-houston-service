@@ -67,26 +67,20 @@ def create(teamDetails):
     if "id" in teamDetails:
         del teamDetails["id"]
     # Does the team exist already?
-    existing_team = (
-        db.session.query(Team).filter(Team.name == teamDetails["name"]).one_or_none()
-    )
+   
+    schema = TeamSchema(many=False)
+    new_team = schema.load(teamDetails, session=db.session)
+    new_team.lastUpdated = ModelTools.get_utc_timestamp()
+    app.logger.debug(f"new_team: {new_team} type: {type(new_team)}")
+    db.session.add(new_team)
+    db.session.commit()
 
-    if existing_team is None:        
-        schema = TeamSchema(many=False)
-        new_team = schema.load(teamDetails, session=db.session)
-        new_team.lastUpdated = ModelTools.get_utc_timestamp()
-        app.logger.debug(f"new_team: {new_team} type: {type(new_team)}")
-        db.session.add(new_team)
-        db.session.commit()
+    # Serialize and return the newly created deployment
+    # in the response
+    data = schema.dump(new_team)
 
-        # Serialize and return the newly created deployment
-        # in the response
-        data = schema.dump(new_team)
+    return data, 201
 
-        return data, 201
-
-    # Otherwise, it already exists, that's an error
-    abort(406, "Team already exists")
 
 
 def update(oid, teamDetails):

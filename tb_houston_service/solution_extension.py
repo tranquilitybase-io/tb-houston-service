@@ -78,7 +78,7 @@ def expand_solution_for_dac(sol):
         ci = db.session.query(CI).filter(CI.id == sol.ciId).one_or_none()
         if ci:
             sol.ci = ci.value
-
+            
     if sol.cdId:
         cd = db.session.query(CD).filter(CD.id == sol.cdId).one_or_none()
         if cd:
