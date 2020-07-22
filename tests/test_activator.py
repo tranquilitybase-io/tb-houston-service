@@ -31,7 +31,6 @@ def typestest(resp):
     assert isinstance(resp["available"], bool)
     assert isinstance(resp["billing"], str)
     assert isinstance(resp["category"], str)
-    assert isinstance(resp["ci"], list)
     assert isinstance(resp["cd"], list)
     assert isinstance(resp["description"], str)
     assert isinstance(resp["envs"], list)

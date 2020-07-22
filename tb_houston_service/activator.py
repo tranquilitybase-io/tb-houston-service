@@ -304,7 +304,7 @@ def notify_admins(message, activatorId, importance = 1):
         admins = dbs.query(User).filter(User.isAdmin, User.isActive).all()
         for admin in admins:
             notification_payload["toUserId"] = admin.id
-            notification.create(notification_payload, typeId = 1)
+            notification.create(notification_payload, typeId = 1, dbsession = dbs)
 
 
 def setActivatorStatus(activatorDetails):
