@@ -27,12 +27,14 @@ def typestest(resp):
 
 def test_notifications():
     # Testing POST request
-    oid = create()
-    update(oid)
+    oid = create_notification_activators()
+    update_notification_activator(oid)
+    oid = create_notification_teams()
+    update_notification_team(oid)
     read_all()
 
 
-def create():
+def create_notification_activators():
     # Test POST Then GET
     # Body
     payload = [
@@ -68,7 +70,7 @@ def create():
     return oid
 
 
-def update(oid):
+def update_notification_activator(oid):
     # Test POST Then GET
     # Body
     payload = [
@@ -81,6 +83,60 @@ def update(oid):
     ]
 
     resp = requests.post(url + "?typeId=1&isActive=true&isRead=false&sort=importance:asc", headers=headers, data=json.dumps(payload, indent=4))
+    # Validate response headers and body contents, e.g. status code.
+    #resp_json = resp.json()
+    assert resp.status_code == 201
+
+
+def create_notification_teams():
+    # Test POST Then GET
+    # Body
+    payload = [
+        {
+            "isActive": True,
+            "toUserId": 1,
+            "importance": 1,
+            "message": "User Jon Snow requested access to Team 1",
+            "isRead": False,
+            "teamId": 1
+        },
+        {
+            "isActive": True,
+            "toUserId": 2,
+            "importance": 2,
+            "message": "User Cersei Lannister requested access to an Team 1",
+            "isRead": False,
+            "teamId": 1
+        }
+    ]
+
+    resp = requests.post(url + "?typeId=2&isActive=true&isRead=false", headers=headers, data=json.dumps(payload, indent=4))
+
+    # Validate response headers and body contents, e.g. status code.
+    resp_json = resp.json()
+    print(resp_json)
+    oid = 0
+    for rj in resp_json:
+        print(rj)
+        oid = rj['id']
+    assert resp.status_code == 201
+    print(f"oid: {oid}")
+    return oid
+
+
+def update_notification_team(oid):
+    # Test POST Then GET
+    # Body
+    payload = [
+        {
+            "id": oid,
+            "isActive": False,
+            "importance": 1,
+            "isRead": True
+        }
+    ]
+
+    resp = requests.post(url + "?typeId=2&isActive=true&isRead=false&sort=importance:asc", headers=headers, data=json.dumps(payload, indent=4))
     # Validate response headers and body contents, e.g. status code.
     #resp_json = resp.json()
     assert resp.status_code == 201
