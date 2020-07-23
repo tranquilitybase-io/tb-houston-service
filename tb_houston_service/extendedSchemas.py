@@ -7,6 +7,7 @@ from tb_houston_service.models import LZEnvironmentSchema
 from tb_houston_service.models import LZLanVpcSchema
 from tb_houston_service.models import RoleSchema
 from tb_houston_service.models import CISchema, CDSchema, SourceControlSchema
+from tb_houston_service.models import NotificationTypeSchema
 from marshmallow_oneofschema import OneOfSchema
 
 
@@ -422,8 +423,8 @@ class ExtendedNotificationActivatorSchema(Schema):
     message = fields.Str()
     isRead = fields.Boolean()
     typeId = fields.Int()
-    activatorId = fields.Int()
-    activator = fields.Nested(ExtendedActivatorSchema)    
+    typeObj = fields.Nested(NotificationTypeSchema)
+    details = fields.Nested(ExtendedActivatorSchema)    
 
 
 class ExtendedNotificationTeamSchema(Schema):
@@ -436,20 +437,21 @@ class ExtendedNotificationTeamSchema(Schema):
     message = fields.Str()
     isRead = fields.Boolean()
     typeId = fields.Int()
-    teamId = fields.Int()
-    team = fields.Nested(ExtendedTeamSchema)    
+    type = fields.Nested(NotificationTypeSchema)
+    details = fields.Nested(ExtendedTeamSchema)    
 
 
 class ExtendedNotificationSchema(OneOfSchema):
+    type_field = "typeName"
     type_schemas = {
         "ACTIVATOR_ACCESS": ExtendedNotificationActivatorSchema,
         "TEAM_ACCESS": ExtendedNotificationTeamSchema        
     }
 
     def get_obj_type(self, obj):
-        if hasattr(obj, "activator"):
+        if obj.typeId == 1:
             return "ACTIVATOR_ACCESS"
-        elif hasattr(obj, "team"):
+        elif obj.typeId == 2:
             return "TEAM_ACCESS"
         else:
             raise Exception("Unknown object type: {}".format(obj.__class__.__name__))    

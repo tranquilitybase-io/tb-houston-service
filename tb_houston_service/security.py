@@ -7,6 +7,7 @@ from google.oauth2 import id_token
 from google.auth.transport import requests
 from tb_houston_service.models import User
 from config.db_lib import db_session
+from flask import make_response
 
 
 CLIENT_ID = os.environ.get("CLIENT_ID")
@@ -14,6 +15,17 @@ CLIENT_ID = os.environ.get("CLIENT_ID")
 logger = logging.getLogger("security")
 
 def decode_token(token):
+    """
+    Args:
+        token ([string]): [Authorisation Bearer token]
+
+    Raises:
+        ValueError: [Unauthorized]
+
+    Returns:
+        [dict]: [oauth claims]
+    """
+
     logger.debug("decode_token: %s", token)
     logger.debug("CLIENT_ID: %s", CLIENT_ID)    
     try:
@@ -45,6 +57,26 @@ def is_active_user(username, dbsession = None):
     return user != None
 
 
+def get_user_id_from_token(dbsession = None):
+    """
+    Get currently logged in user id.
+    :return:        user id
+    :return:        None if no valid user id
+    """
+    authorization = connexion.request.headers.get('Authorization')
+    if authorization:
+        logger.debug("Authorization: %s", authorization)
+        token = authorization.split(' ')[1]
+        claims = decode_token(token)
+        logger.debug("Claims: %s", claims)  
+
+        dbs = dbsession or db_session()
+        user = dbs.query(User).filter(User.email == claims.get("username"), User.isActive).one_or_none()
+        if user:
+            return user.id
+    return None
+
+
 def is_valid_token():
     """
     Validate the Authorisation Bearer token, and check user is a valid user.
@@ -61,3 +93,15 @@ def is_valid_token():
             return True
     return False
 
+
+def validate_token():
+    """
+    For use when all endpoints require an authorisation bearer token.
+    For use by endpoints, except the login endpoint.
+
+    Returns:
+        [400]: [Either the token is invalid or the user is inactive.]
+    """
+
+    if not is_valid_token():
+        return make_response(400, "Access denied")

@@ -21,7 +21,7 @@ def typestest(resp):
     assert isinstance(resp["message"], str)
     assert isinstance(resp["isRead"], bool)
     assert isinstance(resp["typeId"], int)
-    assert isinstance(resp["activatorId"], int)
+    assert isinstance(resp["details"], dict)
     pprint(resp)
 
 
