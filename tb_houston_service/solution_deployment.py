@@ -12,6 +12,7 @@ import logging
 from http import HTTPStatus
 import requests
 from flask import make_response, abort
+import connexion
 
 from config import db, executor
 from tb_houston_service.models import Solution, SolutionSchema
@@ -24,6 +25,10 @@ from tb_houston_service import team
 from tb_houston_service import gcp_dac_folder_deployment
 from tb_houston_service import solution_extension
 from tb_houston_service import solutionresourcejson
+from tb_houston_service import security
+from tb_houston_service import notification
+from config.db_lib import db_session
+
 
 logger = logging.getLogger("tb_houston_service.solution_deployment")
 
@@ -32,6 +37,41 @@ deployment_create_result_url = (
     f"http://{os.environ['GCP_DAC_URL']}/dac/solution_async/result/create/"
 )
 headers = {"Content-Type": "application/json"}
+
+authorization_token = None
+
+def notify_user(solutionId):
+    """
+    Notify the user the solution deployment has completed.
+
+    Args:
+        solutionId ([int]): [The solution id]
+    """
+
+    with db_session() as dbs:
+        user = security.get_valid_user_from_token(dbsession = dbs)
+        logger.debug("user: %s", user)
+        if user:
+            sol = dbs.query(Solution).filter(Solution.id == solutionId).one_or_none()
+            if sol:
+                deploymentState = sol.deploymentState
+                if deploymentState == DeploymentStatus.SUCCESS:
+                    message = f"Your Solution {sol.id} ({sol.name}) deployment has completed successfully"
+                else:
+                    message = f"Your Solution {sol.id} ({sol.name}) deployment has failed."
+                payload = {
+                    "isActive": True,
+                    "toUserId": user.id,
+                    "importance": 1,
+                    "message": message,
+                    "isRead": False,
+                    "solutionId": sol.id
+                }
+                notification.create(notification = payload, typeId = 4, dbsession = dbs)
+            else:
+                logger.warning("notify_user::Cannot send notification, unable to find the solution (%s).", sol.id)
+        else:
+            logger.warning("notify_user::Cannot send notification, unable to validate the token.")
 
 
 def deployment_read_all():
@@ -78,7 +118,9 @@ def deployment_read_one(oid):
 
 
 def start_deployment(solutionId):
-    print("start_deployment")
+    logger.debug("start_deployment")
+
+    
     deployment_complete = False 
     while deployment_complete == False:
         sol = db.session.query(Solution).filter(Solution.id == solutionId).one_or_none()
@@ -98,11 +140,12 @@ def start_deployment(solutionId):
                     logger.debug("start_deployment::polling_results_from_the_DaC: oid: %s task_id: %s", oid, task_id)
                     response = get_solution_results_from_the_dac(oid, task_id)
                     logger.debug(pformat(response))
-                print("Sleep 5")
+                logger.debug("Sleep 5")
                 time.sleep(5)
         else:
-            logger.debug("start_deployment::deployment Solution not found: %s", sol.id)            
+            logger.debug("start_deployment::deployment Solution not found: %s", sol.id)                       
     db.session.close()
+    notify_user(solutionId = solutionId)     
     return True
 
 
@@ -117,6 +160,7 @@ def deployment_create(solutionDeploymentDetails):
     """
 
     logger.debug(pformat(solutionDeploymentDetails))
+
     oid = solutionDeploymentDetails["id"]
     sol = db.session.query(Solution).filter(Solution.id == oid).one_or_none()
 

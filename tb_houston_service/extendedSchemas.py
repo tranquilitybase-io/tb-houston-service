@@ -441,11 +441,41 @@ class ExtendedNotificationTeamSchema(Schema):
     details = fields.Nested(ExtendedTeamSchema)    
 
 
+class ExtendedNotificationApplicationDeploymentSchema(Schema):
+    id = fields.Int()
+    isActive = fields.Bool()
+    lastUpdated = fields.Str()
+    toUserId = fields.Int()
+    fromUserId = fields.Int()
+    importance = fields.Int()
+    message = fields.Str()
+    isRead = fields.Boolean()
+    typeId = fields.Int()
+    type = fields.Nested(NotificationTypeSchema)
+    details = fields.Nested(ExtendedApplicationSchema)   
+
+
+class ExtendedNotificationSolutionDeploymentSchema(Schema):
+    id = fields.Int()
+    isActive = fields.Bool()
+    lastUpdated = fields.Str()
+    toUserId = fields.Int()
+    fromUserId = fields.Int()
+    importance = fields.Int()
+    message = fields.Str()
+    isRead = fields.Boolean()
+    typeId = fields.Int()
+    type = fields.Nested(NotificationTypeSchema)
+    details = fields.Nested(ExtendedSolutionSchema)   
+
+
 class ExtendedNotificationSchema(OneOfSchema):
     type_field = "typeName"
     type_schemas = {
         "ACTIVATOR_ACCESS": ExtendedNotificationActivatorSchema,
-        "TEAM_ACCESS": ExtendedNotificationTeamSchema        
+        "TEAM_ACCESS": ExtendedNotificationTeamSchema,
+        "APPLICATION_DEPLOYMENT": ExtendedNotificationApplicationDeploymentSchema,
+        "SOLUTION_DEPLOYMENT": ExtendedNotificationSolutionDeploymentSchema                
     }
 
     def get_obj_type(self, obj):
@@ -453,5 +483,9 @@ class ExtendedNotificationSchema(OneOfSchema):
             return "ACTIVATOR_ACCESS"
         elif obj.typeId == 2:
             return "TEAM_ACCESS"
+        elif obj.typeId == 3:
+            return "APPLICATION_DEPLOYMENT"
+        elif obj.typeId == 4:
+            return "SOLUTION_DEPLOYMENT"                        
         else:
             raise Exception("Unknown object type: {}".format(obj.__class__.__name__))    

@@ -16,6 +16,9 @@ from tb_houston_service.tools import ModelTools
 from tb_houston_service.extendedSchemas import ExtendedApplicationDeploymentSchema
 from tb_houston_service.extendedSchemas import ExtendedApplicationForDACSchema
 from config.db_lib import db_session
+from tb_houston_service import security
+from tb_houston_service import notification
+
 
 logger = logging.getLogger("tb_houston_service.application_deployment")
 
@@ -24,6 +27,43 @@ deployment_create_result_url = (
     f"http://{os.environ['GCP_DAC_URL']}/dac/application_async/result/create/"
 )
 headers = {"Content-Type": "application/json"}
+
+
+def notify_user(applicationId):
+    """
+    Notify the user the application deployment has completed.
+
+    Args:
+        applicationId ([int]): [The application id]
+    """
+
+    with db_session() as dbs:
+        user = security.get_valid_user_from_token(dbsession=dbs)
+        logger.debug("user: %s", user)        
+        if user:
+            (app, app_deploy) = dbs.query(Application, ApplicationDeployment).filter(
+                ApplicationDeployment.applicationId == applicationId,
+                ApplicationDeployment.applicationId == Application.id
+                ).one_or_none()
+            if app:
+                deploymentState = app_deploy.deploymentState
+                if deploymentState == DeploymentStatus.SUCCESS:
+                    message = f"Your Application {applicationId} ({app.name}) deployment has completed successfully"
+                else:
+                    message = f"Your Application {applicationId} ({app.name}) deployment has failed."                    
+                payload = {
+                    "isActive": True,
+                    "toUserId": user.id,
+                    "importance": 1,
+                    "message": message,
+                    "isRead": False,
+                    "applicationId": app.id
+                }
+                notification.create(notification = payload, typeId = 3, dbsession = dbs)
+            else:
+                logger.warning("Cannot send notification, unable to find the application (%s).", app.id)
+        else:
+            logger.warning("Cannot send notification, unable to validate the token.")
 
 
 def start_deployment(applicationId):
@@ -54,6 +94,7 @@ def start_deployment(applicationId):
         else:
             logger.debug("start_deployment::deployment Solution not found: %s", app_dep.applicationId)            
     db.session.close()
+    notify_user(applicationId = applicationId)     
     return True
 
 

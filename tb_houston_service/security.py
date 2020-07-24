@@ -1,4 +1,3 @@
-import logging
 import os
 import six
 import connexion
@@ -8,11 +7,12 @@ from google.auth.transport import requests
 from tb_houston_service.models import User
 from config.db_lib import db_session
 from flask import make_response
+import logging
 
 
 CLIENT_ID = os.environ.get("CLIENT_ID")
 
-logger = logging.getLogger("security")
+logger = logging.getLogger("tb_houston_service.security")
 
 def decode_token(token):
     """
@@ -51,57 +51,23 @@ def decode_token(token):
         six.raise_from(Unauthorized, e)
 
 
-def is_active_user(username, dbsession = None):
-    dbs = dbsession or db_session()
-    user = dbs.query(User).filter(User.email == username, User.isActive).one_or_none()
-    return user != None
-
-
-def get_user_id_from_token(dbsession = None):
+def get_valid_user_from_token(dbsession = None):
     """
     Get currently logged in user id.
     :return:        user id
     :return:        None if no valid user id
     """
+
     authorization = connexion.request.headers.get('Authorization')
-    if authorization:
-        logger.debug("Authorization: %s", authorization)
-        token = authorization.split(' ')[1]
-        claims = decode_token(token)
-        logger.debug("Claims: %s", claims)  
+    if not authorization:
+        return None
+        
+    token = authorization.split(' ')[1]
 
-        dbs = dbsession or db_session()
-        user = dbs.query(User).filter(User.email == claims.get("username"), User.isActive).one_or_none()
-        if user:
-            return user.id
-    return None
+    logger.debug("Authorization: %s", token)
+    claims = decode_token(token)
+    logger.debug("Claims: %s", claims)  
 
-
-def is_valid_token():
-    """
-    Validate the Authorisation Bearer token, and check user is a valid user.
-    :return:        json string of user details
-    """
-    authorization = connexion.request.headers.get('Authorization')
-    if authorization:
-        logger.debug("Authorization: %s", authorization)
-        token = authorization.split(' ')[1]
-        claims = decode_token(token)
-        logger.debug("Claims: %s", claims)  
-
-        if is_active_user(claims.get("email")):
-            return True
-    return False
-
-
-def validate_token():
-    """
-    For use when all endpoints require an authorisation bearer token.
-    For use by endpoints, except the login endpoint.
-
-    Returns:
-        [400]: [Either the token is invalid or the user is inactive.]
-    """
-
-    if not is_valid_token():
-        return make_response(400, "Access denied")
+    dbs = dbsession or db_session()
+    user = dbs.query(User).filter(User.email == claims.get("email"), User.isActive).one_or_none()
+    return user

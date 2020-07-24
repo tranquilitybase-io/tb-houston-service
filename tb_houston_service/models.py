@@ -552,6 +552,42 @@ class NotificationTeamSchema(SQLAlchemyAutoSchema):
         load_instance = True
 
 
+class NotificationApplicationDeployment(Base):
+    __tablename__ = "notificationApplicationDeployment"
+    isActive = db.Column(db.Boolean())
+    lastUpdated = db.Column(db.String(20))
+    notificationId = db.Column(db.Integer(), db.ForeignKey("notification.id"), primary_key=True)
+    applicationId = db.Column(db.Integer(), db.ForeignKey("application.id"), primary_key=True)
+
+    def __repr__(self):
+        return "<NotificationApplicationDeployment(notificationId={self.notificationId!r}, applicationId={self.applicationId!r})>".format(self=self)
+
+
+class NotificationApplicationDeploymentSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = NotificationApplicationDeployment
+        include_fk = True
+        load_instance = True
+
+
+class NotificationSolutionDeployment(Base):
+    __tablename__ = "notificationSolutionDeployment"
+    isActive = db.Column(db.Boolean())
+    lastUpdated = db.Column(db.String(20))
+    notificationId = db.Column(db.Integer(), db.ForeignKey("notification.id"), primary_key=True)
+    solutionId = db.Column(db.Integer(), db.ForeignKey("solution.id"), primary_key=True)
+
+    def __repr__(self):
+        return "<NotificationSolutionDeployment(notificationId={self.notificationId!r}, solutionId={self.solutionId!r})>".format(self=self)
+
+
+class NotificationSolutionDeploymentSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = NotificationSolutionDeployment
+        include_fk = True
+        load_instance = True
+
+
 # Role
 class Role(Base):
     __tablename__ = "role"

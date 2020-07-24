@@ -142,6 +142,114 @@ def update_notification_team(oid):
     assert resp.status_code == 201
 
 
+def create_notification_application_deployment():
+    # Test POST Then GET
+    # Body
+    payload = [
+        {
+            "isActive": True,
+            "toUserId": 1,
+            "importance": 1,
+            "message": "User Jon Snow has deployed application 1 successfully",
+            "isRead": False,
+            "applicationId": 1
+        },
+        {
+            "isActive": True,
+            "toUserId": 3,
+            "importance": 2,
+            "message": "User Cersei Lannister has deployed application 2 successfully",
+            "isRead": False,
+            "applicationId": 2
+        }
+    ]
+
+    resp = requests.post(url + "?typeId=3&isActive=true&isRead=false", headers=headers, data=json.dumps(payload, indent=4))
+
+    # Validate response headers and body contents, e.g. status code.
+    resp_json = resp.json()
+    print(resp_json)
+    oid = 0
+    for rj in resp_json:
+        print(rj)
+        oid = rj['id']
+    assert resp.status_code == 201
+    print(f"oid: {oid}")
+    return oid
+
+
+def update_notification_application_deployment(oid):
+    # Test POST Then GET
+    # Body
+    payload = [
+        {
+            "id": oid,
+            "isActive": False,
+            "importance": 1,
+            "isRead": True
+        }
+    ]
+
+    resp = requests.post(url + "?typeId=3&isActive=true&isRead=false&sort=importance:asc", headers=headers, data=json.dumps(payload, indent=4))
+    # Validate response headers and body contents, e.g. status code.
+    #resp_json = resp.json()
+    assert resp.status_code == 201
+
+
+def create_notification_solution_deployment():
+    # Test POST Then GET
+    # Body
+    payload = [
+        {
+            "isActive": True,
+            "toUserId": 1,
+            "importance": 1,
+            "message": "User Jon Snow has deployed solution 1 successfully",
+            "isRead": False,
+            "applicationId": 1
+        },
+        {
+            "isActive": True,
+            "toUserId": 3,
+            "importance": 2,
+            "message": "User Cersei Lannister has deployed solution 2 successfully",
+            "isRead": False,
+            "applicationId": 2
+        }
+    ]
+
+    resp = requests.post(url + "?typeId=4&isActive=true&isRead=false", headers=headers, data=json.dumps(payload, indent=4))
+
+    # Validate response headers and body contents, e.g. status code.
+    resp_json = resp.json()
+    print(resp_json)
+    oid = 0
+    for rj in resp_json:
+        print(rj)
+        oid = rj['id']
+    assert resp.status_code == 201
+    print(f"oid: {oid}")
+    return oid
+
+
+def update_notification_solution_deployment(oid):
+    # Test POST Then GET
+    # Body
+    payload = [
+        {
+            "id": oid,
+            "isActive": False,
+            "importance": 1,
+            "isRead": True
+        }
+    ]
+
+    resp = requests.post(url + "?typeId=4&isActive=true&isRead=false&sort=importance:asc", headers=headers, data=json.dumps(payload, indent=4))
+    # Validate response headers and body contents, e.g. status code.
+    #resp_json = resp.json()
+    assert resp.status_code == 201
+
+
 def read_all():
     resp = requests.get(url + "?typeId=1&isActive=true&isRead=false&sort=importance:asc", headers=headers)
     resp_json = resp.json()
