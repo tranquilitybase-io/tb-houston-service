@@ -170,6 +170,7 @@ def create(notification, typeId, dbsession):
             notificationApplicationDeployment["lastUpdated"] = ModelTools.get_utc_timestamp()    
             notificationApplicationDeployment["isActive"] = notification.get("isActive", True) 
             new_na = nadSchema.load(notificationApplicationDeployment, session=dbs)
+            dbs.add(new_na)   
         elif notification.get("typeId") == 4:
             tmp_notification = {}
             tmp_notification["typeId"] = notification.get("typeId")
