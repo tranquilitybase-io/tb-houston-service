@@ -9,6 +9,11 @@ from tb_houston_service.models import RoleSchema
 from tb_houston_service.models import CISchema, CDSchema, SourceControlSchema
 from tb_houston_service.models import NotificationTypeSchema
 from marshmallow_oneofschema import OneOfSchema
+from tb_houston_service.models import NotificationActivatorSchema
+from tb_houston_service.models import NotificationTeamSchema
+from tb_houston_service.models import NotificationApplicationDeploymentSchema
+from tb_houston_service.models import NotificationSolutionDeploymentSchema
+
 
 
 logger = logging.getLogger("tb_houston_service.extendedSchemas")
@@ -424,7 +429,7 @@ class ExtendedNotificationActivatorSchema(Schema):
     isRead = fields.Boolean()
     typeId = fields.Int()
     typeObj = fields.Nested(NotificationTypeSchema)
-    details = fields.Nested(ExtendedActivatorSchema)    
+    details = fields.Nested(NotificationActivatorSchema)    
 
 
 class ExtendedNotificationTeamSchema(Schema):
@@ -438,7 +443,7 @@ class ExtendedNotificationTeamSchema(Schema):
     isRead = fields.Boolean()
     typeId = fields.Int()
     type = fields.Nested(NotificationTypeSchema)
-    details = fields.Nested(ExtendedTeamSchema)    
+    details = fields.Nested(NotificationTeamSchema)    
 
 
 class ExtendedNotificationApplicationDeploymentSchema(Schema):
@@ -452,7 +457,7 @@ class ExtendedNotificationApplicationDeploymentSchema(Schema):
     isRead = fields.Boolean()
     typeId = fields.Int()
     type = fields.Nested(NotificationTypeSchema)
-    details = fields.Nested(ExtendedApplicationSchema)   
+    details = fields.Nested(NotificationApplicationDeploymentSchema)   
 
 
 class ExtendedNotificationSolutionDeploymentSchema(Schema):
@@ -466,7 +471,7 @@ class ExtendedNotificationSolutionDeploymentSchema(Schema):
     isRead = fields.Boolean()
     typeId = fields.Int()
     type = fields.Nested(NotificationTypeSchema)
-    details = fields.Nested(ExtendedSolutionSchema)   
+    details = fields.Nested(NotificationSolutionDeploymentSchema)   
 
 
 class ExtendedNotificationSchema(OneOfSchema):

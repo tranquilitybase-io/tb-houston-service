@@ -14,6 +14,8 @@ from tb_houston_service.models import NotificationSolutionDeploymentSchema
 from tb_houston_service.extendedSchemas import ExtendedNotificationSchema
 from tb_houston_service.models import Activator
 from tb_houston_service.models import Team
+from tb_houston_service.models import Application
+from tb_houston_service.models import Solution
 from config.db_lib import db_session
 from tb_houston_service.tools import ModelTools
 
@@ -61,16 +63,25 @@ def read_all(typeId = None, toUserId = None, isRead = None, isActive = None, pag
         for n in notifications:
             n.type = dbs.query(NotificationType).filter(NotificationType.id == n.typeId).one_or_none()
             if n.typeId == 1:
-                n.details = dbs.query(Activator).filter(
+                n.details = dbs.query(NotificationActivator).filter(
                     n.id == NotificationActivator.notificationId,            
                     Activator.id == NotificationActivator.activatorId 
                 ).one_or_none()
-            if n.typeId == 2:
-                n.details = dbs.query(Team).filter(
+            elif n.typeId == 2:
+                n.details = dbs.query(NotificationTeam).filter(
                     n.id == NotificationTeam.notificationId,            
                     Team.id == NotificationTeam.teamId 
                 ).one_or_none()
-
+            elif n.typeId == 3:
+                n.details = dbs.query(NotificationApplicationDeployment).filter(
+                    n.id == NotificationApplicationDeployment.notificationId,            
+                    Application.id == NotificationApplicationDeployment.applicationId 
+                ).one_or_none()
+            elif n.typeId == 4:
+                n.details = dbs.query(NotificationSolutionDeployment).filter(
+                    n.id == NotificationSolutionDeployment.notificationId,            
+                    Solution.id == NotificationSolutionDeployment.solutionId 
+                ).one_or_none()                
         schema = ExtendedNotificationSchema(many=True)
         data = schema.dump(notifications)
         return data, 200
