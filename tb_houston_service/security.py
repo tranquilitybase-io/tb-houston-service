@@ -6,7 +6,6 @@ from google.oauth2 import id_token
 from google.auth.transport import requests
 from tb_houston_service.models import User
 from config.db_lib import db_session
-from flask import make_response
 import logging
 
 
@@ -61,7 +60,7 @@ def get_valid_user_from_token(dbsession = None):
     authorization = connexion.request.headers.get('Authorization')
     if not authorization:
         return None
-        
+
     token = authorization.split(' ')[1]
 
     logger.debug("Authorization: %s", token)

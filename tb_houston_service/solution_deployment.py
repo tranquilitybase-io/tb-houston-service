@@ -12,7 +12,6 @@ import logging
 from http import HTTPStatus
 import requests
 from flask import make_response, abort
-import connexion
 
 from config import db, executor
 from tb_houston_service.models import Solution, SolutionSchema

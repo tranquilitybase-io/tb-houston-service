@@ -315,7 +315,7 @@ def dismiss(fromUserId, activatorId = None, teamId = None, applicationId = None,
     if applicationId:
         n = dbs.query(Notification).filter(
             NotificationApplicationDeployment.teamId == Notification.id, 
-            NotificationApplication.isActive,
+            NotificationApplicationDeployment.isActive,
             Notification.isActive,
             Notification.fromUserId == fromUserId            
         ).all()
@@ -324,7 +324,7 @@ def dismiss(fromUserId, activatorId = None, teamId = None, applicationId = None,
     if solutionId:
         n = dbs.query(Notification).filter(
             NotificationSolutionDeployment.teamId == Notification.id, 
-            NotificationSolution.isActive,
+            NotificationSolutionDeployment.isActive,
             Notification.isActive,
             Notification.fromUserId == fromUserId            
         ).all()
