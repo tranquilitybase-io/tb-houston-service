@@ -149,8 +149,11 @@ class ApplicationDeployment(Base):
     __tablename__ = "applicationDeployment"
     applicationId = db.Column(db.Integer, primary_key=True)
     solutionId = db.Column(db.Integer, primary_key=True)
+    lzEnvironmentId = db.Column(db.Integer, primary_key=True)
     deploymentState = db.Column(db.String)
     taskId = db.Column(db.String)
+    workspaceProjectId = db.Column(db.String)
+    deploymentProjectId = db.Column(db.String)
     lastUpdated = db.Column(db.String(20))
 
     def __repr__(self):

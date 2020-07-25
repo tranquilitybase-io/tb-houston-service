@@ -10,12 +10,12 @@ from flask import make_response, abort
 from sqlalchemy import literal_column
 from sqlalchemy.exc import SQLAlchemyError
 
-from config import db
 from tb_houston_service.tools import ModelTools
 from tb_houston_service.models import Solution, SolutionSchema
 from tb_houston_service.extendedSchemas import ExtendedSolutionSchema
 from tb_houston_service.extendedSchemas import SolutionNamesOnlySchema
 from tb_houston_service import solution_extension
+from config.db_lib import db_session
 
 logger = logging.getLogger("tb_houston_service.solution")
 
@@ -32,53 +32,53 @@ def read_all(isActive=None, isFavourite=None, namesonly=None, page=None, page_si
     logger.debug("Parameters: isActive: %s, isFavourite: %s, namesonly: %s, page: %s, page_size: %s, sort: %s", 
     isActive, isFavourite, namesonly, page, page_size, sort)
 
-    # pre-process sort instructions
-    if sort == None:
-        solution_query = db.session.query(Solution).order_by(Solution.id)
-    else:
-        try:
-            sort_inst = [si.split(":") for si in sort]
-            orderby_arr = []
-            for si in sort_inst:
-                si1 = si[0]
-                if len(si) > 1:
-                    si2 = si[1]
-                else:
-                    si2 = "asc"
-                orderby_arr.append(f"{si1} {si2}")
-            # print("orderby: {}".format(orderby_arr))
-            solution_query = db.session.query(Solution).order_by(
-                literal_column(", ".join(orderby_arr))
-            )
-        except SQLAlchemyError as e:
-            logger.warning("Exception: %s", e)
-            solution_query = db.session.query(Solution).order_by(Solution.id)
+    with db_session() as dbs:
+        # pre-process sort instructions
+        if sort == None:
+            solution_query = dbs.query(Solution).order_by(Solution.id)
+        else:
+            try:
+                sort_inst = [si.split(":") for si in sort]
+                orderby_arr = []
+                for si in sort_inst:
+                    si1 = si[0]
+                    if len(si) > 1:
+                        si2 = si[1]
+                    else:
+                        si2 = "asc"
+                    orderby_arr.append(f"{si1} {si2}")
+                # print("orderby: {}".format(orderby_arr))
+                solution_query = dbs.query(Solution).order_by(
+                    literal_column(", ".join(orderby_arr))
+                )
+            except SQLAlchemyError as e:
+                logger.warning("Exception: %s", e)
+                solution_query = dbs.query(Solution).order_by(Solution.id)
 
-    # Create the list of solutions from our data
-    solution_query = solution_query.filter(
-        (isActive == None or Solution.isActive == isActive),
-        (isFavourite == None or Solution.isFavourite == isFavourite)
-    )
+        # Create the list of solutions from our data
+        solution_query = solution_query.filter(
+            (isActive == None or Solution.isActive == isActive),
+            (isFavourite == None or Solution.isFavourite == isFavourite)
+        )
 
-    # do limit and offset last
-    if page == None or page_size == None:
-        solutions = solution_query.all()
-    else:
-        solutions = solution_query.limit(page_size).offset(page * page_size)
+        # do limit and offset last
+        if page == None or page_size == None:
+            solutions = solution_query.all()
+        else:
+            solutions = solution_query.limit(page_size).offset(page * page_size)
 
-    if namesonly == True:
-        # Serialize the data for the response
-        schema = SolutionNamesOnlySchema(many=True)
-        data = schema.dump(solutions)
-    else:
-        for sol in solutions:
-            sol = solution_extension.expand_solution(sol)
-        schema = ExtendedSolutionSchema(many=True)
-        data = schema.dump(solutions)
+        if namesonly == True:
+            # Serialize the data for the response
+            schema = SolutionNamesOnlySchema(many=True)
+            data = schema.dump(solutions)
+        else:
+            for sol in solutions:
+                sol = solution_extension.expand_solution(sol, dbsession = dbs)
+            schema = ExtendedSolutionSchema(many=True)
+            data = schema.dump(solutions)
 
-    db.session.close()
-    logger.debug("read_all: %s", data)
-    return data, 200
+        logger.debug("read_all: %s", data)
+        return data, 200
 
 
 def read_one(oid):
@@ -90,16 +90,17 @@ def read_one(oid):
     :return:              solution matching id
     """
 
-    sol = db.session.query(Solution).filter(Solution.id == oid).one_or_none()
+    with db_session() as dbs:
+        sol = dbs.query(Solution).filter(Solution.id == oid).one_or_none()
 
-    if sol is not None:
-        solution = solution_extension.expand_solution(sol)
-        # Serialize the data for the response
-        solution_schema = ExtendedSolutionSchema()
-        data = solution_schema.dump(solution)
-        return data, 200
-    else:
-        abort(404, f"Solution with id {oid} not found".format(id=oid))
+        if sol is not None:
+            solution = solution_extension.expand_solution(sol, dbsession = dbs)
+            # Serialize the data for the response
+            solution_schema = ExtendedSolutionSchema()
+            data = solution_schema.dump(solution)
+            return data, 200
+        else:
+            abort(404, f"Solution with id {oid} not found".format(id=oid))
 
 
 def create(solutionDetails):
@@ -112,7 +113,7 @@ def create(solutionDetails):
     """
 
     data = None
-    try:
+    with db_session() as dbs:
         # Defaults
         if solutionDetails.get("isActive") == None:
             solutionDetails["isActive"] = True
@@ -152,21 +153,16 @@ def create(solutionDetails):
             del solutionDetails["environments"]
 
         schema = SolutionSchema(many=False)
-        new_solution = schema.load(solutionDetails, session=db.session)
+
+        new_solution = schema.load(solutionDetails, session=dbs)
         new_solution.lastUpdated = ModelTools.get_utc_timestamp()
-        db.session.add(new_solution)
-        db.session.flush()
+        dbs.add(new_solution)
+        dbs.flush()
         if envs:
-            solution_extension.create_solution_environments(new_solution.id, envs)
-        new_solution = solution_extension.expand_solution(new_solution)        
+            solution_extension.create_solution_environments(new_solution.id, envs, dbsession = dbs)
+        new_solution = solution_extension.expand_solution(new_solution, dbsession = dbs)        
         schema = ExtendedSolutionSchema()
         data = schema.dump(new_solution)        
-        db.session.commit()      
-    except:
-        db.session.rollback()
-        raise
-    finally:    
-        db.session.close()
         
     # Serialize and return the newly created solution
     # in the response
@@ -185,45 +181,36 @@ def update(oid, solutionDetails):
 
     logger.debug("update::solutionDetails: %s", solutionDetails)
 
-    # Does the solutions exist in solutions list?
-    existing_solution = (
-        db.session.query(Solution).filter(Solution.id == oid).one_or_none()
-    )
+    with db_session() as dbs:
+        # Does the solutions exist in solutions list?
+        existing_solution = (
+            dbs.query(Solution).filter(Solution.id == oid).one_or_none()
+        )
 
-    # Does solutions exist?
+        # Does solutions exist?
 
-    if existing_solution is not None:
-        solutionDetails['id'] = oid
-        try:
+        if existing_solution is not None:
+            solutionDetails['id'] = oid
             envs = solutionDetails.get('environments')
             # Remove envs as it's processed separately, but in the same transaction.
             if "environments" in solutionDetails:
                 del solutionDetails["environments"]
-                solution_extension.create_solution_environments(oid, envs)
+                solution_extension.create_solution_environments(oid, envs, dbsession = dbs)
             schema = SolutionSchema(many=False)
-            new_solution = schema.load(solutionDetails, session=db.session)
+            new_solution = schema.load(solutionDetails, session=dbs)
             new_solution.lastUpdated = ModelTools.get_utc_timestamp()            
-            db.session.merge(new_solution)
-            db.session.commit()
+            dbs.merge(new_solution)
+            dbs.commit()
 
-            new_solution = solution_extension.expand_solution(new_solution)  
+            new_solution = solution_extension.expand_solution(new_solution, dbsession = dbs)  
             # return the updted solutions in the response
             schema = ExtendedSolutionSchema(many=False)
             data = schema.dump(new_solution)
             logger.debug("data: %s", data)
             return data, 200
-        except:
-            db.session.rollback()
-            raise
-        finally:
-            db.session.close()
-
-
-
-    # otherwise, nope, deployment doesn't exist, so that's an error
-    else:
-        db.session.close()
-        abort(404, f"Solution {oid} not found")
+            # otherwise, nope, deployment doesn't exist, so that's an error
+        else:
+            abort(404, f"Solution {oid} not found")
 
 
 def delete(oid):
@@ -233,20 +220,20 @@ def delete(oid):
     :param key: id of the solutions to delete
     :return:    200 on successful delete, 404 if not found
     """
-    # Does the solution to delete exist?
-    existing_solution = (
-        db.session.query(Solution).filter(Solution.id == oid).one_or_none()
-    )
 
-    # if found?
-    if existing_solution is not None:
-        existing_solution.isActive = False
-        db.session.merge(existing_solution)
-        db.session.commit()
+    with db_session() as dbs:
+        # Does the solution to delete exist?
+        existing_solution = (
+            dbs.query(Solution).filter(Solution.id == oid).one_or_none()
+        )
 
-        return make_response(f"Solution {oid} successfully deleted", 200)
+        # if found?
+        if existing_solution is not None:
+            existing_solution.isActive = False
+            dbs.merge(existing_solution)
+            dbs.commit()
+            return make_response(f"Solution {oid} successfully deleted", 200)
 
-    # Otherwise, nope, solution to delete not found
-    else:
-        db.session.close()
-        abort(404, f"Solution {oid} not found")
+        # Otherwise, nope, solution to delete not found
+        else:
+            abort(404, f"Solution {oid} not found")
