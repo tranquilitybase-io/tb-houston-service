@@ -396,6 +396,7 @@ class ExtendedApplicationDeploymentSchema(Schema):
     deploymentState = fields.Str()
     taskId = fields.Str()
     lzEnvironmentId = fields.Int()
+    lzEnvironment = fields.Nested(LZEnvironmentSchema(many=False))
     workspaceProjectId = fields.Str()
     deploymentProjectId = fields.Str()
     lastUpdated = fields.Str()

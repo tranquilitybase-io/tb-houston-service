@@ -193,6 +193,9 @@ def deployment_read_all():
         app_deployments = (
             dbs.query(ApplicationDeployment).filter(ApplicationDeployment.deploymentState != "").all()
         )
+        for ad in app_deployments:
+            ad.lzEnvironment=dbs.query(LZEnvironment).filter(LZEnvironment.id == ad.lzEnvironmentId).one_or_none()
+
         schema = ExtendedApplicationDeploymentSchema(many=True)
         data = schema.dump(app_deployments)
         #logger.debug("deployment_read_all::applications data: %s", data)
