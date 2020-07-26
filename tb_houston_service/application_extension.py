@@ -22,14 +22,17 @@ def expand_application(app, dbsession):
     # ).all()
 
     app_deps = dbsession.query(ApplicationDeployment).filter(ApplicationDeployment.applicationId == app.id).all()
-    if all(elem.deploymentState == DeploymentStatus.SUCCESS for elem in app_deps):
-        app.deploymentState = DeploymentStatus.SUCCESS
-    elif any(elem.deploymentState == DeploymentStatus.PENDING for elem in app_deps):
-        app.deploymentState = DeploymentStatus.PENDING
-    elif any(elem.deploymentState == DeploymentStatus.FAILURE for elem in app_deps):
-        app.deploymentState = DeploymentStatus.FAILURE
-    elif any(elem.deploymentState == DeploymentStatus.STARTED for elem in app_deps):
-        app.deploymentState = DeploymentStatus.STARTED
+    logger.debug("expand_application: %s", app_deps)
+    if len(app_deps) > 0:
+        if all(elem.deploymentState == DeploymentStatus.SUCCESS for elem in app_deps):
+            app.deploymentState = DeploymentStatus.SUCCESS
+        elif any(elem.deploymentState == DeploymentStatus.PENDING for elem in app_deps):
+            app.deploymentState = DeploymentStatus.PENDING
+        elif any(elem.deploymentState == DeploymentStatus.FAILURE for elem in app_deps):
+            app.deploymentState = DeploymentStatus.FAILURE
+        elif any(elem.deploymentState == DeploymentStatus.STARTED for elem in app_deps):
+            app.deploymentState = DeploymentStatus.STARTED
     else:
-        app.deploymentState = None                     
+        app.deploymentState = None                    
+    logger.debug("expand_application::deploymentState: %s", app.deploymentState)     
     return app

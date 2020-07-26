@@ -167,6 +167,7 @@ def deployment_create(applicationDeploymentDetails):
 
             app_deployment = dbs.query(ApplicationDeployment).filter(
                 ApplicationDeployment.solutionId == sol.id,
+                ApplicationDeployment.applicationId == app_id,
                 ApplicationDeployment.lzEnvironmentId == lzenv.id
             ).one_or_none()
             if not app_deployment:
