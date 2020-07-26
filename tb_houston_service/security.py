@@ -5,7 +5,6 @@ from werkzeug.exceptions import Unauthorized
 from google.oauth2 import id_token
 from google.auth.transport import requests
 from tb_houston_service.models import User
-from config.db_lib import db_session
 import logging
 
 
