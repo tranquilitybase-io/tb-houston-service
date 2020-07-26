@@ -50,7 +50,7 @@ def decode_token(token):
         six.raise_from(Unauthorized, e)
 
 
-def get_valid_user_from_token(dbsession = None):
+def get_valid_user_from_token(dbsession):
     """
     Get currently logged in user id.
     :return:        user id
@@ -67,6 +67,5 @@ def get_valid_user_from_token(dbsession = None):
     claims = decode_token(token)
     logger.debug("Claims: %s", claims)  
 
-    dbs = dbsession or db_session()
-    user = dbs.query(User).filter(User.email == claims.get("email"), User.isActive).one_or_none()
+    user = dbsession.query(User).filter(User.email == claims.get("email"), User.isActive).one_or_none()
     return user

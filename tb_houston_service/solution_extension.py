@@ -1,5 +1,4 @@
 import logging
-from config.db_lib import db_session
 from tb_houston_service.models import Application
 from tb_houston_service.models import Team
 from tb_houston_service.models import BusinessUnit

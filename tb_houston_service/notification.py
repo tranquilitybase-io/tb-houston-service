@@ -88,7 +88,6 @@ def read_all(typeId = None, toUserId = None, isRead = None, isActive = None, pag
 
 
 def create(notification, typeId, dbsession):
-    dbs = dbsession or db_session()
     # if id is zero or None (null), we create a a new notification otherwise
     #  we update an existing notification.
     oid = notification.get("id", None)
@@ -115,9 +114,9 @@ def create(notification, typeId, dbsession):
             tmp_notification["fromUserId"] = notification.get("fromUserId")
             tmp_notification["lastUpdated"] = ModelTools.get_utc_timestamp()                                                            
             aSchema = NotificationSchema()                
-            new_notification = aSchema.load(tmp_notification, session=dbs)
-            dbs.add(new_notification)  
-            dbs.flush()
+            new_notification = aSchema.load(tmp_notification, session=dbsession)
+            dbsession.add(new_notification)  
+            dbsession.flush()
             naSchema = NotificationActivatorSchema()
             notificationActivator = {}
             notificationActivator["notificationId"] = new_notification.id
@@ -125,8 +124,8 @@ def create(notification, typeId, dbsession):
             notificationActivator["lastUpdated"] = ModelTools.get_utc_timestamp()    
             notificationActivator["isActive"] = notification.get("isActive", True)     
             logger.debug("notificationActivator: %s", notificationActivator)                                       
-            new_na = naSchema.load(notificationActivator, session=dbs)
-            dbs.add(new_na)                     
+            new_na = naSchema.load(notificationActivator, session=dbsession)
+            dbsession.add(new_na)                     
         elif notification.get("typeId") == 2:
             tmp_notification = {}
             tmp_notification["typeId"] = notification.get("typeId")
@@ -138,17 +137,17 @@ def create(notification, typeId, dbsession):
             tmp_notification["fromUserId"] = notification.get("fromUserId")
             tmp_notification["lastUpdated"] = ModelTools.get_utc_timestamp()             
             aSchema = NotificationSchema()                
-            new_notification = aSchema.load(tmp_notification, session=dbs)                
-            dbs.add(new_notification)         
-            dbs.flush()               
+            new_notification = aSchema.load(tmp_notification, session=dbsession)                
+            dbsession.add(new_notification)         
+            dbsession.flush()               
             naSchema = NotificationTeamSchema()
             notificationTeam = {}
             notificationTeam["notificationId"] = new_notification.id
             notificationTeam["teamId"] = notification.get("teamId")
             notificationTeam["lastUpdated"] = ModelTools.get_utc_timestamp()    
             notificationTeam["isActive"] = notification.get("isActive", True) 
-            new_na = naSchema.load(notificationTeam, session=dbs)
-            dbs.add(new_na)   
+            new_na = naSchema.load(notificationTeam, session=dbsession)
+            dbsession.add(new_na)   
         elif notification.get("typeId") == 3:
             tmp_notification = {}
             tmp_notification["typeId"] = notification.get("typeId")
@@ -160,17 +159,17 @@ def create(notification, typeId, dbsession):
             tmp_notification["fromUserId"] = notification.get("fromUserId")
             tmp_notification["lastUpdated"] = ModelTools.get_utc_timestamp()             
             aSchema = NotificationSchema()                
-            new_notification = aSchema.load(tmp_notification, session=dbs)                
-            dbs.add(new_notification)         
-            dbs.flush()               
+            new_notification = aSchema.load(tmp_notification, session=dbsession)                
+            dbsession.add(new_notification)         
+            dbsession.flush()               
             nadSchema = NotificationApplicationDeploymentSchema()
             notificationApplicationDeployment = {}
             notificationApplicationDeployment["notificationId"] = new_notification.id
             notificationApplicationDeployment["applicationId"] = notification.get("applicationId")
             notificationApplicationDeployment["lastUpdated"] = ModelTools.get_utc_timestamp()    
             notificationApplicationDeployment["isActive"] = notification.get("isActive", True) 
-            new_na = nadSchema.load(notificationApplicationDeployment, session=dbs)
-            dbs.add(new_na)   
+            new_na = nadSchema.load(notificationApplicationDeployment, session=dbsession)
+            dbsession.add(new_na)   
         elif notification.get("typeId") == 4:
             tmp_notification = {}
             tmp_notification["typeId"] = notification.get("typeId")
@@ -182,28 +181,28 @@ def create(notification, typeId, dbsession):
             tmp_notification["fromUserId"] = notification.get("fromUserId")
             tmp_notification["lastUpdated"] = ModelTools.get_utc_timestamp()             
             aSchema = NotificationSchema()                
-            new_notification = aSchema.load(tmp_notification, session=dbs)                
-            dbs.add(new_notification)         
-            dbs.flush()               
+            new_notification = aSchema.load(tmp_notification, session=dbsession)                
+            dbsession.add(new_notification)         
+            dbsession.flush()               
             nsdSchema = NotificationSolutionDeploymentSchema()
             notificationSolutionDeployment = {}
             notificationSolutionDeployment["notificationId"] = new_notification.id
             notificationSolutionDeployment["solutionId"] = notification.get("solutionId")
             notificationSolutionDeployment["lastUpdated"] = ModelTools.get_utc_timestamp()    
             notificationSolutionDeployment["isActive"] = notification.get("isActive", True) 
-            new_na = nsdSchema.load(notificationSolutionDeployment, session=dbs)            
-            dbs.add(new_na)                    
+            new_na = nsdSchema.load(notificationSolutionDeployment, session=dbsession)            
+            dbsession.add(new_na)                    
         else:
             logger.error("Unknown notification type, the transaction will be rolled back for this notification!")
-            dbs.rollback()
+            dbsession.rollback()
     else:
         # Update
         aSchema = NotificationSchema()
         if notification.get("typeId") == 1:
             notification.pop("typeId")               
-            updated_notification = aSchema.load(notification, session=dbs)
-            dbs.merge(updated_notification)   
-            dbs.flush()                
+            updated_notification = aSchema.load(notification, session=dbsession)
+            dbsession.merge(updated_notification)   
+            dbsession.flush()                
             notificationActivator = dbs.query(NotificationActivator).filter(NotificationActivator.notificationId == updated_notification.id).one()
             notificationActivator.lastUpdated = ModelTools.get_utc_timestamp()
             notificationActivator.isActive = notification.get('isActive', notificationActivator.isActive)                   
@@ -277,68 +276,66 @@ def meta(typeId = None, toUserId = None, isRead = None, isActive = None):
 def delete(oid, dbsession):
     logger.debug("delete: %s", oid)    
 
-    dbs = dbsession or db_session()
-    na = dbs.query(NotificationActivator).filter(NotificationActivator.notificationId == oid, NotificationActivator.isActive).one_or_none()
+    na = dbsession.query(NotificationActivator).filter(NotificationActivator.notificationId == oid, NotificationActivator.isActive).one_or_none()
     if na: 
         na.isActive = False
         na.lastUpdated = ModelTools.get_utc_timestamp()
 
-    nt = dbs.query(NotificationTeam).filter(NotificationTeam.notificationId == oid, NotificationTeam.isActive).one_or_none()
+    nt = dbsession.query(NotificationTeam).filter(NotificationTeam.notificationId == oid, NotificationTeam.isActive).one_or_none()
     if nt: 
         nt.isActive = False
         nt.lastUpdated = ModelTools.get_utc_timestamp()
 
-    nad = dbs.query(NotificationApplicationDeployment).filter(NotificationApplicationDeployment.notificationId == oid, NotificationApplicationDeployment.isActive).one_or_none()
+    nad = dbsession.query(NotificationApplicationDeployment).filter(NotificationApplicationDeployment.notificationId == oid, NotificationApplicationDeployment.isActive).one_or_none()
     if nt: 
         nad.isActive = False
         nad.lastUpdated = ModelTools.get_utc_timestamp()
 
-    nsd = dbs.query(NotificationSolutionDeployment).filter(NotificationSolutionDeployment.notificationId == oid, NotificationSolutionDeployment.isActive).one_or_none()
+    nsd = dbsession.query(NotificationSolutionDeployment).filter(NotificationSolutionDeployment.notificationId == oid, NotificationSolutionDeployment.isActive).one_or_none()
     if nt: 
         nsd.isActive = False
         nsd.lastUpdated = ModelTools.get_utc_timestamp()
 
-    n = dbs.query(Notification).filter(Notification.id == oid, Notification.isActive).one_or_none()
+    n = dbsession.query(Notification).filter(Notification.id == oid, Notification.isActive).one_or_none()
     if n:
         n.isActive = False
         n.lastUpdated = ModelTools.get_utc_timestamp()
 
 
-def dismiss(fromUserId, activatorId = None, teamId = None, applicationId = None, solutionId = None, dbsession = None):
-    dbs = dbsession or db_session()
+def dismiss(fromUserId, dbsession, activatorId = None, teamId = None, applicationId = None, solutionId = None):
     if activatorId:
-        ns = dbs.query(Notification).filter(
+        ns = dbsession.query(Notification).filter(
             NotificationActivator.notificationId == Notification.id, 
             NotificationActivator.isActive,
             Notification.isActive,
             Notification.fromUserId == fromUserId
         ).all()
         for n in ns:
-            delete(n.id, dbs)
+            delete(n.id, dbsession)
     if teamId:
-        n = dbs.query(Notification).filter(
+        n = dbsession.query(Notification).filter(
             NotificationTeam.teamId == Notification.id, 
             NotificationTeam.isActive,
             Notification.isActive,
             Notification.fromUserId == fromUserId
         ).all()
         for n in ns:
-            delete(n.id, dbs)
+            delete(n.id, dbsession)
     if applicationId:
-        n = dbs.query(Notification).filter(
+        n = dbsession.query(Notification).filter(
             NotificationApplicationDeployment.teamId == Notification.id, 
             NotificationApplicationDeployment.isActive,
             Notification.isActive,
             Notification.fromUserId == fromUserId            
         ).all()
         for n in ns:
-            delete(n.id, dbs)
+            delete(n.id, dbsession)
     if solutionId:
-        n = dbs.query(Notification).filter(
+        n = dbsession.query(Notification).filter(
             NotificationSolutionDeployment.teamId == Notification.id, 
             NotificationSolutionDeployment.isActive,
             Notification.isActive,
             Notification.fromUserId == fromUserId            
         ).all()
         for n in ns:
-            delete(n.id, dbs)
+            delete(n.id, dbsession)

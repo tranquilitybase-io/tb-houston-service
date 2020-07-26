@@ -146,22 +146,29 @@ def deployment_create(applicationDeploymentDetails):
                 SolutionResource.solutionId == sol.id,
                 SolutionResource.key == workspace_resource_key
             ).one_or_none()
-            workspaceProjectId = workspace_resource.value
+
+            if workspace_resource:            
+                workspaceProjectId = workspace_resource.value
+            else:
+                logger.error("deployment_create: This application deployment %s is missing the workspaceProjectId, resourceKey: %s, skipping...", app_id, workspace_resource_key)
+                continue
+
             resource_key = f"project-id-{lzenv.name.lower()}"
             solution_resource = dbs.query(SolutionResource).filter(
                 SolutionResource.solutionId == sol.id,
                 SolutionResource.key == resource_key
             ).one_or_none()
-            projectId = solution_resource.value           
+
+            if solution_resource:            
+                projectId = solution_resource.value
+            else:
+                logger.error("deployment_create: This application deployment %s is missing the projectId, resourceKey: %s, skipping...", app_id, resource_key)
+                continue
+
             app_deployment = dbs.query(ApplicationDeployment).filter(
                 ApplicationDeployment.solutionId == sol.id,
                 ApplicationDeployment.lzEnvironmentId == lzenv.id
             ).one_or_none()
-
-            if not projectId:
-                logger.error("deployment_create: This application deployment %s is missing the projectId, resourceKey: %s, skipping...", app_id, resource_key)
-                continue
-
             if not app_deployment:
                 schema = ApplicationDeploymentSchema(many=False)
                 app_deployment_dict = {}

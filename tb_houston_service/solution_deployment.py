@@ -119,30 +119,29 @@ def deployment_read_one(oid):
 def start_deployment(solutionId):
     logger.debug("start_deployment")
 
-    with db_session() as dbs:
-        deployment_complete = False 
-        while deployment_complete == False:
-            sol = db.session.query(Solution).filter(Solution.id == solutionId).one_or_none()
-            if sol:
-                if sol.deploymentState == DeploymentStatus.SUCCESS or sol.deploymentState == DeploymentStatus.FAILURE:
-                    deployment_complete = True
-                    logger.debug("start_deployment::deployment complete for Solution: %s", sol.id)                
-                else:
-                    oid = sol.id
-                    task_id = sol.taskId
-                    logger.debug("start_deployment: deploymentState: %s, oid: %s, task_id %s", sol.deploymentState, oid, task_id)
-                    if task_id is None or task_id == "":
-                        response = deploy_folders_and_solution(sol)
-                        logger.debug("start_deployment::deploy_folders_and_solution: oid: %s", oid)
-                        logger.debug(pformat(response))
-                    else:
-                        logger.debug("start_deployment::polling_results_from_the_DaC: oid: %s task_id: %s", oid, task_id)
-                        response = get_solution_results_from_the_dac(oid, task_id)
-                        logger.debug(pformat(response))
-                    logger.debug("Sleep 2")
-                    time.sleep(2)
+    deployment_complete = False 
+    while deployment_complete == False:
+        sol = db.session.query(Solution).filter(Solution.id == solutionId).one_or_none()
+        if sol:
+            if sol.deploymentState == DeploymentStatus.SUCCESS or sol.deploymentState == DeploymentStatus.FAILURE:
+                deployment_complete = True
+                logger.debug("start_deployment::deployment complete for Solution: %s", sol.id)                
             else:
-                logger.debug("start_deployment::deployment Solution not found: %s", sol.id)                       
+                oid = sol.id
+                task_id = sol.taskId
+                logger.debug("start_deployment: deploymentState: %s, oid: %s, task_id %s", sol.deploymentState, oid, task_id)
+                if task_id is None or task_id == "":
+                    response = deploy_folders_and_solution(sol)
+                    logger.debug("start_deployment::deploy_folders_and_solution: oid: %s", oid)
+                    logger.debug(pformat(response))
+                else:
+                    logger.debug("start_deployment::polling_results_from_the_DaC: oid: %s task_id: %s", oid, task_id)
+                    response = get_solution_results_from_the_dac(oid, task_id)
+                    logger.debug(pformat(response))
+                logger.debug("Sleep 2")
+                time.sleep(2)
+        else:
+            logger.debug("start_deployment::deployment Solution not found: %s", sol.id)                       
     notify_user(solutionId = solutionId)     
     return True
 
