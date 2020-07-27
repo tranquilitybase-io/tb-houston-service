@@ -38,55 +38,57 @@ def read_all(
     :return:        json string of list of applications
     """
 
-    logger.debug("Parameters: isActive: %s, isFavourite: %s, status: %s, activatorId: %s, environment: %s, page: %s, page_size: %s, sort: %s",
+    logger.debug("read_all::Parameters: isActive: %s, isFavourite: %s, status: %s, activatorId: %s, environment: %s, page: %s, page_size: %s, sort: %s",
      isActive, isFavourite, status, activatorId, environment, page, page_size, sort)
     # Create the list of applications from our data
     # pre-process sort instructions
-    if sort == None:
-        application_query = db.session.query(Application).order_by(Application.id)
-    else:
-        try:
-            sort_inst = [si.split(":") for si in sort]
-            orderby_arr = []
-            for si in sort_inst:
-                si1 = si[0]
-                if len(si) > 1:
-                    si2 = si[1]
-                else:
-                    si2 = "asc"
-                orderby_arr.append(f"{si1} {si2}")
-            # print("orderby: {}".format(orderby_arr))
-            application_query = db.session.query(Application).order_by(
-                literal_column(", ".join(orderby_arr))
-            )
 
-        except SQLAlchemyError as e:
-            logger.warning(e)
+    with db_session() as dbs:
+        if sort == None:
             application_query = db.session.query(Application).order_by(Application.id)
+        else:
+            try:
+                sort_inst = [si.split(":") for si in sort]
+                orderby_arr = []
+                for si in sort_inst:
+                    si1 = si[0]
+                    if len(si) > 1:
+                        si2 = si[1]
+                    else:
+                        si2 = "asc"
+                    orderby_arr.append(f"{si1} {si2}")
+                # print("orderby: {}".format(orderby_arr))
+                application_query = db.session.query(Application).order_by(
+                    literal_column(", ".join(orderby_arr))
+                )
 
-    application_query = application_query.filter(
-        (status == None or Application.status == status),
-        (activatorId == None or Application.activatorId == activatorId),
-        (environment == None or Application.env == environment),
-        (isActive == None or Application.isActive == isActive),
-        (isFavourite == None or Application.isFavourite == isFavourite), 
-    )
+            except SQLAlchemyError as e:
+                logger.warning(e)
+                application_query = dbs.query(Application).order_by(Application.id)
 
-    if page == None or page_size == None:
-        applications = application_query.all()
-    else:
-        applications = application_query.limit(page_size).offset(page * page_size).all()
+        application_query = application_query.filter(
+            (status == None or Application.status == status),
+            (activatorId == None or Application.activatorId == activatorId),
+            (environment == None or Application.env == environment),
+            (isActive == None or Application.isActive == isActive),
+            (isFavourite == None or Application.isFavourite == isFavourite), 
+        )
+
+        if page == None or page_size == None:
+            applications = application_query.all()
+        else:
+            applications = application_query.limit(page_size).offset(page * page_size).all()
 
 
-    for app in applications:
-        application_extension.expand_application(app)
+        for app in applications:
+            application_extension.expand_application(app, dbsession = dbs)
 
-    # Serialize the data for the response
-    application_schema = ExtendedApplicationSchema(many=True)
-    data = application_schema.dump(applications)
-    logger.debug("application data:")
-    logger.debug(pformat(data))
-    return data
+        # Serialize the data for the response
+        application_schema = ExtendedApplicationSchema(many=True)
+        data = application_schema.dump(applications)
+        logger.debug("read_all::application data:")
+        logger.debug(pformat(data))
+        return data
 
 
 def read_one(oid):
@@ -107,7 +109,7 @@ def read_one(oid):
         logger.debug(pformat(application))
 
         if application is not None:
-            application = application_extension.expand_application(application)
+            application = application_extension.expand_application(application, dbsession = dbs)
             # Serialize the data for the response
             application_schema = ExtendedApplicationSchema()
             data = application_schema.dump(application)
