@@ -10,12 +10,17 @@ from tb_houston_service.DeploymentStatus import DeploymentStatus
 from tb_houston_service.models import Application
 from tb_houston_service.models import Activator
 from tb_houston_service.models import ApplicationDeployment, ApplicationDeploymentSchema
+from tb_houston_service.models import LZEnvironment
 from tb_houston_service.models import Solution
+from tb_houston_service.models import SolutionEnvironment
 from tb_houston_service.models import SolutionResource
 from tb_houston_service.tools import ModelTools
 from tb_houston_service.extendedSchemas import ExtendedApplicationDeploymentSchema
 from tb_houston_service.extendedSchemas import ExtendedApplicationForDACSchema
 from config.db_lib import db_session
+from tb_houston_service import security
+from tb_houston_service import notification
+
 
 logger = logging.getLogger("tb_houston_service.application_deployment")
 
@@ -26,34 +31,77 @@ deployment_create_result_url = (
 headers = {"Content-Type": "application/json"}
 
 
+def notify_user(applicationId):
+    """
+    Notify the user the application deployment has completed.
+
+    Args:
+        applicationId ([int]): [The application id]
+    """
+
+    with db_session() as dbs:
+        user = security.get_valid_user_from_token(dbsession=dbs)
+        logger.debug("user: %s", user)        
+        if user:
+            (app, app_deploy) = dbs.query(Application, ApplicationDeployment).filter(
+                ApplicationDeployment.applicationId == applicationId,
+                ApplicationDeployment.applicationId == Application.id
+                ).one_or_none()
+            if app:
+                deploymentState = app_deploy.deploymentState
+                if deploymentState == DeploymentStatus.SUCCESS:
+                    message = f"Your Application {applicationId} ({app.name}) deployment has completed successfully"
+                else:
+                    message = f"Your Application {applicationId} ({app.name}) deployment has failed."                    
+                payload = {
+                    "isActive": True,
+                    "toUserId": user.id,
+                    "importance": 1,
+                    "message": message,
+                    "isRead": False,
+                    "applicationId": app.id
+                }
+                notification.create(notification = payload, typeId = 3, dbsession = dbs)
+            else:
+                logger.warning("Cannot send notification, unable to find the application (%s).", app.id)
+        else:
+            logger.warning("Cannot send notification, unable to validate the token.")
+
+
 def start_deployment(applicationId):
     logger.info("start_deployment::applicationId: %s", applicationId)
     # can only deploy an application if the solution it belong's to has already been
     # deployed successfully.
-    deployment_complete = False 
-    while deployment_complete == False:
-        app_dep = db.session.query(ApplicationDeployment).filter(ApplicationDeployment.applicationId == applicationId).one_or_none()
-        if app_dep:
-            if app_dep.deploymentState == DeploymentStatus.SUCCESS or app_dep.deploymentState == DeploymentStatus.FAILURE:
-                deployment_complete = True
-                logger.debug("start_deployment::deployment complete for Application: %s", app_dep.applicationId)                
-            else:
-                oid = app_dep.applicationId
+    with db_session() as dbs:
+        deployment_complete = False 
+        while deployment_complete == False:
+            app_dep = dbs.query(ApplicationDeployment).filter(
+                ApplicationDeployment.applicationId == applicationId,
+                ApplicationDeployment.deploymentState.notin_((
+                    DeploymentStatus.SUCCESS, 
+                    DeploymentStatus.FAILURE
+                ))
+            ).first()
+            logger.debug("start_deployment::app_dep *** %s", app_dep)
+            if app_dep:
+                app_id = app_dep.applicationId
                 task_id = app_dep.taskId
-                logger.debug("start_deployment: deploymentState: %s, oid: %s, task_id %s", app_dep.deploymentState, oid, task_id)
+                logger.debug("start_deployment: deploymentState: %s, app_id: %s, workspaceProjectId %s, task_id %s", app_dep.deploymentState, app_id, app_dep.workspaceProjectId, task_id)
                 if task_id is None or task_id == "":
-                    response = deploy_application(app_dep)
-                    logger.debug("start_deployment::deploy_application: oid: %s", oid)
+                    response = deploy_application(app_dep, dbsession = dbs)
+                    dbs.flush()
+                    logger.debug("start_deployment::deploy_application: app_id: %s", app_id)
                     logger.debug(pformat(response))
                 else:
-                    logger.debug("start_deployment::polling_results_from_the_DaC: oid: %s task_id: %s", oid, task_id)
-                    response = get_application_results_from_the_dac(oid, task_id)
-                    logger.debug(pformat(response))
-                print("Sleep 5")
-                time.sleep(5)
-        else:
-            logger.debug("start_deployment::deployment Solution not found: %s", app_dep.applicationId)            
-    db.session.close()
+                    logger.debug("start_deployment::polling_results_from_the_DaC: app_id: %s task_id: %s", app_id, task_id)
+                    get_application_results_from_the_dac(app_id = app_id, lzEnvId = app_dep.lzEnvironmentId, task_id = task_id, dbsession = dbs)
+                    dbs.flush()
+                print("Sleep 2")
+                time.sleep(2)
+            else:
+                deployment_complete = True   
+        logger.debug("start_deployment::deployment complete for Application: %s", applicationId)                       
+    notify_user(applicationId = applicationId)     
     return True
 
 
@@ -68,61 +116,101 @@ def deployment_create(applicationDeploymentDetails):
     """
 
     logger.debug("deployment_create: %s", pformat(applicationDeploymentDetails))
-    oid = applicationDeploymentDetails["id"]
-    app = db.session.query(Application).filter(Application.id == oid).one_or_none()
-    app_deployment = db.session.query(ApplicationDeployment).filter(ApplicationDeployment.applicationId == oid).one_or_none()
+    app_id = applicationDeploymentDetails["id"]
 
-    if not app:
-      abort("This application doesn't exist.", 404)
+    with db_session() as dbs:
+        app = dbs.query(Application).filter(Application.id == app_id).one_or_none()
 
-    sol = db.session.query(Solution).filter(
-        ApplicationDeployment.applicationId == oid, 
-        ApplicationDeployment.applicationId == Application.id,
-        Application.solutionId == Solution.id
-        ).one_or_none()
-    if sol and sol.deploymentState != DeploymentStatus.SUCCESS:
-        logger.warning("Cannot deploy an application if the solution deployment has not completed successfully.")
-        abort(400, "Cannot deploy an application if the solution deployment has not completed successfully.")
+        if not app:
+            abort("This application doesn't exist.", 404)
 
-    if not app_deployment:
-      schema = ApplicationDeploymentSchema(many=False)
-      app_deployment_dict = {}
-      app_deployment_dict["applicationId"] = oid
-      app_deployment_dict["lastUpdated"] = ModelTools.get_utc_timestamp()
-      app_deployment_dict["deploymentState"] = DeploymentStatus.PENDING
-      app_deployment_dict["taskId"] = None
-      app_deployment_dict["solutionId"] = app.solutionId
-      app_deployment = schema.load(app_deployment_dict, session=db.session)      
-  
-      db.session.add(app_deployment)
-      db.session.commit()
-    else:
-      # Allow re-deployment of a previously unsuccessful deployment
-      if app_deployment.deploymentState != DeploymentStatus.SUCCESS:
-        app_deployment.deploymentState = DeploymentStatus.PENDING
-        app_deployment.taskId = None
-        db.session.commit()
+        sol = dbs.query(Solution).filter(
+            Application.id == app_id, 
+            Application.solutionId == Solution.id
+            ).one_or_none()
+        if sol and sol.deploymentState != DeploymentStatus.SUCCESS:
+            logger.warning("Cannot deploy an application if the solution deployment has not completed successfully.")
+            abort(400, "Cannot deploy an application if the solution deployment has not completed successfully.")
 
-    executor.submit(start_deployment, app_deployment.applicationId)
-    ext_schema = ExtendedApplicationDeploymentSchema()
-    data = ext_schema.dump(app_deployment)
-    db.session.close()
-    return data, 200
+
+        sol_envs = dbs.query(LZEnvironment).filter(
+            SolutionEnvironment.environmentId == LZEnvironment.id,
+            SolutionEnvironment.solutionId == sol.id,
+            SolutionEnvironment.isActive,
+            LZEnvironment.isActive
+        ).all()
+    
+        for lzenv in sol_envs:
+            workspace_resource_key = "project-id-workspace"
+            workspace_resource = dbs.query(SolutionResource).filter(
+                SolutionResource.solutionId == sol.id,
+                SolutionResource.key == workspace_resource_key
+            ).one_or_none()
+
+            if workspace_resource:            
+                workspaceProjectId = workspace_resource.value
+            else:
+                logger.error("deployment_create: This application deployment %s is missing the workspaceProjectId, resourceKey: %s, skipping...", app_id, workspace_resource_key)
+                continue
+
+            resource_key = f"project-id-{lzenv.name.lower()}"
+            solution_resource = dbs.query(SolutionResource).filter(
+                SolutionResource.solutionId == sol.id,
+                SolutionResource.key == resource_key
+            ).one_or_none()
+
+            if solution_resource:            
+                projectId = solution_resource.value
+            else:
+                logger.error("deployment_create: This application deployment %s is missing the projectId, resourceKey: %s, skipping...", app_id, resource_key)
+                continue
+
+            app_deployment = dbs.query(ApplicationDeployment).filter(
+                ApplicationDeployment.solutionId == sol.id,
+                ApplicationDeployment.applicationId == app_id,
+                ApplicationDeployment.lzEnvironmentId == lzenv.id
+            ).one_or_none()
+            if not app_deployment:
+                schema = ApplicationDeploymentSchema(many=False)
+                app_deployment_dict = {}
+                app_deployment_dict["applicationId"] = app_id
+                app_deployment_dict["lastUpdated"] = ModelTools.get_utc_timestamp()
+                app_deployment_dict["deploymentState"] = DeploymentStatus.PENDING
+                app_deployment_dict["taskId"] = None
+                app_deployment_dict["solutionId"] = app.solutionId
+                app_deployment_dict["deploymentProjectId"] = projectId
+                app_deployment_dict["lzEnvironmentId"] = lzenv.id                
+                app_deployment_dict["workspaceProjectId"] = workspaceProjectId 
+
+                app_deployment = schema.load(app_deployment_dict, session=db.session)      
+                dbs.add(app_deployment)
+            else:
+                # Allow re-deployment of a previously unsuccessful deployment
+                if app_deployment.deploymentState != DeploymentStatus.SUCCESS:
+                    app_deployment.deploymentState = DeploymentStatus.PENDING
+                    app_deployment.taskId = None
+
+    # above db transaction should be complete before the next steps
+    executor.submit(start_deployment, app_id)
+
+    return make_response("Application deployment is complete.", 200)
 
 
 def deployment_read_all():
-    app_deployments = (
-        db.session.query(ApplicationDeployment).filter(ApplicationDeployment.deploymentState != "").all()
-    )
-    schema = ExtendedApplicationDeploymentSchema(many=True)
-    data = schema.dump(app_deployments)
+    with db_session() as dbs:
+        app_deployments = (
+            dbs.query(ApplicationDeployment).filter(ApplicationDeployment.deploymentState != "").all()
+        )
+        for ad in app_deployments:
+            ad.lzEnvironment=dbs.query(LZEnvironment).filter(LZEnvironment.id == ad.lzEnvironmentId).one_or_none()
 
-    db.session.close()
-    logger.debug("applications data: %s", data)
-    return data, 200
+        schema = ExtendedApplicationDeploymentSchema(many=True)
+        data = schema.dump(app_deployments)
+        #logger.debug("deployment_read_all::applications data: %s", data)
+        return data, 200
 
 
-def deployment_update(oid, applicationDeploymentDetails):
+def deployment_update(app_id, lzEnvId, applicationDeploymentDetails, dbsession):
     """
     Updates an existing applications in the application list with the deployed status.
 
@@ -131,76 +219,57 @@ def deployment_update(oid, applicationDeploymentDetails):
     :return:       updated application
     """
 
-    logger.debug(applicationDeploymentDetails)
+    logger.debug("deployment_update::applicationDeploymentDetails: %s", applicationDeploymentDetails)
 
     # Does the application exist in application list?
     existing_application_deployment = (
-        db.session.query(ApplicationDeployment).filter(ApplicationDeployment.applicationId == oid).one_or_none()
+        dbsession.query(ApplicationDeployment).filter(
+            ApplicationDeployment.applicationId == app_id,
+            ApplicationDeployment.lzEnvironmentId == lzEnvId
+        ).one_or_none()
     )
 
     # Does the application deployment exist?
-    if existing_application_deployment is not None:
-        schema = ApplicationDeploymentSchema(many=False)       
-        applicationDeploymentDetails['applicationId'] = oid
-        if "id" in applicationDeploymentDetails:
-            del applicationDeploymentDetails["id"]
-        app = db.session.query(Application).filter(Application.id == oid).one_or_none()
-        if app:
-          applicationDeploymentDetails['solutionId'] = app.solutionId      
-        update_application_deployment = schema.load(
-            applicationDeploymentDetails, session=db.session
-        )
-        update_application_deployment.applicationId = oid
-        update_application_deployment.lastUpdated = ModelTools.get_utc_timestamp()
-        db.session.merge(update_application_deployment)
-        db.session.commit()
-
-        # return the updted solutions in the response
-        schema = ApplicationDeploymentSchema(many=False)
-        data = schema.dump(update_application_deployment)
-        return data, 200
-
-    # otherwise, nope, deployment doesn't exist, so that's an error
+    if existing_application_deployment:   
+        existing_application_deployment.lastUpdated = ModelTools.get_utc_timestamp()
+        if "deploymentState" in applicationDeploymentDetails:
+            existing_application_deployment.deploymentState = applicationDeploymentDetails["deploymentState"]
+        if "taskId" in applicationDeploymentDetails:
+            existing_application_deployment.taskId = applicationDeploymentDetails["taskId"]            
+        dbsession.merge(existing_application_deployment)
     else:
-        abort(404, f"Solution {oid} not found")
+        logger.debug("deployment_update::existing application deployment not found, %s, %s", app_id, lzEnvId)
 
 
-def deploy_application(app_deployment):
-    logger.debug("app_deployment: %s", app_deployment)
+def deploy_application(app_deployment, dbsession):
+    logger.debug("deploy_application:: %s", app_deployment)
     # expand fields for DaC application deployment
-    with db_session() as dbs:
-        ws_key = "project-id-workspace"
-        sol_res_ws = dbs.query(SolutionResource).filter(SolutionResource.solutionId == app_deployment.solutionId, SolutionResource.key == ws_key).one_or_none()
-        app = dbs.query(Application).filter(Application.id == app_deployment.applicationId).one_or_none()
-        
-        if sol_res_ws: 
-            app_deployment.workspaceProjectId = sol_res_ws.value
-
-        if app:
-            act = dbs.query(Activator).filter(Activator.id == app.activatorId).one_or_none()
-            if act:
-                app_deployment.activatorGitUrl = act.activatorLink
-                app_deployment.deploymentEnvironment = app.env
-                #deploymentProjectIdKey = "project-id-" + app_deployment.deploymentEnvironment.lower()
-                deploymentProjectIdKey = "project-id-development".lower()
-                sol_res_pi = dbs.query(SolutionResource).filter(SolutionResource.solutionId == app_deployment.solutionId, SolutionResource.key == deploymentProjectIdKey).one_or_none()
-                if sol_res_pi:
-                    app_deployment.deploymentProjectId = sol_res_pi.value
-                else:
-                    app_deployment.deploymentProjectId = ""
-
-                app_deployment.mandatoryVariables = []
-                app_deployment.optionalVariables = []
-                app_deployment.id = app.id
-                app_deployment.name = app.name
-                app_deployment.description = app.description
-                return send_application_deployment_to_the_dac(app_deployment)
-    return abort(500, "Unable to deploy application!")
+    app, act, lzenv = dbsession.query(Application, Activator, LZEnvironment).filter(
+        Activator.id == Application.activatorId,
+        Application.id == app_deployment.applicationId,
+        ApplicationDeployment.applicationId == Application.id,
+        ApplicationDeployment.lzEnvironmentId == LZEnvironment.id,
+        LZEnvironment.id == app_deployment.lzEnvironmentId            
+    ).one_or_none()
+    if act:
+        app_deployment.activatorGitUrl = act.activatorLink
+        app_deployment.deploymentEnvironment = lzenv.name.lower()
+        app_deployment.workspaceProjectId = app_deployment.workspaceProjectId
+        app_deployment.deploymentProjectId = app_deployment.deploymentProjectId
+        app_deployment.mandatoryVariables = []
+        app_deployment.optionalVariables = []
+        app_deployment.id = app.id
+        app_deployment.name = app.name
+        app_deployment.description = app.description
+        return send_application_deployment_to_the_dac(app_deployment, dbsession = dbsession)
+    else:
+        logger.error("deploy_application::activator not found, %s!", app.activatorId)
 
 
 # Send the application to the DAC
-def send_application_deployment_to_the_dac(app_deployment):
-    oid = app_deployment.applicationId
+def send_application_deployment_to_the_dac(app_deployment, dbsession):
+    app_id = app_deployment.applicationId
+    lzEnvId = app_deployment.lzEnvironmentId
     schema = ExtendedApplicationForDACSchema(many=False)
     application_deployment_data = schema.dump(app_deployment)
     application_deployment_data = json.dumps(application_deployment_data, indent=4)
@@ -219,16 +288,16 @@ def send_application_deployment_to_the_dac(app_deployment):
             pformat(resp_json),
         )
     except requests.exceptions.RequestException as e:
-        logger.debug(
+        logger.error(
             "send_application_deployment_to_the_dac::Failed during request to DAC %s", e
         )
-        abort("Failed communicating with the DAC", 500)
+        abort(500, "Failed communicating with the DAC")
 
     try:
         taskid = resp_json.get("taskid", None)
         # update with taskId
         deployment_json = {
-            "id": oid,
+            "id": app_id,
             "taskId": taskid,
             "deploymentState": DeploymentStatus.PENDING,
         }
@@ -238,16 +307,15 @@ def send_application_deployment_to_the_dac(app_deployment):
             pformat(deployment_json),
         )
         logger.debug(pformat(deployment_json))
-        deployment_update(oid, deployment_json)
+        deployment_update(app_id, lzEnvId, deployment_json, dbsession)
         return deployment_json
     except requests.exceptions.RequestException as e:
-        logger.debug(
+        logger.error(
             "send_application_deployment_to_the_dac::Failed updating the database with the response from the DAC, %s.",
             e,
         )
-        abort(
-            "send_application_deployment_to_the_dac::Failed updating the database with the response from the DAC.",
-            500,
+        abort(500,
+            "send_application_deployment_to_the_dac::Failed updating the database with the response from the DAC."
         )
 
 
@@ -259,13 +327,13 @@ def validate_json(some_json):
         return False
 
 
-def get_application_results_from_the_dac(oid, task_id):
+def get_application_results_from_the_dac(app_id, lzEnvId, task_id, dbsession):
     """
     Get the application deployment results from the DAC.
     params: task_id
     """
     logger.debug(
-        "get_application_results_from_the_dac: oid: %s taskId: %s", oid, task_id
+        "get_application_results_from_the_dac: oid: %s taskId: %s", app_id, task_id
     )
     resp_json = None
     try:
@@ -277,13 +345,13 @@ def get_application_results_from_the_dac(oid, task_id):
             "get_application_results_from_the_dac::Failed during request to DAC, %s", e
         )
         abort(
-            "get_application_results_from_the_dac::failed communicating with the DAC",
             500,
+            "get_application_results_from_the_dac::failed communicating with the DAC"
         )
 
     # update ApplicationDeployment with results
     deployment_json = {
-      "applicationId": oid,
+      "applicationId": app_id,
       "deploymentState": resp_json.get("status", "ERROR")
     }
     logger.debug(
@@ -291,15 +359,15 @@ def get_application_results_from_the_dac(oid, task_id):
         pformat(deployment_json),
     )
     try:
-        deployment_update(oid, deployment_json)
+        deployment_update(app_id, lzEnvId, deployment_json, dbsession = dbsession)
     except requests.exceptions.RequestException as e:
         logger.debug(
             "get_application_results_from_the_dac::Failed updating the ApplicationDeployment with the response from the DAC, %s",
             e,
         )
         abort(
-            "get_application_results_from_the_dac::Failed updating the ApplicationDeployment with the response from the DAC.",
-            500,
+            500, 
+            "get_application_results_from_the_dac::Failed updating the ApplicationDeployment with the response from the DAC."
         )
 
     if resp_json.get("status", "ERROR") != DeploymentStatus.SUCCESS:

@@ -172,6 +172,14 @@ def set_activator_status(oid):
     assert resp_json["id"] == oid
     assert resp_json["status"] == "Locked"
 
+    payload = {"id": oid, "status": "Available"}
+    resp = requests.post(url, headers=headers, data=json.dumps(payload, indent=4))
+    resp_json = resp.json()
+    # Validate response body for updated values
+    assert resp.status_code == 200
+    assert resp_json["id"] == oid
+    assert resp_json["status"] == "Available"
+
 
 def put(oid):
 

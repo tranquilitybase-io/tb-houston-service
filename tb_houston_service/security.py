@@ -1,15 +1,29 @@
-import logging
 import os
 import six
+import connexion
 from werkzeug.exceptions import Unauthorized
 from google.oauth2 import id_token
 from google.auth.transport import requests
+from tb_houston_service.models import User
+import logging
+
 
 CLIENT_ID = os.environ.get("CLIENT_ID")
 
-logger = logging.getLogger("security")
+logger = logging.getLogger("tb_houston_service.security")
 
 def decode_token(token):
+    """
+    Args:
+        token ([string]): [Authorisation Bearer token]
+
+    Raises:
+        ValueError: [Unauthorized]
+
+    Returns:
+        [dict]: [oauth claims]
+    """
+
     logger.debug("decode_token: %s", token)
     logger.debug("CLIENT_ID: %s", CLIENT_ID)    
     try:
@@ -33,3 +47,24 @@ def decode_token(token):
         return idinfo
     except ValueError as e:
         six.raise_from(Unauthorized, e)
+
+
+def get_valid_user_from_token(dbsession):
+    """
+    Get currently logged in user id.
+    :return:        user id
+    :return:        None if no valid user id
+    """
+
+    authorization = connexion.request.headers.get('Authorization')
+    if not authorization:
+        return None
+
+    token = authorization.split(' ')[1]
+
+    logger.debug("Authorization: %s", token)
+    claims = decode_token(token)
+    logger.debug("Claims: %s", claims)  
+
+    user = dbsession.query(User).filter(User.email == claims.get("email"), User.isActive).one_or_none()
+    return user
