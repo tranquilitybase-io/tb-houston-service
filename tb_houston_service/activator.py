@@ -15,6 +15,7 @@ from config import db
 from config.db_lib import db_session
 from tb_houston_service.models import Activator, ActivatorSchema
 from tb_houston_service.models import User
+from tb_houston_service.models import Notification
 from tb_houston_service import notification
 from tb_houston_service.tools import ModelTools
 from tb_houston_service.extendedSchemas import ExtendedActivatorSchema
@@ -281,30 +282,56 @@ def delete(oid):
 
 
 def notify_user(message, activatorId, toUserId, importance = 1):
+    logger.debug("notify_users fromUserId: %s message: %s activatorId: %s", toUserId, message, activatorId)
     # Notify all user 
-    notification_payload = { 
-        "activatorId": activatorId,
-        "message": message,
-        "toUserId": toUserId,
-        "importance": importance
-    }
-    notification.create(notification_payload, typeId = 1)
+    with db_session() as dbs:
+        # To avoid sending duplicate notifications, send only if no previous active message.
+        existing_notifications = dbs.query(Notification).filter(
+            Notification.message == message, 
+            Notification.toUserId == toUserId, 
+            Notification.isActive
+        ).count()
+        logger.debug("existing_notifications: %s", existing_notifications)
+        if existing_notifications == 0:
+            notification_payload = { 
+                "activatorId": activatorId,
+                "message": message,
+                "toUserId": toUserId,
+                "importance": importance
+            }
+            notification.create(notification_payload, typeId = 1, dbsession = dbs)
+            # Auto-dismiss the previous notification from the user
+            notification.dismiss(fromUserId = toUserId, activatorId = activatorId, dbsession = dbs)            
 
 
-def notify_admins(message, activatorId, importance = 1):
+def notify_admins(message, activatorId, fromUserId, importance = 1):
+    logger.debug("notify_admins fromUserId: %s message: %s activatorId: %s", fromUserId, message, activatorId)
     # Notify all admins 
     notification_payload = { 
         "activatorId": activatorId,
         "message": message,
+        "fromUserId": fromUserId,
         "toUserId": 0,
         "importance": importance
     }
 
+    # TODO: Send admin notifications to teammember.isTeamAdmin, 
+    # joining with activator.businessUnitId when that become available. 
     with db_session() as dbs:
         admins = dbs.query(User).filter(User.isAdmin, User.isActive).all()
         for admin in admins:
-            notification_payload["toUserId"] = admin.id
-            notification.create(notification_payload, typeId = 1, dbsession = dbs)
+            # To avoid sending duplicate notifications, send only if no previous active message.
+            existing_notifications = dbs.query(Notification).filter(
+                Notification.message == message, 
+                Notification.toUserId == admin.id, 
+                Notification.isActive
+            ).count()
+            logger.debug("existing_notifications: %s", existing_notifications)
+            if existing_notifications == 0:
+                notification_payload["toUserId"] = admin.id
+                notification.create(notification_payload, typeId = 1, dbsession = dbs)
+                # Auto-dismiss the previous notification from the user
+                #notification.dismiss(fromUserId = fromUserId, activatorId = activatorId, dbsession = dbs)
 
 
 def setActivatorStatus(activatorDetails):
@@ -340,7 +367,7 @@ def setActivatorStatus(activatorDetails):
                 full_name = (updated_activator.accessRequestedBy.firstName or "") + " "  + (updated_activator.accessRequestedBy.lastName or "") 
                 activator_name = f"Activator {updated_activator.id} ({updated_activator.name})"
                 message = f"{full_name} has requested access to {activator_name}"
-                notify_admins(message = message, activatorId = updated_activator.id)
+                notify_admins(message = message, activatorId = updated_activator.id, fromUserId = updated_activator.accessRequestedById)
             elif updated_activator.status == "Available" and updated_activator.accessRequestedById:
                 activator_name = f"Activator {updated_activator.id} ({updated_activator.name})"
                 message = f"Access to {activator_name} has been granted."

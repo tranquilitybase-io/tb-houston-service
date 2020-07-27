@@ -82,7 +82,6 @@ def create(teamDetails):
     return data, 201
 
 
-
 def update(oid, teamDetails):
     """
     Updates an existing team in the team list
@@ -114,6 +113,49 @@ def update(oid, teamDetails):
         )
         update_team.accessRequestedById = teamDetails.get(
             "accessRequestedById", existing_team.accessRequestedById
+        )
+        update_team.lastUpdated = ModelTools.get_utc_timestamp()
+        update_team.isActive = teamDetails.get("isActive", existing_team.isActive)
+
+        db.session.merge(update_team)
+        db.session.commit()
+
+        # return the updted team in the response
+        data = schema.dump(update_team)
+        return data, 200
+
+    # otherwise, nope, deployment doesn't exist, so that's an error
+    abort(404, f"Team not found")
+
+
+def patch(oid, teamDetails):
+    """
+    Patch update an existing team in the team list
+
+    :param id:    id of the team to update in the team list
+    :param team:   team to update
+    :return:       updated team.
+    """
+
+    app.logger.debug(pformat(teamDetails))
+
+    if teamDetails.get("id") and teamDetails.get("id") != int(oid):
+        abort(400, "Id mismatch in path and body")
+
+    # Does the team exist in team list?
+    existing_team = db.session.query(Team).filter(Team.id == oid).one_or_none()
+
+    # Does team exist?
+
+    if existing_team is not None:
+        schema = TeamSchema()
+        update_team = schema.load(teamDetails, session=db.session)
+        update_team.name = teamDetails.get("name", existing_team.name)
+        update_team.description = teamDetails.get(
+            "description", existing_team.description
+        )
+        update_team.businessUnitId = teamDetails.get(
+            "businessUnitId", existing_team.businessUnitId
         )
         update_team.lastUpdated = ModelTools.get_utc_timestamp()
         update_team.isActive = teamDetails.get("isActive", existing_team.isActive)

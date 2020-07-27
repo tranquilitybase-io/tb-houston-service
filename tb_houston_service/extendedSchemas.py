@@ -8,7 +8,13 @@ from tb_houston_service.models import LZLanVpcSchema
 from tb_houston_service.models import CloudRoleSchema
 from tb_houston_service.models import UserSchema
 from tb_houston_service.models import CISchema, CDSchema, SourceControlSchema
+from tb_houston_service.models import NotificationTypeSchema
 from marshmallow_oneofschema import OneOfSchema
+from tb_houston_service.models import NotificationActivatorSchema
+from tb_houston_service.models import NotificationTeamSchema
+from tb_houston_service.models import NotificationApplicationDeploymentSchema
+from tb_houston_service.models import NotificationSolutionDeploymentSchema
+
 
 
 logger = logging.getLogger("tb_houston_service.extendedSchemas")
@@ -105,9 +111,9 @@ class ExtendedActivatorSchema(Schema):
 
     @post_load(pass_original=True)
     def deserialize_post_load(self, data, original_data, **kwargs):
-        logger.debug(
-            "ExtendedActivatorSchema::post_load::serialize_post_load: %s", data
-        )
+        #logger.debug(
+        #    "ExtendedActivatorSchema::post_load::serialize_post_load: %s", data
+        #)
         data["envs"] = json.dumps(original_data.envs)
         data["platforms"] = json.dumps(original_data.platforms)
         data["regions"] = json.dumps(original_data.regions)
@@ -119,7 +125,7 @@ class ExtendedActivatorSchema(Schema):
 
     @post_dump(pass_original=True)
     def deserialize_post_dump(self, data, original_data, **kwargs):
-        logger.debug("ExtendedActivatorSchema::post_dump %s", original_data)
+        #logger.debug("ExtendedActivatorSchema::post_dump %s", original_data)
         data["envs"] = json.loads(original_data.envs)
         data["platforms"] = json.loads(original_data.platforms)
         data["regions"] = json.loads(original_data.regions)
@@ -400,11 +406,15 @@ class ExtendedApplicationDeploymentSchema(Schema):
     id = fields.Int()
     deploymentState = fields.Str()
     taskId = fields.Str()
+    lzEnvironmentId = fields.Int()
+    lzEnvironment = fields.Nested(LZEnvironmentSchema(many=False))
+    workspaceProjectId = fields.Str()
+    deploymentProjectId = fields.Str()
     lastUpdated = fields.Str()
 
     @post_dump(pass_original=True)
     def deserialize_post_dump(self, data, original_data, **kwargs):
-        logger.debug("ExtendedActivatorSchema::post_dump %s", original_data)
+        #logger.debug("ExtendedApplicationDeploymentSchema::post_dump %s", original_data)
         data["id"] = original_data.applicationId
         return data
 
@@ -433,16 +443,69 @@ class ExtendedNotificationActivatorSchema(Schema):
     message = fields.Str()
     isRead = fields.Boolean()
     typeId = fields.Int()
-    activatorId = fields.Int()
-    activator = fields.Nested(ExtendedActivatorSchema)    
+    typeObj = fields.Nested(NotificationTypeSchema)
+    details = fields.Nested(NotificationActivatorSchema)    
+
+
+class ExtendedNotificationTeamSchema(Schema):
+    id = fields.Int()
+    isActive = fields.Bool()
+    lastUpdated = fields.Str()
+    toUserId = fields.Int()
+    fromUserId = fields.Int()
+    importance = fields.Int()
+    message = fields.Str()
+    isRead = fields.Boolean()
+    typeId = fields.Int()
+    type = fields.Nested(NotificationTypeSchema)
+    details = fields.Nested(NotificationTeamSchema)    
+
+
+class ExtendedNotificationApplicationDeploymentSchema(Schema):
+    id = fields.Int()
+    isActive = fields.Bool()
+    lastUpdated = fields.Str()
+    toUserId = fields.Int()
+    fromUserId = fields.Int()
+    importance = fields.Int()
+    message = fields.Str()
+    isRead = fields.Boolean()
+    typeId = fields.Int()
+    type = fields.Nested(NotificationTypeSchema)
+    details = fields.Nested(NotificationApplicationDeploymentSchema)   
+
+
+class ExtendedNotificationSolutionDeploymentSchema(Schema):
+    id = fields.Int()
+    isActive = fields.Bool()
+    lastUpdated = fields.Str()
+    toUserId = fields.Int()
+    fromUserId = fields.Int()
+    importance = fields.Int()
+    message = fields.Str()
+    isRead = fields.Boolean()
+    typeId = fields.Int()
+    type = fields.Nested(NotificationTypeSchema)
+    details = fields.Nested(NotificationSolutionDeploymentSchema)   
 
 
 class ExtendedNotificationSchema(OneOfSchema):
-    type_schemas = {"ACTIVATOR_ACCESS": ExtendedNotificationActivatorSchema}
+    type_field = "typeName"
+    type_schemas = {
+        "ACTIVATOR_ACCESS": ExtendedNotificationActivatorSchema,
+        "TEAM_ACCESS": ExtendedNotificationTeamSchema,
+        "APPLICATION_DEPLOYMENT": ExtendedNotificationApplicationDeploymentSchema,
+        "SOLUTION_DEPLOYMENT": ExtendedNotificationSolutionDeploymentSchema                
+    }
 
     def get_obj_type(self, obj):
-        if hasattr(obj, "activator"):
+        if obj.typeId == 1:
             return "ACTIVATOR_ACCESS"
+        elif obj.typeId == 2:
+            return "TEAM_ACCESS"
+        elif obj.typeId == 3:
+            return "APPLICATION_DEPLOYMENT"
+        elif obj.typeId == 4:
+            return "SOLUTION_DEPLOYMENT"                        
         else:
             raise Exception("Unknown object type: {}".format(obj.__class__.__name__))    
-
