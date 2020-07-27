@@ -9,14 +9,14 @@ from tests import pytest_lib
 LOG_LEVEL = logging.INFO  # DEBUG, INFO, WARNING, ERROR, CRITICAL
 
 HOUSTON_SERVICE_URL = os.environ["HOUSTON_SERVICE_URL"]
-url = f"http://{HOUSTON_SERVICE_URL}/api/role/"
-plural_url = f"http://{HOUSTON_SERVICE_URL}/api/roles/"
+url = f"http://{HOUSTON_SERVICE_URL}/api/cloudRole/"
+plural_url = f"http://{HOUSTON_SERVICE_URL}/api/cloudRoles/"
 
 # Additional headers.
 headers = {"Content-Type": "application/json"}
 
 
-def test_role():
+def test_cloudRole():
 
     # Testing POST request
     oid = post()
@@ -47,7 +47,7 @@ def post():
     payload = {
         "id": 0,
         "cloudIdentityGroup": "test@gftdevgcp.com",
-        "description": "eagle console test role",
+        "description": "eagle console test cloudRole",
         "name": "test",
     }
 
@@ -79,7 +79,7 @@ def put(oid):
     newpayload = {
         "id": oid,
         "cloudIdentityGroup": f"test{str(oid)}@gftdevgcp.com",
-        "description": "eagle console test role changed",
+        "description": "eagle console test cloudRole changed",
         "name": "test",
     }
 
@@ -96,7 +96,7 @@ def put(oid):
 
     # Validate response body for updated values
     assert resp.status_code == 200
-    assert resp_json["description"] == "eagle console test role changed"
+    assert resp_json["description"] == "eagle console test cloudRole changed"
     assert resp_json["cloudIdentityGroup"] == f"test{str(oid)}@gftdevgcp.com"
 
     typestest(resp_json)

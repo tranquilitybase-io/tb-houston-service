@@ -5,7 +5,8 @@ from tb_houston_service.models import TeamSchema
 from tb_houston_service.models import BusinessUnitSchema
 from tb_houston_service.models import LZEnvironmentSchema
 from tb_houston_service.models import LZLanVpcSchema
-from tb_houston_service.models import RoleSchema
+from tb_houston_service.models import CloudRoleSchema
+from tb_houston_service.models import UserSchema
 from tb_houston_service.models import CISchema, CDSchema, SourceControlSchema
 from tb_houston_service.models import NotificationTypeSchema
 from marshmallow_oneofschema import OneOfSchema
@@ -55,10 +56,21 @@ class ExtendedUserSchema(Schema):
     lastName = fields.Str()
     isAdmin = fields.Boolean()
     showWelcome = fields.Boolean()
-    role = fields.Nested(RoleSchema(many=False))
+    cloudRoles = fields.Nested(CloudRoleSchema(many=True))
     isActive = fields.Boolean()
     lastUpdated = fields.Str()
     teamCount = fields.Int()
+
+class ExtendedUserCloudRoleSchema(Schema):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    id = fields.Int()
+    userId = fields.Int()
+    user = fields.Nested(UserSchema(many=False))
+    cloudRoleId = fields.Int()
+    cloudRole = fields.Nested(CloudRoleSchema(many=False))
+    isActive = fields.Boolean()
 
 
 class ExtendedActivatorSchema(Schema):
@@ -195,15 +207,12 @@ class ExtendedSolutionSchema(Schema):
 class ExtendedTeamMemberSchema(Schema):
     id = fields.Int()
     user = fields.Nested(ExtendedUserSchema(many=False))
-    role = fields.Str()
 
 
 class ExtendedTeamMemberFullSchema(Schema):
     id = fields.Int()
     isActive = fields.Boolean()
     isTeamAdmin = fields.Boolean()
-    roleId = fields.Int()
-    role = fields.Nested(RoleSchema(many=False))
     teamId = fields.Int()
     team = fields.Nested(ExtendedTeamSchema(many=False))
     userId = fields.Int()
@@ -231,7 +240,7 @@ class ExtendedUserTeamsSchema(Schema):
     lastName = fields.Str()
     isAdmin = fields.Boolean()
     showWelcome = fields.Boolean()
-    role = fields.Str()
+    cloudRole = fields.Nested(CloudRoleSchema(many=True))
     isActive = fields.Boolean()
     lastUpdated = fields.Str()
     teamMembers = fields.Nested(ExtendedTeamMemberFullSchema(many=True))

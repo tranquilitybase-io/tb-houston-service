@@ -1,14 +1,24 @@
 import logging 
-from tb_houston_service.models import Team, TeamMember, Role
+from tb_houston_service.models import Team, TeamMember, CloudRole, UserCloudRole
 from tb_houston_service import team_member_extension
 from config import db
 
-logger = logging.getLogger("tb_houston_service.teammember")
+logger = logging.getLogger("tb_houston_service.user_extension")
 
 def expand_user(a_user):
     if a_user:                
         team_count = db.session.query(TeamMember).filter(TeamMember.userId == a_user.id, TeamMember.isActive).count()
         a_user.teamCount = team_count
+    
+        userRoles = db.session.query(UserCloudRole).filter(UserCloudRole.userId == a_user.id, UserCloudRole.isActive).all()
+        cloudRoles = []
+        
+        for userRole in userRoles:
+            cloudRole = db.session.query(CloudRole).filter(CloudRole.id == userRole.cloudRoleId).one_or_none()
+            cloudRoles.append(cloudRole)
+
+        a_user.cloudRoles = cloudRoles
+    
     return a_user
 
 
@@ -19,11 +29,6 @@ def expand_team_member(a_team_member):
 
     if a_team_member == None:
         return None
-
-    role = db.session.query(Role).filter(Role.id == a_team_member.roleId).one_or_none()
-
-    if role:
-        a_team_member.role = role
 
     tm = db.session.query(Team).filter(Team.id == a_team_member.teamId).one_or_none()
     a_team_member.team = team_member_extension.expand_team(tm)
