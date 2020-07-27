@@ -45,11 +45,12 @@ def post():
     # Test POST Then GET
     # Body
     payload = {
+        "accessRequestedById": 0,
         "businessUnitId": 0,
         "description": "Test Team",
         "id": 0,
         "isActive": True,
-        "name": "Team-Test",
+        "name": "Team-Test"
     }
 
     # convert dict to json by json.dumps() for body data.
@@ -81,11 +82,12 @@ def put(id):
 
     # Test Update Then get new value
     newpayload = {
+        "accessRequestedById": 1,
         "businessUnitId": 0,
-        "description": "Test Team",
+        "description": "Test Team Updated",
         "id": id,
         "isActive": False,
-        "name": "Team-Test-Updated",
+        "name": "Team-Test"
     }
 
     resp = requests.put(
@@ -102,8 +104,8 @@ def put(id):
 
     # Validate response body for updated values
     assert resp.status_code == 200
-    assert resp_json["name"] == "Team-Test-Updated"
-    assert resp_json["description"] == "Test Team"
+    assert resp_json["name"] == "Team-Test"
+    assert resp_json["description"] == "Test Team Updated"
     assert resp_json["isActive"] == False
 
     typestest(resp_json)

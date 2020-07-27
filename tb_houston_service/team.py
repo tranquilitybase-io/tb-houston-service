@@ -111,6 +111,9 @@ def update(oid, teamDetails):
         update_team.businessUnitId = teamDetails.get(
             "businessUnitId", existing_team.businessUnitId
         )
+        update_team.accessRequestedById = teamDetails.get(
+            "accessRequestedById", existing_team.accessRequestedById
+        )
         update_team.lastUpdated = ModelTools.get_utc_timestamp()
         update_team.isActive = teamDetails.get("isActive", existing_team.isActive)
 

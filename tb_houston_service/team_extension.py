@@ -32,6 +32,17 @@ def expand_team(a_team):
         .count()
     )
     a_team.userCount = user_count
+    
+    if a_team.accessRequestedById :
+        accessRequestedBy = (
+            db.session.query(User)
+            .filter(User.id == a_team.accessRequestedById and User.isActive)
+            .one_or_none()
+        )
+
+        if accessRequestedBy:
+            a_team.accessRequestedBy = accessRequestedBy
+        
     return a_team
 
 
@@ -67,4 +78,14 @@ def expand_team_with_users(a_team):
     for tm in team_members:
         tm.user = user_dict.get(tm.userId)
     a_team.teamMembers = team_members
+    
+    accessRequestedBy = (
+        db.session.query(User)
+        .filter(User.id == a_team.accessRequestedById and User.isActive)
+        .one_or_none()
+    )
+
+    if accessRequestedBy:
+        a_team.accessRequestedBy = accessRequestedBy
+
     return a_team
