@@ -232,7 +232,7 @@ class ExtendedTeamDACSchema(Schema):
     isActive = fields.Boolean()
     businessUnit = fields.Nested(BusinessUnitSchema(many=False))
     lastUpdated = fields.Str()
-    teamMembers = fields.Nested(ExtendedTeamMemberSchema(many=True))
+    teamMembers = fields.Nested(ExtendedTeamMemberFullSchema(many=True))
 
 
 class ExtendedUserTeamsSchema(Schema):
@@ -269,6 +269,7 @@ class ExtendedSolutionForDACSchema(Schema):
     teamId = fields.Int()
     team = fields.Nested(ExtendedTeamDACSchema(many=False))
     deploymentFolderId = fields.Str()
+    createdBy = fields.Str()
 
 
 class SolutionNamesOnlySchema(Schema):

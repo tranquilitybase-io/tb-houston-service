@@ -8,6 +8,7 @@ from tb_houston_service.models import CI,CD,SourceControl
 from tb_houston_service.tools import ModelTools
 from tb_houston_service import application_extension
 from tb_houston_service import team_extension
+from tb_houston_service import security
 
 logger = logging.getLogger('tb_houston_service.solution_extension')
 
@@ -89,6 +90,11 @@ def expand_solution_for_dac(sol, dbsession):
         if sourceControl:
             sol.sourceControl = sourceControl.value 
     
+    # set createdBy field
+    logged_in_user = security.get_valid_user_from_token(dbsession = dbsession)
+    logger.debug("logged_in_user: %s", logged_in_user)
+    if logged_in_user:
+        sol.createdBy = f"{logged_in_user.firstName} {logged_in_user.lastName}"
     return sol
 
 
