@@ -81,7 +81,7 @@ def expand_team_with_users(a_team):
     
     accessRequestedBy = (
         db.session.query(User)
-        .filter(User.id == a_team.accessRequestedById and User.isActive)
+        .filter(User.id == a_team.accessRequestedById, User.isActive)
         .one_or_none()
     )
 
