@@ -79,7 +79,7 @@ def update(id, cloudRoleDetails):
     app.logger.debug(pformat(cloudRoleDetails))
 
     if cloudRoleDetails["id"] != id:
-        abort(400, f"Id mismatch in path and body")
+        abort(400, "id mismatch in path and body")
 
     # Does the cloudRole exist in cloudRole list?
     existing_cloud_role = db.session.query(CloudRole).filter(CloudRole.id == id).one_or_none()

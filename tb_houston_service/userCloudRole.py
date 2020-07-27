@@ -89,7 +89,7 @@ def read_one(oid):
         data = userCloudRole_schema.dump(userCloudRole)
         return data
     else:
-        abort(404, f"User Role with id {oid} not found")
+        abort(404, f"User Cloud Role with id {oid} not found")
 
 
 def create(userCloudRoleDetails):
@@ -142,7 +142,7 @@ def update(oid, userCloudRoleDetails):
     app.logger.debug(pformat(userCloudRoleDetails))
 
     if userCloudRoleDetails["id"] != int(oid):
-        abort(400, f"Id mismatch in path and body")
+        abort(400, "id mismatch in path and body")
 
     # Does the user role relationship exist in userCloudRoles list?
     existing_user_role = (
@@ -165,7 +165,7 @@ def update(oid, userCloudRoleDetails):
 
     # otherwise, nope, deployment doesn't exist, so that's an error
     else:
-        abort(404, f"User Role not found")
+        abort(404, "User Role not found")
 
 
 def delete(oid):
