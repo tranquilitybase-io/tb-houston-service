@@ -66,7 +66,8 @@ def create(teamDetails):
     # Remove id as it's created automatically
     if "id" in teamDetails:
         del teamDetails["id"]
-
+    # Does the team exist already?
+   
     schema = TeamSchema(many=False)
     new_team = schema.load(teamDetails, session=db.session)
     new_team.lastUpdated = ModelTools.get_utc_timestamp()
@@ -80,8 +81,6 @@ def create(teamDetails):
 
     return data, 201
 
-    # Otherwise, it already exists, that's an error
-    abort(406, "Team already exists")
 
 
 def update(oid, teamDetails):

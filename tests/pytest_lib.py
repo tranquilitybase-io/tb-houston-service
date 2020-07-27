@@ -68,7 +68,6 @@ def typestest_activator(obj):
     assert isinstance(obj["businessUnit"], str)
     assert isinstance(obj["category"], str)
     assert isinstance(obj["cd"], list)
-    assert isinstance(obj["ci"], list)
     assert isinstance(obj["description"], str)
     assert isinstance(obj["hosting"], list)
     assert isinstance(obj["name"], str)

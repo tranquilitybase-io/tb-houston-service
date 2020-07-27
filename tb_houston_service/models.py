@@ -534,18 +534,18 @@ class NotificationActivatorSchema(SQLAlchemyAutoSchema):
         load_instance = True
 
 
-# Role
-class Role(Base):
-    __tablename__ = "role"
+# CloudRole
+class CloudRole(Base):
+    __tablename__ = "cloudRole"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
     cloudIdentityGroup = db.Column(db.String(200))
     description = db.Column(db.String(200))
 
 
-class RoleSchema(SQLAlchemyAutoSchema):
+class CloudRoleSchema(SQLAlchemyAutoSchema):
     class Meta:
-        model = Role
+        model = CloudRole
         include_fk = True
         load_instance = True
 
@@ -716,7 +716,6 @@ class TeamMember(Base):
     id = db.Column(db.Integer, primary_key=True)
     userId = db.Column(db.Integer)
     teamId = db.Column(db.Integer)
-    roleId = db.Column(db.Integer)
     isTeamAdmin = db.Column(db.Boolean())
     isActive = db.Column(db.Boolean())
 
@@ -754,6 +753,21 @@ class UserSchema(SQLAlchemyAutoSchema):
         data["lastUpdated"] = ModelTools.get_utc_timestamp()
         return data
 
+
+# User Role
+class UserCloudRole(Base):
+    __tablename__ = "userCloudRole"
+    id = db.Column(db.Integer, primary_key=True)
+    userId = db.Column(db.Integer)
+    cloudRoleId = db.Column(db.Integer)
+    isActive = db.Column(db.Boolean())
+
+
+class UserCloudRoleSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = UserCloudRole
+        include_fk = True
+        load_instance = True
 
 # VPNOnPremiseVendor
 class VPNOnPremiseVendor(Base):
