@@ -92,8 +92,9 @@ def expand_solution_for_dac(sol, dbsession):
     
     # set createdBy field
     logged_in_user = security.get_valid_user_from_token(dbsession = dbsession)
+    logger.debug("logged_in_user: %s", logged_in_user)
     if logged_in_user:
-        sol.createdBy = f"logged_in_user.firstName() logged_in_user.lastName()"
+        sol.createdBy = f"{logged_in_user.firstName} {logged_in_user.lastName}"
     return sol
 
 

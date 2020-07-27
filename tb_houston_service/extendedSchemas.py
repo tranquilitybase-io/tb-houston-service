@@ -221,7 +221,7 @@ class ExtendedTeamDACSchema(Schema):
     isActive = fields.Boolean()
     businessUnit = fields.Nested(BusinessUnitSchema(many=False))
     lastUpdated = fields.Str()
-    teamMembers = fields.Nested(ExtendedTeamMemberSchema(many=True))
+    teamMembers = fields.Nested(ExtendedTeamMemberFullSchema(many=True))
 
 
 class ExtendedUserTeamsSchema(Schema):
