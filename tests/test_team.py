@@ -46,7 +46,7 @@ def post():
     # Body
     payload = {
         "accessRequestedById": 0,
-        "businessUnitId": 0,
+        "businessUnitId": 1,
         "description": "Test Team",
         "id": 0,
         "isActive": True,
@@ -70,7 +70,7 @@ def post():
     # Validate response
     assert resp.status_code == 200
     assert resp_json["name"] == "Team-Test"
-    assert resp_json["businessUnitId"] == 0
+    assert resp_json["businessUnitId"] == 1
     assert resp_json["description"] == "Test Team"
     assert resp_headers["content-type"] == "application/json"
     typestest(resp_json)
@@ -83,7 +83,7 @@ def put(id):
     # Test Update Then get new value
     newpayload = {
         "accessRequestedById": 1,
-        "businessUnitId": 0,
+        "businessUnitId": 1,
         "description": "Test Team Updated",
         "id": id,
         "isActive": False,

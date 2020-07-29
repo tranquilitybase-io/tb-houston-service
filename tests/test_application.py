@@ -103,7 +103,7 @@ def post1():
     payload = {
         "solutionId": 1,
         "activatorId": 1,
-        "name": "test",
+        "name": "test2",
         "env": "DEV",
         "status": "Active",
         "description": "test",
@@ -123,7 +123,7 @@ def post1():
     resp_headers = resp.headers
     # Validate response
     assert resp.status_code == 200
-    assert resp_json["name"] == "test"
+    assert resp_json["name"] == "test2"
     assert resp_json["env"] == "DEV"
     assert resp_json["status"] == "Active"
     assert resp_json["description"] == "test"

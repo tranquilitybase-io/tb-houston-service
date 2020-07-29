@@ -5,6 +5,9 @@ from werkzeug.exceptions import Unauthorized
 from google.oauth2 import id_token
 from google.auth.transport import requests
 from tb_houston_service.models import User
+from tb_houston_service.models import BusinessUnit
+from tb_houston_service.models import Team
+from tb_houston_service.models import TeamMember
 import logging
 
 
@@ -68,3 +71,28 @@ def get_valid_user_from_token(dbsession):
 
     user = dbsession.query(User).filter(User.email == claims.get("email"), User.isActive).one_or_none()
     return user
+
+
+def get_business_units_for_user(dbsession):
+    business_units = None
+    user = get_valid_user_from_token(dbsession)
+    logger.debug("user: %s", user)
+    if user:
+        business_units = dbsession.query(BusinessUnit).filter(
+            BusinessUnit.id == Team.businessUnitId,
+            TeamMember.teamId == Team.id,
+            TeamMember.userId == user.id,
+            Team.isActive,
+            TeamMember.isActive,
+            BusinessUnit.isActive
+        ).all()
+    logger.debug("business_units: %s", business_units)        
+    return business_units
+
+
+def get_business_units_ids_for_user(dbsession):
+    business_units = get_business_units_for_user(dbsession)
+    business_unit_ids = None
+    if business_units:
+        business_unit_ids = [ bu.id for bu in business_units]
+    return business_unit_ids
