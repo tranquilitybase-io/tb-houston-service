@@ -4,7 +4,6 @@ solutions collection
 """
 
 # 3rd party modules
-import json
 import logging
 from flask import make_response, abort
 from sqlalchemy import literal_column
@@ -16,6 +15,7 @@ from tb_houston_service.extendedSchemas import ExtendedSolutionSchema
 from tb_houston_service.extendedSchemas import SolutionNamesOnlySchema
 from tb_houston_service import solution_extension
 from config.db_lib import db_session
+from tb_houston_service import security
 
 logger = logging.getLogger("tb_houston_service.solution")
 
@@ -55,10 +55,14 @@ def read_all(isActive=None, isFavourite=None, namesonly=None, page=None, page_si
                 logger.warning("Exception: %s", e)
                 solution_query = dbs.query(Solution).order_by(Solution.id)
 
+        # filter solutions by logged in user id
+        business_unit_ids = security.get_business_units_ids_for_user(dbsession = dbs)
+
         # Create the list of solutions from our data
         solution_query = solution_query.filter(
             (isActive == None or Solution.isActive == isActive),
-            (isFavourite == None or Solution.isFavourite == isFavourite)
+            (isFavourite == None or Solution.isFavourite == isFavourite),
+            (business_unit_ids == None or Solution.businessUnitId.in_(business_unit_ids))
         )
 
         # do limit and offset last
@@ -91,7 +95,12 @@ def read_one(oid):
     """
 
     with db_session() as dbs:
-        sol = dbs.query(Solution).filter(Solution.id == oid).one_or_none()
+        # filter solutions by logged in user 
+        business_unit_ids = security.get_business_units_ids_for_user(dbsession = dbs)
+        sol = dbs.query(Solution).filter(
+            Solution.id == oid,
+            (business_unit_ids == None or Solution.businessUnitId.in_(business_unit_ids))
+        ).one_or_none()
 
         if sol is not None:
             solution = solution_extension.expand_solution(sol, dbsession = dbs)
@@ -148,6 +157,16 @@ def create(solutionDetails):
         solutionDetails["lastUpdated"] = ModelTools.get_utc_timestamp()
         envs = solutionDetails.get('environments')
 
+        # Validate the business unit
+        business_unit_ids = security.get_business_units_ids_for_user(dbsession = dbs)
+        if business_unit_ids:
+            business_unit = solutionDetails.get("businessUnitId")
+            if business_unit not in business_unit_ids:
+                abort(400, f"Unauthorized to create solutions for business unit {business_unit}")
+        else:
+            # initially will let this pass, but in future we could abort if user is not a member of any business units
+            pass
+
         # Removing this as the below schema is not expecting this field.
         if "environments" in solutionDetails:
             del solutionDetails["environments"]
@@ -191,6 +210,20 @@ def update(oid, solutionDetails):
 
         if existing_solution is not None:
             solutionDetails['id'] = oid
+
+            # Validate the business unit
+            business_unit_ids = security.get_business_units_ids_for_user(dbsession = dbs)
+            if business_unit_ids:
+                business_unit = solutionDetails.get("businessUnitId")
+                if business_unit and business_unit not in business_unit_ids:
+                    abort(400, f"Unauthorized to update solutions for business unit {business_unit}")
+                business_unit = existing_solution.businessUnitId
+                if business_unit and business_unit not in business_unit_ids:
+                    abort(400, f"Unauthorized to update solutions for business unit {business_unit}")                
+            else:
+                # initially will let this pass, but in future we could abort if user is not a member of any business units
+                pass
+
             envs = solutionDetails.get('environments')
             # Remove envs as it's processed separately, but in the same transaction.
             if "environments" in solutionDetails:
@@ -226,6 +259,15 @@ def delete(oid):
         existing_solution = (
             dbs.query(Solution).filter(Solution.id == oid).one_or_none()
         )
+
+        # Validate the business unit
+        business_unit_ids = security.get_business_units_ids_for_user(dbsession = dbs)
+        if business_unit_ids:
+            business_unit = existing_solution.businessUnitId
+            if business_unit and business_unit not in business_unit_ids:
+                abort(400, f"Unauthorized to delete solutions for business unit {business_unit}") 
+        else:
+            pass 
 
         # if found?
         if existing_solution is not None:

@@ -13,7 +13,7 @@ def expand_team(a_team):
 
     bu = (
         db.session.query(BusinessUnit)
-        .filter(BusinessUnit.id == a_team.businessUnitId and BusinessUnit.isActive)
+        .filter(BusinessUnit.id == a_team.businessUnitId, BusinessUnit.isActive)
         .one_or_none()
     )
 
@@ -32,24 +32,24 @@ def expand_team(a_team):
         .count()
     )
     a_team.userCount = user_count
-    
-    if a_team.accessRequestedById :
+
+    if a_team.accessRequestedById:
         accessRequestedBy = (
             db.session.query(User)
-            .filter(User.id == a_team.accessRequestedById and User.isActive)
+            .filter(User.id == a_team.accessRequestedById, User.isActive)
             .one_or_none()
         )
 
         if accessRequestedBy:
             a_team.accessRequestedBy = accessRequestedBy
-        
+
     return a_team
 
 
 def expand_team_with_users(a_team):
     bu = (
         db.session.query(BusinessUnit)
-        .filter(BusinessUnit.id == a_team.businessUnitId and BusinessUnit.isActive)
+        .filter(BusinessUnit.id == a_team.businessUnitId, BusinessUnit.isActive)
         .one_or_none()
     )
 
@@ -78,7 +78,7 @@ def expand_team_with_users(a_team):
     for tm in team_members:
         tm.user = user_dict.get(tm.userId)
     a_team.teamMembers = team_members
-    
+
     accessRequestedBy = (
         db.session.query(User)
         .filter(User.id == a_team.accessRequestedById, User.isActive)
