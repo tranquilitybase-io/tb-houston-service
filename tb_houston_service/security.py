@@ -8,7 +8,6 @@ from tb_houston_service.models import User
 from tb_houston_service.models import BusinessUnit
 from tb_houston_service.models import Team
 from tb_houston_service.models import TeamMember
-from tb_houston_service.models import User
 import logging
 
 
