@@ -3,6 +3,8 @@ from tb_houston_service.models import Application
 from tb_houston_service.models import Team
 from tb_houston_service.models import BusinessUnit
 from tb_houston_service.models import LZEnvironment
+from tb_houston_service.models import LZLanVpc
+from tb_houston_service.models import LZLanVpcEnvironment
 from tb_houston_service.models import SolutionEnvironment
 from tb_houston_service.models import CI,CD,SourceControl
 from tb_houston_service.tools import ModelTools
@@ -61,9 +63,18 @@ def expand_solution_for_dac(sol, dbsession):
         )
         .all()
     )
-
-    # 20200607 - DaC can only support a list of string
-    sol.environments = [ env.name for env in environments ]
+    logger.debug("expand_solution_for_dac::environments: %s", environments)
+    # 20200730 - Expand environments + lzvpc name
+    sol.environments = environments
+    for se in sol.environments:
+        lzlanvpc = dbsession.query(LZLanVpc).filter(
+            LZLanVpcEnvironment.environmentId == se.id,
+            LZLanVpcEnvironment.lzlanvpcId == LZLanVpc.id,
+            LZLanVpcEnvironment.isActive,
+            LZLanVpc.isActive
+        ).one_or_none()
+        if lzlanvpc:
+            se.sharedVPCProjectId = lzlanvpc.sharedVPCProjectId
 
     a_team = dbsession.query(Team).filter(Team.id == sol.teamId).one_or_none()
     sol.team = team_extension.expand_team_with_users(a_team)

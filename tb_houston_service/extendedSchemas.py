@@ -248,6 +248,12 @@ class ExtendedUserTeamsSchema(Schema):
     teamMembers = fields.Nested(ExtendedTeamMemberFullSchema(many=True))
 
 
+class ExtendedLZEnvironmentForDacSchema(Schema):
+    id = fields.Int()
+    name = fields.Str()
+    sharedVPCProjectId = fields.Str()
+
+
 class ExtendedSolutionForDACSchema(Schema):
     __envelope__ = {"single": "solution", "many": "solutions"}
 
@@ -265,7 +271,7 @@ class ExtendedSolutionForDACSchema(Schema):
     cd = fields.Str()
     sourceControlId = fields.Int()
     sourceControl = fields.Str()
-    environments = fields.List(fields.Str())
+    environments = fields.Nested(ExtendedLZEnvironmentForDacSchema(many=True))
     teamId = fields.Int()
     team = fields.Nested(ExtendedTeamDACSchema(many=False))
     deploymentFolderId = fields.Str()
@@ -428,11 +434,10 @@ class ExtendedApplicationForDACSchema(Schema):
     lastUpdated = fields.Str()
     workspaceProjectId = fields.Str()
     activatorGitUrl = fields.Str()
-    deploymentEnvironment = fields.Str()
     deploymentProjectId = fields.Str()
     mandatoryVariables = fields.List(fields.Dict())
     optionalVariables = fields.List(fields.Dict())
-
+    deploymentEnvironment = fields.Nested(ExtendedLZEnvironmentForDacSchema)
 
 class ExtendedNotificationActivatorSchema(Schema):
     id = fields.Int()
