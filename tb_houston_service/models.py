@@ -108,7 +108,7 @@ class ActivatorCD(Base):
 
     def __repr__(self):
         return "<Activator(id={self.id!r}, activatorId={self.activatorId!r}, activatorId={self.cdId!r})>".format(
-            self=sel
+            self=self
         )
 
 
