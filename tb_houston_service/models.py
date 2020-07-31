@@ -31,7 +31,7 @@ class Activator(Base):
     apiManagement = db.Column(db.String(255))
     cd = db.Column(db.String(255))
     sourceControl = db.Column(db.String(255))
-    businessUnit = db.Column(db.String(255))
+    businessUnitId = db.Column(db.Integer)
     technologyOwner = db.Column(db.String(255))
     technologyOwnerEmail = db.Column(db.String(255))
     billing = db.Column(db.String(255))
