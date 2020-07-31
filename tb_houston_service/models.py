@@ -130,7 +130,7 @@ class ActivatorEnvironment(Base):
 
     def __repr__(self):
         return "<Activator(id={self.id!r}, activatorId={self.activatorId!r}, activatorId={self.envId!r})>".format(
-            self=sel
+            self=self
         )
 
 
