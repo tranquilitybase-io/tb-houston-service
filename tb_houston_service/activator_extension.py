@@ -7,78 +7,62 @@ from copy import deepcopy
 
 logger = logging.getLogger("tb_houston_service.activator_extension")
 
-
 def expand_activator(act, dbsession):
     """
-    Expand accessRequestedBy from an integer to an object. 
+    Expand ci, cd, envs, accessRequestedBy to objects. 
     Do not use, fails with:
     '_mysql_connector.MySQLInterfaceError: Python type User cannot be converted'
     Need to fix the data model later. 
     """
     logger.debug("expand_activator: %s", act)
+    #expand accessRequestedBy
     act.accessRequestedBy = (
         dbsession.query(User).filter(User.id == act.accessRequestedById).one_or_none()
+    )  
+    #expand source control
+    act.sourceControl = (
+        dbsession.query(SourceControl).filter(SourceControl.id == act.sourceControlId).one_or_none()
     )
-    expand_activator_fields(act)
-    return act
-
-
-def expand_activator_fields(act):
-    """
-    Expand ci from an integer  list to an object list. 
-    Do not use, fails with:
-    '_mysql_connector.MySQLInterfaceError: Python type User cannot be converted'
-    Need to fix the data model later. 
-    """
-    logger.debug("expand_activator_full: %s", act)
-    act = activator_ci.expand_ci(act)
-    act = activator_cd.expand_cd(act)
-    act = activator_environment.expand_environment(act)
-    act = expand_sourceControl(act)
+    #expand CI
+    act = activator_ci.expand_ci(act , dbsession)
+    #expand CD
+    act = activator_cd.expand_cd(act, dbsession)
+    #expand environments
+    act = activator_environment.expand_environment(act, dbsession)
 
     return act
-
-
-def expand_sourceControl(act):
-
-    sc_object = (
-        db.session.query(SourceControl)
-        .filter(SourceControl.id == act.sourceControlId)
-        .one_or_none()
-    )
-    act.sourceControl = sc_object
-    return act
-
 
 def refine_activator_details(activatorDetails):
-
-    newActivatorDetails = deepcopy(activatorDetails)
-
-    if "ci" in newActivatorDetails:
-        del newActivatorDetails["ci"]
-
-    if "cd" in newActivatorDetails:
-        del newActivatorDetails["cd"]
-
-    if "envs" in newActivatorDetails:
-        del newActivatorDetails["envs"]
-
-    return newActivatorDetails
-
-
-def create_activator_associations(activatorDetails, new_activator, dbs):
-
+    
+    extraFields = {}
     if "ci" in activatorDetails:
-        act_ci_list = activatorDetails["ci"]
-
+        extraFields["ci"] = activatorDetails["ci"]
+        del activatorDetails["ci"]
+    
     if "cd" in activatorDetails:
-        act_cd_list = activatorDetails["cd"]
-
+        extraFields["cd"] = activatorDetails["cd"]
+        del activatorDetails["cd"]
+    
     if "envs" in activatorDetails:
-        act_env_list = activatorDetails["envs"]
+        extraFields["envs"] = activatorDetails["envs"]
+        del activatorDetails["envs"]
+    
+    return extraFields
+     
 
+def create_activator_associations(extraFields, activator, dbsession):
+
+    if "ci" in extraFields:
+        act_ci_list = extraFields["ci"]
+    
+    if "cd" in extraFields:
+        act_cd_list = extraFields["cd"]
+    
+    if "envs" in extraFields:
+        act_env_list = extraFields["envs"]
+ 
     if act_ci_list:
-        activator_ci.create_activator_ci(new_activator.id, act_ci_list, dbs)
+            activator_ci.create_activator_ci(activator.id, act_ci_list, dbsession)
     else:
         logger.error(
             "ci details in activator are missing, the transaction will be rolled back for this activator!"
@@ -86,7 +70,7 @@ def create_activator_associations(activatorDetails, new_activator, dbs):
         dbs.rollback()
 
     if act_cd_list:
-        activator_cd.create_activator_cd(new_activator.id, act_cd_list, dbs)
+        activator_cd.create_activator_cd(activator.id, act_cd_list, dbsession)
     else:
         logger.error(
             "cd details in activator are missing, the transaction will be rolled back for this activator!"
@@ -94,18 +78,23 @@ def create_activator_associations(activatorDetails, new_activator, dbs):
         dbs.rollback()
 
     if act_env_list:
-        activator_environment.create_activator_environment(
-            new_activator.id, act_env_list, dbs
-        )
+        activator_environment.create_activator_environment(activator.id, act_env_list, dbsession)
     else:
         logger.error(
             "env details in activator are missing, the transaction will be rolled back for this activator!"
         )
         dbs.rollback()
 
+def delete_activator_associations(id, dbsession):
 
-def delete_activator_associations(id, dbs):
+    activator_ci.delete_activator_ci(id , dbsession)
+    activator_cd.delete_activator_cd(id , dbsession)
+    activator_environment.delete_activator_environment(id , dbsession)
 
-    activator_ci.delete_activator_ci(id, dbs)
-    activator_cd.delete_activator_cd(id, dbs)
-    activator_environment.delete_activator_environment(id, dbs)
+
+
+
+
+
+
+

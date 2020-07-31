@@ -1,6 +1,5 @@
 import logging
 
-from config import db
 from tb_houston_service.tools import ModelTools
 from tb_houston_service.models import ActivatorCD, CD
 
@@ -8,7 +7,7 @@ from tb_houston_service.models import ActivatorCD, CD
 logger = logging.getLogger("tb_houston_service.activator_cd")
 
 
-def create_activator_cd(activatorId, list_of_cd, dbs):
+def create_activator_cd(activatorId, list_of_cd, dbsession):
     """
     Args:
         activatorId ([int]): [The Activator id]
@@ -22,24 +21,24 @@ def create_activator_cd(activatorId, list_of_cd, dbs):
 
     # Inactivates the active activator-cd for this activator (activatorId)
     cd_list = (
-        dbs.query(ActivatorCD)
+        dbsession.query(ActivatorCD)
         .filter(ActivatorCD.activatorId == activatorId, ActivatorCD.isActive)
         .all()
     )
     for cd in cd_list:
         cd.isActive = False
-    dbs.flush()
+    dbsession.flush()
 
     for cd in list_of_cd:
         existing_act_cd = (
-            dbs.query(ActivatorCD)
+            dbsession.query(ActivatorCD)
             .filter(ActivatorCD.activatorId == activatorId, ActivatorCD.cdId == cd)
             .one_or_none()
         )
 
         if existing_act_cd:
             existing_act_cd.isActive = True
-            dbs.merge(existing_act_cd)
+            dbsession.merge(existing_act_cd)
         else:
             new_act_cd = ActivatorCD(
                 activatorId=activatorId,
@@ -47,13 +46,13 @@ def create_activator_cd(activatorId, list_of_cd, dbs):
                 lastUpdated=ModelTools.get_utc_timestamp(),
                 isActive=True,
             )
-            dbs.add(new_act_cd)
+            dbsession.add(new_act_cd)
         logger.debug("Added Activator CD: {new_act_cd} to transaction.")
 
-    return dbs
+    return dbsession
 
 
-def delete_activator_cd(activatorId, dbs):
+def delete_activator_cd(activatorId, dbsession):
     """
     Args:
         activatorId ([int]): [The Activator id]
@@ -64,26 +63,26 @@ def delete_activator_cd(activatorId, dbs):
 
     # Inactivates the active activator-cd for this activator (activatorId)
     cd_list = (
-        dbs.query(ActivatorCD)
+        dbsession.query(ActivatorCD)
         .filter(ActivatorCD.activatorId == activatorId, ActivatorCD.isActive)
         .all()
     )
     for cd in cd_list:
         cd.isActive = False
-    dbs.flush()
+    dbsession.flush()
 
-    return dbs
+    return dbsession
 
 
-def expand_cd(act):
+def expand_cd(act, dbsession):
     act_cd_list = (
-        db.session.query(ActivatorCD)
+        dbsession.query(ActivatorCD)
         .filter(ActivatorCD.activatorId == act.id, ActivatorCD.isActive)
         .all()
     )
     newList = []
     for act_cd in act_cd_list:
-        cd_object = db.session.query(CD).filter(CD.id == act_cd.cdId).one_or_none()
+        cd_object = dbsession.query(CD).filter(CD.id == act_cd.cdId).one_or_none()
         newList.append(cd_object)
     act.cd = newList
     return act

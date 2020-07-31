@@ -103,19 +103,10 @@ def read_all(
         activators = activator_query.all()
     else:
         activators = activator_query.limit(page_size).offset(page * page_size).all()
-
-    # This is a better way of doing it, but doesn't work because we can't assign an object
-    #  to accessRequested because it's an integer
-    # for act in activators:
-    #     act = activator_extension.expand_activator(act)
-    # Serialize the data for the response
+    # Expand all Activators
     for act in activators:
-        act = activator_extension.expand_activator_fields(act)
+        act = activator_extension.expand_activator(act, dbs)
 
-    Activator.accessRequestedBy = db.relationship(
-        "User",
-        primaryjoin="and_(Activator.accessRequestedById==User.id, User.isActive)",
-    )
     activator_schema = ExtendedActivatorSchema(many=True)
     data = activator_schema.dump(activators)
 
@@ -135,12 +126,10 @@ def read_one(oid):
     with db_session() as dbs:
 
         act = dbs.query(Activator).filter(Activator.id == oid).one_or_none()
+
         if act is not None:
-            Activator.accessRequestedBy = db.relationship(
-                "User",
-                primaryjoin="and_(Activator.accessRequestedById==User.id, User.isActive)",
-            )
-            act = activator_extension.expand_activator_fields(act)
+            # Expand Activator
+            act = activator_extension.expand_activator(act, dbs)
             schema = ExtendedActivatorSchema(many=False)
             data = schema.dump(act)
             return data, 200
@@ -161,21 +150,20 @@ def create(activatorDetails):
         if "id" in activatorDetails:
             del activatorDetails["id"]
 
-        activatorDetails_1 = activator_extension.refine_activator_details(
+        extraFields = activator_extension.refine_activator_details(
             activatorDetails
         )
 
         schema = ActivatorSchema()
-        new_activator = schema.load(activatorDetails_1, session=dbs)
+        new_activator = schema.load(activatorDetails, session=dbs)
         dbs.add(new_activator)
         dbs.flush()
-
+        # Create entries into all tables where activator has association
         activator_extension.create_activator_associations(
-            activatorDetails, new_activator, dbs
+            extraFields, new_activator, dbs
         )
-        # Serialize and return the newly created deployment
-        # in the response
-        new_activator = activator_extension.expand_activator_fields(new_activator)
+        # Expand Activator
+        new_activator = activator_extension.expand_activator(new_activator, dbs)
         schema = ExtendedActivatorSchema(many=False)
         data = schema.dump(new_activator)
         return data, 201
@@ -212,12 +200,12 @@ def update(oid, activatorDetails):
             activatorDetails["id"] = oid
             logger.info("activatorDetails: %s", activatorDetails)
 
-            activatorDetails_1 = activator_extension.refine_activator_details(
+            extraFields = activator_extension.refine_activator_details(
                 activatorDetails
             )
 
             schema = ActivatorSchema(many=False, session=dbs)
-            updatedActivator = schema.load(activatorDetails_1)
+            updatedActivator = schema.load(activatorDetails)
             logger.info("updatedActivator: %s", updatedActivator)
             dbs.merge(updatedActivator)
             # Update CI list in activatorCI table
@@ -225,16 +213,11 @@ def update(oid, activatorDetails):
             dbs.flush()
 
             activator_extension.create_activator_associations(
-                activatorDetails, updatedActivator, dbs
+                extraFields, updatedActivator, dbs
             )
+            # Expand activator
+            updatedActivator = activator_extension.expand_activator(updatedActivator, dbs)
 
-            Activator.accessRequestedBy = db.relationship(
-                "User",
-                primaryjoin="and_(Activator.accessRequestedById==User.id, User.isActive)",
-            )
-            updatedActivator = activator_extension.expand_activator_fields(
-                updatedActivator
-            )
             schema = ExtendedActivatorSchema(many=False)
             data = schema.dump(updatedActivator)
             return data, 200
@@ -369,14 +352,10 @@ def setActivatorStatus(activatorDetails):
             updated_activator = schema.load(activatorDetails, session=dbs)
             updated_activator.lastUpdated = ModelTools.get_utc_timestamp()
             dbs.merge(updated_activator)
+            
+            # Expand Activator
+            updated_activator = activator_extension.expand_activator(updated_activator, dbs)
 
-            Activator.accessRequestedBy = db.relationship(
-                "User",
-                primaryjoin="and_(Activator.accessRequestedById==User.id, User.isActive)",
-            )
-            updated_activator = activator_extension.expand_activator_fields(
-                updated_activator
-            )
             activator_schema = ExtendedActivatorSchema()
             data = activator_schema.dump(updated_activator)
 
