@@ -40,7 +40,7 @@ def typestest(resp):
     assert isinstance(resp["sensitivity"], str)
     assert isinstance(resp["serverCapacity"], int)
     assert isinstance(resp["source"], str)
-    assert isinstance(resp["sourceControl"], list)
+    assert isinstance(resp["sourceControl"], dict)
     assert isinstance(resp["status"], str)
     assert isinstance(resp["technologyOwner"], str)
     assert isinstance(resp["technologyOwnerEmail"], str)
@@ -90,10 +90,10 @@ def post():
         "billing": "test-post-",
         "businessUnit": "test-post-",
         "category": "test-post-",
-        "cd": ["test-post-1", "test-post-2", "test-post-3"],
+        "cd": [5, 6],
         "ci": [3, 5],
         "description": "test-post-test-post-test-post-test-post-test-post-test-post-test-post-test-post-",
-        "envs": ["dev", "prd", "poc"],
+        "envs": [1],
         "hosting": [
             "test-post-1",
             "test-post-2",
@@ -122,7 +122,7 @@ def post():
         "sensitivity": "test-post-",
         "serverCapacity": 999999999,
         "source": "test-post-",
-        "sourceControl": ["test-post-", "test-post-1"],
+        "sourceControlId": 3,
         "status": "Available",
         "technologyOwner": "test-post-",
         "technologyOwnerEmail": "test-post-",
@@ -194,10 +194,10 @@ def put(oid):
         "billing": "billing",
         "businessUnit": "businessUnit",
         "category": "category",
-        "cd": ["test-put-4", "test-put-5", "test-put-6"],
+        "cd": [3, 4],
         "ci": [1, 2],
         "description": "TheQuickBrownFoxJumpedOverTheLazyDogs",
-        "envs": ["dev", "Prd", "Poc"],
+        "envs": [1],
         "hosting": [
             "test-put-11",
             "test-put-22",
@@ -225,7 +225,7 @@ def put(oid):
         "sensitivity": "confidential",
         "serverCapacity": 5,
         "source": "original",
-        "sourceControl": ["dotmatrix", "tape"],
+        "sourceControlId": 1,
         "status": "NotAvailable",
         "technologyOwner": "me",
         "technologyOwnerEmail": "me@me.com",

@@ -20,7 +20,7 @@ def create_activator_ci(activatorId, list_of_ci, dbs):
 
     """
 
-    # Inactivates the active solution environments for this Solution (activatorId)
+    # Inactivates the active activator-ci for this activator (activatorId)
     ci_list = (
         dbs.query(ActivatorCI)
         .filter(ActivatorCI.activatorId == activatorId, ActivatorCI.isActive)
@@ -62,7 +62,7 @@ def delete_activator_ci(activatorId, dbs):
         1. Logically delete all active CI ids for this activator
     """
 
-    # Inactivates the active solution environments for this Solution (activatorId)
+    # Inactivates the active activator-ci for this activator (activatorId)
     ci_list = (
         dbs.query(ActivatorCI)
         .filter(ActivatorCI.activatorId == activatorId, ActivatorCI.isActive)

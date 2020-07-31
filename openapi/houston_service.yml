@@ -3268,7 +3268,7 @@ components:
           type: array
           description: envs
           items:
-             type: string
+             type: integer
         platforms:
           type: array
           description: platforms
@@ -3306,12 +3306,10 @@ components:
           type: array
           description: cd
           items:
-            type: string
-        sourceControl:
-          type: array
-          description: sourceControl
-          items:
-             type: string
+            type: integer
+        sourceControlId:
+          type: integer
+          description: sourceControlId
         businessUnit:
           type: string
           description: businessUnit

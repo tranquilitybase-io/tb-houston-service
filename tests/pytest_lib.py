@@ -67,7 +67,9 @@ def typestest_activator(obj):
     assert isinstance(obj["billing"], str)
     assert isinstance(obj["businessUnit"], str)
     assert isinstance(obj["category"], str)
-    assert isinstance(obj["cd"], list)
+    assert isinstance(obj["ci"], list) or obj["ci"] is None
+    assert isinstance(obj["cd"], list) or obj["cd"] is None
+    assert isinstance(obj["envs"], list) or obj["envs"] is None
     assert isinstance(obj["description"], str)
     assert isinstance(obj["hosting"], list)
     assert isinstance(obj["name"], str)
@@ -76,7 +78,7 @@ def typestest_activator(obj):
     assert isinstance(obj["sensitivity"], str)
     assert isinstance(obj["serverCapacity"], int)
     assert isinstance(obj["source"], str)
-    assert isinstance(obj["sourceControl"], list)
+    assert isinstance(obj["sourceControl"], dict)
     assert isinstance(obj["status"], str)
     assert isinstance(obj["technologyOwner"], str)
     assert isinstance(obj["technologyOwnerEmail"], str)
