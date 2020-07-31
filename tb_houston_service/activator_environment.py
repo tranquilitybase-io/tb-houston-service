@@ -1,6 +1,5 @@
 import logging
 
-from config import db
 from tb_houston_service.tools import ModelTools
 from tb_houston_service.models import ActivatorEnvironment, Environment
 

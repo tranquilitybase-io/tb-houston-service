@@ -1,8 +1,6 @@
 import logging
 from tb_houston_service.models import User, SourceControl
 from tb_houston_service import activator_ci, activator_cd, activator_environment
-from config import db
-from copy import deepcopy
 
 
 logger = logging.getLogger("tb_houston_service.activator_extension")
@@ -67,7 +65,7 @@ def create_activator_associations(extraFields, activator, dbsession):
         logger.error(
             "ci details in activator are missing, the transaction will be rolled back for this activator!"
         )
-        dbs.rollback()
+        dbsession.rollback()
 
     if act_cd_list:
         activator_cd.create_activator_cd(activator.id, act_cd_list, dbsession)
