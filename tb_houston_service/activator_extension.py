@@ -73,7 +73,7 @@ def create_activator_associations(extraFields, activator, dbsession):
         logger.error(
             "cd details in activator are missing, the transaction will be rolled back for this activator!"
         )
-        dbs.rollback()
+        dbsession.rollback()
 
     if act_env_list:
         activator_environment.create_activator_environment(activator.id, act_env_list, dbsession)
@@ -81,7 +81,7 @@ def create_activator_associations(extraFields, activator, dbsession):
         logger.error(
             "env details in activator are missing, the transaction will be rolled back for this activator!"
         )
-        dbs.rollback()
+        dbsession.rollback()
 
 def delete_activator_associations(id, dbsession):
 
