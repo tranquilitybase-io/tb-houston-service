@@ -2672,7 +2672,7 @@ paths:
           name: typeId
           schema:
             type: integer
-          required: true   
+          required: true               
         - in: query
           name: isRead
           schema:
@@ -2712,11 +2712,7 @@ paths:
         - in: query
           name: typeId
           schema:
-            type: integer
-        - in: query             
-          name: toUserId
-          schema:
-            type: integer                
+            type: integer            
         - in: query
           name: isRead
           schema:

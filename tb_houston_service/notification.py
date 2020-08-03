@@ -255,11 +255,12 @@ def create_all(notificationListDetails, typeId, isRead = None, isActive = None, 
         for n in notificationListDetails:
             create(n, typeId, dbsession = dbs)
 
+    # filter output by toUserId
     user = security.get_valid_user_from_token(dbsession = dbs)
     if not user:
         abort(404, "No valid user found!")
     toUserId = user.id
-    (data, resp_code) = read_all(typeId = typeId, toUserId = toUserId, isRead = isRead, isActive = isActive, page = page, page_size = page_size, sort = sort)
+    (data, resp_code) = read_all(typeId = typeId, isRead = isRead, isActive = isActive, page = page, page_size = page_size, sort = sort)
     logger.debug("data: %s, resp_code: %s", data, resp_code)
     return data, 201
 

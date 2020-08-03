@@ -10,6 +10,10 @@ url = f"http://{HOUSTON_SERVICE_URL}/api/notifications/"
 # Additional headers.
 headers = {"Content-Type": "application/json"}
 
+TOKEN = os.environ.get('TOKEN')
+if TOKEN:
+    headers["Authorization"] = "Bearer ${TOKEN}"
+
 
 def typestest(resp):
     assert isinstance(resp["id"], int)
@@ -56,7 +60,7 @@ def create_notification_activators():
         }
     ]
 
-    resp = requests.post(url + "?typeId=1&toUserId=1&isActive=true&isRead=false", headers=headers, data=json.dumps(payload, indent=4))
+    resp = requests.post(url + "?typeId=1&isActive=true&isRead=false", headers=headers, data=json.dumps(payload, indent=4))
 
     # Validate response headers and body contents, e.g. status code.
     resp_json = resp.json()
