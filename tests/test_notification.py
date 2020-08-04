@@ -10,9 +10,12 @@ url = f"http://{HOUSTON_SERVICE_URL}/api/notifications/"
 # Additional headers.
 headers = {"Content-Type": "application/json"}
 
-TOKEN = os.environ.get('TOKEN')
-if TOKEN:
-    headers["Authorization"] = "Bearer ${TOKEN}"
+if os.environ.get("TOKEN"):
+   headers["Authorization"] = f"Bearer {os.environ['TOKEN']}"
+
+print(f"headers: {headers}")
+
+# *** make sure toUserId is set to the user in the Token ***
 
 
 def typestest(resp):
@@ -44,7 +47,7 @@ def create_notification_activators():
     payload = [
         {
             "isActive": True,
-            "toUserId": 1,
+            "toUserId": 4,
             "importance": 1,
             "message": "User Jon Snow requested access to Activator 2",
             "isRead": False,
@@ -52,7 +55,7 @@ def create_notification_activators():
         },
         {
             "isActive": True,
-            "toUserId": 2,
+            "toUserId": 4,
             "importance": 2,
             "message": "User Cersei Lannister requested access to an Activator 3",
             "isRead": False,
@@ -64,7 +67,7 @@ def create_notification_activators():
 
     # Validate response headers and body contents, e.g. status code.
     resp_json = resp.json()
-    print(resp_json)
+    print(f"resp_json: {resp_json}")
     oid = 0
     for rj in resp_json:
         print(rj)
@@ -85,6 +88,7 @@ def update_notification_activator(oid):
             "isRead": True
         }
     ]
+    print(f"payload: {payload}")
 
     resp = requests.post(url + "?typeId=1&isActive=true&isRead=false&sort=importance:asc", headers=headers, data=json.dumps(payload, indent=4))
     # Validate response headers and body contents, e.g. status code.
@@ -98,7 +102,7 @@ def create_notification_teams():
     payload = [
         {
             "isActive": True,
-            "toUserId": 1,
+            "toUserId": 4,
             "importance": 1,
             "message": "User Jon Snow requested access to Team 1",
             "isRead": False,
@@ -106,7 +110,7 @@ def create_notification_teams():
         },
         {
             "isActive": True,
-            "toUserId": 2,
+            "toUserId": 4,
             "importance": 2,
             "message": "User Cersei Lannister requested access to an Team 1",
             "isRead": False,
