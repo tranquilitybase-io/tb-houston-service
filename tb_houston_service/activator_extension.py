@@ -10,9 +10,6 @@ logger = logging.getLogger("tb_houston_service.activator_extension")
 def expand_activator(act, dbsession):
     """
     Expand ci, cd, envs, accessRequestedBy to objects. 
-    Do not use, fails with:
-    '_mysql_connector.MySQLInterfaceError: Python type User cannot be converted'
-    Need to fix the data model later. 
     """
     logger.debug("expand_activator: %s", act)
     #expand accessRequestedBy
@@ -29,6 +26,11 @@ def expand_activator(act, dbsession):
     act = activator_cd.expand_cd(act, dbsession)
     #expand environments
     act = activator_environment.expand_environment(act, dbsession)
+
+    #expand businessUnit
+    act.businessUnit = (
+        dbsession.query(BusinessUnit).filter(BusinessUnit.id == act.businessUnitId).one_or_none()
+    )
     return act
 
 def refine_activator_details(activatorDetails):
