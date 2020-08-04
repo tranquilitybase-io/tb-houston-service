@@ -10,7 +10,9 @@ from tb_houston_service.DeploymentStatus import DeploymentStatus
 from tb_houston_service.models import Application
 from tb_houston_service.models import Activator
 from tb_houston_service.models import ApplicationDeployment, ApplicationDeploymentSchema
+from tb_houston_service.models import LZLanVpc
 from tb_houston_service.models import LZEnvironment
+from tb_houston_service.models import LZLanVpcEnvironment
 from tb_houston_service.models import Solution
 from tb_houston_service.models import SolutionEnvironment
 from tb_houston_service.models import SolutionResource
@@ -253,7 +255,7 @@ def deploy_application(app_deployment, dbsession):
     ).one_or_none()
     if act:
         app_deployment.activatorGitUrl = act.activatorLink
-        app_deployment.deploymentEnvironment = lzenv.name.lower()
+        #app_deployment.deploymentEnvironment = lzenv.name.lower()
         app_deployment.workspaceProjectId = app_deployment.workspaceProjectId
         app_deployment.deploymentProjectId = app_deployment.deploymentProjectId
         app_deployment.mandatoryVariables = []
@@ -261,6 +263,20 @@ def deploy_application(app_deployment, dbsession):
         app_deployment.id = app.id
         app_deployment.name = app.name
         app_deployment.description = app.description
+
+        environment, lzlanvpc = dbsession.query(LZEnvironment, LZLanVpc).filter(
+            LZLanVpcEnvironment.lzlanvpcId == LZLanVpc.id, 
+            LZLanVpcEnvironment.environmentId == lzenv.id,
+            LZLanVpcEnvironment.environmentId == LZEnvironment.id,
+            LZLanVpcEnvironment.isActive,
+            LZEnvironment.isActive,
+        ).one_or_none()
+        if lzlanvpc:
+            environment.sharedVPCProjectId = lzlanvpc.sharedVPCProjectId
+        else:
+            environment.sharedVPCProjectId = ""
+        app_deployment.deploymentEnvironment = environment
+
         return send_application_deployment_to_the_dac(app_deployment, dbsession = dbsession)
     else:
         logger.error("deploy_application::activator not found, %s!", app.activatorId)

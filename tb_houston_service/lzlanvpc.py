@@ -6,11 +6,12 @@ lzlanvpc collection
 # 3rd party modules
 from pprint import pformat
 import logging
-from flask import make_response, abort
+from flask import abort
 from config import db, app
 from tb_houston_service.models import LZLanVpc, LZLanVpcSchema
 from tb_houston_service.models import LZLanVpcEnvironment
 from tb_houston_service import lzlanvpc_extension
+from tb_houston_service import gcp_dac_metadata
 from tb_houston_service.extendedSchemas import ExtendedLZLanVpcSchema
 
 
@@ -138,3 +139,18 @@ def create_all(lzLanVpcListDetails, readActiveOnly=False, bulkDelete=False):
         db.session.close()
     resp = read(readActiveOnly=readActiveOnly)
     return resp[0], 201
+
+
+def set_shared_vpc_project_id(dbsession):
+    """
+    [By default everything usess the sharedVPCProjectId]
+
+    Args:
+        dbsession ([dbsession]): [DB Session]
+    """
+    logger.debug("set_shared_vpc_project_id")
+    metadata_dict = gcp_dac_metadata.read()
+    lzlanvpcs = dbsession.query(LZLanVpc).filter(LZLanVpc.isActive).all()
+    for vpc in lzlanvpcs:
+        vpc.sharedVPCProjectId = metadata_dict.get("shared_vpc_host_project")
+        dbsession.merge(vpc)

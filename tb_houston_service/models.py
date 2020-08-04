@@ -428,6 +428,7 @@ class LZLanVpc(Base):
     __tablename__ = "lzlanvpc"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
+    sharedVPCProjectId = db.Column(db.String)
     isActive = db.Column(db.Boolean)
 
     def __repr__(self):
