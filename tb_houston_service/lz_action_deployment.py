@@ -1,10 +1,46 @@
 import logging
 from tb_houston_service.models import LandingZoneAction
 from tb_houston_service.models import LandingZoneProgressItem
-from config import db
+from tb_houston_service.models import LZLanVpcEnvironment
+from tb_houston_service.models import LZLanVpc
+from tb_houston_service.models import LZEnvironment
+from tb_houston_service import lzlanvpc
+from config.db_lib import db_session
+from flask import abort
 
 
 logger = logging.getLogger("tb_houston_service.lz_action_deployment")
+
+
+def is_valid_lzlanvpc(dbsession):
+    logger.debug("is_valid_lzlanvpc")    
+    count = dbsession.query(LZLanVpc).filter(
+        LZLanVpc.isActive, 
+        LZLanVpc.sharedVPCProjectId == None
+    ).count()
+    return count == 0
+
+
+# LZLanVpcEnvironment validation
+# Validate all active environments are associated with active lzlanvpc
+def is_valid_lzlanvpc_environment(dbsession):
+    logger.debug("is_valid_lzlanvpc_environment") 
+    # env_id checks
+    active_env_ids = set([ obj.id for obj in dbsession.query(LZEnvironment).filter(LZEnvironment.isActive).all() ])
+    active_vpc_env_ids = set([ obj.environmentId for obj in dbsession.query(LZLanVpcEnvironment).filter(LZLanVpcEnvironment.isActive).all() ])
+    env_sym_diff = active_env_ids.symmetric_difference(active_vpc_env_ids)
+    if len(env_sym_diff) > 0:
+        logger.debug("env sym_diff: %s", env_sym_diff)
+        return False
+
+    # vpc_id checks
+    active_vpc_ids = set([ obj.id for obj in dbsession.query(LZLanVpc).filter(LZLanVpc.isActive).all() ])
+    active_vpc_env_ids = set([ obj.lzlanvpcId for obj in dbsession.query(LZLanVpcEnvironment).filter(LZLanVpcEnvironment.isActive).all() ])
+    vpc_sym_diff = active_vpc_ids.symmetric_difference(active_vpc_env_ids)
+    if len(env_sym_diff) > 0:
+        logger.debug("vpc sym_diff: %s", vpc_sym_diff)
+        return False
+    return True
 
 
 def environment_deployment():
@@ -25,43 +61,48 @@ def environment_deployment():
     LandingZoneProgressItem.label == "Environment", completed = True    
     """
 
+    logger.debug("environment_deployment")
+
     data = {"deployment": False}
     return_code = 500
 
-    try:
+    with db_session() as dbs:
+
+        lzlanvpc.set_shared_vpc_project_id(dbsession = dbs)
+
+        if not is_valid_lzlanvpc(dbsession = dbs):
+            abort(400, "Invalid LAN VPC found.")
+
+        if not is_valid_lzlanvpc_environment(dbsession = dbs):
+            abort(400, "All active environments must be connected to an active LAN VPC.")
+
         lza_environment = (
-            db.session.query(LandingZoneAction)
+            dbs.query(LandingZoneAction)
             .filter(LandingZoneAction.title == "Environment")
             .one()
         )
         logger.debug(lza_environment)
         lza_environment.completionRate = 100
         lza_wan = (
-            db.session.query(LandingZoneAction)
+            dbs.query(LandingZoneAction)
             .filter(LandingZoneAction.title == "WAN")
             .one()
         )
         logger.debug(lza_wan)
         lza_wan.locked = False
         lzpi_environment = (
-            db.session.query(LandingZoneProgressItem)
+            dbs.query(LandingZoneProgressItem)
             .filter(LandingZoneProgressItem.label == "Environment")
             .one()
         )
         logger.debug(lzpi_environment)
         lzpi_environment.completed = True
-        db.session.add(lza_environment)
-        db.session.add(lza_wan)
-        db.session.add(lzpi_environment)
-        db.session.commit()
+        dbs.add(lza_environment)
+        dbs.add(lza_wan)
+        dbs.add(lzpi_environment)
+        dbs.commit()
         data = {"deployment": True}
         return_code = 200
-    except:
-        db.session.rollback()
-        raise
-    finally:
-        db.session.close()
-
     return data, return_code
 
 

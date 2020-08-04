@@ -8,32 +8,27 @@ import json
 import os
 import requests
 import re
-
+import logging
 from config import app
 
+
+logger = logging.getLogger("gcp_dac_folder_deployment")
 
 gcp_dac_url = f"http://{os.environ['GCP_DAC_URL']}"
 headers = {"Content-Type": "application/json"}
 folder_url = f"{gcp_dac_url}/dac/folder_async"
-metadata_url = f"{gcp_dac_url}/dac/metadata"
 create_folder_result_url = f"{gcp_dac_url}/dac/folder_async/result/create/"
 delete_folder_result_url = f"{gcp_dac_url}/dac/folder_async/result/delete/"
 
 folderid_regex = re.compile(r"folders/(?P<folder>\w+)")
 
 
-def metadata():
-    response = requests.get(metadata_url, headers=headers)
-    return response
-
-
 # Send the payload to the DAC
 def create(details):
-    app.logger.debug(f"metadata_url: {metadata_url}")
     response = requests.post(folder_url, data=json.dumps(details), headers=headers)
     resp_json = response.json()
-    app.logger.debug("Response from DAC")
-    app.logger.debug(pformat(resp_json))
+    logger.debug("create::Response from DAC")
+    logger.debug("create::%s", pformat(resp_json))
     return resp_json, 200
 
 

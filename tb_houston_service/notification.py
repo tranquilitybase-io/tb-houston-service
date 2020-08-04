@@ -1,4 +1,5 @@
 import logging
+from flask import abort
 from sqlalchemy import literal_column
 from sqlalchemy.exc import SQLAlchemyError
 from tb_houston_service.models import Notification, NotificationSchema
@@ -18,11 +19,12 @@ from tb_houston_service.models import Application
 from tb_houston_service.models import Solution
 from config.db_lib import db_session
 from tb_houston_service.tools import ModelTools
+from tb_houston_service import security
 
 
 logger = logging.getLogger("tb_houston_service.notification")
 
-def read_all(typeId = None, toUserId = None, isRead = None, isActive = None, page = None, page_size = None, sort = None):
+def read_all(typeId = None, isRead = None, isActive = None, page = None, page_size = None, sort = None):
     logger.debug("read_all: %s", typeId)    
     with db_session() as dbs:
         # pre-process sort instructions
@@ -47,6 +49,11 @@ def read_all(typeId = None, toUserId = None, isRead = None, isActive = None, pag
                 logger.warning("Exception: %s", e)
                 notifications_query = dbs.query(Notification).order_by(Notification.lastUpdated + " desc")
 
+
+        user = security.get_valid_user_from_token(dbsession = dbs)
+        if not user:
+            abort(404, "No valid user found!")
+        toUserId = user.id
         notifications_query = notifications_query.filter(
             (typeId == None or Notification.typeId == typeId),            
             (toUserId == None or Notification.toUserId == toUserId),
@@ -241,19 +248,24 @@ def create(notification, typeId, dbsession):
     return notification
 
 
-def create_all(notificationListDetails, typeId, toUserId = None, isRead = None, isActive = None, page = None, page_size = None, sort = None):
+def create_all(notificationListDetails, typeId, isRead = None, isActive = None, page = None, page_size = None, sort = None):
     logger.debug("create_all: %s", notificationListDetails)    
 
     with db_session() as dbs:
         for n in notificationListDetails:
             create(n, typeId, dbsession = dbs)
 
-    (data, resp_code) = read_all(typeId = typeId, toUserId = toUserId, isRead = isRead, isActive = isActive, page = page, page_size = page_size, sort = sort)
+    # filter output by toUserId
+    user = security.get_valid_user_from_token(dbsession = dbs)
+    if not user:
+        abort(404, "No valid user found!")
+    toUserId = user.id
+    (data, resp_code) = read_all(typeId = typeId, isRead = isRead, isActive = isActive, page = page, page_size = page_size, sort = sort)
     logger.debug("data: %s, resp_code: %s", data, resp_code)
     return data, 201
 
 
-def meta(typeId = None, toUserId = None, isRead = None, isActive = None):
+def meta(typeId = None, isRead = None, isActive = None):
     """
     Responds to a request for /api/notificationsMeta/.
 
@@ -262,6 +274,10 @@ def meta(typeId = None, toUserId = None, isRead = None, isActive = None):
     """
 
     with db_session() as dbs:
+        user = security.get_valid_user_from_token(dbsession = dbs)
+        if not user:
+            abort(404, "No valid user found!")
+        toUserId = user.id
         count = dbs.query(Notification).filter(
             (typeId == None or Notification.typeId == typeId),
             (toUserId == None or Notification.toUserId == toUserId),

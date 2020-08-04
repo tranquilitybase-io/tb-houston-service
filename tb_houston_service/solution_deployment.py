@@ -26,6 +26,7 @@ from tb_houston_service import solution_extension
 from tb_houston_service import solutionresourcejson
 from tb_houston_service import security
 from tb_houston_service import notification
+from tb_houston_service import gcp_dac_metadata
 from config.db_lib import db_session
 
 
@@ -311,9 +312,7 @@ def create_folder(folderId, folderName):
 # Return SUCCESS if all folders have been created on the DB and DAC
 def create_folders(solution):
     logger.debug("create_folders::solution: %s", pformat(solution))
-    resp = gcp_dac_folder_deployment.metadata()
-    logger.debug("resp_json: {resp.json()}")
-    dac_metadata = resp.json()
+    dac_metadata = gcp_dac_metadata.read()
     logger.debug("dac_metadata: %s", dac_metadata)
     root_folder_id = dac_metadata["root_folder_id"]
     folder_id = root_folder_id
