@@ -29,7 +29,7 @@ class Activator(Base):
     hosting = db.Column(db.String(255))
     apiManagement = db.Column(db.String(255))
     sourceControlId = db.Column(db.Integer, db.ForeignKey("sourcecontrol.id"))
-    businessUnit = db.Column(db.String(255))
+    businessUnitId = db.Column(db.Integer)
     technologyOwner = db.Column(db.String(255))
     technologyOwnerEmail = db.Column(db.String(255))
     billing = db.Column(db.String(255))

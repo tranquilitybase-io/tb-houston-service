@@ -1,6 +1,8 @@
 import logging
-from tb_houston_service.models import User, SourceControl
 from tb_houston_service import activator_ci, activator_cd, activator_environment
+from tb_houston_service.models import User
+from tb_houston_service.models import SourceControl
+from tb_houston_service.models import BusinessUnit
 
 
 logger = logging.getLogger("tb_houston_service.activator_extension")
@@ -27,7 +29,6 @@ def expand_activator(act, dbsession):
     act = activator_cd.expand_cd(act, dbsession)
     #expand environments
     act = activator_environment.expand_environment(act, dbsession)
-
     return act
 
 def refine_activator_details(activatorDetails):
@@ -88,11 +89,3 @@ def delete_activator_associations(id, dbsession):
     activator_ci.delete_activator_ci(id , dbsession)
     activator_cd.delete_activator_cd(id , dbsession)
     activator_environment.delete_activator_environment(id , dbsession)
-
-
-
-
-
-
-
-
