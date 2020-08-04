@@ -93,7 +93,7 @@ def post():
         "cd": [5, 6],
         "ci": [3, 5],
         "description": "test-post-test-post-test-post-test-post-test-post-test-post-test-post-test-post-",
-        "envs": [1],
+        "envs": [1, 2],
         "hosting": [
             "test-post-1",
             "test-post-2",
@@ -138,12 +138,28 @@ def post():
     pprint(f"resp_json: {resp_json}")
     assert resp.status_code == 201
     assert resp_json["activator"] == "test-activator"
-    # Validate activator CI relationship
+    
+    # Validate CI 
     ci_list = resp_json["ci"]
     assert ci_list[0]["id"] == 3
     isinstance(ci_list[0]["value"], str)
     assert ci_list[1]["id"] == 5
     isinstance(ci_list[1]["value"], str)
+
+    # Validate CD
+    cd_list = resp_json["cd"]
+    assert cd_list[0]["id"] == 5
+    isinstance(cd_list[0]["value"], str)
+    assert cd_list[1]["id"] == 6
+    isinstance(cd_list[1]["value"], str)
+
+    # Validate Envs
+    envs_list = resp_json["envs"]
+    assert envs_list[0]["id"] == 1
+    isinstance(envs_list[0]["name"], str)
+    assert envs_list[1]["id"] == 2
+    isinstance(envs_list[1]["name"], str)
+
     oid = resp_json["id"]
     print(f"oid: {oid}")
 
@@ -197,7 +213,7 @@ def put(oid):
         "cd": [3, 4],
         "ci": [1, 2],
         "description": "TheQuickBrownFoxJumpedOverTheLazyDogs",
-        "envs": [1],
+        "envs": [2],
         "hosting": [
             "test-put-11",
             "test-put-22",
@@ -243,11 +259,24 @@ def put(oid):
     resp = requests.get(url + oid, headers=headers)
     resp_json = resp.json()
     oid = resp_json["id"]
+    # Validate CI
     ci_list = resp_json["ci"]
     assert ci_list[0]["id"] == 1
     isinstance(ci_list[0]["value"], str)
     assert ci_list[1]["id"] == 2
     isinstance(ci_list[1]["value"], str)
+
+    # Validate CD
+    cd_list = resp_json["cd"]
+    assert cd_list[0]["id"] == 3
+    isinstance(cd_list[0]["value"], str)
+    assert cd_list[1]["id"] == 4
+    isinstance(cd_list[1]["value"], str)
+
+    # Validate Envs
+    envs_list = resp_json["envs"]
+    assert envs_list[0]["id"] == 2
+    isinstance(envs_list[0]["name"], str)
 
     # Validate response body for updated values
     assert resp.status_code == 200

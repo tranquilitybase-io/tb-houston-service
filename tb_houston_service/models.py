@@ -124,7 +124,7 @@ class ActivatorEnvironment(Base):
     __tablename__ = "activatorEnvironment"
     id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
     activatorId = db.Column(db.Integer(), ForeignKey("activator.id"))
-    envId = db.Column(db.Integer(), ForeignKey("environment.id"))
+    envId = db.Column(db.Integer(), ForeignKey("lzenvironment.id"))
     lastUpdated = db.Column(db.String(20))
     isActive = db.Column(db.Boolean())
 
@@ -276,23 +276,6 @@ class CISchema(SQLAlchemyAutoSchema):
         model = CI
         include_fk = True
         load_instance = True
-
-# Environment
-class Environment(Base):
-    __tablename__ = "environment"
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(255))
-
-    def __repr__(self):
-        return "<CI(id={self.id!r}, name={self.id!r})>".format(self=self)
-
-
-class EnvironmentSchema(SQLAlchemyAutoSchema):
-    class Meta:
-        model = Environment
-        include_fk = True
-        load_instance = True
-
 
 # Cloud Account
 class CloudAccount(Base):

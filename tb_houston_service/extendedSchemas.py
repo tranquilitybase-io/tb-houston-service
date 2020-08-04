@@ -14,7 +14,6 @@ from tb_houston_service.models import NotificationActivatorSchema
 from tb_houston_service.models import NotificationTeamSchema
 from tb_houston_service.models import NotificationApplicationDeploymentSchema
 from tb_houston_service.models import NotificationSolutionDeploymentSchema
-from tb_houston_service.models import EnvironmentSchema
 
 
 
@@ -87,7 +86,7 @@ class ExtendedActivatorSchema(Schema):
     available = fields.Boolean()
     sensitivity = fields.Str()
     category = fields.Str()
-    envs = fields.Nested(EnvironmentSchema(many=True))
+    envs = fields.Nested(LZEnvironmentSchema(many=True))
     platforms = fields.List(fields.Str())
     userCapacity = fields.Int()
     serverCapacity = fields.Int()

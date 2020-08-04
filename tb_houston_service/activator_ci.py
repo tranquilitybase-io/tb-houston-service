@@ -1,7 +1,7 @@
 import logging
 
 from tb_houston_service.tools import ModelTools
-from tb_houston_service.models import ActivatorCI, CI
+from tb_houston_service.models import ActivatorCI, CI , Activator
 
 
 logger = logging.getLogger("tb_houston_service.activator_ci")
@@ -75,14 +75,10 @@ def delete_activator_ci(activatorId, dbsession):
 
 
 def expand_ci(act,  dbsession):
-    act_ci_list = (
-        dbsession.query(ActivatorCI)
-        .filter(ActivatorCI.activatorId == act.id, ActivatorCI.isActive)
-        .all()
-    )
-    newList = []
-    for act_ci in act_ci_list:
-        ci_object = dbsession.query(CI).filter(CI.id == act_ci.ciId).one_or_none()
-        newList.append(ci_object)
-    act.ci = newList
+
+    act.ci = dbsession.query(CI).filter(
+        CI.id == ActivatorCI.ciId, 
+        Activator.id == ActivatorCI.activatorId, 
+        Activator.id == act.id,
+        ActivatorCI.isActive, Activator.isActive).all()
     return act

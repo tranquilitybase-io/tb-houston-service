@@ -1,7 +1,7 @@
 import logging
 
 from tb_houston_service.tools import ModelTools
-from tb_houston_service.models import ActivatorCD, CD
+from tb_houston_service.models import ActivatorCD, CD, Activator
 
 
 logger = logging.getLogger("tb_houston_service.activator_cd")
@@ -75,14 +75,11 @@ def delete_activator_cd(activatorId, dbsession):
 
 
 def expand_cd(act, dbsession):
-    act_cd_list = (
-        dbsession.query(ActivatorCD)
-        .filter(ActivatorCD.activatorId == act.id, ActivatorCD.isActive)
-        .all()
-    )
-    newList = []
-    for act_cd in act_cd_list:
-        cd_object = dbsession.query(CD).filter(CD.id == act_cd.cdId).one_or_none()
-        newList.append(cd_object)
-    act.cd = newList
+
+    act.cd = dbsession.query(CD).filter(
+    CD.id == ActivatorCD.cdId, 
+    Activator.id == ActivatorCD.activatorId, 
+    Activator.id == act.id,
+    ActivatorCD.isActive, Activator.isActive).all()
+
     return act
