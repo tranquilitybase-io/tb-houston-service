@@ -1,14 +1,13 @@
 import logging
 
-from config import db
 from tb_houston_service.tools import ModelTools
-from tb_houston_service.models import ActivatorCI, CI
+from tb_houston_service.models import ActivatorCI, CI , Activator
 
 
 logger = logging.getLogger("tb_houston_service.activator_ci")
 
 
-def create_activator_ci(activatorId, list_of_ci, dbs):
+def create_activator_ci(activatorId, list_of_ci, dbsession):
     """
     Args:
         activatorId ([int]): [The Activator id]
@@ -20,26 +19,26 @@ def create_activator_ci(activatorId, list_of_ci, dbs):
 
     """
 
-    # Inactivates the active solution environments for this Solution (activatorId)
+    # Inactivates the active activator-ci for this activator (activatorId)
     ci_list = (
-        dbs.query(ActivatorCI)
+        dbsession.query(ActivatorCI)
         .filter(ActivatorCI.activatorId == activatorId, ActivatorCI.isActive)
         .all()
     )
     for ci in ci_list:
         ci.isActive = False
-    dbs.flush()
+    dbsession.flush()
 
     for ci in list_of_ci:
         existing_act_ci = (
-            dbs.query(ActivatorCI)
+            dbsession.query(ActivatorCI)
             .filter(ActivatorCI.activatorId == activatorId, ActivatorCI.ciId == ci)
             .one_or_none()
         )
 
         if existing_act_ci:
             existing_act_ci.isActive = True
-            dbs.merge(existing_act_ci)
+            dbsession.merge(existing_act_ci)
         else:
             new_act_ci = ActivatorCI(
                 activatorId=activatorId,
@@ -47,13 +46,13 @@ def create_activator_ci(activatorId, list_of_ci, dbs):
                 lastUpdated=ModelTools.get_utc_timestamp(),
                 isActive=True,
             )
-            dbs.add(new_act_ci)
+            dbsession.add(new_act_ci)
         logger.debug("Added Activator CI: {new_act_ci} to transaction.")
 
-    return dbs
+    return dbsession
 
 
-def delete_activator_ci(activatorId, dbs):
+def delete_activator_ci(activatorId, dbsession):
     """
     Args:
         activatorId ([int]): [The Activator id]
@@ -62,28 +61,24 @@ def delete_activator_ci(activatorId, dbs):
         1. Logically delete all active CI ids for this activator
     """
 
-    # Inactivates the active solution environments for this Solution (activatorId)
+    # Inactivates the active activator-ci for this activator (activatorId)
     ci_list = (
-        dbs.query(ActivatorCI)
+        dbsession.query(ActivatorCI)
         .filter(ActivatorCI.activatorId == activatorId, ActivatorCI.isActive)
         .all()
     )
     for ci in ci_list:
         ci.isActive = False
-    dbs.flush()
+    dbsession.flush()
 
-    return dbs
+    return dbsession
 
 
-def expand_ci(act):
-    act_ci_list = (
-        db.session.query(ActivatorCI)
-        .filter(ActivatorCI.activatorId == act.id, ActivatorCI.isActive)
-        .all()
-    )
-    newList = []
-    for act_ci in act_ci_list:
-        ci_object = db.session.query(CI).filter(CI.id == act_ci.ciId).one_or_none()
-        newList.append(ci_object)
-    act.ci = newList
+def expand_ci(act,  dbsession):
+
+    act.ci = dbsession.query(CI).filter(
+        CI.id == ActivatorCI.ciId, 
+        Activator.id == ActivatorCI.activatorId, 
+        Activator.id == act.id,
+        ActivatorCI.isActive, Activator.isActive).all()
     return act

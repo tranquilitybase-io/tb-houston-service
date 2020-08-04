@@ -67,8 +67,8 @@ def post():
     resp_json = resp.json()
     print("post resp_json: " + pformat(resp_json))
 
-    oid = str(resp_json["id"])
     assert resp.status_code == 201
+    oid = str(resp_json["id"])
 
     # Get Request to check Post has created item as expected
     resp = requests.get(url + oid, headers=headers)

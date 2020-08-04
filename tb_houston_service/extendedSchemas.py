@@ -86,7 +86,7 @@ class ExtendedActivatorSchema(Schema):
     available = fields.Boolean()
     sensitivity = fields.Str()
     category = fields.Str()
-    envs = fields.List(fields.Str())
+    envs = fields.Nested(LZEnvironmentSchema(many=True))
     platforms = fields.List(fields.Str())
     userCapacity = fields.Int()
     serverCapacity = fields.Int()
@@ -94,8 +94,8 @@ class ExtendedActivatorSchema(Schema):
     hosting = fields.List(fields.Str())
     apiManagement = fields.List(fields.Str())
     ci = fields.Nested(CISchema(many=True))
-    cd = fields.List(fields.Str())
-    sourceControl = fields.List(fields.Str())
+    cd = fields.Nested(CDSchema(many=True))
+    sourceControl = fields.Nested(SourceControlSchema(many=False))
     businessUnit = fields.Str()
     technologyOwner = fields.Str()
     technologyOwnerEmail = fields.Str()
@@ -114,25 +114,19 @@ class ExtendedActivatorSchema(Schema):
         #logger.debug(
         #    "ExtendedActivatorSchema::post_load::serialize_post_load: %s", data
         #)
-        data["envs"] = json.dumps(original_data.envs)
         data["platforms"] = json.dumps(original_data.platforms)
         data["regions"] = json.dumps(original_data.regions)
         data["hosting"] = json.dumps(original_data.hosting)
         data["apiManagement"] = json.dumps(original_data.apiManagement)
-        data["cd"] = json.dumps(original_data.cd)
-        data["sourceControl"] = json.dumps(original_data.sourceControl)
         return data
 
     @post_dump(pass_original=True)
     def deserialize_post_dump(self, data, original_data, **kwargs):
         #logger.debug("ExtendedActivatorSchema::post_dump %s", original_data)
-        data["envs"] = json.loads(original_data.envs)
         data["platforms"] = json.loads(original_data.platforms)
         data["regions"] = json.loads(original_data.regions)
         data["hosting"] = json.loads(original_data.hosting)
         data["apiManagement"] = json.loads(original_data.apiManagement)
-        data["cd"] = json.loads(original_data.cd)
-        data["sourceControl"] = json.loads(original_data.sourceControl)
         return data
 
 

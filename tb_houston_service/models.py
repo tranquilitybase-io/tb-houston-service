@@ -22,15 +22,13 @@ class Activator(Base):
     available = db.Column(db.Boolean())
     sensitivity = db.Column(db.String(255))
     category = db.Column(db.String(255))
-    envs = db.Column(db.String(255))
     platforms = db.Column(db.String(255))
     userCapacity = db.Column(db.Integer)
     serverCapacity = db.Column(db.Integer)
     regions = db.Column(db.String(255))
     hosting = db.Column(db.String(255))
     apiManagement = db.Column(db.String(255))
-    cd = db.Column(db.String(255))
-    sourceControl = db.Column(db.String(255))
+    sourceControlId = db.Column(db.Integer, db.ForeignKey("sourcecontrol.id"))
     businessUnit = db.Column(db.String(255))
     technologyOwner = db.Column(db.String(255))
     technologyOwnerEmail = db.Column(db.String(255))
@@ -71,17 +69,13 @@ class ActivatorSchema(SQLAlchemyAutoSchema):
             data["hosting"] = json.dumps(data["hosting"])
         if "apiManagement" in data:
             data["apiManagement"] = json.dumps(data["apiManagement"])
-        if "cd" in data:
-            data["cd"] = json.dumps(data["cd"])
-        if "sourceControl" in data:
-            data["sourceControl"] = json.dumps(data["sourceControl"])
         if data.get("accessRequestedById") == 0:
             data["accessRequestedById"] = None
 
         return data
 
 
-# SolutionEnvironment
+# class ActivatorCI(Base):
 class ActivatorCI(Base):
     __tablename__ = "activatorCI"
     id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
@@ -99,6 +93,50 @@ class ActivatorCI(Base):
 class ActivatorCISchema(SQLAlchemyAutoSchema):
     class Meta:
         model = ActivatorCI
+        include_fk = True
+        load_instance = True
+
+
+# class ActivatorCD(Base):
+class ActivatorCD(Base):
+    __tablename__ = "activatorCD"
+    id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
+    activatorId = db.Column(db.Integer(), ForeignKey("activator.id"))
+    cdId = db.Column(db.Integer(), ForeignKey("cd.id"))
+    lastUpdated = db.Column(db.String(20))
+    isActive = db.Column(db.Boolean())
+
+    def __repr__(self):
+        return "<Activator(id={self.id!r}, activatorId={self.activatorId!r}, activatorId={self.cdId!r})>".format(
+            self=self
+        )
+
+
+class ActivatorCDSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = ActivatorCD
+        include_fk = True
+        load_instance = True
+
+
+# class ActivatorEnvironment(Base):
+class ActivatorEnvironment(Base):
+    __tablename__ = "activatorEnvironment"
+    id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
+    activatorId = db.Column(db.Integer(), ForeignKey("activator.id"))
+    envId = db.Column(db.Integer(), ForeignKey("lzenvironment.id"))
+    lastUpdated = db.Column(db.String(20))
+    isActive = db.Column(db.Boolean())
+
+    def __repr__(self):
+        return "<Activator(id={self.id!r}, activatorId={self.activatorId!r}, activatorId={self.envId!r})>".format(
+            self=self
+        )
+
+
+class ActivatorEnvironmentSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = ActivatorEnvironment
         include_fk = True
         load_instance = True
 
@@ -238,7 +276,6 @@ class CISchema(SQLAlchemyAutoSchema):
         model = CI
         include_fk = True
         load_instance = True
-
 
 # Cloud Account
 class CloudAccount(Base):

@@ -20,7 +20,7 @@ from tb_houston_service import notification
 from tb_houston_service.tools import ModelTools
 from tb_houston_service.extendedSchemas import ExtendedActivatorSchema
 from tb_houston_service.extendedSchemas import ExtendedActivatorCategorySchema
-from tb_houston_service import activator_ci
+from tb_houston_service import activator_extension
 
 logger = logging.getLogger("tb_houston_service.activator")
 
@@ -63,9 +63,9 @@ def read_all(
         page_size,
         sort,
     )
-    
+
     with db_session() as dbs:
-    # pre-process sort instructions
+        # pre-process sort instructions
         if sort == None:
             activator_query = db.session.query(Activator).order_by(Activator.id)
         else:
@@ -103,19 +103,10 @@ def read_all(
         activators = activator_query.all()
     else:
         activators = activator_query.limit(page_size).offset(page * page_size).all()
-
-    # This is a better way of doing it, but doesn't work because we can't assign an object
-    #  to accessRequested because it's an integer
-    # for act in activators:
-    #     act = activator_extension.expand_activator(act)
-    # Serialize the data for the response
+    # Expand all Activators
     for act in activators:
-        act = activator_ci.expand_ci(act)
+        act = activator_extension.expand_activator(act, dbs)
 
-    Activator.accessRequestedBy = db.relationship(
-        "User",
-        primaryjoin="and_(Activator.accessRequestedById==User.id, User.isActive)",
-    )
     activator_schema = ExtendedActivatorSchema(many=True)
     data = activator_schema.dump(activators)
 
@@ -133,14 +124,12 @@ def read_one(oid):
     :return:              activator matching key
     """
     with db_session() as dbs:
-        
+
         act = dbs.query(Activator).filter(Activator.id == oid).one_or_none()
+
         if act is not None:
-            Activator.accessRequestedBy = db.relationship(
-                "User",
-                primaryjoin="and_(Activator.accessRequestedById==User.id, User.isActive)",
-            )
-            act = activator_ci.expand_ci(act)
+            # Expand Activator
+            act = activator_extension.expand_activator(act, dbs)
             schema = ExtendedActivatorSchema(many=False)
             data = schema.dump(act)
             return data, 200
@@ -161,30 +150,23 @@ def create(activatorDetails):
         if "id" in activatorDetails:
             del activatorDetails["id"]
 
-        if "ci" in activatorDetails:
-            act_ci_list = activatorDetails["ci"]
-            del activatorDetails["ci"]
-        
+        extraFields = activator_extension.refine_activator_details(
+            activatorDetails
+        )
+
         schema = ActivatorSchema()
         new_activator = schema.load(activatorDetails, session=dbs)
         dbs.add(new_activator)
         dbs.flush()
-
-        if act_ci_list:
-            activator_ci.create_activator_ci(new_activator.id, act_ci_list, dbs)
-        else:
-            logger.error(
-                "ci details in activator are missing, the transaction will be rolled back for this activator!"
-            )
-            dbs.rollback()
-
-        # Serialize and return the newly created deployment
-        # in the response
-        new_activator = activator_ci.expand_ci(new_activator)
+        # Create entries into all tables where activator has association
+        activator_extension.create_activator_associations(
+            extraFields, new_activator, dbs
+        )
+        # Expand Activator
+        new_activator = activator_extension.expand_activator(new_activator, dbs)
         schema = ExtendedActivatorSchema(many=False)
         data = schema.dump(new_activator)
         return data, 201
-        
 
 
 def update(oid, activatorDetails):
@@ -204,7 +186,7 @@ def update(oid, activatorDetails):
 
     if "id" in activatorDetails and activatorDetails["id"] != oid:
         abort(400, "Key mismatch in path and body")
-    
+
     with db_session() as dbs:
         # Does the activators exist in activators list?
         existing_activator = (
@@ -218,10 +200,9 @@ def update(oid, activatorDetails):
             activatorDetails["id"] = oid
             logger.info("activatorDetails: %s", activatorDetails)
 
-            if "ci" in activatorDetails:
-                act_ci_list = activatorDetails["ci"]
-                del activatorDetails["ci"]
-
+            extraFields = activator_extension.refine_activator_details(
+                activatorDetails
+            )
 
             schema = ActivatorSchema(many=False, session=dbs)
             updatedActivator = schema.load(activatorDetails)
@@ -231,19 +212,12 @@ def update(oid, activatorDetails):
             # return the updated activator in the response
             dbs.flush()
 
-            if act_ci_list:
-                activator_ci.create_activator_ci(updatedActivator.id, act_ci_list, dbs)
-            else:
-                logger.error(
-                    "ci details in activator are missing, the transaction will be rolled back for this activator!"
-                )
-                dbs.rollback()
-
-            Activator.accessRequestedBy = db.relationship(
-                "User",
-                primaryjoin="and_(Activator.accessRequestedById==User.id, User.isActive)",
+            activator_extension.create_activator_associations(
+                extraFields, updatedActivator, dbs
             )
-            updatedActivator = activator_ci.expand_ci(updatedActivator)
+            # Expand activator
+            updatedActivator = activator_extension.expand_activator(updatedActivator, dbs)
+
             schema = ExtendedActivatorSchema(many=False)
             data = schema.dump(updatedActivator)
             return data, 200
@@ -270,10 +244,12 @@ def delete(oid):
             existing_activator.isActive = False
             dbs.merge(existing_activator)
             dbs.flush()
-            
+
             # Delete entires Activator-CI relationship table
-            activator_ci.delete_activator_ci(existing_activator.id, dbs)
-            
+            activator_extension.delete_activator_associations(
+                existing_activator.id, dbs
+            )
+
             return make_response(f"Activator id {oid} successfully deleted", 200)
 
             # Otherwise, nope, activator to delete not found
@@ -281,57 +257,77 @@ def delete(oid):
             abort(404, f"Activator id {oid} not found")
 
 
-def notify_user(message, activatorId, toUserId, importance = 1):
-    logger.debug("notify_users fromUserId: %s message: %s activatorId: %s", toUserId, message, activatorId)
-    # Notify all user 
+def notify_user(message, activatorId, toUserId, importance=1):
+    logger.debug(
+        "notify_users fromUserId: %s message: %s activatorId: %s",
+        toUserId,
+        message,
+        activatorId,
+    )
+    # Notify all user
     with db_session() as dbs:
         # To avoid sending duplicate notifications, send only if no previous active message.
-        existing_notifications = dbs.query(Notification).filter(
-            Notification.message == message, 
-            Notification.toUserId == toUserId, 
-            Notification.isActive
-        ).count()
+        existing_notifications = (
+            dbs.query(Notification)
+            .filter(
+                Notification.message == message,
+                Notification.toUserId == toUserId,
+                Notification.isActive,
+            )
+            .count()
+        )
         logger.debug("existing_notifications: %s", existing_notifications)
         if existing_notifications == 0:
-            notification_payload = { 
+            notification_payload = {
                 "activatorId": activatorId,
                 "message": message,
                 "toUserId": toUserId,
-                "importance": importance
+                "importance": importance,
             }
-            notification.create(notification_payload, typeId = 1, dbsession = dbs)
+            notification.create(notification_payload, typeId=1, dbsession=dbs)
             # Auto-dismiss the previous notification from the user
-            notification.dismiss(fromUserId = toUserId, activatorId = activatorId, dbsession = dbs)            
+            notification.dismiss(
+                fromUserId=toUserId, activatorId=activatorId, dbsession=dbs
+            )
 
 
-def notify_admins(message, activatorId, fromUserId, importance = 1):
-    logger.debug("notify_admins fromUserId: %s message: %s activatorId: %s", fromUserId, message, activatorId)
-    # Notify all admins 
-    notification_payload = { 
+def notify_admins(message, activatorId, fromUserId, importance=1):
+    logger.debug(
+        "notify_admins fromUserId: %s message: %s activatorId: %s",
+        fromUserId,
+        message,
+        activatorId,
+    )
+    # Notify all admins
+    notification_payload = {
         "activatorId": activatorId,
         "message": message,
         "fromUserId": fromUserId,
         "toUserId": 0,
-        "importance": importance
+        "importance": importance,
     }
 
-    # TODO: Send admin notifications to teammember.isTeamAdmin, 
-    # joining with activator.businessUnitId when that become available. 
+    # TODO: Send admin notifications to teammember.isTeamAdmin,
+    # joining with activator.businessUnitId when that become available.
     with db_session() as dbs:
         admins = dbs.query(User).filter(User.isAdmin, User.isActive).all()
         for admin in admins:
             # To avoid sending duplicate notifications, send only if no previous active message.
-            existing_notifications = dbs.query(Notification).filter(
-                Notification.message == message, 
-                Notification.toUserId == admin.id, 
-                Notification.isActive
-            ).count()
+            existing_notifications = (
+                dbs.query(Notification)
+                .filter(
+                    Notification.message == message,
+                    Notification.toUserId == admin.id,
+                    Notification.isActive,
+                )
+                .count()
+            )
             logger.debug("existing_notifications: %s", existing_notifications)
             if existing_notifications == 0:
                 notification_payload["toUserId"] = admin.id
-                notification.create(notification_payload, typeId = 1, dbsession = dbs)
+                notification.create(notification_payload, typeId=1, dbsession=dbs)
                 # Auto-dismiss the previous notification from the user
-                #notification.dismiss(fromUserId = fromUserId, activatorId = activatorId, dbsession = dbs)
+                # notification.dismiss(fromUserId = fromUserId, activatorId = activatorId, dbsession = dbs)
 
 
 def setActivatorStatus(activatorDetails):
@@ -356,22 +352,45 @@ def setActivatorStatus(activatorDetails):
             updated_activator = schema.load(activatorDetails, session=dbs)
             updated_activator.lastUpdated = ModelTools.get_utc_timestamp()
             dbs.merge(updated_activator)
+            
+            # Expand Activator
+            updated_activator = activator_extension.expand_activator(updated_activator, dbs)
 
-            Activator.accessRequestedBy = db.relationship("User", primaryjoin="and_(Activator.accessRequestedById==User.id, User.isActive)")
-            updated_activator = activator_ci.expand_ci(updated_activator)
             activator_schema = ExtendedActivatorSchema()
             data = activator_schema.dump(updated_activator)
 
             # Create notifications
-            if updated_activator.status != "Available" and updated_activator.accessRequestedById:            
-                full_name = (updated_activator.accessRequestedBy.firstName or "") + " "  + (updated_activator.accessRequestedBy.lastName or "") 
-                activator_name = f"Activator {updated_activator.id} ({updated_activator.name})"
+            if (
+                updated_activator.status != "Available"
+                and updated_activator.accessRequestedById
+            ):
+                full_name = (
+                    (updated_activator.accessRequestedBy.firstName or "")
+                    + " "
+                    + (updated_activator.accessRequestedBy.lastName or "")
+                )
+                activator_name = (
+                    f"Activator {updated_activator.id} ({updated_activator.name})"
+                )
                 message = f"{full_name} has requested access to {activator_name}"
-                notify_admins(message = message, activatorId = updated_activator.id, fromUserId = updated_activator.accessRequestedById)
-            elif updated_activator.status == "Available" and updated_activator.accessRequestedById:
-                activator_name = f"Activator {updated_activator.id} ({updated_activator.name})"
+                notify_admins(
+                    message=message,
+                    activatorId=updated_activator.id,
+                    fromUserId=updated_activator.accessRequestedById,
+                )
+            elif (
+                updated_activator.status == "Available"
+                and updated_activator.accessRequestedById
+            ):
+                activator_name = (
+                    f"Activator {updated_activator.id} ({updated_activator.name})"
+                )
                 message = f"Access to {activator_name} has been granted."
-                notify_user(message, activatorId = updated_activator.id, toUserId = updated_activator.accessRequestedById)                
+                notify_user(
+                    message,
+                    activatorId=updated_activator.id,
+                    toUserId=updated_activator.accessRequestedById,
+                )
 
             return data, 200
 
