@@ -49,6 +49,7 @@ def decode_token(token):
         logger.debug("payload sub: %s", idinfo)
         return idinfo
     except ValueError as e:
+        logger.error("decode_token failed: %s", e)
         six.raise_from(Unauthorized, e)
 
 

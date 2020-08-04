@@ -30,6 +30,7 @@ def typestest(resp):
     assert isinstance(resp["apiManagement"], list)
     assert isinstance(resp["available"], bool)
     assert isinstance(resp["billing"], str)
+    assert isinstance(resp["businessUnit"], dict)
     assert isinstance(resp["category"], str)
     assert isinstance(resp["cd"], list)
     assert isinstance(resp["description"], str)
@@ -88,7 +89,7 @@ def post():
         ],
         "available": True,
         "billing": "test-post-",
-        "businessUnit": "test-post-",
+        "businessUnitId": 1,
         "category": "test-post-",
         "cd": [5, 6],
         "ci": [3, 5],
@@ -208,7 +209,7 @@ def put(oid):
         "apiManagement": ["test-put-6", "test-put-7", "test-put-8"],
         "available": False,
         "billing": "billing",
-        "businessUnit": "businessUnit",
+        "businessUnitId": 1,
         "category": "category",
         "cd": [3, 4],
         "ci": [1, 2],
@@ -281,7 +282,7 @@ def put(oid):
     # Validate response body for updated values
     assert resp.status_code == 200
     assert resp_json["activator"] == "new-test-activator"
-    assert resp_json["businessUnit"] == "businessUnit"
+    assert resp_json["businessUnitId"] == 1
     typestest(resp_json)
 
 
