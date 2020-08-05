@@ -226,10 +226,10 @@ def update(oid, activatorDetails):
             if business_unit_ids:
                 business_unit = activatorDetails.get("businessUnitId")
                 if business_unit and business_unit not in business_unit_ids:
-                    abort(400, f"Unauthorized to update solutions for business unit {business_unit}")
+                    abort(400, f"Unauthorized to update activators for business unit {business_unit}")
                 business_unit = existing_activator.businessUnitId
                 if business_unit and business_unit not in business_unit_ids:
-                    abort(400, f"Unauthorized to update solutions for business unit {business_unit}")                
+                    abort(400, f"Unauthorized to update activators for business unit {business_unit}")
             else:
                 # initially will let this pass, but in future we could abort if user is not a member of any business units
                 pass
@@ -280,6 +280,7 @@ def delete(oid):
             business_unit_ids = security.get_business_units_ids_for_user(dbsession = dbs)
             if business_unit_ids:
                 business_unit = existing_activator.businessUnitId
+                logger.debug("delete: %s, %s", business_unit, business_unit_ids)
                 if business_unit and business_unit not in business_unit_ids:
                     abort(400, f"Unauthorized to delete activators for business unit {business_unit}")                
             else:
