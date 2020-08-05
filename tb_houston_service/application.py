@@ -73,12 +73,13 @@ def read_all(
         business_unit_ids = security.get_business_units_ids_for_user(dbsession = dbs)
 
         application_query = application_query.filter(
+            Activator.id == Application.activatorId,
             (status == None or Application.status == status),
             (activatorId == None or Application.activatorId == activatorId),
             (environment == None or Application.env == environment),
             (isActive == None or Application.isActive == isActive),
             (isFavourite == None or Application.isFavourite == isFavourite), 
-            (business_unit_ids == None or (Activator.id == Application.activatorId, Activator.businessUnitId.in_(business_unit_ids)))
+            (business_unit_ids == None or Activator.businessUnitId.in_(business_unit_ids))
         )
 
         if page == None or page_size == None:
@@ -112,7 +113,8 @@ def read_one(oid):
         business_unit_ids = security.get_business_units_ids_for_user(dbsession = dbs)
         application = (
             dbs.query(Application).filter(Application.id == oid,
-            (business_unit_ids == None or (Activator.id == Application.activatorId, Activator.businessUnitId.in_(business_unit_ids)))
+            Activator.id == Application.activatorId,
+            (business_unit_ids == None or Activator.businessUnitId.in_(business_unit_ids))
             ).one_or_none()
         )
 
