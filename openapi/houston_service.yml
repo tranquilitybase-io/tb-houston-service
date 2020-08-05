@@ -3298,9 +3298,9 @@ components:
         sourceControlId:
           type: integer
           description: sourceControlId
-        businessUnit:
-          type: string
-          description: businessUnit
+        businessUnitId:
+          type: integer
+          description: businessUnitId
         technologyOwner:
           type: string
           description: technologyOwner

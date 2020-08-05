@@ -11,7 +11,7 @@ from sqlalchemy import literal_column
 from sqlalchemy.exc import SQLAlchemyError
 
 
-from config import db
+#from config import db
 from config.db_lib import db_session
 from tb_houston_service.models import Activator, ActivatorSchema
 from tb_houston_service.models import User
@@ -21,6 +21,8 @@ from tb_houston_service.tools import ModelTools
 from tb_houston_service.extendedSchemas import ExtendedActivatorSchema
 from tb_houston_service.extendedSchemas import ExtendedActivatorCategorySchema
 from tb_houston_service import activator_extension
+from tb_houston_service import security
+
 
 logger = logging.getLogger("tb_houston_service.activator")
 
@@ -67,7 +69,7 @@ def read_all(
     with db_session() as dbs:
         # pre-process sort instructions
         if sort == None:
-            activator_query = db.session.query(Activator).order_by(Activator.id)
+            activator_query = dbs.query(Activator).order_by(Activator.id)
         else:
             try:
                 sort_inst = [si.split(":") for si in sort]
@@ -80,12 +82,15 @@ def read_all(
                         si2 = "asc"
                     orderby_arr.append(f"{si1} {si2}")
                 # print("orderby: {}".format(orderby_arr))
-                activator_query = db.session.query(Activator).order_by(
+                activator_query = dbs.query(Activator).order_by(
                     literal_column(", ".join(orderby_arr))
                 )
             except SQLAlchemyError as e:
                 logger.warning(e)
-                activator_query = db.session.query(Activator).order_by(Activator.id)
+                activator_query = dbs.query(Activator).order_by(Activator.id)
+
+    # filter activators by logged in user 
+    business_unit_ids = security.get_business_units_ids_for_user(dbsession = dbs)
 
     activator_query = activator_query.filter(
         (category == None or Activator.category == category),
@@ -97,6 +102,7 @@ def read_all(
         (sensitivity == None or Activator.sensitivity == sensitivity),
         (isActive == None or Activator.isActive == isActive),
         (isFavourite == None or Activator.isFavourite == isFavourite),
+        (business_unit_ids == None or Activator.businessUnitId.in_(business_unit_ids))     
     )
 
     if page == None or page_size == None:
@@ -125,7 +131,12 @@ def read_one(oid):
     """
     with db_session() as dbs:
 
-        act = dbs.query(Activator).filter(Activator.id == oid).one_or_none()
+        # filter activators by logged in user 
+        business_unit_ids = security.get_business_units_ids_for_user(dbsession = dbs)
+        act = dbs.query(Activator).filter(
+            Activator.id == oid,
+            (business_unit_ids == None or Activator.businessUnitId.in_(business_unit_ids))
+        ).one_or_none()
 
         if act is not None:
             # Expand Activator
@@ -149,6 +160,16 @@ def create(activatorDetails):
         # Remove id as it's created automatically
         if "id" in activatorDetails:
             del activatorDetails["id"]
+
+        # Validate the business unit
+        business_unit_ids = security.get_business_units_ids_for_user(dbsession = dbs)
+        if business_unit_ids:
+            business_unit = activatorDetails.get("businessUnitId")
+            if business_unit not in business_unit_ids:
+                abort(400, f"Unauthorized to create activators for business unit {business_unit}")
+        else:
+            # initially will let this pass, but in future we could abort if user is not a member of any business units
+            pass
 
         extraFields = activator_extension.refine_activator_details(
             activatorDetails
@@ -200,6 +221,19 @@ def update(oid, activatorDetails):
             activatorDetails["id"] = oid
             logger.info("activatorDetails: %s", activatorDetails)
 
+           # Validate the business unit
+            business_unit_ids = security.get_business_units_ids_for_user(dbsession = dbs)
+            if business_unit_ids:
+                business_unit = activatorDetails.get("businessUnitId")
+                if business_unit and business_unit not in business_unit_ids:
+                    abort(400, f"Unauthorized to update solutions for business unit {business_unit}")
+                business_unit = existing_activator.businessUnitId
+                if business_unit and business_unit not in business_unit_ids:
+                    abort(400, f"Unauthorized to update solutions for business unit {business_unit}")                
+            else:
+                # initially will let this pass, but in future we could abort if user is not a member of any business units
+                pass
+
             extraFields = activator_extension.refine_activator_details(
                 activatorDetails
             )
@@ -241,6 +275,17 @@ def delete(oid):
 
         # if found?
         if existing_activator is not None:
+
+           # Validate the business unit
+            business_unit_ids = security.get_business_units_ids_for_user(dbsession = dbs)
+            if business_unit_ids:
+                business_unit = existing_activator.businessUnitId
+                if business_unit and business_unit not in business_unit_ids:
+                    abort(400, f"Unauthorized to delete activators for business unit {business_unit}")                
+            else:
+                # initially will let this pass, but in future we could abort if user is not a member of any business units
+                pass
+
             existing_activator.isActive = False
             dbs.merge(existing_activator)
             dbs.flush()

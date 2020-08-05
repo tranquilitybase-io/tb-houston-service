@@ -12,6 +12,7 @@ from tb_houston_service.DeploymentStatus import DeploymentStatus
 
 class TestDeployment(unittest.TestCase):
     HOUSTON_SERVICE_URL = os.environ["HOUSTON_SERVICE_URL"]
+    lzenvironment_deployment_url = f"http://{HOUSTON_SERVICE_URL}/api/lzEnvironmentDeployment/"
     solution_url = f"http://{HOUSTON_SERVICE_URL}/api/solution/"
     solution_deployment_url = f"http://{HOUSTON_SERVICE_URL}/api/solutiondeployment/"
     solution_deployments_url = f"http://{HOUSTON_SERVICE_URL}/api/solutiondeployments/"
@@ -28,6 +29,12 @@ class TestDeployment(unittest.TestCase):
 
 
     # Main tests are prefix with test_
+    def lzenvironment_deployment(self):
+        resp = requests.post(self.lzenvironment_deployment_url, headers=self.headers)
+        print(f"resp: {resp}")
+        self.assertEqual(resp.status_code, 200)
+        
+
     def solution_deployment(self):
         # Testing POST request
         self.solution_oid = self.post_solution()
@@ -333,6 +340,7 @@ class TestDeployment(unittest.TestCase):
 
 
     def test_deployment(self):
+        self.lzenvironment_deployment()
         self.solution_deployment()
         self.application_deployment()
 

@@ -65,7 +65,7 @@ def typestest_activator(obj):
     assert isinstance(obj["apiManagement"], list)
     assert isinstance(obj["available"], bool)
     assert isinstance(obj["billing"], str)
-    assert isinstance(obj["businessUnit"], str)
+    assert isinstance(obj["businessUnit"], dict)
     assert isinstance(obj["category"], str)
     assert isinstance(obj["ci"], list) or obj["ci"] is None
     assert isinstance(obj["cd"], list) or obj["cd"] is None

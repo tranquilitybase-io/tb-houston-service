@@ -12,9 +12,11 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from config import db
 from tb_houston_service.models import Application, ApplicationSchema
+from tb_houston_service.models import Activator
 from tb_houston_service.extendedSchemas import ExtendedApplicationSchema
 from tb_houston_service.tools import ModelTools
 from tb_houston_service import application_extension
+from tb_houston_service import security
 from config.db_lib import db_session
 
 
@@ -66,12 +68,17 @@ def read_all(
                 logger.warning(e)
                 application_query = dbs.query(Application).order_by(Application.id)
 
+
+        # filter activators by logged in user 
+        business_unit_ids = security.get_business_units_ids_for_user(dbsession = dbs)
+
         application_query = application_query.filter(
             (status == None or Application.status == status),
             (activatorId == None or Application.activatorId == activatorId),
             (environment == None or Application.env == environment),
             (isActive == None or Application.isActive == isActive),
             (isFavourite == None or Application.isFavourite == isFavourite), 
+            (business_unit_ids == None or (Activator.id == Application.activatorId, Activator.businessUnitId.in_(business_unit_ids)))
         )
 
         if page == None or page_size == None:
@@ -101,8 +108,12 @@ def read_one(oid):
     """
 
     with db_session() as dbs:
+        # filter activators by logged in user 
+        business_unit_ids = security.get_business_units_ids_for_user(dbsession = dbs)
         application = (
-            dbs.query(Application).filter(Application.id == oid).one_or_none()
+            dbs.query(Application).filter(Application.id == oid,
+            (business_unit_ids == None or (Activator.id == Application.activatorId, Activator.businessUnitId.in_(business_unit_ids)))
+            ).one_or_none()
         )
 
         logger.debug("application data:")
@@ -133,6 +144,17 @@ def create(applicationDetails):
         # Remove id as it's created automatically
         if "id" in applicationDetails:
             del applicationDetails["id"]
+
+        # Validate the business unit
+        business_unit_ids = security.get_business_units_ids_for_user(dbsession = dbs)
+        if business_unit_ids:
+            activator = dbs.query(Activator).filter(Activator.id == applicationDetails.get("activatorId")).one_or_none()
+            business_unit = activator.businessUnitId
+            if business_unit not in business_unit_ids:
+                abort(400, f"Unauthorized to create solutions for business unit {business_unit}")
+        else:
+            # initially will let this pass, but in future we could abort if user is not a member of any business units
+            pass
 
         schema = ApplicationSchema()
         new_application = schema.load(applicationDetails, session=dbs)
@@ -167,6 +189,18 @@ def update(oid, applicationDetails):
 
         # Does application exist?
         if existing_application is not None:
+            # Validate the business unit
+            business_unit_ids = security.get_business_units_ids_for_user(dbsession = dbs)
+            if business_unit_ids:
+                activator = dbs.query(Activator).filter(Activator.id == applicationDetails.get("activatorId")).one_or_none()
+                business_unit = activator.businessUnitId
+                if business_unit and business_unit not in business_unit_ids:
+                    abort(400, f"Unauthorized to update solutions for business unit {business_unit}")                
+            else:
+                # initially will let this pass, but in future we could abort if user is not a member of any business units
+                pass
+
+
             schema = ApplicationSchema()
             applicationDetails['id'] = oid
             schema.load(applicationDetails, session=db.session)
@@ -199,6 +233,18 @@ def delete(oid):
 
         # if found?
         if existing_application is not None:
+
+           # Validate the business unit
+            business_unit_ids = security.get_business_units_ids_for_user(dbsession = dbs)
+            if business_unit_ids:
+                activator = dbs.query(Activator).filter(Activator.id == existing_application.activatorId).one_or_none()
+                business_unit = activator.businessUnitId                
+                if business_unit and business_unit not in business_unit_ids:
+                    abort(400, f"Unauthorized to delete applications for business unit {business_unit}")                
+            else:
+                # initially will let this pass, but in future we could abort if user is not a member of any business units
+                pass
+
             existing_application.isActive = False
             dbs.merge(existing_application)
             dbs.commit()
