@@ -142,6 +142,8 @@ def create(applicationDetails):
     :return:             201 on success, 406 on application exists
     """
 
+    logger.debug("create: %s", applicationDetails)
+
     with db_session() as dbs:
         # Remove id as it's created automatically
         if "id" in applicationDetails:
@@ -153,7 +155,7 @@ def create(applicationDetails):
             activator = dbs.query(Activator).filter(Activator.id == applicationDetails.get("activatorId")).one_or_none()
             business_unit = activator.businessUnitId
             if business_unit not in business_unit_ids:
-                abort(400, f"Unauthorized to create solutions for business unit {business_unit}")
+                abort(400, f"Unauthorized to create applications for business unit {business_unit}")
         else:
             # initially will let this pass, but in future we could abort if user is not a member of any business units
             pass
@@ -179,6 +181,8 @@ def update(oid, applicationDetails):
     :param application:   application to update
     :return: updated application
     """
+
+    logger.debug("update: %s", applicationDetails)
 
     with db_session() as dbs:
         logger.debug("application: ")

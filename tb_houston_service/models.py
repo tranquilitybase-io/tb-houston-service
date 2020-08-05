@@ -835,6 +835,11 @@ class User(Base):
     showWelcome = db.Column(db.Boolean(), default=True)
     lastUpdated = db.Column(db.String(20))
 
+    def __repr__(self):
+        return "<User(id={self.id!r}, email={self.email!r})>".format(
+            self=self
+        )
+
 
 class UserSchema(SQLAlchemyAutoSchema):
     class Meta:
