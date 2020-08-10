@@ -1,10 +1,8 @@
 import logging
 import json
 from marshmallow import Schema, fields, post_load, post_dump
-from tb_houston_service.models import TeamSchema
 from tb_houston_service.models import BusinessUnitSchema
 from tb_houston_service.models import LZEnvironmentSchema
-from tb_houston_service.models import LZLanVpcSchema
 from tb_houston_service.models import CloudRoleSchema
 from tb_houston_service.models import UserSchema
 from tb_houston_service.models import CISchema, CDSchema, SourceControlSchema
@@ -14,7 +12,6 @@ from tb_houston_service.models import NotificationActivatorSchema
 from tb_houston_service.models import NotificationTeamSchema
 from tb_houston_service.models import NotificationApplicationDeploymentSchema
 from tb_houston_service.models import NotificationSolutionDeploymentSchema
-
 
 
 logger = logging.getLogger("tb_houston_service.extendedSchemas")
@@ -61,6 +58,7 @@ class ExtendedUserSchema(Schema):
     lastUpdated = fields.Str()
     teamCount = fields.Int()
 
+
 class ExtendedUserCloudRoleSchema(Schema):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -100,7 +98,7 @@ class ExtendedActivatorSchema(Schema):
     sourceControlId = fields.Int()
     sourceControl = fields.Nested(SourceControlSchema(many=False))
     businessUnitId = fields.Int()
-    businessUnit = fields.Nested(BusinessUnitSchema(many=False))    
+    businessUnit = fields.Nested(BusinessUnitSchema(many=False))
     technologyOwner = fields.Str()
     technologyOwnerEmail = fields.Str()
     billing = fields.Str()
@@ -115,9 +113,9 @@ class ExtendedActivatorSchema(Schema):
 
     @post_load(pass_original=True)
     def deserialize_post_load(self, data, original_data, **kwargs):
-        #logger.debug(
+        # logger.debug(
         #    "ExtendedActivatorSchema::post_load::serialize_post_load: %s", data
-        #)
+        # )
         data["platforms"] = json.dumps(original_data.platforms)
         data["regions"] = json.dumps(original_data.regions)
         data["hosting"] = json.dumps(original_data.hosting)
@@ -126,7 +124,7 @@ class ExtendedActivatorSchema(Schema):
 
     @post_dump(pass_original=True)
     def deserialize_post_dump(self, data, original_data, **kwargs):
-        #logger.debug("ExtendedActivatorSchema::post_dump %s", original_data)
+        # logger.debug("ExtendedActivatorSchema::post_dump %s", original_data)
         data["platforms"] = json.loads(original_data.platforms)
         data["regions"] = json.loads(original_data.regions)
         data["hosting"] = json.loads(original_data.hosting)
@@ -295,7 +293,7 @@ class SolutionDeploymentSchema(Schema):
     taskId = fields.Str()
 
 
-class ExtendedGoogleSessionSchema(Schema):
+class ExtendedGoogleEndpointSchema(Schema):
     primaryGcpVpcSubnet = fields.Str()
     primaryRegion = fields.Str()
     primarySubnetName = fields.Str()
@@ -304,7 +302,7 @@ class ExtendedGoogleSessionSchema(Schema):
     secondarySubnetName = fields.Str()
 
 
-class ExtendedOnPremiseSessionSchema(Schema):
+class ExtendedRemoteEndpointSchema(Schema):
     primaryBgpPeer = fields.Str()
     primaryPeerIp = fields.Str()
     primaryPeerIpSubnet = fields.Str()
@@ -335,8 +333,8 @@ class ExtendedVPNSchema(Schema):
 class ExtendedLandingZoneWANSchema(Schema):
     __envelope__ = {"single": "landingZoneWAN", "many": "landingZoneWANs"}
     id = fields.Int()
-    googleSession = fields.Nested(ExtendedGoogleSessionSchema(many=False))
-    onPremiseSession = fields.Nested(ExtendedOnPremiseSessionSchema(many=False))
+    googleEndpoint = fields.Nested(ExtendedGoogleEndpointSchema(many=False))
+    remoteEndpoint = fields.Nested(ExtendedRemoteEndpointSchema(many=False))
     vpn = fields.Nested(ExtendedVPNSchema(many=False))
 
 
@@ -419,7 +417,7 @@ class ExtendedApplicationDeploymentSchema(Schema):
 
     @post_dump(pass_original=True)
     def deserialize_post_dump(self, data, original_data, **kwargs):
-        #logger.debug("ExtendedApplicationDeploymentSchema::post_dump %s", original_data)
+        # logger.debug("ExtendedApplicationDeploymentSchema::post_dump %s", original_data)
         data["id"] = original_data.applicationId
         return data
 
@@ -437,6 +435,7 @@ class ExtendedApplicationForDACSchema(Schema):
     optionalVariables = fields.List(fields.Dict())
     deploymentEnvironment = fields.Nested(ExtendedLZEnvironmentForDacSchema)
 
+
 class ExtendedNotificationActivatorSchema(Schema):
     id = fields.Int()
     isActive = fields.Bool()
@@ -448,7 +447,7 @@ class ExtendedNotificationActivatorSchema(Schema):
     isRead = fields.Boolean()
     typeId = fields.Int()
     typeObj = fields.Nested(NotificationTypeSchema)
-    details = fields.Nested(NotificationActivatorSchema)    
+    details = fields.Nested(NotificationActivatorSchema)
 
 
 class ExtendedNotificationTeamSchema(Schema):
@@ -462,7 +461,7 @@ class ExtendedNotificationTeamSchema(Schema):
     isRead = fields.Boolean()
     typeId = fields.Int()
     type = fields.Nested(NotificationTypeSchema)
-    details = fields.Nested(NotificationTeamSchema)    
+    details = fields.Nested(NotificationTeamSchema)
 
 
 class ExtendedNotificationApplicationDeploymentSchema(Schema):
@@ -476,7 +475,7 @@ class ExtendedNotificationApplicationDeploymentSchema(Schema):
     isRead = fields.Boolean()
     typeId = fields.Int()
     type = fields.Nested(NotificationTypeSchema)
-    details = fields.Nested(NotificationApplicationDeploymentSchema)   
+    details = fields.Nested(NotificationApplicationDeploymentSchema)
 
 
 class ExtendedNotificationSolutionDeploymentSchema(Schema):
@@ -490,7 +489,7 @@ class ExtendedNotificationSolutionDeploymentSchema(Schema):
     isRead = fields.Boolean()
     typeId = fields.Int()
     type = fields.Nested(NotificationTypeSchema)
-    details = fields.Nested(NotificationSolutionDeploymentSchema)   
+    details = fields.Nested(NotificationSolutionDeploymentSchema)
 
 
 class ExtendedNotificationSchema(OneOfSchema):
@@ -499,7 +498,7 @@ class ExtendedNotificationSchema(OneOfSchema):
         "ACTIVATOR_ACCESS": ExtendedNotificationActivatorSchema,
         "TEAM_ACCESS": ExtendedNotificationTeamSchema,
         "APPLICATION_DEPLOYMENT": ExtendedNotificationApplicationDeploymentSchema,
-        "SOLUTION_DEPLOYMENT": ExtendedNotificationSolutionDeploymentSchema                
+        "SOLUTION_DEPLOYMENT": ExtendedNotificationSolutionDeploymentSchema,
     }
 
     def get_obj_type(self, obj):
@@ -510,6 +509,6 @@ class ExtendedNotificationSchema(OneOfSchema):
         elif obj.typeId == 3:
             return "APPLICATION_DEPLOYMENT"
         elif obj.typeId == 4:
-            return "SOLUTION_DEPLOYMENT"                        
+            return "SOLUTION_DEPLOYMENT"
         else:
-            raise Exception("Unknown object type: {}".format(obj.__class__.__name__))    
+            raise Exception("Unknown object type: {}".format(obj.__class__.__name__))
