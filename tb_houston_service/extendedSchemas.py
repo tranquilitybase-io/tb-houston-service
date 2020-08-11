@@ -269,7 +269,7 @@ class ExtendedSolutionForDACSchema(Schema):
     cd = fields.Str()
     sourceControlId = fields.Int()
     sourceControl = fields.Str()
-    environments = fields.Nested(ExtendedLZEnvironmentForDacSchema(many=True))
+    environments = fields.List(fields.Str())
     teamId = fields.Int()
     team = fields.Nested(ExtendedTeamDACSchema(many=False))
     deploymentFolderId = fields.Str()
@@ -435,7 +435,7 @@ class ExtendedApplicationForDACSchema(Schema):
     deploymentProjectId = fields.Str()
     mandatoryVariables = fields.List(fields.Dict())
     optionalVariables = fields.List(fields.Dict())
-    deploymentEnvironment = fields.Nested(ExtendedLZEnvironmentForDacSchema)
+    deploymentEnvironment = fields.Str()
 
 class ExtendedNotificationActivatorSchema(Schema):
     id = fields.Int()

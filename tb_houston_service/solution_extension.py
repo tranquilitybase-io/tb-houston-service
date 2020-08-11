@@ -76,6 +76,12 @@ def expand_solution_for_dac(sol, dbsession):
         if lzlanvpc:
             se.sharedVPCProjectId = lzlanvpc.sharedVPCProjectId
 
+
+    # added for integration purposes only, atw gcpdac expects a list of strings
+    # Can remove when gcpdac can support lzenvironment objects
+    sol.environments = [ se.name for se in environments]
+
+
     a_team = dbsession.query(Team).filter(Team.id == sol.teamId).one_or_none()
     sol.team = team_extension.expand_team_with_users(a_team)
 

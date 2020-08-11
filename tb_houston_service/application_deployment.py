@@ -275,7 +275,10 @@ def deploy_application(app_deployment, dbsession):
             environment.sharedVPCProjectId = lzlanvpc.sharedVPCProjectId
         else:
             environment.sharedVPCProjectId = ""
-        app_deployment.deploymentEnvironment = environment
+    
+        #app_deployment.deploymentEnvironment = environment
+        # below line can be remove and above line reinstated when gcp dac can support env objects
+        app_deployment.deploymentEnvironment = environment.name
 
         return send_application_deployment_to_the_dac(app_deployment, dbsession = dbsession)
     else:
