@@ -12,6 +12,8 @@ from tb_houston_service.models import NotificationActivatorSchema
 from tb_houston_service.models import NotificationTeamSchema
 from tb_houston_service.models import NotificationApplicationDeploymentSchema
 from tb_houston_service.models import NotificationSolutionDeploymentSchema
+from tb_houston_service.models import NotificationSolutionRollbackSchema
+
 
 
 logger = logging.getLogger("tb_houston_service.extendedSchemas")
@@ -293,6 +295,16 @@ class SolutionDeploymentSchema(Schema):
     taskId = fields.Str()
 
 
+class SolutionRollbackSchema(Schema):
+    __envelope__ = {"single": "solutionrollback", "many": "solutionrollbacks"}
+
+    id = fields.Int()
+    deployed = fields.Boolean()
+    rollbackState = fields.Str()
+    statusMessage = fields.Str()
+    rollbackTaskId = fields.Str()
+
+
 class ExtendedGoogleEndpointSchema(Schema):
     primaryGcpVpcSubnet = fields.Str()
     primaryRegion = fields.Str()
@@ -492,6 +504,20 @@ class ExtendedNotificationSolutionDeploymentSchema(Schema):
     details = fields.Nested(NotificationSolutionDeploymentSchema)
 
 
+class ExtendedNotificationSolutionRollbackSchema(Schema):
+    id = fields.Int()
+    isActive = fields.Bool()
+    lastUpdated = fields.Str()
+    toUserId = fields.Int()
+    fromUserId = fields.Int()
+    importance = fields.Int()
+    message = fields.Str()
+    isRead = fields.Boolean()
+    typeId = fields.Int()
+    type = fields.Nested(NotificationTypeSchema)
+    details = fields.Nested(NotificationSolutionRollbackSchema)
+
+
 class ExtendedNotificationSchema(OneOfSchema):
     type_field = "typeName"
     type_schemas = {
@@ -499,6 +525,7 @@ class ExtendedNotificationSchema(OneOfSchema):
         "TEAM_ACCESS": ExtendedNotificationTeamSchema,
         "APPLICATION_DEPLOYMENT": ExtendedNotificationApplicationDeploymentSchema,
         "SOLUTION_DEPLOYMENT": ExtendedNotificationSolutionDeploymentSchema,
+        "SOLUTION_ROLLBACK": ExtendedNotificationSolutionRollbackSchema,        
     }
 
     def get_obj_type(self, obj):
@@ -510,5 +537,7 @@ class ExtendedNotificationSchema(OneOfSchema):
             return "APPLICATION_DEPLOYMENT"
         elif obj.typeId == 4:
             return "SOLUTION_DEPLOYMENT"
+        elif obj.typeId == 5:
+            return "SOLUTION_ROLLBACK"            
         else:
             raise Exception("Unknown object type: {}".format(obj.__class__.__name__))

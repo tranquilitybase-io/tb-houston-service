@@ -629,6 +629,24 @@ class NotificationSolutionDeploymentSchema(SQLAlchemyAutoSchema):
         load_instance = True
 
 
+class NotificationSolutionRollback(Base):
+    __tablename__ = "notificationSolutionRollback"
+    isActive = db.Column(db.Boolean())
+    lastUpdated = db.Column(db.String(20))
+    notificationId = db.Column(db.Integer(), db.ForeignKey("notification.id"), primary_key=True)
+    solutionId = db.Column(db.Integer(), db.ForeignKey("solution.id"), primary_key=True)
+
+    def __repr__(self):
+        return "<NotificationSolutionRollback(notificationId={self.notificationId!r}, solutionId={self.solutionId!r})>".format(self=self)
+
+
+class NotificationSolutionRollbackSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = NotificationSolutionRollback
+        include_fk = True
+        load_instance = True
+
+
 # CloudRole
 class CloudRole(Base):
     __tablename__ = "cloudRole"
@@ -667,6 +685,8 @@ class Solution(Base):
     statusMessage = db.Column(db.String(255))
     taskId = db.Column(db.String(100))
     deploymentFolderId = db.Column(db.String(50))
+    rollbackState = db.Column(db.String(45))
+    rollbackTaskId = db.Column(db.String(100))
     # applications = db.relationship("Application")
 
     def __repr__(self):

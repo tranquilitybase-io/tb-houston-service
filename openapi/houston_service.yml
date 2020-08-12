@@ -1487,6 +1487,80 @@ paths:
           description: Successfully updated a solution deployment
 
 
+  /solutionrollbacks/:
+    get:
+      operationId: tb_houston_service.solution_rollback.rollback_read_all
+      tags:
+        - solution
+      summary: Read the entire list of rollbacked solutions
+      description: Read the list of rolledback solutions
+      responses:
+        "200":
+          description: Successfully read solutions list operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SolutionRollback"
+
+  /solutionrollback/:
+    post:
+      operationId: tb_houston_service.solution_rollback.rollback_create
+      tags:
+        - solution
+      summary: receive solution id from the Eagle Console and then post the Solution rollback to the DaC
+      description: receive solution id from the Eagle Console and then post the Solution rollback to the DaC
+      requestBody:
+        $ref: "#/components/requestBodies/solution.solutionRollbackPostDetails"
+      responses:
+        "201":
+          description: Successfully created a Solution Rollback
+
+  "/solutionrollback/{oid}":
+    get:
+      operationId: tb_houston_service.solution_rollback.rollback_read_one
+      tags:
+        - solution
+      summary: Read a solution rollback from the list 
+      description: Read solution rollback from the list
+      parameters:
+        - name: oid
+          in: path
+          description: id of the solution to update
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successfully updated a solution rollback
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SolutionRollback"
+
+    put:
+      operationId: tb_houston_service.solution_rollback.rollback_update
+      tags:
+        - solution
+      summary: Update a solution in the list with the rollback state
+      description: Update a solution in the list with the rollback state
+      parameters:
+        - name: oid
+          in: path
+          description: id of the solution to update
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        $ref: "#/components/requestBodies/solution.solutionRollbackPutDetails"
+      responses:
+        "200":
+          description: Successfully updated a solution rollback          
+
+
   "/solutionEnvironment/":
     post:
       operationId: tb_houston_service.solution_environment.create_all
@@ -3153,6 +3227,43 @@ components:
       description: the solution id to deploy
       required: true
 
+    solution.solutionRollbackPostDetails:
+      content:
+        application/json:
+          schema:
+            x-body-name: solutionRollbackDetails
+            type: object
+            properties:
+              id:
+                type: integer
+                description: The id of the solution that is being rolled-back
+
+    solution.solutionRollbackPutDetails:
+      content:
+        application/json:
+          schema:
+            x-body-name: solutionRollbackDetails
+            type: object
+            properties:
+              id:
+                type: integer
+                description: The id of the solution that is being rolled-back
+              deployed:
+                type: boolean
+                description: The state of the rollback
+              rollbackState:
+                type: string
+                description: The rollback state
+              statusMessage:
+                type: string
+                description: The error message
+              rollbackTaskId:
+                type: string
+                nullable: true
+                description: The rollback task Id
+      description: the solution id to rollback
+      required: true
+
     solution.solutionEnvironmentDetails:  
       content:
         application/json:
@@ -3733,6 +3844,26 @@ components:
           type: string
           nullable: true
           description: task id
+
+    SolutionRollback:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The solution id
+        deployed:
+          type: boolean
+          description: Has the solution been deployed?
+        rollbackState:
+          type: string
+          description: Rollback state
+        statusMessage:
+          type: string
+          description: status message
+        rollbackTaskId:
+          type: string
+          nullable: true
+          description: rollback task id
 
     SolutionEnvironment:
       type: object
