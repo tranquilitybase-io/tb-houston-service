@@ -99,7 +99,7 @@ def create(typeDetails):
 
     # Otherwise, it already exists, that's an error
     else:
-        abort(406, f"Type already exists")
+        abort(406, "Type already exists")
 
 
 def update(id, typeDetails):
@@ -114,7 +114,7 @@ def update(id, typeDetails):
     app.logger.debug(pformat(typeDetails))
 
     if typeDetails["id"] != id:
-        abort(400, f"Key mismatch in path and body")
+        abort(400, "Key mismatch in path and body")
 
     # Does the type exist in type list?
     existing_type = db.session.query(Type).filter(Type.id == id).one_or_none()
@@ -135,7 +135,7 @@ def update(id, typeDetails):
 
     # otherwise, nope, deployment doesn't exist, so that's an error
     else:
-        abort(404, f"Type not found")
+        abort(404, "Type not found")
 
 
 def delete(id):

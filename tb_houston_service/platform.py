@@ -99,7 +99,7 @@ def create(platformDetails):
 
     # Otherwise, it already exists, that's an error
     else:
-        abort(406, f"Platform already exists")
+        abort(406, "Platform already exists")
 
 
 def update(id, platformDetails):
@@ -114,7 +114,7 @@ def update(id, platformDetails):
     app.logger.debug(pformat(platformDetails))
 
     if platformDetails["id"] != id:
-        abort(400, f"Key mismatch in path and body")
+        abort(400, "Key mismatch in path and body")
 
     # Does the platform exist in platform list?
     existing_platform = db.session.query(Platform).filter(Platform.id == id).one_or_none()
@@ -135,7 +135,7 @@ def update(id, platformDetails):
 
     # otherwise, nope, deployment doesn't exist, so that's an error
     else:
-        abort(404, f"Platform not found")
+        abort(404, "Platform not found")
 
 
 def delete(id):
