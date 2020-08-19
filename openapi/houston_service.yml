@@ -3821,7 +3821,7 @@ components:
         id:
           type: integer
           description: id
-        googleSession:
+        googleEndpoint:
           type: object
           properties:
             primaryGcpVpcSubnet:
@@ -3836,7 +3836,7 @@ components:
               type: string
             secondarySubnetName:
               type: string
-        onPremiseSession:
+        remoteEndpoint:
           type: object
           properties:
             primaryBgpPeer:
