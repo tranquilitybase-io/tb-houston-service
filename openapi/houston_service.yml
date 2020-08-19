@@ -1059,6 +1059,7 @@ paths:
       responses:
         "201":
           description: Successfully created an platform
+
   "/platform/{id}":
     get:
       operationId: tb_houston_service.platform.read_one
@@ -1118,7 +1119,101 @@ paths:
       responses:
         "200":
           description: Successfully deleted a platform
-        
+  
+  /type/:
+    get:
+      operationId: tb_houston_service.type.read_all
+      tags:
+        - type
+      summary: Read the entire list of types
+      description: Read the list of types
+      responses:
+        "200":
+          description: Successfully read type list operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties:
+                    id:
+                      type: integer
+                      description: id
+                    value:
+                      type: string
+                      description: value
+    post:
+      operationId: tb_houston_service.type.create
+      tags:
+        - type
+      summary: Create a type and add it to the type list
+      description: Create a new type in the type list
+      requestBody:
+        $ref: '#/components/requestBodies/type.typeDetails'
+      responses:
+        "201":
+          description: Successfully created an type
+  "/type/{id}":
+    get:
+      operationId: tb_houston_service.type.read_one
+      tags:
+        - type
+      summary: Read one type from the list
+      description: Read one type from the list
+      parameters:
+        - name: id
+          in: path
+          description: key of the type to get from the list
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successfully read an type from the list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  value:
+                    type: string
+    put:
+      operationId: tb_houston_service.type.update
+      tags:
+        - type
+      summary: Update an type in the list
+      description: Update an type in the list
+      parameters:
+        - name: id
+          in: path
+          description: key of the type to update
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        $ref: "#/components/requestBodies/type.typeDetails"
+      responses:
+        "200":
+          description: Successfully updated a type 
+    delete:
+      operationId: tb_houston_service.type.delete
+      tags:
+        - type
+      summary: Delete a type from the list
+      description: Delete a type
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successfully deleted a type
+
+
   /keyValues/sourceControl/:
     get:
       operationId: tb_houston_service.sourcecontrol.read_keyValues
@@ -3040,7 +3135,16 @@ components:
             $ref: "#/components/schemas/Platform"
       description: platform to create
       required: true
-      
+    
+    type.typeDetails:
+      content:
+        application/json:
+          schema:
+            x-body-name: typeDetails
+            $ref: "#/components/schemas/Type"
+      description: Type to create
+      required: true
+    
     sourceControl.sourceControlDetails:
       content:
         application/json:
@@ -3650,7 +3754,7 @@ components:
       properties:
         id:
           type: integer
-          description: id of the CI
+          description: id of the CD
         value:
           type: string
           description: value
@@ -3664,13 +3768,23 @@ components:
         value:
           type: string
           description: value
+          
+    Type:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: id of the Type
+        value:
+          type: string
+          description: value
 
     SourceControl:
       type: object
       properties:
         id:
           type: integer
-          description: id of the CI
+          description: id of the SourceControl
         value:
           type: string
           description: value
