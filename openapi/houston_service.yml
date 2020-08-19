@@ -1025,7 +1025,100 @@ paths:
       responses:
         "200":
           description: Successfully deleted a continuous deployment
-
+  
+  /platform/:
+    get:
+      operationId: tb_houston_service.platform.read_all
+      tags:
+        - platform
+      summary: Read the entire list of platforms
+      description: Read the list of platforms
+      responses:
+        "200":
+          description: Successfully read platform list operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties:
+                    id:
+                      type: integer
+                      description: id
+                    value:
+                      type: string
+                      description: value
+    post:
+      operationId: tb_houston_service.platform.create
+      tags:
+        - platform
+      summary: Create a platform and add it to the platform list
+      description: Create a new platform in the platform list
+      requestBody:
+        $ref: '#/components/requestBodies/platform.platformDetails'
+      responses:
+        "201":
+          description: Successfully created an platform
+  "/platform/{id}":
+    get:
+      operationId: tb_houston_service.platform.read_one
+      tags:
+        - platform
+      summary: Read one platform from the list
+      description: Read one platform from the list
+      parameters:
+        - name: id
+          in: path
+          description: key of the platform to get from the list
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successfully read an platform from the list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  value:
+                    type: string
+    put:
+      operationId: tb_houston_service.platform.update
+      tags:
+        - platform
+      summary: Update an platform in the list
+      description: Update an platform in the list
+      parameters:
+        - name: id
+          in: path
+          description: key of the platform to update
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        $ref: "#/components/requestBodies/platform.platformDetails"
+      responses:
+        "200":
+          description: Successfully updated a platform 
+    delete:
+      operationId: tb_houston_service.platform.delete
+      tags:
+        - platform
+      summary: Delete a platform from the list
+      description: Delete a platform
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successfully deleted a platform
+        
   /keyValues/sourceControl/:
     get:
       operationId: tb_houston_service.sourcecontrol.read_keyValues
@@ -2935,8 +3028,17 @@ components:
         application/json:
           schema:
             x-body-name: cdDetails
-            $ref: "#/components/schemas/CI"
+            $ref: "#/components/schemas/CD"
       description: CD to create
+      required: true
+    
+    platform.platformDetails:
+      content:
+        application/json:
+          schema:
+            x-body-name: platformDetails
+            $ref: "#/components/schemas/Platform"
+      description: platform to create
       required: true
       
     sourceControl.sourceControlDetails:
@@ -3549,6 +3651,16 @@ components:
         id:
           type: integer
           description: id of the CI
+        value:
+          type: string
+          description: value
+
+    Platform:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: id of the Platform
         value:
           type: string
           description: value
