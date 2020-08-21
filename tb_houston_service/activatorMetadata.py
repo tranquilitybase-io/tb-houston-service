@@ -11,7 +11,7 @@ from tb_houston_service.tools import ModelTools
 from tb_houston_service.models import ActivatorSchema, ActivatorMetadataSchema
 from tb_houston_service.models import ActivatorMetadataPlatformSchema, ActivatorMetadataVariableSchema
 from tb_houston_service.models import ActivatorMetadata, ActivatorMetadataPlatform, ActivatorMetadataVariable
-from tb_houston_service.models import Type ,Platform, ActivatorMetadataPlatform
+from tb_houston_service.models import Type ,Platform
 from tb_houston_service.extendedSchemas import ExtendedActivatorMetadataSchema
 
 
@@ -68,7 +68,7 @@ def get_file_from_repo(url):
     shutil.rmtree(t)
     act_metadata_yaml_file = open("activator_metadata.yml")
     act_metadata_yml_dict = yaml.load(act_metadata_yaml_file, Loader=yaml.FullLoader)
-    logger.debug("activator_metadata.yml file :::: %s", pformat(act_metadata_yml))
+    logger.debug("activator_metadata.yml file :::: %s", pformat(act_metadata_yml_dict))
     # Remove yaml file 
     os.remove("activator_metadata.yml")
     return act_metadata_yml_dict
@@ -127,7 +127,7 @@ def create_activator_metadata_variables(dbs, activator_metadata_id, variables,is
         variableDetails["name"] = variable["name"]
         variableDetails["type"] = variable["type"]
         if "value" in variable:
-            variableDetails["value"] = value
+            variableDetails["value"] = variable["value"]
         else:
             variableDetails["value"] = ""
 
