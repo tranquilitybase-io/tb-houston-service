@@ -156,6 +156,47 @@ class ActivatorEnvironmentSchema(SQLAlchemyAutoSchema):
         include_fk = True
         load_instance = True
 
+# class ActivatorMetadataPlatform(Base):
+class ActivatorMetadataPlatform(Base):
+    __tablename__ = "activatorMetadataPlatform"
+    id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
+    activatorMetadataId = db.Column(db.Integer(), ForeignKey("activatorMetadata.id"))
+    platformId = db.Column(db.Integer(), ForeignKey("platform.id"))
+    lastUpdated = db.Column(db.String(20))
+    isActive = db.Column(db.Boolean())
+
+    def __repr__(self):
+        return "<ActivatorMetadataPlatform(id={self.id!r}, activatorMetadataId={self.activatorMetadataId!r})>".format(self=self)
+
+
+
+class ActivatorMetadataPlatformSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = ActivatorMetadataPlatform
+        include_fk = True
+        load_instance = True
+
+# class ActivatorCI(Base):
+class ActivatorMetadataVariable(Base):
+    __tablename__ = "activatorMetadataVariables"
+    id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
+    activatorMetadataId = db.Column(db.Integer(), ForeignKey("activatorMetadata.id"))
+    name = db.Column(db.String(255))
+    type = db.Column(db.String(255))
+    value = db.Column(db.String(255))   
+    isOptional = db.Column(db.Boolean())
+
+    def __repr__(self):
+        return "<ActivatorMetadataVariable(id={self.id!r}, activatorMetadataId={self.activatorMetadataId!r})>".format(self=self)
+
+
+
+class ActivatorMetadataVariableSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = ActivatorMetadataVariable
+        include_fk = True
+        load_instance = True
+
 
 # Application
 class Application(Base):

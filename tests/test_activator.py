@@ -25,18 +25,14 @@ def typestest(resp):
         isinstance(resp["accessRequestedBy"], dict) or resp["accessRequestedBy"] is None
     )
     assert isinstance(resp["activator"], str)
-    assert isinstance(resp["activatorLink"], str)
     assert isinstance(resp["gitRepoUrl"], str)
     assert isinstance(resp["apiManagement"], list)
     assert isinstance(resp["available"], bool)
     assert isinstance(resp["billing"], str)
     assert isinstance(resp["businessUnit"], dict)
-    assert isinstance(resp["category"], str)
     assert isinstance(resp["cd"], list)
-    assert isinstance(resp["description"], str)
     assert isinstance(resp["envs"], list)
     assert isinstance(resp["hosting"], list)
-    assert isinstance(resp["platforms"], list)
     assert isinstance(resp["regions"], list)
     assert isinstance(resp["sensitivity"], str)
     assert isinstance(resp["serverCapacity"], int)
@@ -45,7 +41,6 @@ def typestest(resp):
     assert isinstance(resp["status"], str)
     assert isinstance(resp["technologyOwner"], str)
     assert isinstance(resp["technologyOwnerEmail"], str)
-    assert isinstance(resp["type"], str)
     assert isinstance(resp["userCapacity"], int)
     pprint(resp)
 
@@ -68,7 +63,7 @@ def test_activators():
     # Testing GETONE request
     get_meta()
     # Test Get Activator Categories
-    get_categories()
+    #get_categories()
 
 
 def post():
@@ -77,7 +72,6 @@ def post():
     payload = {
         "accessRequestedById": 1,
         "activator": "test-activator",
-        "activatorLink": "test-post-",
         "gitRepoUrl": "test-post-",
         "apiManagement": [
             "test-post-",
@@ -90,10 +84,8 @@ def post():
         "available": True,
         "billing": "test-post-",
         "businessUnitId": 1,
-        "category": "test-post-",
         "cd": [5, 6],
         "ci": [3, 5],
-        "description": "test-post-test-post-test-post-test-post-test-post-test-post-test-post-test-post-",
         "envs": [1, 2],
         "hosting": [
             "test-post-1",
@@ -105,14 +97,6 @@ def post():
         "id": 0,
         "lastUpdated": "test-post-",
         "name": "test-post-",
-        "platforms": [
-            "test-post-1",
-            "test-post-2",
-            "test-post-3",
-            "test-post-4",
-            "test-post-5",
-            "test-post-6",
-        ],
         "regions": [
             "test-post-1",
             "test-post-2",
@@ -127,7 +111,6 @@ def post():
         "status": "Available",
         "technologyOwner": "test-post-",
         "technologyOwnerEmail": "test-post-",
-        "type": "test-post-",
         "userCapacity": 999999999,
     }
 
@@ -204,16 +187,13 @@ def put(oid):
     newpayload = {
         "activator": "new-test-activator",
         "accessRequestedById": 2,
-        "activatorLink": "test-put-",
         "gitRepoUrl": "test-put-",
         "apiManagement": ["test-put-6", "test-put-7", "test-put-8"],
         "available": False,
         "billing": "billing",
         "businessUnitId": 1,
-        "category": "category",
         "cd": [3, 4],
         "ci": [1, 2],
-        "description": "TheQuickBrownFoxJumpedOverTheLazyDogs",
         "envs": [2],
         "hosting": [
             "test-put-11",
@@ -224,14 +204,6 @@ def put(oid):
         ],
         "lastUpdated": "fredbloggs",
         "name": "mynewactivatortest",
-        "platforms": [
-            "test-put-101",
-            "test-put-102",
-            "test-put-103",
-            "test-put-104",
-            "test-put-105",
-            "test-put-106",
-        ],
         "regions": [
             "test-put-101",
             "test-put-210",
@@ -246,7 +218,6 @@ def put(oid):
         "status": "NotAvailable",
         "technologyOwner": "me",
         "technologyOwnerEmail": "me@me.com",
-        "type": "best",
         "userCapacity": 10,
     }
     resp = requests.put(

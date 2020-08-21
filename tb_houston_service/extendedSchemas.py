@@ -12,6 +12,7 @@ from tb_houston_service.models import NotificationActivatorSchema
 from tb_houston_service.models import NotificationTeamSchema
 from tb_houston_service.models import NotificationApplicationDeploymentSchema
 from tb_houston_service.models import NotificationSolutionDeploymentSchema
+from tb_houston_service.models import TypeSchema, PlatformSchema, ActivatorMetadataVariableSchema
 
 
 logger = logging.getLogger("tb_houston_service.extendedSchemas")
@@ -70,6 +71,20 @@ class ExtendedUserCloudRoleSchema(Schema):
     cloudRole = fields.Nested(CloudRoleSchema(many=False))
     isActive = fields.Boolean()
 
+class ExtendedActivatorMetadataSchema(Schema):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    id = fields.Int()
+    name = fields.Str()
+    category = fields.Str()
+    platform = fields.Nested(PlatformSchema(many=True))
+    type = fields.Nested(TypeSchema(many=False))
+    typeId = fields.Int()
+    description = fields.Str()
+    activatorLink = fields.Str()
+    variables= fields.Nested(ActivatorMetadataVariableSchema(many=True))
+    lastUpdated = fields.Str()
 
 class ExtendedActivatorSchema(Schema):
     def __init__(self, **kwargs):
@@ -80,12 +95,9 @@ class ExtendedActivatorSchema(Schema):
     lastUpdated = fields.Str()
     isFavourite = fields.Boolean()
     name = fields.Str()
-    type = fields.Str()
     available = fields.Boolean()
     sensitivity = fields.Str()
-    category = fields.Str()
     envs = fields.Nested(LZEnvironmentSchema(many=True))
-    platforms = fields.List(fields.Str())
     userCapacity = fields.Int()
     serverCapacity = fields.Int()
     regions = fields.List(fields.Str())
@@ -104,32 +116,36 @@ class ExtendedActivatorSchema(Schema):
     billing = fields.Str()
     activator = fields.Str()
     status = fields.Str()
-    description = fields.Str()
     accessRequestedById = fields.Int()
     accessRequestedBy = fields.Nested(ExtendedUserSchema(many=False))
     source = fields.Str()
-    activatorLink = fields.Str()
     gitRepoUrl = fields.Str()
+    activatorMetadata = fields.Nested(ExtendedActivatorMetadataSchema(many=False))
 
     @post_load(pass_original=True)
     def deserialize_post_load(self, data, original_data, **kwargs):
         # logger.debug(
         #    "ExtendedActivatorSchema::post_load::serialize_post_load: %s", data
         # )
-        data["platforms"] = json.dumps(original_data.platforms)
-        data["regions"] = json.dumps(original_data.regions)
-        data["hosting"] = json.dumps(original_data.hosting)
-        data["apiManagement"] = json.dumps(original_data.apiManagement)
+        if original_data.regions is not None:
+            data["regions"] = json.dumps(original_data.regions)
+        if original_data.hosting is not None:
+            data["hosting"] = json.dumps(original_data.hosting)
+        if original_data.apiManagement is not None:
+            data["apiManagement"] = json.dumps(original_data.apiManagement)
         return data
 
     @post_dump(pass_original=True)
     def deserialize_post_dump(self, data, original_data, **kwargs):
         # logger.debug("ExtendedActivatorSchema::post_dump %s", original_data)
-        data["platforms"] = json.loads(original_data.platforms)
-        data["regions"] = json.loads(original_data.regions)
-        data["hosting"] = json.loads(original_data.hosting)
-        data["apiManagement"] = json.loads(original_data.apiManagement)
+        if original_data.regions is not None:
+            data["regions"] = json.loads(original_data.regions)
+        if original_data.hosting is not None:
+            data["hosting"] = json.loads(original_data.hosting)
+        if original_data.apiManagement is not None:
+            data["apiManagement"] = json.loads(original_data.apiManagement)
         return data
+
 
 
 class ExtendedApplicationSchema(Schema):
