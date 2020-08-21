@@ -381,23 +381,23 @@ class LandingZoneProgressItemSchema(SQLAlchemyAutoSchema):
 class LandingZoneWAN(Base):
     __tablename__ = "landingzonewan"
     id = db.Column(db.Integer, primary_key=True)
-    googleSession__primaryGcpVpcSubnet = db.Column(db.String)
-    googleSession__primaryRegion = db.Column(db.String)
-    googleSession__primarySubnetName = db.Column(db.String)
-    googleSession__secondaryGcpVpcSubnet = db.Column(db.String)
-    googleSession__secondaryRegion = db.Column(db.String)
-    googleSession__secondarySubnetName = db.Column(db.String)
-    onPremiseSession__primaryBgpPeer = db.Column(db.String)
-    onPremiseSession__primaryPeerIp = db.Column(db.String)
-    onPremiseSession__primaryPeerIpSubnet = db.Column(db.String)
-    onPremiseSession__primarySharedSecret = db.Column(db.String)
-    onPremiseSession__primaryVpnTunnel = db.Column(db.String)
-    onPremiseSession__secondaryBgpPeer = db.Column(db.String)
-    onPremiseSession__secondaryPeerIp = db.Column(db.String)
-    onPremiseSession__secondaryPeerIpSubnet = db.Column(db.String)
-    onPremiseSession__secondarySharedSecret = db.Column(db.String)
-    onPremiseSession__secondaryVpnTunnel = db.Column(db.String)
-    onPremiseSession__vendor = db.Column(db.String)
+    googleEndpoint__primaryGcpVpcSubnet = db.Column(db.String)
+    googleEndpoint__primaryRegion = db.Column(db.String)
+    googleEndpoint__primarySubnetName = db.Column(db.String)
+    googleEndpoint__secondaryGcpVpcSubnet = db.Column(db.String)
+    googleEndpoint__secondaryRegion = db.Column(db.String)
+    googleEndpoint__secondarySubnetName = db.Column(db.String)
+    remoteEndpoint__primaryBgpPeer = db.Column(db.String)
+    remoteEndpoint__primaryPeerIp = db.Column(db.String)
+    remoteEndpoint__primaryPeerIpSubnet = db.Column(db.String)
+    remoteEndpoint__primarySharedSecret = db.Column(db.String)
+    remoteEndpoint__primaryVpnTunnel = db.Column(db.String)
+    remoteEndpoint__secondaryBgpPeer = db.Column(db.String)
+    remoteEndpoint__secondaryPeerIp = db.Column(db.String)
+    remoteEndpoint__secondaryPeerIpSubnet = db.Column(db.String)
+    remoteEndpoint__secondarySharedSecret = db.Column(db.String)
+    remoteEndpoint__secondaryVpnTunnel = db.Column(db.String)
+    remoteEndpoint__vendor = db.Column(db.String)
     vpn__bgpInterfaceNetLength = db.Column(db.String)
     vpn__bgpRoutingMode = db.Column(db.String)
     vpn__cloudRouterName = db.Column(db.String)
@@ -850,6 +850,11 @@ class User(Base):
     isActive = db.Column(db.Boolean(), default=True)
     showWelcome = db.Column(db.Boolean(), default=True)
     lastUpdated = db.Column(db.String(20))
+
+    def __repr__(self):
+        return "<User(id={self.id!r}, email={self.email!r})>".format(
+            self=self
+        )
 
 
 class UserSchema(SQLAlchemyAutoSchema):

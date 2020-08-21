@@ -73,12 +73,13 @@ def read_all(
         business_unit_ids = security.get_business_units_ids_for_user(dbsession = dbs)
 
         application_query = application_query.filter(
+            Activator.id == Application.activatorId,
             (status == None or Application.status == status),
             (activatorId == None or Application.activatorId == activatorId),
             (environment == None or Application.env == environment),
             (isActive == None or Application.isActive == isActive),
             (isFavourite == None or Application.isFavourite == isFavourite), 
-            (business_unit_ids == None or (Activator.id == Application.activatorId, Activator.businessUnitId.in_(business_unit_ids)))
+            (business_unit_ids == None or Activator.businessUnitId.in_(business_unit_ids))
         )
 
         if page == None or page_size == None:
@@ -112,7 +113,8 @@ def read_one(oid):
         business_unit_ids = security.get_business_units_ids_for_user(dbsession = dbs)
         application = (
             dbs.query(Application).filter(Application.id == oid,
-            (business_unit_ids == None or (Activator.id == Application.activatorId, Activator.businessUnitId.in_(business_unit_ids)))
+            Activator.id == Application.activatorId,
+            (business_unit_ids == None or Activator.businessUnitId.in_(business_unit_ids))
             ).one_or_none()
         )
 
@@ -140,6 +142,8 @@ def create(applicationDetails):
     :return:             201 on success, 406 on application exists
     """
 
+    logger.debug("create: %s", applicationDetails)
+
     with db_session() as dbs:
         # Remove id as it's created automatically
         if "id" in applicationDetails:
@@ -151,7 +155,7 @@ def create(applicationDetails):
             activator = dbs.query(Activator).filter(Activator.id == applicationDetails.get("activatorId")).one_or_none()
             business_unit = activator.businessUnitId
             if business_unit not in business_unit_ids:
-                abort(400, f"Unauthorized to create solutions for business unit {business_unit}")
+                abort(400, f"Unauthorized to create applications for business unit {business_unit}")
         else:
             # initially will let this pass, but in future we could abort if user is not a member of any business units
             pass
@@ -177,6 +181,8 @@ def update(oid, applicationDetails):
     :param application:   application to update
     :return: updated application
     """
+
+    logger.debug("update: %s", applicationDetails)
 
     with db_session() as dbs:
         logger.debug("application: ")
