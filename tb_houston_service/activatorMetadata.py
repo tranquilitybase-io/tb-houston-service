@@ -63,7 +63,7 @@ def get_file_from_repo(url):
     # Clone into temporary dir
     git.Repo.clone_from(url, t, branch='master', depth=1)
     # Copy desired file from temporary dir
-    shutil.move(os.path.join(t, '.tb/activator_metadata1.yml'), '.')
+    shutil.move(os.path.join(t, '.tb/activator_metadata.yml'), '.')
     # Remove temporary dir
     shutil.rmtree(t)
     act_metadata_yaml_file = open("activator_metadata.yml")
