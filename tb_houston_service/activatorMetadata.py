@@ -1,7 +1,12 @@
 import logging
 import yaml
+import os
+import git
+import shutil
+import tempfile
 
 from config.db_lib import db_session
+from pprint import pformat
 from tb_houston_service.tools import ModelTools
 from tb_houston_service.models import ActivatorSchema, ActivatorMetadataSchema
 from tb_houston_service.models import ActivatorMetadataPlatformSchema, ActivatorMetadataVariableSchema
@@ -10,7 +15,7 @@ from tb_houston_service.models import Type ,Platform, ActivatorMetadataPlatform
 from tb_houston_service.extendedSchemas import ExtendedActivatorMetadataSchema
 
 
-logger = logging.getLogger("tb_houston_service.activator_metadata")
+logger = logging.getLogger("tb_houston_service.activatorMetadata")
 
 
 def create(activatorMetadataDetails):
@@ -27,75 +32,80 @@ def create(activatorMetadataDetails):
         7. Read 'optionalVariables' from yaml and insert into 'activatorVariables' table with 'isOptional'=True
 
     """
-    #Task # 2
-    a_yaml_file = open("docs/activator_metadata.yml")
-    parsed_yaml_file = yaml.load(a_yaml_file, Loader=yaml.FullLoader)
-    print(parsed_yaml_file)
+    #get Yaml from gitgub and read the contents of the yaml file
+    act_metadata_yml_dict = get_file_from_repo(activatorMetadataDetails["uri"])
 
     with db_session() as dbs:
         
-        # Task # 3
-        activator_id=create_activator(dbs, parsed_yaml_file)
+        activator_id=create_activator(dbs, act_metadata_yml_dict)
         
-        # Task # 4
-        activator_metadata=create_activator_metadata(dbs, parsed_yaml_file, activator_id)
+        activator_metadata=create_activator_metadata(dbs, act_metadata_yml_dict, activator_id)
         
-        # Task # 5
-        create_activator_metadata_platforms(dbs, parsed_yaml_file, activator_metadata.id)
+        create_activator_metadata_platforms(dbs, act_metadata_yml_dict, activator_metadata.id)
         
-        # Task # 6 
-        mandatoryVariables = parsed_yaml_file["mandatoryVariables"]
+        mandatoryVariables = act_metadata_yml_dict["mandatoryVariables"]
         create_activator_metadata_variables(dbs,activator_metadata.id, mandatoryVariables, False)
         
-        # Task # 7 
-        optionalVariables = parsed_yaml_file["optionalVariables"]
+        optionalVariables = act_metadata_yml_dict["optionalVariables"]
         create_activator_metadata_variables(dbs,activator_metadata.id, optionalVariables, True)
        
         # Expand activator metadata object to return
         schema = ExtendedActivatorMetadataSchema()
         expand_activator_metadata(activator_metadata, dbs)
         data = schema.dump(activator_metadata)
+        logger.debug(pformat(data))
         return data, 201
-    return "a"
 
     
+def get_file_from_repo(url):
+    # Create temporary dir
+    t = tempfile.mkdtemp()
+    # Clone into temporary dir
+    git.Repo.clone_from(url, t, branch='master', depth=1)
+    # Copy desired file from temporary dir
+    shutil.move(os.path.join(t, '.tb/activator_metadata1.yml'), '.')
+    # Remove temporary dir
+    shutil.rmtree(t)
+    act_metadata_yaml_file = open("activator_metadata.yml")
+    act_metadata_yml_dict = yaml.load(act_metadata_yaml_file, Loader=yaml.FullLoader)
+    logger.debug("activator_metadata.yml file :::: %s", pformat(act_metadata_yml))
+    # Remove yaml file 
+    os.remove("activator_metadata.yml")
+    return act_metadata_yml_dict
 
 
-def create_activator(dbs, parsed_yaml_file):
+
+def create_activator(dbs, act_metadata_yml):
 
     schema = ActivatorSchema()
     activatorDetails = {}
-    activatorDetails["name"] = parsed_yaml_file["name"]
-    activatorDetails["gitRepoUrl"] = parsed_yaml_file["url"]
-    print(activatorDetails)
+    activatorDetails["name"] = act_metadata_yml["name"]
+    activatorDetails["gitRepoUrl"] = act_metadata_yml["url"]
     activator = schema.load(activatorDetails, session=dbs)
-    print(activator)
     dbs.add(activator)
     dbs.flush()
     return activator.id
 
-def create_activator_metadata(dbs, parsed_yaml_file, activator_id):
+def create_activator_metadata(dbs, act_metadata_yml, activator_id):
 
     schema = ActivatorMetadataSchema()
     actMetaDetails = {}
     actMetaDetails["activatorId"] = activator_id
-    actMetaDetails["name"] = parsed_yaml_file["name"]
-    actMetaDetails["description"] = parsed_yaml_file["description"]
-    actMetaDetails["category"] = parsed_yaml_file["category"]
-    actMetaDetails["activatorLink"] = parsed_yaml_file["url"]
-    actMetaDetails["typeId"] = (dbs.query(Type).filter(Type.value == parsed_yaml_file["type"]).one_or_none()).id
+    actMetaDetails["name"] = act_metadata_yml["name"]
+    actMetaDetails["description"] = act_metadata_yml["description"]
+    actMetaDetails["category"] = act_metadata_yml["category"]
+    actMetaDetails["activatorLink"] = act_metadata_yml["url"]
+    actMetaDetails["typeId"] = (dbs.query(Type).filter(Type.value == act_metadata_yml["type"]).one_or_none()).id
     actMetaDetails["lastUpdated"] = ModelTools.get_utc_timestamp()
-    print(actMetaDetails)
     activator_metadata = schema.load(actMetaDetails, session=dbs)
-    print(activator_metadata)
     dbs.add(activator_metadata)
     dbs.flush()
     return activator_metadata
 
-def create_activator_metadata_platforms(dbs, parsed_yaml_file, activator_metadata_id):
+def create_activator_metadata_platforms(dbs, act_metadata_yml, activator_metadata_id):
 
     schema = ActivatorMetadataPlatformSchema()
-    platforms = parsed_yaml_file["platforms"]
+    platforms = act_metadata_yml["platforms"]
     
     for p in platforms:
         actPlatformDetails = {}
@@ -103,9 +113,7 @@ def create_activator_metadata_platforms(dbs, parsed_yaml_file, activator_metadat
         actPlatformDetails["platformId"] = (dbs.query(Platform).filter(Platform.value == p ).one_or_none()).id
         actPlatformDetails["lastUpdated"] = ModelTools.get_utc_timestamp()
         actPlatformDetails["isActive"] = True
-        print(actPlatformDetails)
         activator_metadata_platform = schema.load(actPlatformDetails, session=dbs)
-        print(activator_metadata_platform)
         dbs.add(activator_metadata_platform)
         dbs.flush()
 
@@ -124,9 +132,7 @@ def create_activator_metadata_variables(dbs, activator_metadata_id, variables,is
             variableDetails["value"] = ""
 
         variableDetails["isOptional"] = isOptional
-        print(variableDetails)
         activator_metadata_variable = schema.load(variableDetails, session=dbs)
-        print(activator_metadata_variable)
         dbs.add(activator_metadata_variable)
         dbs.flush()
 
