@@ -452,7 +452,7 @@ def categories():
     """
 
     with db_session() as dbs:
-        sql = "select category from activator group by category"
+        sql = "select category from activatorMetadata group by category"
         rs = dbs.execute(sql)
         categories_arr = []
         for row in rs:
