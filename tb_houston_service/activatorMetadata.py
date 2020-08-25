@@ -141,10 +141,11 @@ def expand_activator_metadata(act_metadata, dbs):
     act_metadata.type = dbs.query(Type).filter(
         Type.id == act_metadata.typeId).one_or_none()
     
-    act_metadata.platforms = dbs.query(ActivatorMetadataPlatform).filter(
+    act_metadata.platforms = dbs.query(Platform).filter(
         Platform.id == ActivatorMetadataPlatform.platformId, 
         ActivatorMetadata.id == ActivatorMetadataPlatform.activatorMetadataId, 
-        ActivatorMetadata.id == act_metadata.id).all()
+        ActivatorMetadata.id == act_metadata.id,
+        ActivatorMetadataPlatform.isActive).all()
 
     act_metadata.variables = dbs.query(ActivatorMetadataVariable).filter(
         ActivatorMetadata.id == ActivatorMetadataVariable.activatorMetadataId, 

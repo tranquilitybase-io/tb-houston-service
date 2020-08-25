@@ -78,7 +78,7 @@ class ExtendedActivatorMetadataSchema(Schema):
     id = fields.Int()
     name = fields.Str()
     category = fields.Str()
-    platform = fields.Nested(PlatformSchema(many=True))
+    platforms = fields.Nested(PlatformSchema(many=True))
     type = fields.Nested(TypeSchema(many=False))
     typeId = fields.Int()
     description = fields.Str()
