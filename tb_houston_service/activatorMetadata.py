@@ -33,7 +33,7 @@ def create(activatorMetadataDetails):
 
     """
     #get Yaml from gitgub and read the contents of the yaml file
-    act_metadata_yml_dict = get_file_from_repo(activatorMetadataDetails["uri"])
+    act_metadata_yml_dict = get_file_from_repo(activatorMetadataDetails["url"])
 
     with db_session() as dbs:
         
