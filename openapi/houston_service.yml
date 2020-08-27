@@ -1999,6 +1999,28 @@ paths:
                     type: integer
                   status:
                     type: string
+  
+  /activatorMetadata/:
+    post:
+      operationId: tb_houston_service.activatorMetadata.create
+      tags:
+        - activator
+      summary: set activator status
+      description: set activator status
+      requestBody:
+        $ref: "#/components/requestBodies/activatorMetadata.activatorMetadataDetails"
+      responses:
+        "200":
+          description: Successfully updated an activator
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  status:
+                    type: string
 
   /activatorcategories/:
     get:
@@ -3098,6 +3120,17 @@ components:
                 type: string
               accessRequestedById:
                 type: integer
+      required: true
+
+    activatorMetadata.activatorMetadataDetails:
+      content:
+        application/json:
+          schema:
+            x-body-name: activatorMetadataDetails
+            type: object
+            properties:
+              url:
+                type: string
       required: true
 
     businessUnit.businessUnitDetails:

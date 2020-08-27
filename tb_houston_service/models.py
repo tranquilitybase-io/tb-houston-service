@@ -18,11 +18,8 @@ class Activator(Base):
     lastUpdated = db.Column(db.String(20))
     isFavourite = db.Column(db.Boolean)
     name = db.Column(db.String(255))
-    type = db.Column(db.String(255))
     available = db.Column(db.Boolean())
     sensitivity = db.Column(db.String(255))
-    category = db.Column(db.String(255))
-    platforms = db.Column(db.String(255))
     userCapacity = db.Column(db.Integer)
     serverCapacity = db.Column(db.Integer)
     regions = db.Column(db.String(255))
@@ -35,10 +32,8 @@ class Activator(Base):
     billing = db.Column(db.String(255))
     activator = db.Column(db.String(255))
     status = db.Column(db.String(255))
-    description = db.Column(db.String(255))
     accessRequestedById = db.Column(db.Integer, db.ForeignKey("user.id"))
     source = db.Column(db.String(100))
-    activatorLink = db.Column(db.String(255))
     gitRepoUrl = db.Column(db.String(255))
 
     def __repr__(self):
@@ -61,8 +56,6 @@ class ActivatorSchema(SQLAlchemyAutoSchema):
             data["isFavourite"] = False
         if "envs" in data:
             data["envs"] = json.dumps(data["envs"])
-        if "platforms" in data:
-            data["platforms"] = json.dumps(data["platforms"])
         if "regions" in data:
             data["regions"] = json.dumps(data["regions"])
         if "hosting" in data:
@@ -73,6 +66,29 @@ class ActivatorSchema(SQLAlchemyAutoSchema):
             data["accessRequestedById"] = None
 
         return data
+
+# class ActivatorMetadata(Base):
+class ActivatorMetadata(Base):
+    __tablename__ = "activatorMetadata"
+    id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
+    activatorId = db.Column(db.Integer(), ForeignKey("activator.id"))
+    name = db.Column(db.String(255))
+    description = db.Column(db.String(255))
+    category = db.Column(db.String(255))
+    typeId = db.Column(db.Integer(), ForeignKey("type.id"))
+    activatorLink = db.Column(db.String(255))
+    lastUpdated = db.Column(db.String(20))
+    
+    def __repr__(self):
+        return "<ActivatorMetadata(id={self.id!r}, name={self.name!r})>".format(self=self)
+
+
+class ActivatorMetadataSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = ActivatorMetadata
+        include_fk = True
+        load_instance = True
+
 
 
 # class ActivatorCI(Base):
@@ -137,6 +153,47 @@ class ActivatorEnvironment(Base):
 class ActivatorEnvironmentSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = ActivatorEnvironment
+        include_fk = True
+        load_instance = True
+
+# class ActivatorMetadataPlatform(Base):
+class ActivatorMetadataPlatform(Base):
+    __tablename__ = "activatorMetadataPlatform"
+    id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
+    activatorMetadataId = db.Column(db.Integer(), ForeignKey("activatorMetadata.id"))
+    platformId = db.Column(db.Integer(), ForeignKey("platform.id"))
+    lastUpdated = db.Column(db.String(20))
+    isActive = db.Column(db.Boolean())
+
+    def __repr__(self):
+        return "<ActivatorMetadataPlatform(id={self.id!r}, activatorMetadataId={self.activatorMetadataId!r})>".format(self=self)
+
+
+
+class ActivatorMetadataPlatformSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = ActivatorMetadataPlatform
+        include_fk = True
+        load_instance = True
+
+# class ActivatorCI(Base):
+class ActivatorMetadataVariable(Base):
+    __tablename__ = "activatorMetadataVariables"
+    id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
+    activatorMetadataId = db.Column(db.Integer(), ForeignKey("activatorMetadata.id"))
+    name = db.Column(db.String(255))
+    type = db.Column(db.String(255))
+    value = db.Column(db.String(255))   
+    isOptional = db.Column(db.Boolean())
+
+    def __repr__(self):
+        return "<ActivatorMetadataVariable(id={self.id!r}, activatorMetadataId={self.activatorMetadataId!r})>".format(self=self)
+
+
+
+class ActivatorMetadataVariableSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = ActivatorMetadataVariable
         include_fk = True
         load_instance = True
 

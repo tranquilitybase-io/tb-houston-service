@@ -1,8 +1,9 @@
 import logging
-from tb_houston_service import activator_ci, activator_cd, activator_environment
+from tb_houston_service import activator_ci, activator_cd, activator_environment, activatorMetadata
 from tb_houston_service.models import User
 from tb_houston_service.models import SourceControl
 from tb_houston_service.models import BusinessUnit
+from tb_houston_service.models import ActivatorMetadata
 
 
 logger = logging.getLogger("tb_houston_service.activator_extension")
@@ -31,6 +32,13 @@ def expand_activator(act, dbsession):
     act.businessUnit = (
         dbsession.query(BusinessUnit).filter(BusinessUnit.id == act.businessUnitId).one_or_none()
     )
+    # expand activator metadata
+    act_metadata= (
+        dbsession.query(ActivatorMetadata).filter(ActivatorMetadata.activatorId == act.id).one_or_none()
+    )
+    if act_metadata is not None:
+        act.activatorMetadata = activatorMetadata.expand_activator_metadata(act_metadata, dbsession)
+
     return act
 
 def refine_activator_details(activatorDetails):

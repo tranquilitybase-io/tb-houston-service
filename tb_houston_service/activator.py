@@ -13,7 +13,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 #from config import db
 from config.db_lib import db_session
-from tb_houston_service.models import Activator, ActivatorSchema
+from tb_houston_service.models import Activator, ActivatorSchema, ActivatorMetadata
 from tb_houston_service.models import User
 from tb_houston_service.models import Notification
 from tb_houston_service import notification
@@ -91,34 +91,45 @@ def read_all(
 
     # filter activators by logged in user 
     business_unit_ids = security.get_business_units_ids_for_user(dbsession = dbs)
+    
+    activator_metadatas = dbs.query(ActivatorMetadata).filter(
+        (category == None or ActivatorMetadata.category == category),
+        (type == None or ActivatorMetadata.typeId == type)
+    ).all()
+    act_ids = None
+    if activator_metadatas:
+        act_ids = [ am.activatorId for am in activator_metadatas]
 
     activator_query = activator_query.filter(
-        (category == None or Activator.category == category),
         (status == None or Activator.status == status),
         (environment == None or Activator.envs.like('%"{}"%'.format(environment))),
-        (platform == None or Activator.platforms.like('%"{}"%'.format(platform))),
-        (type == None or Activator.type == type),
         (source == None or Activator.sourceControl.like('%"{}"%'.format(source))),
         (sensitivity == None or Activator.sensitivity == sensitivity),
         (isActive == None or Activator.isActive == isActive),
         (isFavourite == None or Activator.isFavourite == isFavourite),
+        (act_ids == None or Activator.id.in_(act_ids)),
         (business_unit_ids == None or Activator.businessUnitId.in_(business_unit_ids))     
     )
-
-    if page == None or page_size == None:
+    if act_ids is None:
+        activators = None
+    elif page == None or page_size == None:
         activators = activator_query.all()
     else:
         activators = activator_query.limit(page_size).offset(page * page_size).all()
-    # Expand all Activators
-    for act in activators:
-        act = activator_extension.expand_activator(act, dbs)
+    if activators:
+        # Expand all Activators
+        for act in activators:
+            act = activator_extension.expand_activator(act, dbs)
 
-    activator_schema = ExtendedActivatorSchema(many=True)
-    data = activator_schema.dump(activators)
+        activator_schema = ExtendedActivatorSchema(many=True)
+        data = activator_schema.dump(activators)
 
-    logger.debug("read_all")
-    logger.debug(pformat(data))
-    return data, 200
+        logger.debug("read_all")
+        logger.debug(pformat(data))
+        return data, 200
+    else:
+        abort(404, "No Activators found with matching criteria")
+
 
 
 def read_one(oid):
@@ -452,7 +463,7 @@ def categories():
     """
 
     with db_session() as dbs:
-        sql = "select category from activator group by category"
+        sql = "select category from activatorMetadata group by category"
         rs = dbs.execute(sql)
         categories_arr = []
         for row in rs:

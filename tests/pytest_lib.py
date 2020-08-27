@@ -61,19 +61,15 @@ def typestest_activator(obj):
     assert isinstance(obj["lastUpdated"], str)
     assert isinstance(obj["isFavourite"], bool)
     assert isinstance(obj["activator"], str)
-    assert isinstance(obj["activatorLink"], str)
     assert isinstance(obj["apiManagement"], list)
     assert isinstance(obj["available"], bool)
     assert isinstance(obj["billing"], str)
     assert isinstance(obj["businessUnit"], dict)
-    assert isinstance(obj["category"], str)
     assert isinstance(obj["ci"], list) or obj["ci"] is None
     assert isinstance(obj["cd"], list) or obj["cd"] is None
     assert isinstance(obj["envs"], list) or obj["envs"] is None
-    assert isinstance(obj["description"], str)
     assert isinstance(obj["hosting"], list)
     assert isinstance(obj["name"], str)
-    assert isinstance(obj["platforms"], list)
     assert isinstance(obj["regions"], list)
     assert isinstance(obj["sensitivity"], str)
     assert isinstance(obj["serverCapacity"], int)
@@ -82,7 +78,6 @@ def typestest_activator(obj):
     assert isinstance(obj["status"], str)
     assert isinstance(obj["technologyOwner"], str)
     assert isinstance(obj["technologyOwnerEmail"], str)
-    assert isinstance(obj["type"], str)
     assert isinstance(obj["userCapacity"], int)
 
 
