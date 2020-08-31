@@ -37,9 +37,9 @@ def create(activatorMetadataDetails):
 
     with db_session() as dbs:
         
-        activator_id=create_activator(dbs, act_metadata_yml_dict)
+        activator_id=create_activator(dbs, act_metadata_yml_dict,activatorMetadataDetails["url"] )
         
-        activator_metadata=create_activator_metadata(dbs, act_metadata_yml_dict, activator_id)
+        activator_metadata=create_activator_metadata(dbs, act_metadata_yml_dict, activator_id, activatorMetadataDetails["url"])
         
         create_activator_metadata_platforms(dbs, act_metadata_yml_dict, activator_metadata.id)
         
@@ -75,18 +75,18 @@ def get_file_from_repo(url):
 
 
 
-def create_activator(dbs, act_metadata_yml):
+def create_activator(dbs, act_metadata_yml, url):
 
     schema = ActivatorSchema()
     activatorDetails = {}
     activatorDetails["name"] = act_metadata_yml["name"]
-    activatorDetails["gitRepoUrl"] = act_metadata_yml["url"]
+    activatorDetails["gitRepoUrl"] = url
     activator = schema.load(activatorDetails, session=dbs)
     dbs.add(activator)
     dbs.flush()
     return activator.id
 
-def create_activator_metadata(dbs, act_metadata_yml, activator_id):
+def create_activator_metadata(dbs, act_metadata_yml, activator_id, url):
 
     schema = ActivatorMetadataSchema()
     actMetaDetails = {}
@@ -94,7 +94,7 @@ def create_activator_metadata(dbs, act_metadata_yml, activator_id):
     actMetaDetails["name"] = act_metadata_yml["name"]
     actMetaDetails["description"] = act_metadata_yml["description"]
     actMetaDetails["category"] = act_metadata_yml["category"]
-    actMetaDetails["activatorLink"] = act_metadata_yml["url"]
+    actMetaDetails["activatorLink"] = url
     actMetaDetails["typeId"] = (dbs.query(Type).filter(Type.value == act_metadata_yml["type"]).one_or_none()).id
     actMetaDetails["lastUpdated"] = ModelTools.get_utc_timestamp()
     activator_metadata = schema.load(actMetaDetails, session=dbs)
