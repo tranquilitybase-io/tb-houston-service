@@ -8,7 +8,7 @@ from flask import make_response, abort
 from config import db, executor
 from tb_houston_service.DeploymentStatus import DeploymentStatus
 from tb_houston_service.models import Application
-from tb_houston_service.models import Activator
+from tb_houston_service.models import Activator, ActivatorMetadata
 from tb_houston_service.models import ApplicationDeployment, ApplicationDeploymentSchema
 from tb_houston_service.models import LZLanVpc
 from tb_houston_service.models import LZEnvironment
@@ -246,15 +246,16 @@ def deployment_update(app_id, lzEnvId, applicationDeploymentDetails, dbsession):
 def deploy_application(app_deployment, dbsession):
     logger.debug("deploy_application:: %s", app_deployment)
     # expand fields for DaC application deployment
-    app, act, lzenv = dbsession.query(Application, Activator, LZEnvironment).filter(
+    app, act, actMetadata, lzenv = dbsession.query(Application, Activator, ActivatorMetadata, LZEnvironment).filter(
         Activator.id == Application.activatorId,
+        ActivatorMetadata.activatorId == Application.activatorId,
         Application.id == app_deployment.applicationId,
         ApplicationDeployment.applicationId == Application.id,
         ApplicationDeployment.lzEnvironmentId == LZEnvironment.id,
         LZEnvironment.id == app_deployment.lzEnvironmentId            
     ).one_or_none()
     if act:
-        app_deployment.activatorGitUrl = act.activatorLink
+        app_deployment.activatorGitUrl = actMetadata.activatorLink
         #app_deployment.deploymentEnvironment = lzenv.name.lower()
         app_deployment.workspaceProjectId = app_deployment.workspaceProjectId
         app_deployment.deploymentProjectId = app_deployment.deploymentProjectId
