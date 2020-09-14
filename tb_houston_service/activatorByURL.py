@@ -18,7 +18,7 @@ from tb_houston_service.extendedSchemas import ExtendedActivatorMetadataSchema
 logger = logging.getLogger("tb_houston_service.activatorMetadata")
 
 
-def create(activatorMetadataDetails):
+def create(activatorByURLDetails):
     """
     Args:
         url ([url]): [URL of the githib repo to get activator_metadata.yml]
@@ -33,13 +33,13 @@ def create(activatorMetadataDetails):
 
     """
     #get Yaml from gitgub and read the contents of the yaml file
-    act_metadata_yml_dict = get_file_from_repo(activatorMetadataDetails["url"])
+    act_metadata_yml_dict = get_file_from_repo(activatorByURLDetails["url"])
 
     with db_session() as dbs:
         
-        activator_id=create_activator(dbs, act_metadata_yml_dict,activatorMetadataDetails["url"] )
+        activator_id=create_activator(dbs, act_metadata_yml_dict,activatorByURLDetails["url"] )
         
-        activator_metadata=create_activator_metadata(dbs, act_metadata_yml_dict, activator_id, activatorMetadataDetails["url"])
+        activator_metadata=create_activator_metadata(dbs, act_metadata_yml_dict, activator_id, activatorByURLDetails["url"])
         
         create_activator_metadata_platforms(dbs, act_metadata_yml_dict, activator_metadata.id)
         
@@ -61,16 +61,20 @@ def get_file_from_repo(url):
     # Create temporary dir
     t = tempfile.mkdtemp()
     # Clone into temporary dir
-    git.Repo.clone_from(url, t, branch='master', depth=1)
+    repo = git.Repo.clone_from(url, t, branch='master', depth=1)
+
+    tag = repo.tags.pop()
+    print("tag: " + tag.name)
+
     # Copy desired file from temporary dir
-    shutil.move(os.path.join(t, '.tb/activator_metadata.yml'), '.')
+    #shutil.move(os.path.join(t, '.tb/activator_metadata.yml'), '.')
+
+    act_metadata_yaml_file = open(os.path.join(t, ".tb/activator_metadata.yml"))
+    act_metadata_yml_dict = yaml.load(act_metadata_yaml_file, Loader=yaml.FullLoader)
+    act_metadata_yml_dict['latestVersion'] = tag.name
+    logger.debug("activator_metadata.yml file :::: %s", pformat(act_metadata_yml_dict))
     # Remove temporary dir
     shutil.rmtree(t)
-    act_metadata_yaml_file = open("activator_metadata.yml")
-    act_metadata_yml_dict = yaml.load(act_metadata_yaml_file, Loader=yaml.FullLoader)
-    logger.debug("activator_metadata.yml file :::: %s", pformat(act_metadata_yml_dict))
-    # Remove yaml file 
-    os.remove("activator_metadata.yml")
     return act_metadata_yml_dict
 
 
@@ -81,6 +85,7 @@ def create_activator(dbs, act_metadata_yml, url):
     activatorDetails = {}
     activatorDetails["name"] = act_metadata_yml["name"]
     activatorDetails["gitRepoUrl"] = url
+    activatorDetails["status"] = "Draft"
     activator = schema.load(activatorDetails, session=dbs)
     dbs.add(activator)
     dbs.flush()
@@ -97,6 +102,7 @@ def create_activator_metadata(dbs, act_metadata_yml, activator_id, url):
     actMetaDetails["activatorLink"] = url
     actMetaDetails["typeId"] = (dbs.query(Type).filter(Type.value == act_metadata_yml["type"]).one_or_none()).id
     actMetaDetails["lastUpdated"] = ModelTools.get_utc_timestamp()
+    actMetaDetails["latestVersion"] = act_metadata_yml["latestVersion"]
     activator_metadata = schema.load(actMetaDetails, session=dbs)
     dbs.add(activator_metadata)
     dbs.flush()
