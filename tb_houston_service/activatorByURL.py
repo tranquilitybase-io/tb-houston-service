@@ -62,13 +62,7 @@ def get_file_from_repo(url):
     t = tempfile.mkdtemp()
     # Clone into temporary dir
     repo = git.Repo.clone_from(url, t, branch='master', depth=1)
-
     tag = repo.tags.pop()
-    print("tag: " + tag.name)
-
-    # Copy desired file from temporary dir
-    #shutil.move(os.path.join(t, '.tb/activator_metadata.yml'), '.')
-
     act_metadata_yaml_file = open(os.path.join(t, ".tb/activator_metadata.yml"))
     act_metadata_yml_dict = yaml.load(act_metadata_yaml_file, Loader=yaml.FullLoader)
     act_metadata_yml_dict['latestVersion'] = tag.name
