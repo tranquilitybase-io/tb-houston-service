@@ -78,6 +78,7 @@ class ActivatorMetadata(Base):
     typeId = db.Column(db.Integer(), ForeignKey("type.id"))
     activatorLink = db.Column(db.String(255))
     lastUpdated = db.Column(db.String(20))
+    latestVersion = db.Column(db.String(30))
     
     def __repr__(self):
         return "<ActivatorMetadata(id={self.id!r}, name={self.name!r})>".format(self=self)

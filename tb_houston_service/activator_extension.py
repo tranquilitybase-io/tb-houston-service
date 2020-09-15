@@ -1,5 +1,5 @@
 import logging
-from tb_houston_service import activator_ci, activator_cd, activator_environment, activatorMetadata
+from tb_houston_service import activator_ci, activator_cd, activator_environment, activatorByURL
 from tb_houston_service.models import User
 from tb_houston_service.models import SourceControl
 from tb_houston_service.models import BusinessUnit
@@ -37,7 +37,7 @@ def expand_activator(act, dbsession):
         dbsession.query(ActivatorMetadata).filter(ActivatorMetadata.activatorId == act.id).one_or_none()
     )
     if act_metadata is not None:
-        act.activatorMetadata = activatorMetadata.expand_activator_metadata(act_metadata, dbsession)
+        act.activatorMetadata = activatorByURL.expand_activator_metadata(act_metadata, dbsession)
 
     return act
 

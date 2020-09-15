@@ -2000,15 +2000,15 @@ paths:
                   status:
                     type: string
   
-  /activatorMetadata/:
+  /activatorByURL/:
     post:
-      operationId: tb_houston_service.activatorMetadata.create
+      operationId: tb_houston_service.activatorByURL.create
       tags:
         - activator
       summary: set activator status
       description: set activator status
       requestBody:
-        $ref: "#/components/requestBodies/activatorMetadata.activatorMetadataDetails"
+        $ref: "#/components/requestBodies/activatorByURL.activatorByURLDetails"
       responses:
         "200":
           description: Successfully updated an activator
@@ -3122,11 +3122,11 @@ components:
                 type: integer
       required: true
 
-    activatorMetadata.activatorMetadataDetails:
+    activatorByURL.activatorByURLDetails:
       content:
         application/json:
           schema:
-            x-body-name: activatorMetadataDetails
+            x-body-name: activatorByURLDetails
             type: object
             properties:
               url:
