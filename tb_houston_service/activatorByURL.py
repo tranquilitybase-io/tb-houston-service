@@ -8,11 +8,15 @@ import tempfile
 from config.db_lib import db_session
 from pprint import pformat
 from tb_houston_service.tools import ModelTools
+from tb_houston_service.models import Activator
 from tb_houston_service.models import ActivatorSchema, ActivatorMetadataSchema
 from tb_houston_service.models import ActivatorMetadataPlatformSchema, ActivatorMetadataVariableSchema
 from tb_houston_service.models import ActivatorMetadata, ActivatorMetadataPlatform, ActivatorMetadataVariable
 from tb_houston_service.models import Type ,Platform
 from tb_houston_service.extendedSchemas import ExtendedActivatorMetadataSchema
+from tb_houston_service import activator_extension
+from tb_houston_service import security
+from tb_houston_service.extendedSchemas import ExtendedActivatorSchema
 
 
 logger = logging.getLogger("tb_houston_service.activatorMetadata")
@@ -49,11 +53,21 @@ def create(activatorByURLDetails):
         optionalVariables = act_metadata_yml_dict["optionalVariables"]
         create_activator_metadata_variables(dbs,activator_metadata.id, optionalVariables, True)
        
-        # Expand activator metadata object to return
-        schema = ExtendedActivatorMetadataSchema()
-        expand_activator_metadata(activator_metadata, dbs)
-        data = schema.dump(activator_metadata)
-        logger.debug(pformat(data))
+        # return the activator
+        # filter activators by logged in user 
+        business_unit_ids = security.get_business_units_ids_for_user(dbsession = dbs)
+        act = dbs.query(Activator).filter(
+            Activator.id == activator_id,
+            (business_unit_ids == None or Activator.businessUnitId.in_(business_unit_ids))
+        ).one_or_none()
+
+        if act is not None:
+            # Expand Activator
+            act = activator_extension.expand_activator(act, dbs)
+            schema = ExtendedActivatorSchema(many=False)
+            data = schema.dump(act)
+            return data, 200
+
         return data, 201
 
     
