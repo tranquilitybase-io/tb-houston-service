@@ -4,11 +4,8 @@ from tb_houston_service.models import User
 from tb_houston_service.models import SourceControl
 from tb_houston_service.models import BusinessUnit
 from tb_houston_service.models import ActivatorMetadata
-from tb_houston_service.models import ActivatorMetadataSchema
 from tb_houston_service.models import ActivatorMetadataVariable
-from tb_houston_service.models import ActivatorMetadataVariableSchema
 from tb_houston_service.models import ActivatorMetadataPlatform
-from tb_houston_service.models import Type
 from tb_houston_service.tools import ModelTools
 
 
