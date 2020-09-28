@@ -257,9 +257,13 @@ def update(oid, activatorDetails):
             # return the updated activator in the response
             dbs.flush()
 
-            activator_extension.create_activator_associations(
+            response = activator_extension.create_activator_associations(
                 extraFields, updatedActivator, dbs
             )
+
+            if response:
+                abort(response["code"], response["message"]) 
+
             # Expand activator
             updatedActivator = activator_extension.expand_activator(updatedActivator, dbs)
 

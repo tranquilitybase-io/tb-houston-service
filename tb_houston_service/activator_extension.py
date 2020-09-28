@@ -136,6 +136,15 @@ def create_activator_associations(extraFields, activator, dbsession):
         update_activator_metadata_platforms(platforms, activator_metadata["id"], dbsession)
         activator_metadata_variables = activator_metadata['variables']
         update_activator_metadata_variables(activator_metadata_variables, dbsession)
+    else:
+        logger.error(
+            "activatorMetadata missing, the transaction will be rolled back for this activator!"
+        )
+        dbsession.rollback()
+        return {
+            "code": 400, 
+            "message": "activatorMetadata missing, the transaction will be rolled back for this activator!"
+        } 
 
     if act_ci_list:
             activator_ci.create_activator_ci(activator.id, act_ci_list, dbsession)
@@ -144,6 +153,10 @@ def create_activator_associations(extraFields, activator, dbsession):
             "ci details in activator are missing, the transaction will be rolled back for this activator!"
         )
         dbsession.rollback()
+        return {
+            "code": 400, 
+            "message": "ci details in activator are missing, the transaction will be rolled back for this activator!"
+        }
 
     if act_cd_list:
         activator_cd.create_activator_cd(activator.id, act_cd_list, dbsession)
@@ -152,6 +165,10 @@ def create_activator_associations(extraFields, activator, dbsession):
             "cd details in activator are missing, the transaction will be rolled back for this activator!"
         )
         dbsession.rollback()
+        return {
+            "code": 400, 
+            "message": "cd details in activator are missing, the transaction will be rolled back for this activator!"
+        } 
 
     if act_env_list:
         activator_environment.create_activator_environment(activator.id, act_env_list, dbsession)
@@ -160,6 +177,10 @@ def create_activator_associations(extraFields, activator, dbsession):
             "env details in activator are missing, the transaction will be rolled back for this activator!"
         )
         dbsession.rollback()
+        return {
+            "code": 400, 
+            "message": "env details in activator are missing, the transaction will be rolled back for this activator!"
+        }
     dbsession.commit()
 
 
