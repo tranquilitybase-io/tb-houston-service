@@ -2041,6 +2041,19 @@ paths:
                     category:
                       type: string
 
+  /activatorOnboard/:
+    post:
+      operationId: tb_houston_service.activator.onboard 
+      tags:
+        - activator
+      summary: Onboard the activator 
+      description: Onboard the activator
+      requestBody:
+        $ref: "#/components/requestBodies/activator.activatorOnboardDetails"
+      responses:
+        "200":
+          description: Successfully onboarded the activator 
+
   /landingzoneprogressitems/:
     get:
       operationId: tb_houston_service.landingzoneprogressitem.read_all
@@ -3132,6 +3145,19 @@ components:
               url:
                 type: string
       required: true
+
+
+    activator.activatorOnboardDetails:
+      content:
+        application/json:
+          schema:
+            x-body-name: activatorOnboardDetails
+            type: object
+            properties:
+              id:
+                type: integer
+      required: true
+
 
     businessUnit.businessUnitDetails:
       content:

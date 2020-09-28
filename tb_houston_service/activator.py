@@ -476,3 +476,26 @@ def categories():
         schema = ExtendedActivatorCategorySchema(many=True)
         data = schema.dump(categories_arr)
         return data, 200
+
+
+def onboard(activatorOnboardDetails):
+    """
+    This function onboards an activator given an activator id
+
+    :param activator:  activator to create in activator list
+    :return:        200 on success, 406 on activator not-exists
+    """
+    with db_session() as dbs:
+        oid = activatorOnboardDetails["id"]
+        act = dbs.query(Activator).filter(Activator.id == oid).one_or_none()
+        if act:
+            act.status = "Available"
+            dbs.merge(act)
+            dbs.commit()
+        else:
+            abort(406, "Unable to find activator.")
+         # Expand Activator
+        act = activator_extension.expand_activator(act, dbs)
+        schema = ExtendedActivatorSchema(many=False)
+        data = schema.dump(act)
+        return data, 201
