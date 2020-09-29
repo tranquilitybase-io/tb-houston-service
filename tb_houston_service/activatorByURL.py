@@ -116,6 +116,7 @@ def create_activator_metadata(dbs, act_metadata_yml, activator_id, url):
     dbs.flush()
     return activator_metadata
 
+
 def create_activator_metadata_platforms(dbs, act_metadata_yml, activator_metadata_id):
 
     schema = ActivatorMetadataPlatformSchema()
@@ -130,6 +131,7 @@ def create_activator_metadata_platforms(dbs, act_metadata_yml, activator_metadat
         activator_metadata_platform = schema.load(actPlatformDetails, session=dbs)
         dbs.add(activator_metadata_platform)
         dbs.flush()
+
 
 def create_activator_metadata_variables(dbs, activator_metadata_id, variables,isOptional):
 
@@ -149,6 +151,7 @@ def create_activator_metadata_variables(dbs, activator_metadata_id, variables,is
         activator_metadata_variable = schema.load(variableDetails, session=dbs)
         dbs.add(activator_metadata_variable)
         dbs.flush()
+
 
 def expand_activator_metadata(act_metadata, dbs):
     
