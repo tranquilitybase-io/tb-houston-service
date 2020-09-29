@@ -426,10 +426,7 @@ def setActivatorStatus(activatorDetails):
                     + " "
                     + (updated_activator.accessRequestedBy.lastName or "")
                 )
-                activator_name = (
-                    f"Activator {updated_activator.id} ({updated_activator.name})"
-                )
-                message = f"{full_name} has requested access to {activator_name}"
+                message = f"{full_name} has requested access to an activator"
                 notify_admins(
                     message=message,
                     activatorId=updated_activator.id,
