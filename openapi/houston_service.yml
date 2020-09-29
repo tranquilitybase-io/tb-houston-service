@@ -2041,6 +2041,19 @@ paths:
                     category:
                       type: string
 
+  /activatorOnboard/:
+    post:
+      operationId: tb_houston_service.activator.onboard 
+      tags:
+        - activator
+      summary: Onboard the activator 
+      description: Onboard the activator
+      requestBody:
+        $ref: "#/components/requestBodies/activator.activatorOnboardDetails"
+      responses:
+        "200":
+          description: Successfully onboarded the activator 
+
   /landingzoneprogressitems/:
     get:
       operationId: tb_houston_service.landingzoneprogressitem.read_all
@@ -3133,6 +3146,19 @@ components:
                 type: string
       required: true
 
+
+    activator.activatorOnboardDetails:
+      content:
+        application/json:
+          schema:
+            x-body-name: activatorOnboardDetails
+            type: object
+            properties:
+              id:
+                type: integer
+      required: true
+
+
     businessUnit.businessUnitDetails:
       content:
         application/json:
@@ -3484,9 +3510,11 @@ components:
           description: type
         available:
           type: boolean
+          nullable: true
           description: available
         sensitivity:
           type: string
+          nullable: true          
           description: sensitivity
         category:
           type: string
@@ -3506,22 +3534,27 @@ components:
           description: "UTC/CUT last updated datetime stamp see: https://github.com/tranquilitybase-io/tb-houston-service/wiki/UTC-Timestamp"
         userCapacity:
           type: integer
+          nullable: true
           description: userCapacity
         serverCapacity:
           type: integer
+          nullable: true
           description: serverCapacity
         regions:
           type: array
+          nullable: true
           description: regions
           items:
              type: string
         hosting:
-          type: array
+          type: array          
+          nullable: true
           description: hosting
           items:
             type: string
         apiManagement:
           type: array
+          nullable: true
           items:
             type: string
         ci:
@@ -3536,21 +3569,27 @@ components:
             type: integer
         sourceControlId:
           type: integer
+          nullable: true
           description: sourceControlId
         businessUnitId:
           type: integer
+          nullable: true
           description: businessUnitId
         technologyOwner:
           type: string
+          nullable: true
           description: technologyOwner
         technologyOwnerEmail:
           type: string
+          nullable: true
           description: technologyOwnerEmail
         billing:
           type: string
+          nullable: true
           description: billing
         activator:
           type: string
+          nullable: true
           description: activator
         status:
           type: string
@@ -3564,6 +3603,7 @@ components:
           description: accessRequestedById
         source:
           type: string
+          nullable: true
           description: source
         activatorLink:
           type: string

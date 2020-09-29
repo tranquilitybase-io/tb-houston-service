@@ -184,7 +184,8 @@ class ActivatorMetadataVariable(Base):
     activatorMetadataId = db.Column(db.Integer(), ForeignKey("activatorMetadata.id"))
     name = db.Column(db.String(255))
     type = db.Column(db.String(255))
-    value = db.Column(db.String(255))   
+    value = db.Column(db.String(255))
+    defaultValue = db.Column(db.String(255))   
     isOptional = db.Column(db.Boolean())
 
     def __repr__(self):
