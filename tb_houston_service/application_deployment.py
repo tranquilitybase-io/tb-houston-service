@@ -265,6 +265,14 @@ def deploy_application(app_deployment, dbsession):
         app_deployment.name = app.name
         app_deployment.description = app.description
 
+        # set createdBy field
+        logged_in_user = security.get_valid_user_from_token(dbsession = dbsession)
+        logger.debug("logged_in_user: %s", logged_in_user)
+        if logged_in_user:
+            app_deployment.createdBy = f"{logged_in_user.firstName} {logged_in_user.lastName}"
+        else:
+            app_deployment.createdBy = ""
+
         environment, lzlanvpc = dbsession.query(LZEnvironment, LZLanVpc).filter(
             LZLanVpcEnvironment.lzlanvpcId == LZLanVpc.id, 
             LZLanVpcEnvironment.environmentId == lzenv.id,

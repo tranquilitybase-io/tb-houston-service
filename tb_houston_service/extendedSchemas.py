@@ -450,6 +450,7 @@ class ExtendedApplicationForDACSchema(Schema):
     mandatoryVariables = fields.List(fields.Dict())
     optionalVariables = fields.List(fields.Dict())
     deploymentEnvironment = fields.Nested(ExtendedLZEnvironmentForDacSchema)
+    createdBy = fields.Str()
 
 
 class ExtendedNotificationActivatorSchema(Schema):

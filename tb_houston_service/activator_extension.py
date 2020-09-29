@@ -4,7 +4,7 @@ from tb_houston_service.models import User
 from tb_houston_service.models import SourceControl
 from tb_houston_service.models import BusinessUnit
 from tb_houston_service.models import ActivatorMetadata
-
+from tb_houston_service import security
 
 logger = logging.getLogger("tb_houston_service.activator_extension")
 
