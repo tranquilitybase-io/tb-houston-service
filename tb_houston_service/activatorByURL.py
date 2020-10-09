@@ -75,7 +75,7 @@ def get_file_from_repo(url):
     # Create temporary dir
     t = tempfile.mkdtemp()
     # Clone into temporary dir
-    repo = git.Repo.clone_from(url, t, branch='master', depth=1)
+    repo = git.Repo.clone_from(url, t, depth=1)
     tag = repo.tags.pop()
     act_metadata_yaml_file = open(os.path.join(t, ".tb/activator_metadata.yml"))
     act_metadata_yml_dict = yaml.load(act_metadata_yaml_file, Loader=yaml.FullLoader)
@@ -137,7 +137,7 @@ def create_activator_metadata_variables(dbs, activator_metadata_id, variables,is
 
     schema = ActivatorMetadataVariableSchema()
     
-    for variable in variables:
+    for variable in (variables or ()):
         variableDetails = {}
         variableDetails["activatorMetadataId"] = activator_metadata_id
         variableDetails["name"] = variable["name"]
