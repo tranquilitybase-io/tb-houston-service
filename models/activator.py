@@ -1,18 +1,16 @@
 import logging
 import json
 
-from sqlalchemy.ext.declarative import declarative_base
-from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from marshmallow import pre_load
 
-from config import db
+from config import db, ma
 from tb_houston_service.tools import ModelTools
 
 logger = logging.getLogger("tb_houston_service.models")
-Base = declarative_base()
 
-class Activator(Base):
+class Activator(db.Model):
     __tablename__ = "activator"
+    __table_args__ = {'schema': 'eagle_db'}
     id = db.Column(db.Integer, primary_key=True)
     isActive = db.Column(db.Boolean)
     lastUpdated = db.Column(db.String(20))
@@ -25,28 +23,28 @@ class Activator(Base):
     regions = db.Column(db.String(255))
     hosting = db.Column(db.String(255))
     apiManagement = db.Column(db.String(255))
-    sourceControlId = db.Column(db.Integer, db.ForeignKey("sourcecontrol.id"))
+    sourceControlId = db.Column(db.Integer, db.ForeignKey("eagle_db.sourcecontrol.id"))
     businessUnitId = db.Column(db.Integer)
     technologyOwner = db.Column(db.String(255))
     technologyOwnerEmail = db.Column(db.String(255))
     billing = db.Column(db.String(255))
     activator = db.Column(db.String(255))
     status = db.Column(db.String(255))
-    accessRequestedById = db.Column(db.Integer, db.ForeignKey("user.id"))
+    accessRequestedById = db.Column(db.Integer, db.ForeignKey("eagle_db.user.id"))
     source = db.Column(db.String(100))
     gitRepoUrl = db.Column(db.String(255))
 
     def __repr__(self):
         return "<Activator(id={self.id!r}, name={self.name!r})>".format(self=self)
 
-class ActivatorSchema(SQLAlchemyAutoSchema):
+class ActivatorSchema(ma.ModelSchema):
     class Meta:
         model = Activator
         include_fk = True
         load_instance = True
 
     @pre_load()
-    def serialize_pre_load(self, data):
+    def serialize_pre_load(self, data, **kwargs):
         logger.debug("ActivatorSchema::pre_load::serialize_pre_load: %s", data)
         data["lastUpdated"] = ModelTools.get_utc_timestamp()
         if "isActive" not in data:

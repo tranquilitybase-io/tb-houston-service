@@ -1,17 +1,15 @@
 import logging
 
-from sqlalchemy.ext.declarative import declarative_base
-from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from marshmallow import pre_load
 
-from config import db
+from config import db, ma
 from tb_houston_service.tools import ModelTools
 
 logger = logging.getLogger("tb_houston_service.models")
-Base = declarative_base()
 
-class Solution(Base):
+class Solution(db.Model):
     __tablename__ = "solution"
+    __table_args__ = {'schema': 'eagle_db'}
     id = db.Column(db.Integer(), primary_key=True)
     isActive = db.Column(db.Boolean)
     lastUpdated = db.Column(db.String(20))
@@ -36,14 +34,14 @@ class Solution(Base):
         return "<Solution(id={self.id!r}, name={self.name!r})>".format(self=self)
 
 
-class SolutionSchema(SQLAlchemyAutoSchema):
+class SolutionSchema(ma.ModelSchema):
     class Meta:
         model = Solution
         include_fk = True
         load_instance = True
 
     @pre_load()
-    def serialize_pre_load(self, data):
+    def serialize_pre_load(self, data, **kwargs):
         logger.debug("SolutionSchema::pre_load::serialize_pre_load: %s", data)
         data["lastUpdated"] = ModelTools.get_utc_timestamp()
         if "isActive" not in data:

@@ -1,12 +1,8 @@
-from sqlalchemy.ext.declarative import declarative_base
-from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
+from config import db, ma
 
-from config import db
-
-Base = declarative_base()
-
-class LandingZoneAction(Base):
+class LandingZoneAction(db.Model):
     __tablename__ = "landingzoneaction"
+    __table_args__ = {'schema': 'eagle_db'}
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String)
     categoryName = db.Column(db.String)
@@ -20,7 +16,7 @@ class LandingZoneAction(Base):
             self=self
         )
 
-class LandingZoneActionSchema(SQLAlchemyAutoSchema):
+class LandingZoneActionSchema(ma.ModelSchema):
     class Meta:
         model = LandingZoneAction
         include_fk = True

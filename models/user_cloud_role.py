@@ -1,18 +1,14 @@
-from sqlalchemy.ext.declarative import declarative_base
-from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
+from config import db, ma
 
-from config import db
-
-Base = declarative_base()
-
-class UserCloudRole(Base):
+class UserCloudRole(db.Model):
     __tablename__ = "userCloudRole"
+    __table_args__ = {'schema': 'eagle_db'}
     id = db.Column(db.Integer, primary_key=True)
     userId = db.Column(db.Integer)
     cloudRoleId = db.Column(db.Integer)
     isActive = db.Column(db.Boolean())
 
-class UserCloudRoleSchema(SQLAlchemyAutoSchema):
+class UserCloudRoleSchema(ma.ModelSchema):
     class Meta:
         model = UserCloudRole
         include_fk = True

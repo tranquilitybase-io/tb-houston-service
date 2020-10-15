@@ -1,12 +1,8 @@
-from sqlalchemy.ext.declarative import declarative_base
-from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
+from config import db, ma
 
-from config import db
-
-Base = declarative_base()
-
-class NotificationType(Base):
+class NotificationType(db.Model):
     __tablename__ = "notificationType"
+    __table_args__ = {'schema': 'eagle_db'}
     id = db.Column(db.Integer, primary_key=True)
     isActive = db.Column(db.Boolean)
     lastUpdated = db.Column(db.String(20))
@@ -15,7 +11,7 @@ class NotificationType(Base):
     def __repr__(self):
         return "<NotificationType(id={self.id!r})>".format(self=self)
 
-class NotificationTypeSchema(SQLAlchemyAutoSchema):
+class NotificationTypeSchema(ma.ModelSchema):
     class Meta:
         model = NotificationType
         include_fk = True

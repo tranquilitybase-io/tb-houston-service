@@ -1,12 +1,8 @@
-from sqlalchemy.ext.declarative import declarative_base
-from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
+from config import db, ma
 
-from config import db
-
-Base = declarative_base()
-
-class LZFolderStructure(Base):
+class LZFolderStructure(db.Model):
     __tablename__ = "lzfolderstructure"
+    __table_args__ = {'schema': 'eagle_db'}
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
     isActive = db.Column(db.Boolean)
@@ -16,9 +12,8 @@ class LZFolderStructure(Base):
             self=self
         )
 
-class LZFolderStructureSchema(SQLAlchemyAutoSchema):
+class LZFolderStructureSchema(ma.ModelSchema):
     class Meta:
         model = LZFolderStructure
         include_fk = True
         load_instance = True
-

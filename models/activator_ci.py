@@ -1,16 +1,11 @@
-from sqlalchemy import ForeignKey
-from sqlalchemy.ext.declarative import declarative_base
-from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
+from config import db, ma
 
-from config import db
-
-Base = declarative_base()
-
-class ActivatorCI(Base):
+class ActivatorCI(db.Model):
     __tablename__ = "activatorCI"
+    __table_args__ = {'schema': 'eagle_db'}
     id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
-    activatorId = db.Column(db.Integer(), ForeignKey("activator.id"))
-    ciId = db.Column(db.Integer(), ForeignKey("ci.id"))
+    activatorId = db.Column(db.Integer(), db.ForeignKey("eagle_db.activator.id"))
+    ciId = db.Column(db.Integer(), db.ForeignKey("eagle_db.ci.id"))
     lastUpdated = db.Column(db.String(20))
     isActive = db.Column(db.Boolean())
 
@@ -19,7 +14,7 @@ class ActivatorCI(Base):
             self=self
         )
 
-class ActivatorCISchema(SQLAlchemyAutoSchema):
+class ActivatorCISchema(ma.ModelSchema):
     class Meta:
         model = ActivatorCI
         include_fk = True

@@ -1,12 +1,8 @@
-from sqlalchemy.ext.declarative import declarative_base
-from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
+from config import db, ma
 
-from config import db
-
-Base = declarative_base()
-
-class LandingZoneWAN(Base):
+class LandingZoneWAN(db.Model):
     __tablename__ = "landingzonewan"
+    __table_args__ = {'schema': 'eagle_db'}
     id = db.Column(db.Integer, primary_key=True)
     googleEndpoint__primaryGcpVpcSubnet = db.Column(db.String)
     googleEndpoint__primaryRegion = db.Column(db.String)
@@ -37,7 +33,7 @@ class LandingZoneWAN(Base):
     vpn__subnetMode = db.Column(db.String)
     vpn__vpcName = db.Column(db.String)
 
-class LandingZoneWANSchema(SQLAlchemyAutoSchema):
+class LandingZoneWANSchema(ma.ModelSchema):
     class Meta:
         model = LandingZoneWAN
         include_fk = True

@@ -1,19 +1,14 @@
-from sqlalchemy import ForeignKey
-from sqlalchemy.ext.declarative import declarative_base
-from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
+from config import db, ma
 
-from config import db
-
-Base = declarative_base()
-
-class ActivatorMetadata(Base):
+class ActivatorMetadata(db.Model):
     __tablename__ = "activatorMetadata"
+    __table_args__ = {'schema': 'eagle_db'}
     id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
-    activatorId = db.Column(db.Integer(), ForeignKey("activator.id"))
+    activatorId = db.Column(db.Integer(), db.ForeignKey("eagle_db.activator.id"))
     name = db.Column(db.String(255))
     description = db.Column(db.String(255))
     category = db.Column(db.String(255))
-    typeId = db.Column(db.Integer(), ForeignKey("type.id"))
+    typeId = db.Column(db.Integer(), db.ForeignKey("eagle_db.type.id"))
     activatorLink = db.Column(db.String(255))
     lastUpdated = db.Column(db.String(20))
     latestVersion = db.Column(db.String(30))
@@ -21,7 +16,7 @@ class ActivatorMetadata(Base):
     def __repr__(self):
         return "<ActivatorMetadata(id={self.id!r}, name={self.name!r})>".format(self=self)
 
-class ActivatorMetadataSchema(SQLAlchemyAutoSchema):
+class ActivatorMetadataSchema(ma.ModelSchema):
     class Meta:
         model = ActivatorMetadata
         include_fk = True

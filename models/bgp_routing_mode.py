@@ -1,12 +1,8 @@
-from sqlalchemy.ext.declarative import declarative_base
-from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
+from config import db, ma
 
-from config import db
-
-Base = declarative_base()
-
-class BGPRoutingMode(Base):
+class BGPRoutingMode(db.Model):
     __tablename__ = "bgproutingmode"
+    __table_args__ = {'schema': 'eagle_db'}
     id = db.Column(db.Integer, primary_key=True)
     key = db.Column(db.String)
     value = db.Column(db.String)
@@ -14,7 +10,7 @@ class BGPRoutingMode(Base):
     def __repr__(self):
         return "<BGPRoutingMode(id={self.id!r}, name={self.key!r})>".format(self=self)
 
-class BGPRoutingModeSchema(SQLAlchemyAutoSchema):
+class BGPRoutingModeSchema(ma.ModelSchema):
     class Meta:
         model = BGPRoutingMode
         include_fk = True

@@ -1,16 +1,12 @@
-from sqlalchemy.ext.declarative import declarative_base
-from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
+from config import db, ma
 
-from config import db
-
-Base = declarative_base()
-
-class SourceControl(Base):
+class SourceControl(db.Model):
     __tablename__ = "sourcecontrol"
+    __table_args__ = {'schema': 'eagle_db'}
     id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.String(255))
 
-class SourceControlSchema(SQLAlchemyAutoSchema):
+class SourceControlSchema(ma.ModelSchema):
     class Meta:
         model = SourceControl
         include_fk = True

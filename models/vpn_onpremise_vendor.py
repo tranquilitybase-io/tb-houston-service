@@ -1,17 +1,13 @@
-from sqlalchemy.ext.declarative import declarative_base
-from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
+from config import db, ma
 
-from config import db
-
-Base = declarative_base()
-
-class VPNOnPremiseVendor(Base):
+class VPNOnPremiseVendor(db.Model):
     __tablename__ = "vpnonpremisevendor"
+    __table_args__ = {'schema': 'eagle_db'}
     id = db.Column(db.Integer, primary_key=True)
     key = db.Column(db.String)
     value = db.Column(db.String)
 
-class VPNOnPremiseVendorSchema(SQLAlchemyAutoSchema):
+class VPNOnPremiseVendorSchema(ma.ModelSchema):
     class Meta:
         model = VPNOnPremiseVendor
         include_fk = True

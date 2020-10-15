@@ -1,16 +1,12 @@
-from sqlalchemy.ext.declarative import declarative_base
-from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
+from config import db, ma
 
-from config import db
-
-Base = declarative_base()
-
-class LZMetadata(Base):
+class LZMetadata(db.Model):
     __tablename__ = "lzmetadata"
+    __table_args__ = {'schema': 'eagle_db'}
     key = db.Column(db.String(), primary_key=True)
     value = db.Column(db.String())
 
-class LZMetadataSchema(SQLAlchemyAutoSchema):
+class LZMetadataSchema(ma.ModelSchema):
     class Meta:
         model = LZMetadata
         include_fk = True

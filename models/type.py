@@ -1,20 +1,14 @@
-from sqlalchemy.ext.declarative import declarative_base
-from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
+from config import db, ma
 
-from config import db
-
-Base = declarative_base()
-
-class Type(Base):
+class Type(db.Model):
     __tablename__ = "type"
+    __table_args__ = {'schema': 'eagle_db'}
     id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.String(255))
-
     def __repr__(self):
         return "<CI(id={self.id!r}, name={self.id!r})>".format(self=self)
 
-
-class TypeSchema(SQLAlchemyAutoSchema):
+class TypeSchema(ma.ModelSchema):
     class Meta:
         model = Type
         include_fk = True

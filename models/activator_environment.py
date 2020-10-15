@@ -1,16 +1,11 @@
-from sqlalchemy import ForeignKey
-from sqlalchemy.ext.declarative import declarative_base
-from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
+from config import db, ma
 
-from config import db
-
-Base = declarative_base()
-
-class ActivatorEnvironment(Base):
+class ActivatorEnvironment(db.Model):
     __tablename__ = "activatorEnvironment"
+    __table_args__ = {'schema': 'eagle_db'}
     id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
-    activatorId = db.Column(db.Integer(), ForeignKey("activator.id"))
-    envId = db.Column(db.Integer(), ForeignKey("lzenvironment.id"))
+    activatorId = db.Column(db.Integer(), db.ForeignKey("eagle_db.activator.id"))
+    envId = db.Column(db.Integer(), db.ForeignKey("eagle_db.lzenvironment.id"))
     lastUpdated = db.Column(db.String(20))
     isActive = db.Column(db.Boolean())
 
@@ -19,7 +14,7 @@ class ActivatorEnvironment(Base):
             self=self
         )
 
-class ActivatorEnvironmentSchema(SQLAlchemyAutoSchema):
+class ActivatorEnvironmentSchema(ma.ModelSchema):
     class Meta:
         model = ActivatorEnvironment
         include_fk = True
