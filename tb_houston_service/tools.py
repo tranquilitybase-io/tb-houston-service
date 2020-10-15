@@ -1,7 +1,6 @@
 from datetime import datetime
 import json
 
-
 class ModelTools:
     @staticmethod
     def get_utc_epoch():

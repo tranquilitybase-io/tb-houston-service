@@ -2,16 +2,13 @@
 This is the solution resource JSON module and supports all the ReST actions for the
 solution resource JSON collection
 """
-
-# 3rd party modules
 import json
 from pprint import pformat
 from flask import make_response, abort
 
 from config import db, app
-from tb_houston_service.models import SolutionResourceJSON, SolutionResourceJSONSchema
+from models import SolutionResourceJSON, SolutionResourceJSONSchema
 from tb_houston_service import solutionresource
-
 
 def read_all():
     """
@@ -20,7 +17,6 @@ def read_all():
 
     :return:        json string of list of solutionresourcejsons
     """
-
     # Create the list of solutionresourcejsons from our data
     solutionresourcejson = (
         db.session.query(SolutionResourceJSON)
@@ -33,7 +29,6 @@ def read_all():
     data = solutionresourcejson_schema.dump(solutionresourcejson)
     return data, 200
 
-
 def read_one(solutionId):
     """
     This function responds to a request for /api/solutionresourcejson/{oid}
@@ -42,7 +37,6 @@ def read_one(solutionId):
     :param application:   id of solutionresourcejson to find
     :return:              solutionresourcejson matching id
     """
-
     solutionresourcejson = (
         db.session.query(SolutionResourceJSON)
         .filter(SolutionResourceJSON.solutionId == solutionId)
@@ -56,7 +50,6 @@ def read_one(solutionId):
         return data, 200
     else:
         abort(404, f"SolutionResourceJSON with solution id {solutionId} not found")
-
 
 def create_solution_resources(resources_dict):
     app.logger.debug("resources_dict")
@@ -84,7 +77,6 @@ def create_solution_resources(resources_dict):
         }
         solutionresource.create(ws)
 
-
 def create(solutionResourceJSONDetails):
     """
     This function updates an existing or creates a 
@@ -95,7 +87,6 @@ def create(solutionResourceJSONDetails):
     :param solutionresourcejson:   solutionresourcejson to update
     :return:       updated solutionresourcejson
     """
-
     app.logger.debug(pformat(solutionResourceJSONDetails))
 
     solutionId = solutionResourceJSONDetails["solutionId"]
@@ -126,7 +117,6 @@ def create(solutionResourceJSONDetails):
     app.logger.debug(pformat(data))
     create_solution_resources(data)
     return data, 201
-
 
 def delete(solutionId):
     """

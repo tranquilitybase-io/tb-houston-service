@@ -3,14 +3,12 @@ deployments module
 supports all the ReST actions for the
 team collection
 """
-
-# 3rd party modules
 from pprint import pformat
 from http import HTTPStatus
 from flask import make_response, abort
 
 from config import db, app
-from tb_houston_service.models import Team, TeamMember, TeamSchema
+from models import Team, TeamMember, TeamSchema
 from tb_houston_service.extendedSchemas import KeyValueSchema
 from tb_houston_service.extendedSchemas import ExtendedTeamSchema
 from tb_houston_service.team_extension import expand_team
@@ -23,7 +21,6 @@ def read_all():
 
     :return:        json string of list of teams.
     """
-
     # Create the list of teams from our data
     teams = db.session.query(Team).order_by(Team.id).all()
     for tm in teams:
@@ -34,7 +31,6 @@ def read_all():
     data = team_schema.dump(teams)
     return data, 200
 
-
 def read_one(oid):
     """
     Responds to a request for /api/team/{key}
@@ -43,7 +39,6 @@ def read_one(oid):
     :param application:   key of team to find
     :return:              team matching key
     """
-
     team = db.session.query(Team).filter(Team.id == oid).one_or_none()
 
     if team is not None:
@@ -53,7 +48,6 @@ def read_one(oid):
         data = team_schema.dump(team)
         return data
     return abort(404, f"Team with id {oid} not found")
-
 
 def create(teamDetails):
     """
@@ -67,7 +61,6 @@ def create(teamDetails):
     if "id" in teamDetails:
         del teamDetails["id"]
     # Does the team exist already?
-   
     schema = TeamSchema(many=False)
     new_team = schema.load(teamDetails, session=db.session)
     new_team.lastUpdated = ModelTools.get_utc_timestamp()
@@ -81,7 +74,6 @@ def create(teamDetails):
 
     return data, 201
 
-
 def update(oid, teamDetails):
     """
     Updates an existing team in the team list
@@ -90,9 +82,7 @@ def update(oid, teamDetails):
     :param team:   team to update
     :return:       updated team.
     """
-
     app.logger.debug(pformat(teamDetails))
-
     if teamDetails.get("id") and teamDetails.get("id") != int(oid):
         abort(400, "Id mismatch in path and body")
 
@@ -127,7 +117,6 @@ def update(oid, teamDetails):
     # otherwise, nope, deployment doesn't exist, so that's an error
     abort(404, f"Team not found")
 
-
 def patch(oid, teamDetails):
     """
     Patch update an existing team in the team list
@@ -136,9 +125,7 @@ def patch(oid, teamDetails):
     :param team:   team to update
     :return:       updated team.
     """
-
     app.logger.debug(pformat(teamDetails))
-
     if teamDetails.get("id") and teamDetails.get("id") != int(oid):
         abort(400, "Id mismatch in path and body")
 
@@ -170,7 +157,6 @@ def patch(oid, teamDetails):
     # otherwise, nope, deployment doesn't exist, so that's an error
     abort(404, f"Team not found")
 
-
 def delete(oid):
     """
     Deletes a team from the teams list
@@ -192,7 +178,6 @@ def delete(oid):
     # Otherwise, nope, team to delete not found
     abort(404, f"Team {oid} not found")
 
-
 # Other queries
 def read_all_by_user_id(userId):
     teams = (
@@ -212,7 +197,6 @@ def read_all_by_user_id(userId):
     data = schema.dump(teams)
     app.logger.debug(f"{data} type: {type(data)}")
     return data, 200
-
 
 def read_key_values_by_user_id(userId):
     teams_resp = read_all_by_user_id(userId)
@@ -234,7 +218,6 @@ def read_key_values_by_user_id(userId):
     else:
         return abort(teams_resp[0], "Error reading key / values by user id.")
 
-
 def read_list_by_user_id(userId):
     teams_resp = read_all_by_user_id(userId)
     if teams_resp[1] == HTTPStatus.OK:
@@ -248,14 +231,12 @@ def read_list_by_user_id(userId):
     else:
         return abort(teams_resp[0], "Error reading key / values by user id.")
 
-
 def read_keyValues():
     """
     Responds to a request for /api/keyValues/team
     with the complete lists of teams
     :return:        json string of list of teams
     """
-
     # Create the list of teams from our data
     team = db.session.query(Team).order_by(Team.id).all()
     app.logger.debug(pformat(team))

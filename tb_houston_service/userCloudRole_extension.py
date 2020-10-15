@@ -1,5 +1,6 @@
-import logging 
-from tb_houston_service.models import User, CloudRole
+import logging
+
+from models import User, CloudRole
 from config import db
 
 logger = logging.getLogger("tb_houston_service.userCloudRole_extension")

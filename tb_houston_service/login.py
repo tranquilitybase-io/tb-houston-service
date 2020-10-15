@@ -1,34 +1,30 @@
 """
 Login module - supports all the ReST actions login.
 """
-
-# 3rd party modules
 import os
 import logging
-import connexion
-from flask import abort
-from config import db, app
 from pprint import pformat
 from http import HTTPStatus
-from tb_houston_service.models import User, UserSchema
+import connexion
+from flask import abort
+
+from config import db
+from config.db_lib import db_session
+from models import User, UserSchema
 from tb_houston_service.tools import ModelTools
 from tb_houston_service.extendedSchemas import ExtendedLoginSchema
 from tb_houston_service import team
 from tb_houston_service import security
-from config.db_lib import db_session
-
 
 logger = logging.getLogger("login")
 
 pw_backup = "eaglehaslanded"
-
 
 def check_credentials(login_details):
     """
     Responds to a request for /api/login.
     :return:        json string of user details
     """
-    
     authorization = connexion.request.headers.get('Authorization')
 
     if authorization:

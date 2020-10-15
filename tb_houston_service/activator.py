@@ -2,20 +2,14 @@
 This is the activator module and supports all the ReST actions for the
 activators collection
 """
-
-# 3rd party modules
-from flask import make_response, abort
 import logging
 from pprint import pformat
+from flask import make_response, abort
 from sqlalchemy import literal_column
 from sqlalchemy.exc import SQLAlchemyError
 
-
-#from config import db
 from config.db_lib import db_session
-from tb_houston_service.models import Activator, ActivatorSchema, ActivatorMetadata
-from tb_houston_service.models import User
-from tb_houston_service.models import Notification
+from models import Activator, ActivatorSchema, ActivatorMetadata, User, Notification
 from tb_houston_service import notification
 from tb_houston_service.tools import ModelTools
 from tb_houston_service.extendedSchemas import ExtendedActivatorSchema
@@ -23,33 +17,29 @@ from tb_houston_service.extendedSchemas import ExtendedActivatorCategorySchema
 from tb_houston_service import activator_extension
 from tb_houston_service import security
 
-
 logger = logging.getLogger("tb_houston_service.activator")
 
-
 def read_all(
-    isActive=None,
-    isFavourite=None,
-    category=None,
-    status=None,
-    environment=None,
-    platform=None,
-    type=None,
-    source=None,
-    sensitivity=None,
-    page=None,
-    page_size=None,
-    sort=None,
-):
+        isActive=None,
+        isFavourite=None,
+        category=None,
+        status=None,
+        environment=None,
+        platform=None,
+        type=None,
+        source=None,
+        sensitivity=None,
+        page=None,
+        page_size=None,
+        sort=None,
+    ):
     """
     This function responds to a request for /api/activators
     with the complete lists of activators
 
     :return:        json string of list of activators
     """
-
     # Create the list of activators from our data
-
     logger.debug(
         "Parameters: isActive: %s, isFavourite: %s, category: %s, status: %s, environment: %s, platform: %s, type: %s, source: %s, sensitivity: %s, page: %s, page_size: %s, sort: %s",
         isActive,
@@ -130,8 +120,6 @@ def read_all(
     else:
         abort(404, "No Activators found with matching criteria")
 
-
-
 def read_one(oid):
     """
     This function responds to a request for /api/activator/{key}
@@ -141,7 +129,6 @@ def read_one(oid):
     :return:              activator matching key
     """
     with db_session() as dbs:
-
         # filter activators by logged in user 
         business_unit_ids = security.get_business_units_ids_for_user(dbsession = dbs)
         act = dbs.query(Activator).filter(
@@ -157,7 +144,6 @@ def read_one(oid):
             return data, 200
         else:
             abort(404, f"Activator with id {oid} not found".format(id=oid))
-
 
 def create(activatorDetails):
     """
@@ -200,7 +186,6 @@ def create(activatorDetails):
         data = schema.dump(new_activator)
         return data, 201
 
-
 def update(oid, activatorDetails):
     """
     This function updates an existing activator in the activators list
@@ -209,7 +194,6 @@ def update(oid, activatorDetails):
     :param activator:   activator to update
     :return:       updated activator
     """
-
     logger.debug("update")
     logger.debug("id")
     logger.debug(oid)
@@ -274,7 +258,6 @@ def update(oid, activatorDetails):
         else:
             abort(404, f"Activator id {oid} not found")
 
-
 def delete(oid):
     """
     This function deletes an activator from the activators list
@@ -317,7 +300,6 @@ def delete(oid):
         else:
             abort(404, f"Activator id {oid} not found")
 
-
 def notify_user(message, activatorId, toUserId, importance=1):
     logger.debug(
         "notify_users fromUserId: %s message: %s activatorId: %s",
@@ -351,7 +333,6 @@ def notify_user(message, activatorId, toUserId, importance=1):
                 fromUserId=toUserId, activatorId=activatorId, dbsession=dbs
             )
 
-
 def notify_admins(message, activatorId, fromUserId, importance=1):
     logger.debug(
         "notify_admins fromUserId: %s message: %s activatorId: %s",
@@ -367,7 +348,6 @@ def notify_admins(message, activatorId, fromUserId, importance=1):
         "toUserId": 0,
         "importance": importance,
     }
-
     # TODO: Send admin notifications to teammember.isTeamAdmin,
     # joining with activator.businessUnitId when that become available.
     with db_session() as dbs:
@@ -390,13 +370,11 @@ def notify_admins(message, activatorId, fromUserId, importance=1):
                 # Auto-dismiss the previous notification from the user
                 # notification.dismiss(fromUserId = fromUserId, activatorId = activatorId, dbsession = dbs)
 
-
 def setActivatorStatus(activatorDetails):
     """
     Update the activator status.
     : return:      The activator that was changed
     """
-
     logger.info(pformat(activatorDetails))
 
     with db_session() as dbs:
@@ -457,12 +435,10 @@ def setActivatorStatus(activatorDetails):
             actid = activatorDetails["id"]
             abort(404, f"Activator id {actid} not found")
 
-
 def categories():
     """
     :return:        distinct list of activator categories.
     """
-
     with db_session() as dbs:
         sql = "select category from activatorMetadata group by category"
         rs = dbs.execute(sql)
@@ -473,7 +449,6 @@ def categories():
         schema = ExtendedActivatorCategorySchema(many=True)
         data = schema.dump(categories_arr)
         return data, 200
-
 
 def onboard(activatorOnboardDetails):
     """

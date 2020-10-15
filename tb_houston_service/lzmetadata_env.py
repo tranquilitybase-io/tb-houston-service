@@ -2,12 +2,11 @@
 This is the deployments module and supports all the ReST actions for the
 environment collection
 """
-
-# 3rd party modules
 from pprint import pformat
-from flask import make_response, abort
+from flask import abort
+
 from config import db, app
-from tb_houston_service.models import LZEnvironment, LZEnvironmentSchema
+from models import LZEnvironment, LZEnvironmentSchema
 from tb_houston_service.extendedSchemas import KeyValueSchema
 
 def read_all(readActiveOnly=False):
@@ -17,7 +16,6 @@ def read_all(readActiveOnly=False):
 
     :return:        json string of list of environments
     """
-
     # Create the list of environments from our data
     lzenvironment_query = db.session.query(LZEnvironment)
     if readActiveOnly:
@@ -31,7 +29,6 @@ def read_all(readActiveOnly=False):
     data = environment_schema.dump(lzenvironment)
     return data, 200
 
-
 def read_all_key_values():
     """
     This function responds to a request for /api/environment
@@ -39,7 +36,6 @@ def read_all_key_values():
 
     :return:        json string of list of environments
     """
-
     # Create the list of environments from our data
     lzenvironment = db.session.query(LZEnvironment).order_by(LZEnvironment.name).all()
     keyvalues = []
@@ -54,14 +50,10 @@ def read_all_key_values():
     data = schema.dump(keyvalues)
     return data, 200
 
-
 def create(lzenvDetails):
     app.logger.debug(f"lzmetadata_env::create: {lzenvDetails}")
-
     # Does the environment exist in environment list?
-
     schema = LZEnvironmentSchema()
-
     # Does environment exist?
     if lzenvDetails.get("id"):
         existing_environment = (
@@ -107,14 +99,12 @@ def create(lzenvDetails):
             data = schema.dump(env_change)
             return data, 201
     abort("Create: Unable to create without the id or name!", 500)
- 
 
 def logical_delete_all_active():
     objs = db.session.query(LZEnvironment).filter(LZEnvironment.isActive == True).all()
     for o in objs:
         o.isActive = False
         db.session.add(o)
-
 
 def create_all(lzMetadataEnvListDetails, readActiveOnly=False, bulkDelete=False):
     """
@@ -124,7 +114,6 @@ def create_all(lzMetadataEnvListDetails, readActiveOnly=False, bulkDelete=False)
     :param environment:   environment to update
     :return:       updated environment
     """
-
     app.logger.debug(pformat(lzMetadataEnvListDetails))
 
     try:

@@ -1,11 +1,9 @@
 import logging
-from config import db
-from tb_houston_service.models import LZEnvironment
-from tb_houston_service.models import LZLanVpcEnvironment
 
+from config import db
+from models import LZEnvironment, LZLanVpcEnvironment
 
 logger = logging.getLogger('tb_houston_service.lzlanvpc_extension')
-
 
 def expand_lzlanvpc(lzlanvpc):
     environments = (
@@ -19,7 +17,6 @@ def expand_lzlanvpc(lzlanvpc):
     )
     lzlanvpc.environments = environments
     return lzlanvpc
-
 
 def create_lzlanvpc_environments(lzlanvpc_id, list_of_env_ids):
     for env in list_of_env_ids:
@@ -39,4 +36,3 @@ def create_lzlanvpc_environments(lzlanvpc_id, list_of_env_ids):
             lzlanvpc_env.isActive = True
             db.session.merge(lzlanvpc_env)
             logger.debug("Added lzlanvpc environment: %s to transaction.", lzlanvpc_env)
-

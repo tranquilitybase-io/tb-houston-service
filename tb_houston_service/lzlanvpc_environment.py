@@ -1,14 +1,12 @@
 """
 A helper module to create the lzlanvpc environment relationship.
 """
-# 3rd party modules
 import logging
+
 from config import db
-from tb_houston_service.models import LZLanVpcEnvironment, LZLanVpcEnvironmentSchema
-from tb_houston_service.models import LZLanVpc
+from models import LZLanVpcEnvironment, LZLanVpcEnvironmentSchema, LZLanVpc
 
 logger = logging.getLogger("tb_houston_service.lzlanvpc_environment")
-
 
 def create(lzLanVpcEnvironmentListDetail):
     logger.debug("create: %s", lzLanVpcEnvironmentListDetail)
@@ -40,7 +38,6 @@ def create(lzLanVpcEnvironmentListDetail):
             lzLanVpcEnvironmentListDetail, session=db.session
         )
         db.session.add(lzlanvpc_env_change)
-
 
 def logical_delete_all_active():
     objs = db.session.query(LZLanVpc).filter(LZLanVpc.isActive == True).all()

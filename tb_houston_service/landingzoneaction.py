@@ -2,13 +2,11 @@
 The landingZoneAction module and supports all the ReST actions for the
 landingZoneAction collection
 """
-
-# 3rd party modules
 from pprint import pformat
 from flask import make_response, abort
-from config import db, app
-from tb_houston_service.models import LandingZoneAction, LandingZoneActionSchema
 
+from config import db, app
+from models import LandingZoneAction, LandingZoneActionSchema
 
 def read_all():
     """
@@ -17,7 +15,6 @@ def read_all():
 
     :return:        json string of list of landingZoneActions
     """
-
     # Create the list of people from our data
     landingZoneActions = db.session.query(LandingZoneAction).all()
 
@@ -28,7 +25,6 @@ def read_all():
     app.logger.debug(pformat(data))
     return data
 
-
 def read_one(oid):
     """
     Responds to a request for /api/landingzoneaction/{oid}
@@ -37,7 +33,6 @@ def read_one(oid):
     :param landingZoneAction:   id of the landingZoneAction to find
     :return:              landingZoneAction matching the id
     """
-
     landingZoneAction = (
         db.session.query(LandingZoneAction)
         .filter(LandingZoneAction.id == oid)
@@ -54,7 +49,6 @@ def read_one(oid):
     else:
         abort(404, f"LandingZoneAction with id {oid} not found")
 
-
 def create(landingZoneActionDetails):
     """
     Creates a new landingZoneAction in the landingZoneAction structure
@@ -63,7 +57,6 @@ def create(landingZoneActionDetails):
     :param landingZoneAction:  landingZoneAction to create in landingZoneAction list
     :return:             201 on success, 406 on landingZoneAction exists
     """
-
     # we don't need the id, the is generated automatically on the database
     if "id" in landingZoneActionDetails:
         del landingZoneActionDetails["id"]
@@ -81,7 +74,6 @@ def create(landingZoneActionDetails):
 
     return data, 201
 
-
 def update(oid, landingZoneActionDetails):
     """
     Updates an existing landingZoneAction in the landingZoneAction list
@@ -90,7 +82,6 @@ def update(oid, landingZoneActionDetails):
     :param landingZoneAction:   landingZoneAction to update
     :return: updated landingZoneAction
     """
-
     app.logger.debug("landingZoneAction: ")
     app.logger.debug(pformat(landingZoneActionDetails))
 
@@ -124,7 +115,6 @@ def update(oid, landingZoneActionDetails):
     # otherwise, nope, landingZoneAction doesn't exist, so that's an error
     else:
         abort(404, f"LandingZoneAction not found")
-
 
 def delete(oid):
     """

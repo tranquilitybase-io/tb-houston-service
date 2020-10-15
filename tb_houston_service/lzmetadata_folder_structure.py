@@ -2,14 +2,13 @@ import json
 from http import HTTPStatus
 from pprint import pformat
 from flask import make_response, abort
-from config import db, app
-from tb_houston_service.models import LZMetadata, LZMetadataSchema
-from tb_houston_service.extendedSchemas import ExtendedLZMetadataFSSchema
 
+from config import db, app
+from models import LZMetadata, LZMetadataSchema
+from tb_houston_service.extendedSchemas import ExtendedLZMetadataFSSchema
 
 folder_structure_group = "folder_structure"
 folder_structure_name = "folder_structure"
-
 
 def read():
     """
@@ -18,7 +17,6 @@ def read():
 
     :return:              Landing Zone table structure metadata
     """
-
     lzmetadata = db.session.query(LZMetadata).filter(
         LZMetadata.group == folder_structure_group,
         LZMetadata.name == folder_structure_name
@@ -36,7 +34,6 @@ def read():
     else:
         abort(404, "Landing zone folder_structure not found")
 
-
 def create(lzMetadataFolderStructureDetails):
     """
     This function updates an existing or creates a 
@@ -45,7 +42,6 @@ def create(lzMetadataFolderStructureDetails):
     :param lzFolderStructureDetails:   lzmetadata to create or update
     :return:       updated landing zone metadata folder structure metadata
     """
-
     app.logger.debug(pformat(lzMetadataFolderStructureDetails))
 
     # Always set active to True while creating
@@ -84,7 +80,6 @@ def create(lzMetadataFolderStructureDetails):
     lzmetadata.value = json.loads(lzmetadata.value)
     return schema.dump(lzmetadata), 201
 
-
 def delete():
     """
     This function responds to a request for /api/lzmetadata_folder_structure/
@@ -92,7 +87,6 @@ def delete():
 
     :return:              Landing Zone LAN VPC metadata for a given name
     """
-
     # Does the landing zone folder structure metadata row to delete exist?
     lzmetadata = db.session.query(LZMetadata).filter(
         LZMetadata.group == folder_structure_group, 
@@ -122,11 +116,10 @@ def delete():
     else:
         abort(404, f"Landing zone metadata for group: {folder_structure_group} name: {folder_structure_name} not found")
 
-
 def read_value():
     resp = read()
     print(f"lzmetadata_folder_structure::read_value: {resp}")
     if resp[1] == HTTPStatus.OK:
         return resp[0]['value']
     else:
-        return abort(500, "Unable to read folder structure metadata.") 
+        return abort(500, "Unable to read folder structure metadata.")

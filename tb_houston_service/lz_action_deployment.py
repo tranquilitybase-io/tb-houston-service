@@ -1,16 +1,12 @@
 import logging
-from tb_houston_service.models import LandingZoneAction
-from tb_houston_service.models import LandingZoneProgressItem
-from tb_houston_service.models import LZLanVpcEnvironment
-from tb_houston_service.models import LZLanVpc
-from tb_houston_service.models import LZEnvironment
-from tb_houston_service import lzlanvpc
-from config.db_lib import db_session
 from flask import abort
 
+from models import  LandingZoneAction, LandingZoneProgressItem, LZLanVpcEnvironment, \
+                    LZLanVpc, LZEnvironment
+from tb_houston_service import lzlanvpc
+from config.db_lib import db_session
 
 logger = logging.getLogger("tb_houston_service.lz_action_deployment")
-
 
 def is_valid_lzlanvpc(dbsession):
     logger.debug("is_valid_lzlanvpc")    
@@ -19,7 +15,6 @@ def is_valid_lzlanvpc(dbsession):
         LZLanVpc.sharedVPCProjectId == None
     ).count()
     return count == 0
-
 
 # LZLanVpcEnvironment validation
 # Validate all active environments are associated with active lzlanvpc
@@ -42,7 +37,6 @@ def is_valid_lzlanvpc_environment(dbsession):
         return False
     return True
 
-
 def environment_deployment():
     """
     Deployment Steps:
@@ -60,7 +54,6 @@ def environment_deployment():
     LandingZoneAction.title == "WAN", locked == 0
     LandingZoneProgressItem.label == "Environment", completed = True    
     """
-
     logger.debug("environment_deployment")
 
     data = {"deployment": False}
@@ -104,7 +97,6 @@ def environment_deployment():
         data = {"deployment": True}
         return_code = 200
     return data, return_code
-
 
 if __name__ == "__main__":
     resp = environment_deployment()

@@ -2,23 +2,20 @@
 This is the deployments module and supports all the ReST actions for the
 solutions collection
 """
-
-# 3rd party modules
 import logging
 from flask import make_response, abort
 from sqlalchemy import literal_column
 from sqlalchemy.exc import SQLAlchemyError
 
+from config.db_lib import db_session
+from models import Solution, SolutionSchema
 from tb_houston_service.tools import ModelTools
-from tb_houston_service.models import Solution, SolutionSchema
 from tb_houston_service.extendedSchemas import ExtendedSolutionSchema
 from tb_houston_service.extendedSchemas import SolutionNamesOnlySchema
 from tb_houston_service import solution_extension
-from config.db_lib import db_session
 from tb_houston_service import security
 
 logger = logging.getLogger("tb_houston_service.solution")
-
 
 def read_all(isActive=None, isFavourite=None, namesonly=None, page=None, page_size=None, sort=None):
     """
@@ -27,11 +24,9 @@ def read_all(isActive=None, isFavourite=None, namesonly=None, page=None, page_si
 
     :return:        json string of list of solutions
     """
-
     logger.debug("solution.read_all")
     logger.debug("Parameters: isActive: %s, isFavourite: %s, namesonly: %s, page: %s, page_size: %s, sort: %s", 
     isActive, isFavourite, namesonly, page, page_size, sort)
-
     with db_session() as dbs:
         # pre-process sort instructions
         if sort == None:
@@ -84,7 +79,6 @@ def read_all(isActive=None, isFavourite=None, namesonly=None, page=None, page_si
         logger.debug("read_all: %s", data)
         return data, 200
 
-
 def read_one(oid):
     """
     This function responds to a request for /api/solution/{oid}
@@ -93,7 +87,6 @@ def read_one(oid):
     :param application:   id of solution to find
     :return:              solution matching id
     """
-
     with db_session() as dbs:
         # filter solutions by logged in user 
         business_unit_ids = security.get_business_units_ids_for_user(dbsession = dbs)
@@ -111,7 +104,6 @@ def read_one(oid):
         else:
             abort(404, f"Solution with id {oid} not found".format(id=oid))
 
-
 def create(solutionDetails):
     """
     This function creates a new solution in the solutions list
@@ -120,7 +112,6 @@ def create(solutionDetails):
     :param solution:  solution to create in solutions list
     :return:        201 on success, 406 on solutions exists
     """
-
     data = None
     with db_session() as dbs:
         # Defaults
@@ -188,7 +179,6 @@ def create(solutionDetails):
 
     return data, 201
 
-
 def update(oid, solutionDetails):
     """
     Updates an existing solutions in the solutions list.
@@ -197,9 +187,7 @@ def update(oid, solutionDetails):
     :param solutions:   solutions to update
     :return:       updated solutions
     """
-
     logger.debug("update::solutionDetails: %s", solutionDetails)
-
     with db_session() as dbs:
         # Does the solutions exist in solutions list?
         existing_solution = (
@@ -245,7 +233,6 @@ def update(oid, solutionDetails):
         else:
             abort(404, f"Solution {oid} not found")
 
-
 def delete(oid):
     """
     This function deletes a solution from the solutions list
@@ -253,7 +240,6 @@ def delete(oid):
     :param key: id of the solutions to delete
     :return:    200 on successful delete, 404 if not found
     """
-
     with db_session() as dbs:
         # Does the solution to delete exist?
         existing_solution = (

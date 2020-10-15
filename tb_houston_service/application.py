@@ -2,26 +2,21 @@
 This is the application module and supports all the ReST actions for the
 application collection
 """
-
-# 3rd party modules
-from flask import make_response, abort
 import logging
 from pprint import pformat
+from flask import make_response, abort
 from sqlalchemy import literal_column
 from sqlalchemy.exc import SQLAlchemyError
 
 from config import db
-from tb_houston_service.models import Application, ApplicationSchema
-from tb_houston_service.models import Activator
+from config.db_lib import db_session
+from models import Application, ApplicationSchema, Activator
 from tb_houston_service.extendedSchemas import ExtendedApplicationSchema
 from tb_houston_service.tools import ModelTools
 from tb_houston_service import application_extension
 from tb_houston_service import security
-from config.db_lib import db_session
-
 
 logger = logging.getLogger("tb_houston_service.application")
-
 
 def read_all(
     isActive=None,
@@ -39,7 +34,6 @@ def read_all(
 
     :return:        json string of list of applications
     """
-
     logger.debug("read_all::Parameters: isActive: %s, isFavourite: %s, status: %s, activatorId: %s, environment: %s, page: %s, page_size: %s, sort: %s",
      isActive, isFavourite, status, activatorId, environment, page, page_size, sort)
     # Create the list of applications from our data
@@ -67,7 +61,6 @@ def read_all(
             except SQLAlchemyError as e:
                 logger.warning(e)
                 application_query = dbs.query(Application).order_by(Application.id)
-
 
         # filter activators by logged in user 
         business_unit_ids = security.get_business_units_ids_for_user(dbsession = dbs)
@@ -98,7 +91,6 @@ def read_all(
         logger.debug(pformat(data))
         return data
 
-
 def read_one(oid):
     """
     This function responds to a request for /api/application/{oid}
@@ -107,7 +99,6 @@ def read_one(oid):
     :param application:   id of the application to find
     :return:              application matching the id
     """
-
     with db_session() as dbs:
         # filter activators by logged in user 
         business_unit_ids = security.get_business_units_ids_for_user(dbsession = dbs)
@@ -132,7 +123,6 @@ def read_one(oid):
         else:
             abort(404, f"Application with id {oid} not found".format(id=oid))
 
-
 def create(applicationDetails):
     """
     This function creates a new application in the application structure
@@ -141,7 +131,6 @@ def create(applicationDetails):
     :param application:  application to create in application list
     :return:             201 on success, 406 on application exists
     """
-
     logger.debug("create: %s", applicationDetails)
 
     with db_session() as dbs:
@@ -172,7 +161,6 @@ def create(applicationDetails):
         logger.debug(pformat(data))
         return data, 201
 
-
 def update(oid, applicationDetails):
     """
     This function updates an existing application in the application list
@@ -181,7 +169,6 @@ def update(oid, applicationDetails):
     :param application:   application to update
     :return: updated application
     """
-
     logger.debug("update: %s", applicationDetails)
 
     with db_session() as dbs:
@@ -222,7 +209,6 @@ def update(oid, applicationDetails):
         else:
             abort(404, f"Application {oid} not found")
 
-
 def delete(oid):
     """
     Deletes an application from the application list.
@@ -230,7 +216,6 @@ def delete(oid):
     :param id: id of the application to delete
     :return:             200 on successful delete, 404 if not found
     """
-
     with db_session() as dbs:
         # Does the application to delete exist?
         existing_application = (

@@ -2,18 +2,15 @@
 This is the deployments module and supports all the ReST actions for the
 lzlanvpc collection
 """
-
-# 3rd party modules
-from pprint import pformat
 import logging
+from pprint import pformat
 from flask import abort
+
 from config import db, app
-from tb_houston_service.models import LZLanVpc, LZLanVpcSchema
-from tb_houston_service.models import LZLanVpcEnvironment
+from models import LZLanVpc, LZLanVpcSchema, LZLanVpcEnvironment
 from tb_houston_service import lzlanvpc_extension
 from tb_houston_service import gcp_dac_metadata
 from tb_houston_service.extendedSchemas import ExtendedLZLanVpcSchema
-
 
 logger = logging.getLogger("tb_houston_service.lzlanvpc")
 
@@ -24,7 +21,6 @@ def read(readActiveOnly=None):
 
     :return:        json string of list of lzlanvpc
     """
-
     logger.debug("readActiveOnly: %s", readActiveOnly)
 
     # Create the list of lzlanvpc from our data
@@ -102,7 +98,6 @@ def create(lzLanVpcDetails):
     else:
         abort("Cannot create without the id or name.", 500)
 
-
 def logical_delete_all_active():
     objs = db.session.query(LZLanVpc).filter(LZLanVpc.isActive == True).all()
     for o in objs:
@@ -113,7 +108,6 @@ def logical_delete_all_active():
         o.isActive = False
         db.session.add(o)    
 
-
 def create_all(lzLanVpcListDetails, readActiveOnly=False, bulkDelete=False):
     """
     This function updates lzlanvpcs from a list of  lzlanvpcs
@@ -122,7 +116,6 @@ def create_all(lzLanVpcListDetails, readActiveOnly=False, bulkDelete=False):
     :param lzlanvpc:   lzlanvpc to update
     :return:       updated lzlanvpc
     """
-
     app.logger.debug("create_all: %s", pformat(lzLanVpcListDetails))
 
     try:
@@ -139,7 +132,6 @@ def create_all(lzLanVpcListDetails, readActiveOnly=False, bulkDelete=False):
         db.session.close()
     resp = read(readActiveOnly=readActiveOnly)
     return resp[0], 201
-
 
 def set_shared_vpc_project_id(dbsession):
     """

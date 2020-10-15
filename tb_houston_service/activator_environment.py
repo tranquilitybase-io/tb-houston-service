@@ -1,11 +1,9 @@
 import logging
 
 from tb_houston_service.tools import ModelTools
-from tb_houston_service.models import ActivatorEnvironment, LZEnvironment, Activator
-
+from models import Activator, ActivatorEnvironment, LZEnvironment
 
 logger = logging.getLogger("tb_houston_service.activator_environment")
-
 
 def create_activator_environment(activatorId, list_of_environment, dbsession):
     """
@@ -18,7 +16,6 @@ def create_activator_environment(activatorId, list_of_environment, dbsession):
         3. Create the activator-environment rows that are not in this list.
 
     """
-
     # Inactivates the active activator-environment for this activator (activatorId)
     environment_list = (
         dbsession.query(ActivatorEnvironment)
@@ -59,7 +56,6 @@ def create_activator_environment(activatorId, list_of_environment, dbsession):
 
     return dbsession
 
-
 def delete_activator_environment(activatorId, dbsession):
     """
     Args:
@@ -68,7 +64,6 @@ def delete_activator_environment(activatorId, dbsession):
 
         1. Logically delete all active Environment ids for this activator
     """
-
     # Inactivates the active activator-environment for this activator (activatorId)
     environment_list = (
         dbsession.query(ActivatorEnvironment)
@@ -84,13 +79,15 @@ def delete_activator_environment(activatorId, dbsession):
 
     return dbsession
 
-
 def expand_environment(act, dbsession):
+    act.envs = dbsession.query(LZEnvironment) \
+        .filter(
+            LZEnvironment.id == ActivatorEnvironment.envId,
+            Activator.id == ActivatorEnvironment.activatorId,
+            Activator.id == act.id,
+            ActivatorEnvironment.isActive,
+            Activator.isActive,
+            LZEnvironment.isActive) \
+        .all()
 
-    act.envs = dbsession.query(LZEnvironment).filter(
-    LZEnvironment.id == ActivatorEnvironment.envId, 
-    Activator.id == ActivatorEnvironment.activatorId, 
-    Activator.id == act.id, 
-    ActivatorEnvironment.isActive, Activator.isActive, LZEnvironment.isActive).all()
-    
     return act

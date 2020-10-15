@@ -1,7 +1,8 @@
-import logging 
-from tb_houston_service.models import Team, TeamMember, CloudRole, UserCloudRole
-from tb_houston_service import team_member_extension
+import logging
+
 from config import db
+from models import Team, TeamMember, CloudRole, UserCloudRole
+from tb_houston_service import team_member_extension
 
 logger = logging.getLogger("tb_houston_service.user_extension")
 
@@ -21,12 +22,10 @@ def expand_user(a_user):
     
     return a_user
 
-
 def expand_team_member(a_team_member):
     # This function is similar to the one in team_member_extension.py but without the user object,
     # it's not required when we expand a user with the teams he's a member of: expand_user_with_teams.
     logger.debug("expand_team_member: %s", a_team_member)
-
     if a_team_member == None:
         return None
 
@@ -34,7 +33,6 @@ def expand_team_member(a_team_member):
     a_team_member.team = team_member_extension.expand_team(tm)
 
     return a_team_member
-
 
 def expand_user_with_teams(a_user):
     logger.debug("expand_user_with_teams: %s", a_user)

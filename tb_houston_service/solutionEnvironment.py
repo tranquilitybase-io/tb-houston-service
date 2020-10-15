@@ -2,17 +2,15 @@
 This is the deployments module and supports all the ReST actions for the
 solution environment collection
 """
-
-# 3rd party modules
 import logging
 from pprint import pformat
 from flask import make_response
+
 from config import db
-from tb_houston_service.models import SolutionEnvironment, SolutionEnvironmentSchema
+from models import SolutionEnvironment, SolutionEnvironmentSchema
 from tb_houston_service.tools import ModelTools
 
 logger = logging.getLogger("tb_houston_service.solutionEnvironment")
-
 
 def read_all():
     """
@@ -21,7 +19,6 @@ def read_all():
 
     :return:        json string of list of solutionEnvironments
     """
-
     # Create the list of solution environments from our data
     sol_env = (
         db.session.query(SolutionEnvironment).order_by(SolutionEnvironment.id).all()
@@ -31,7 +28,6 @@ def read_all():
     schema = SolutionEnvironmentSchema(many=True)
     data = schema.dump(sol_env)
     return data, 200
-
 
 def create(solEnvDetails):
     logger.debug("solutionEnvironment::create: %s", solEnvDetails)
@@ -67,7 +63,6 @@ def create(solEnvDetails):
         data = schema.dump(sol_env_change)
         return data, 201
 
-
 def create_all(solutionEnvironmentListDetails):
     """
     This function updates solution environments relationships.
@@ -75,7 +70,6 @@ def create_all(solutionEnvironmentListDetails):
     :param solution environment:  solution environment to update
     :return:       updated solution environment
     """
-
     logger.debug("create_all: %s", pformat(solutionEnvironmentListDetails))
 
     for lze in solutionEnvironmentListDetails:

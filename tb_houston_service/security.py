@@ -1,15 +1,12 @@
+import logging
 import os
 import six
 import connexion
 from werkzeug.exceptions import Unauthorized
 from google.oauth2 import id_token
 from google.auth.transport import requests
-from tb_houston_service.models import User
-from tb_houston_service.models import BusinessUnit
-from tb_houston_service.models import Team
-from tb_houston_service.models import TeamMember
-import logging
 
+from models import User, BusinessUnit, Team, TeamMember
 
 CLIENT_ID = os.environ.get("CLIENT_ID")
 
@@ -26,7 +23,6 @@ def decode_token(token):
     Returns:
         [dict]: [oauth claims]
     """
-
     logger.debug("decode_token: %s", token)
     logger.debug("CLIENT_ID: %s", CLIENT_ID)    
     try:
@@ -52,14 +48,12 @@ def decode_token(token):
         logger.error("decode_token failed: %s", e)
         six.raise_from(Unauthorized, e)
 
-
 def get_valid_user_from_token(dbsession):
     """
     Get currently logged in user id.
     :return:        user id
     :return:        None if no valid user id
     """
-
     authorization = connexion.request.headers.get('Authorization')
     if not authorization:
         return None
@@ -72,7 +66,6 @@ def get_valid_user_from_token(dbsession):
 
     user = dbsession.query(User).filter(User.email == claims.get("email"), User.isActive).one_or_none()
     return user
-
 
 def get_business_units_for_user(dbsession):
     business_units = None
@@ -89,7 +82,6 @@ def get_business_units_for_user(dbsession):
         ).all()
     logger.debug("business_units: %s", business_units)        
     return business_units
-
 
 def get_business_units_ids_for_user(dbsession):
     business_units = get_business_units_for_user(dbsession)

@@ -2,19 +2,16 @@
 This is the landingZoneWAN module and supports all the ReST actions for the
 landingZoneWAN collection
 """
-
-# 3rd party modules
 from pprint import pformat
 from flask import make_response, abort
 from flatten_json import flatten, unflatten
 
 from config import db, app
-from tb_houston_service.models import LandingZoneWAN, LandingZoneWANSchema
+from models import LandingZoneWAN, LandingZoneWANSchema
 from tb_houston_service.extendedSchemas import ExtendedLandingZoneWANSchema
 from tb_houston_service.extendedSchemas import IdSchema
 
 delimiter = "__"
-
 
 def read_all():
     """
@@ -23,7 +20,6 @@ def read_all():
 
     :return:        json string of list of landingZoneWANs
     """
-
     # Create the list of people from our data
     landingZoneWANs = db.session.query(LandingZoneWAN).all()
     landingZoneWANArr = []
@@ -37,7 +33,6 @@ def read_all():
     app.logger.debug(pformat(data))
     return data
 
-
 def read_one(oid):
     """
     This function responds to a request for /api/landingZoneWAN/{oid}
@@ -46,7 +41,6 @@ def read_one(oid):
     :param landingZoneWAN:   id of the landingZoneWAN to find
     :return:              landingZoneWAN matching the id
     """
-
     landingZoneWAN = (
         db.session.query(LandingZoneWAN).filter(LandingZoneWAN.id == oid).one_or_none()
     )
@@ -62,7 +56,6 @@ def read_one(oid):
     else:
         abort(404, f"LandingZoneWAN with id {oid} not found".format(id=oid))
 
-
 def create(landingZoneWANDetails):
     """
     This function creates a new landingZoneWAN in the landingZoneWAN structure
@@ -71,7 +64,6 @@ def create(landingZoneWANDetails):
     :param landingZoneWAN:  landingZoneWAN to create in landingZoneWAN list
     :return:             201 on success, 406 on landingZoneWAN exists
     """
-
     # we don't need the id, the is generated automatically on the database
     if "id" in landingZoneWANDetails:
         del landingZoneWANDetails["id"]
@@ -92,7 +84,6 @@ def create(landingZoneWANDetails):
 
     return data, 201
 
-
 def update(oid, landingZoneWANDetails):
     """
     This function updates an existing landingZoneWAN in the landingZoneWAN list
@@ -101,7 +92,6 @@ def update(oid, landingZoneWANDetails):
     :param landingZoneWAN:   landingZoneWAN to update
     :return: updated landingZoneWAN
     """
-
     app.logger.debug("landingZoneWAN: ")
     app.logger.debug(pformat(landingZoneWANDetails))
 
@@ -223,7 +213,6 @@ def update(oid, landingZoneWANDetails):
     # otherwise, nope, landingZoneWAN doesn't exist, so that's an error
     else:
         abort(404, f"LandingZoneWAN not found")
-
 
 def delete(oid):
     """

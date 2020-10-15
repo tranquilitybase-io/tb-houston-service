@@ -1,9 +1,5 @@
-# System modules
-
-# 3rd party modules
 from config import db
-from tb_houston_service.models import Activator
-
+from models import Activator
 
 def read_one():
     """
@@ -12,7 +8,6 @@ def read_one():
     :param activator:
     :return:              count of activators
     """
-
     count = db.session.query(Activator).count()
     data = {"count": count}
     return data, 200

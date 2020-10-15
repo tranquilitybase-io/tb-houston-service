@@ -3,17 +3,14 @@ deployments module
 supports all the ReST actions for the
 team collection
 """
-
-# 3rd party modules
 from pprint import pformat
 from flask import make_response, abort
 from sqlalchemy import literal_column
 
 from config import db, app
-from tb_houston_service.models import UserCloudRole, UserCloudRoleSchema
+from models import UserCloudRole, UserCloudRoleSchema
 from tb_houston_service.extendedSchemas import ExtendedUserCloudRoleSchema
 from tb_houston_service.userCloudRole_extension import expand_user_cloud_role
-
 
 def read_all(
     userId=None, cloudRoleId=None, active=None, page=None, page_size=None, sort=None
@@ -24,10 +21,8 @@ def read_all(
 
     :return:        json string of list of user roles
     """
-
     # Create the list of user roles from our data
     # pre-process sort instructions
-
     if sort == None:
         userCloudRole_query = db.session.query(UserCloudRole).order_by(UserCloudRole.id)
 
@@ -70,7 +65,6 @@ def read_all(
     app.logger.debug(pformat(data))
     return data
 
-
 def read_one(oid):
     """
     Responds to a request for /api/userCloudRole/{oid}
@@ -79,9 +73,7 @@ def read_one(oid):
     :param application:   key of user-role to find
     :return:              user-role matching key.
     """
-
     userCloudRole = db.session.query(UserCloudRole).filter(UserCloudRole.id == oid).one_or_none()
-
     if userCloudRole is not None:
         # Serialize the data for the response
         expand_user_cloud_role(userCloudRole)
@@ -90,7 +82,6 @@ def read_one(oid):
         return data
     else:
         abort(404, f"User Cloud Role with id {oid} not found")
-
 
 def create(userCloudRoleDetails):
     """
@@ -129,7 +120,6 @@ def create(userCloudRoleDetails):
         userCloudRoleDetails["id"] = existing_user_role.id
         update(existing_user_role.id, userCloudRoleDetails)
 
-
 def update(oid, userCloudRoleDetails):
     """
     Updates an existing user role in the user list
@@ -138,9 +128,7 @@ def update(oid, userCloudRoleDetails):
     :param team:   team to update
     :return:       updated user role.
     """
-
     app.logger.debug(pformat(userCloudRoleDetails))
-
     if userCloudRoleDetails["id"] != int(oid):
         abort(400, "id mismatch in path and body")
 
@@ -148,9 +136,7 @@ def update(oid, userCloudRoleDetails):
     existing_user_role = (
         db.session.query(UserCloudRole).filter(UserCloudRole.id == oid).one_or_none()
     )
-
     # Does user-role exist?
-
     if existing_user_role is not None:
         schema = UserCloudRoleSchema()
         update_user_role = schema.load(userCloudRoleDetails, session=db.session)
@@ -166,7 +152,6 @@ def update(oid, userCloudRoleDetails):
     # otherwise, nope, deployment doesn't exist, so that's an error
     else:
         abort(404, "User Role not found")
-
 
 def delete(oid):
     """

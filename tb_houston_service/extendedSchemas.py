@@ -1,22 +1,15 @@
 import logging
 import json
 from marshmallow import Schema, fields, post_load, post_dump
-from tb_houston_service.models import BusinessUnitSchema
-from tb_houston_service.models import LZEnvironmentSchema
-from tb_houston_service.models import CloudRoleSchema
-from tb_houston_service.models import UserSchema
-from tb_houston_service.models import CISchema, CDSchema, SourceControlSchema
-from tb_houston_service.models import NotificationTypeSchema
 from marshmallow_oneofschema import OneOfSchema
-from tb_houston_service.models import NotificationActivatorSchema
-from tb_houston_service.models import NotificationTeamSchema
-from tb_houston_service.models import NotificationApplicationDeploymentSchema
-from tb_houston_service.models import NotificationSolutionDeploymentSchema
-from tb_houston_service.models import TypeSchema, PlatformSchema, ActivatorMetadataVariableSchema
 
+from models import  BusinessUnitSchema, LZEnvironmentSchema, CloudRoleSchema, UserSchema, \
+                    CISchema, CDSchema, SourceControlSchema, NotificationTypeSchema, \
+                    NotificationActivatorSchema, NotificationTeamSchema, \
+                    NotificationApplicationDeploymentSchema, NotificationSolutionDeploymentSchema, \
+                    TypeSchema, PlatformSchema, ActivatorMetadataVariableSchema
 
 logger = logging.getLogger("tb_houston_service.extendedSchemas")
-
 
 class IdSchema(Schema):
     def __init__(self, **kwargs):
@@ -24,15 +17,12 @@ class IdSchema(Schema):
 
     id = fields.Int()
 
-
 class HealthSchema(Schema):
     status = fields.Str()
-
 
 class ResourceSchema(Schema):
     ipaddress = fields.Str()
     name = fields.Str()
-
 
 class ExtendedLoginSchema(Schema):
     id = fields.Int()
@@ -42,7 +32,6 @@ class ExtendedLoginSchema(Schema):
     isAdmin = fields.Boolean()
     showWelcome = fields.Boolean()
     teams = fields.List(fields.Str())
-
 
 class ExtendedUserSchema(Schema):
     def __init__(self, **kwargs):
@@ -58,7 +47,6 @@ class ExtendedUserSchema(Schema):
     isActive = fields.Boolean()
     lastUpdated = fields.Str()
     teamCount = fields.Int()
-
 
 class ExtendedUserCloudRoleSchema(Schema):
     def __init__(self, **kwargs):
@@ -146,8 +134,6 @@ class ExtendedActivatorSchema(Schema):
             data["apiManagement"] = json.loads(original_data.apiManagement)
         return data
 
-
-
 class ExtendedApplicationSchema(Schema):
     id = fields.Int()
     solutionId = fields.Int()
@@ -177,7 +163,6 @@ class ExtendedApplicationSchema(Schema):
         data["resources"] = json.loads(original_data.resources)
         return data
 
-
 class ExtendedTeamSchema(Schema):
     id = fields.Int()
     name = fields.Str()
@@ -189,7 +174,6 @@ class ExtendedTeamSchema(Schema):
     userCount = fields.Int()
     accessRequestedById = fields.Int()
     accessRequestedBy = fields.Nested(ExtendedUserSchema(many=False))
-
 
 class ExtendedSolutionSchema(Schema):
     __envelope__ = {"single": "solution", "many": "solutions"}
@@ -217,11 +201,9 @@ class ExtendedSolutionSchema(Schema):
     businessUnit = fields.Nested(BusinessUnitSchema(many=False))
     deploymentState = fields.Str()
 
-
 class ExtendedTeamMemberSchema(Schema):
     id = fields.Int()
     user = fields.Nested(ExtendedUserSchema(many=False))
-
 
 class ExtendedTeamMemberFullSchema(Schema):
     id = fields.Int()
@@ -235,7 +217,6 @@ class ExtendedTeamMemberFullSchema(Schema):
     class Meta:
         ordered = True
 
-
 class ExtendedTeamDACSchema(Schema):
     id = fields.Int()
     name = fields.Str()
@@ -245,7 +226,6 @@ class ExtendedTeamDACSchema(Schema):
     businessUnit = fields.Nested(BusinessUnitSchema(many=False))
     lastUpdated = fields.Str()
     teamMembers = fields.Nested(ExtendedTeamMemberFullSchema(many=True))
-
 
 class ExtendedUserTeamsSchema(Schema):
     id = fields.Int()
@@ -259,12 +239,10 @@ class ExtendedUserTeamsSchema(Schema):
     lastUpdated = fields.Str()
     teamMembers = fields.Nested(ExtendedTeamMemberFullSchema(many=True))
 
-
 class ExtendedLZEnvironmentForDacSchema(Schema):
     id = fields.Int()
     name = fields.Str()
     sharedVPCProjectId = fields.Str()
-
 
 class ExtendedSolutionForDACSchema(Schema):
     __envelope__ = {"single": "solution", "many": "solutions"}
@@ -289,13 +267,11 @@ class ExtendedSolutionForDACSchema(Schema):
     deploymentFolderId = fields.Str()
     createdBy = fields.Str()
 
-
 class SolutionNamesOnlySchema(Schema):
     __envelope__ = {"single": "solution", "many": "solutions"}
 
     id = fields.Int()
     name = fields.Str()
-
 
 class SolutionDeploymentSchema(Schema):
     __envelope__ = {"single": "solutiondeployment", "many": "solutiondeployments"}
@@ -308,7 +284,6 @@ class SolutionDeploymentSchema(Schema):
     statusMessage = fields.Str()
     taskId = fields.Str()
 
-
 class ExtendedGoogleEndpointSchema(Schema):
     primaryGcpVpcSubnet = fields.Str()
     primaryRegion = fields.Str()
@@ -316,7 +291,6 @@ class ExtendedGoogleEndpointSchema(Schema):
     secondaryGcpVpcSubnet = fields.Str()
     secondaryRegion = fields.Str()
     secondarySubnetName = fields.Str()
-
 
 class ExtendedRemoteEndpointSchema(Schema):
     primaryBgpPeer = fields.Str()
@@ -331,7 +305,6 @@ class ExtendedRemoteEndpointSchema(Schema):
     secondaryVpnTunnel = fields.Str()
     vendor = fields.Str()
 
-
 class ExtendedVPNSchema(Schema):
     bgpInterfaceNetLength = fields.Str()
     bgpRoutingMode = fields.Str()
@@ -345,7 +318,6 @@ class ExtendedVPNSchema(Schema):
     subnetMode = fields.Str()
     vpcName = fields.Str()
 
-
 class ExtendedLandingZoneWANSchema(Schema):
     __envelope__ = {"single": "landingZoneWAN", "many": "landingZoneWANs"}
     id = fields.Int()
@@ -353,11 +325,9 @@ class ExtendedLandingZoneWANSchema(Schema):
     remoteEndpoint = fields.Nested(ExtendedRemoteEndpointSchema(many=False))
     vpn = fields.Nested(ExtendedVPNSchema(many=False))
 
-
 class ExtendedActivatorCategorySchema(Schema):
     __envelope__ = {"single": "activatorCategory", "many": "activatorCategories"}
     category = fields.Str()
-
 
 class ExtendedLZMetadataSchema(Schema):
     active = fields.Boolean()
@@ -366,19 +336,16 @@ class ExtendedLZMetadataSchema(Schema):
     description = fields.Str()
     value = fields.List(fields.Str())
 
-
 class ExtendedLZMetadataListSchema(Schema):
     name = fields.Str()
     value = fields.List(fields.Str())
     description = fields.Str()
     isActive = fields.Boolean()
 
-
 class ExtendedLZMetadataFSSolutionSchema(Schema):
     id = fields.Int()
     isActive = fields.Boolean()
     name = fields.String()
-
 
 class ExtendedLZMetadataFSTeamSchema(Schema):
     id = fields.Int()
@@ -386,13 +353,11 @@ class ExtendedLZMetadataFSTeamSchema(Schema):
     name = fields.String()
     children = fields.Nested(ExtendedLZMetadataFSSolutionSchema(many=True))
 
-
 class ExtendedLZMetadataFSBusinessUnitSchema(Schema):
     id = fields.Int()
     isActive = fields.Boolean()
     name = fields.String()
     children = fields.Nested(ExtendedLZMetadataFSTeamSchema(many=True))
-
 
 class ExtendedLZMetadataFSApplicationSchema(Schema):
     id = fields.Int()
@@ -400,24 +365,20 @@ class ExtendedLZMetadataFSApplicationSchema(Schema):
     name = fields.String()
     children = fields.Nested(ExtendedLZMetadataFSBusinessUnitSchema(many=True))
 
-
 class ExtendedLZMetadataFSSchema(Schema):
     isActive = fields.Boolean()
     name = fields.String()
     value = fields.Nested(ExtendedLZMetadataFSApplicationSchema(many=True))
 
-
 class KeyValueSchema(Schema):
     key = fields.Int()
     value = fields.Str()
-
 
 class ExtendedLZLanVpcSchema(Schema):
     id = fields.Int()
     name = fields.Str()
     isActive = fields.Boolean()
     environments = fields.Nested(LZEnvironmentSchema(many=True))
-
 
 class ExtendedApplicationDeploymentSchema(Schema):
     __envelope__ = {"single": "applicationdeployment", "many": "applicationdeployments"}
@@ -437,7 +398,6 @@ class ExtendedApplicationDeploymentSchema(Schema):
         data["id"] = original_data.applicationId
         return data
 
-
 class ExtendedApplicationForDACSchema(Schema):
     id = fields.Int()
     name = fields.Str()
@@ -450,7 +410,6 @@ class ExtendedApplicationForDACSchema(Schema):
     mandatoryVariables = fields.List(fields.Dict())
     optionalVariables = fields.List(fields.Dict())
     deploymentEnvironment = fields.Nested(ExtendedLZEnvironmentForDacSchema)
-
 
 class ExtendedNotificationActivatorSchema(Schema):
     id = fields.Int()
@@ -465,7 +424,6 @@ class ExtendedNotificationActivatorSchema(Schema):
     typeObj = fields.Nested(NotificationTypeSchema)
     details = fields.Nested(NotificationActivatorSchema)
 
-
 class ExtendedNotificationTeamSchema(Schema):
     id = fields.Int()
     isActive = fields.Bool()
@@ -478,7 +436,6 @@ class ExtendedNotificationTeamSchema(Schema):
     typeId = fields.Int()
     type = fields.Nested(NotificationTypeSchema)
     details = fields.Nested(NotificationTeamSchema)
-
 
 class ExtendedNotificationApplicationDeploymentSchema(Schema):
     id = fields.Int()
@@ -493,7 +450,6 @@ class ExtendedNotificationApplicationDeploymentSchema(Schema):
     type = fields.Nested(NotificationTypeSchema)
     details = fields.Nested(NotificationApplicationDeploymentSchema)
 
-
 class ExtendedNotificationSolutionDeploymentSchema(Schema):
     id = fields.Int()
     isActive = fields.Bool()
@@ -506,7 +462,6 @@ class ExtendedNotificationSolutionDeploymentSchema(Schema):
     typeId = fields.Int()
     type = fields.Nested(NotificationTypeSchema)
     details = fields.Nested(NotificationSolutionDeploymentSchema)
-
 
 class ExtendedNotificationSchema(OneOfSchema):
     type_field = "typeName"

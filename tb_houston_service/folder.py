@@ -2,21 +2,18 @@
 This is the deployments module and supports all the ReST actions for the
 folder collection
 """
-
-# 3rd party modules
 from pprint import pformat
 from flask import make_response, abort
-from config import db, app
-from tb_houston_service.models import Folder, FolderSchema
-from tb_houston_service.DeploymentStatus import DeploymentStatus
-from tb_houston_service import lzfolderstructure
 
+from config import db, app
+from models import Folder, FolderSchema
+from tb_houston_service import lzfolderstructure
+from tb_houston_service.DeploymentStatus import DeploymentStatus
 
 APPLICATIONS = "Applications"
 BUSINESS_UNIT = "Business Unit"
 TEAM = "Team"
 SOLUTION = "Solutions"
-
 
 def read_all():
     """
@@ -25,7 +22,6 @@ def read_all():
 
     :return: json string of list of Folders
     """
-
     # Create the list of Folders from our data
     fdr = db.session.query(Folder).order_by(Folder.id).all()
     app.logger.debug(pformat(fdr))
@@ -35,7 +31,6 @@ def read_all():
     app.logger.debug(data)
     return data, 200
 
-
 def read_one(oid):
     """
     Responds to a request for /api/folder/{id}
@@ -44,7 +39,6 @@ def read_one(oid):
     :param application:   id of folder to find
     :return:              folder matching id
     """
-
     fdr = db.session.query(Folder).filter(Folder.id == oid).one_or_none()
 
     if fdr is not None:
@@ -55,7 +49,6 @@ def read_one(oid):
         return data, 200
     else:
         abort(404, "Folder with id {id} not found".format(id=oid))
-
 
 def create(folderDetails):
     """
@@ -80,7 +73,6 @@ def create(folderDetails):
     app.logger.debug(data)
     return data, 201
 
-
 def update(oid, folderDetails):
     """
     Updates an existing folder in the folder list
@@ -89,7 +81,6 @@ def update(oid, folderDetails):
     :param folder:   folder to update
     :return:       updated folder.
     """
-
     app.logger.debug(f"folder::update: oid: {oid} folderDetails: {folderDetails}")
 
     if folderDetails.get(id, oid) != oid:
@@ -118,7 +109,6 @@ def update(oid, folderDetails):
     else:
         abort(404, f"Folder with id {oid} not found")
 
-
 def delete(oid):
     """
     Deletes a Folder from the Folder list.
@@ -140,7 +130,6 @@ def delete(oid):
     else:
         abort(404, f"Folder with id {oid} not found")
 
-
 def get_folder_meta():
     resp = lzfolderstructure.read()
     app.logger.debug(f"get_folder_meta::resp: {resp}")
@@ -158,7 +147,6 @@ def get_folder_meta():
     print(f"folder::get_folder_meta: {folder_meta}")
     return folder_meta
 
-
 def read_or_create_by_parent_folder_id_and_folder_name(parentFolderId, folderName):
     """
     Called by solution_deployment.
@@ -166,7 +154,6 @@ def read_or_create_by_parent_folder_id_and_folder_name(parentFolderId, folderNam
     :param application:   solutionId and the folderName
     :return:              parentFolderId, status, taskId
     """
-
     app.logger.debug(f"parentFolderId: {parentFolderId}, folderName: {folderName}")
     fdr = (
         db.session.query(Folder)

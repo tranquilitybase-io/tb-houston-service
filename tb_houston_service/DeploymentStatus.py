@@ -1,14 +1,12 @@
 class DeploymentStatus:
     def __init__():
         pass
-
     PENDING = "PENDING"
     STARTED = "STARTED"
     SUCCESS = "SUCCESS"
     RETRY = "RETRY"
     FAILURE = "FAILURE"
     REVOKED = "REVOKED"
-
 
 if __name__ == "__main__":
     # Unit test

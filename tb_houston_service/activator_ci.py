@@ -1,11 +1,9 @@
 import logging
 
 from tb_houston_service.tools import ModelTools
-from tb_houston_service.models import ActivatorCI, CI , Activator
-
+from models import Activator, ActivatorCI, CI
 
 logger = logging.getLogger("tb_houston_service.activator_ci")
-
 
 def create_activator_ci(activatorId, list_of_ci, dbsession):
     """
@@ -18,7 +16,6 @@ def create_activator_ci(activatorId, list_of_ci, dbsession):
         3. Create the activator-ci rows that are not in this list.
 
     """
-
     # Inactivates the active activator-ci for this activator (activatorId)
     ci_list = (
         dbsession.query(ActivatorCI)
@@ -51,7 +48,6 @@ def create_activator_ci(activatorId, list_of_ci, dbsession):
 
     return dbsession
 
-
 def delete_activator_ci(activatorId, dbsession):
     """
     Args:
@@ -60,7 +56,6 @@ def delete_activator_ci(activatorId, dbsession):
 
         1. Logically delete all active CI ids for this activator
     """
-
     # Inactivates the active activator-ci for this activator (activatorId)
     ci_list = (
         dbsession.query(ActivatorCI)
@@ -73,12 +68,14 @@ def delete_activator_ci(activatorId, dbsession):
 
     return dbsession
 
-
 def expand_ci(act,  dbsession):
-
-    act.ci = dbsession.query(CI).filter(
-        CI.id == ActivatorCI.ciId, 
-        Activator.id == ActivatorCI.activatorId, 
-        Activator.id == act.id,
-        ActivatorCI.isActive, Activator.isActive).all()
+    act.ci = dbsession.query(CI) \
+            .filter(
+                CI.id == ActivatorCI.ciId,
+                Activator.id == ActivatorCI.activatorId,
+                Activator.id == act.id,
+                ActivatorCI.isActive,
+                Activator.isActive) \
+            .all()
+    
     return act

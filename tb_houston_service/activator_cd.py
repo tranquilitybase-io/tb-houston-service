@@ -1,11 +1,9 @@
 import logging
 
 from tb_houston_service.tools import ModelTools
-from tb_houston_service.models import ActivatorCD, CD, Activator
-
+from models import Activator, ActivatorCD, CD
 
 logger = logging.getLogger("tb_houston_service.activator_cd")
-
 
 def create_activator_cd(activatorId, list_of_cd, dbsession):
     """
@@ -18,7 +16,6 @@ def create_activator_cd(activatorId, list_of_cd, dbsession):
         3. Create the activator-cd rows that are not in this list.
 
     """
-
     # Inactivates the active activator-cd for this activator (activatorId)
     cd_list = (
         dbsession.query(ActivatorCD)
@@ -51,7 +48,6 @@ def create_activator_cd(activatorId, list_of_cd, dbsession):
 
     return dbsession
 
-
 def delete_activator_cd(activatorId, dbsession):
     """
     Args:
@@ -60,7 +56,6 @@ def delete_activator_cd(activatorId, dbsession):
 
         1. Logically delete all active CD ids for this activator
     """
-
     # Inactivates the active activator-cd for this activator (activatorId)
     cd_list = (
         dbsession.query(ActivatorCD)
@@ -73,13 +68,13 @@ def delete_activator_cd(activatorId, dbsession):
 
     return dbsession
 
-
 def expand_cd(act, dbsession):
-
-    act.cd = dbsession.query(CD).filter(
-    CD.id == ActivatorCD.cdId, 
-    Activator.id == ActivatorCD.activatorId, 
-    Activator.id == act.id,
-    ActivatorCD.isActive, Activator.isActive).all()
+    act.cd = dbsession.query(CD) \
+            .filter(
+                CD.id == ActivatorCD.cdId,
+                Activator.id == ActivatorCD.activatorId, 
+                Activator.id == act.id,
+                ActivatorCD.isActive, Activator.isActive) \
+            .all()
 
     return act

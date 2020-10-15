@@ -1,9 +1,5 @@
-# System modules
-
-# 3rd party modules
-from tb_houston_service.models import Application
 from config import db
-
+from models import Application
 
 def read_one(activatorId):
     """
@@ -12,7 +8,6 @@ def read_one(activatorId):
     :param application:   activatorId
     :return:              count of applications that match the acivatorId
     """
-
     acount = (
         db.session.query(Application)
         .filter(Application.activatorId == activatorId)
