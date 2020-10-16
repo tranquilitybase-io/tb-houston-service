@@ -2,14 +2,12 @@
 This is the solution resource module and supports all the ReST actions for the
 solution resource collection
 """
-
-# 3rd party modules
 import logging
 from pprint import pformat
 from flask import make_response, abort
 
 from config import db
-from tb_houston_service.models import SolutionResource, SolutionResourceSchema
+from models import SolutionResource, SolutionResourceSchema
 
 logger = logging.getLogger("tb_houston_service.solutionresource")
 
@@ -20,7 +18,6 @@ def read_all():
 
     :return:        json string of list of solutionresources
     """
-
     # Create the list of solutionresources from our data
     solutionresource = (
         db.session.query(SolutionResource).order_by(SolutionResource.solutionId).all()
@@ -31,7 +28,6 @@ def read_all():
     data = solutionresource_schema.dump(solutionresource)
     return data, 200
 
-
 def read_one(solutionId, key):
     """
     This function responds to a request for /api/solutionresource/{solutionId}/{key}
@@ -40,7 +36,6 @@ def read_one(solutionId, key):
     :param solutionId, key:   composite key of solutionresource to find
     :return:              solutionresource matching key
     """
-
     solutionresource = (
         db.session.query(SolutionResource)
         .filter(SolutionResource.key == key, SolutionResource.solutionId == solutionId)
@@ -57,7 +52,6 @@ def read_one(solutionId, key):
             404, f"SolutionResource with solutionId {solutionId}, key {key} not found"
         )
 
-
 def create(solutionResourceDetails):
     """
     This function updates an existing or creates a solutionresource in the solution resource list
@@ -65,15 +59,12 @@ def create(solutionResourceDetails):
     :param solutionresource:   solutionresource to create or update
     :return:       updated solutionresource
     """
-
     logger.debug(pformat(solutionResourceDetails))
-
     solutionId = solutionResourceDetails["solutionId"]
     key = solutionResourceDetails["key"]
 
     logger.debug("solutionresource:create")
     logger.debug(pformat(solutionResourceDetails))
-
     logger.debug("solutionId: %s key: %s", solutionId, key)
 
     # Does the solutionresource exist in solutionresource list?
@@ -100,7 +91,6 @@ def create(solutionResourceDetails):
     logger.debug("solutionresource")
     logger.debug(pformat(data))
     return data, 201
-
 
 def delete(solutionId, key):
     """

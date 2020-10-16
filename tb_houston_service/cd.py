@@ -2,13 +2,11 @@
 Deployments module, supports all the ReST actions for the
 cd collection
 """
-
-# 3rd party modules
 from pprint import pformat
 from flask import make_response, abort
-from config import db, app
-from tb_houston_service.models import CD, CDSchema
 
+from config import db, app
+from models import CD, CDSchema
 
 def read_all():
     """
@@ -17,7 +15,6 @@ def read_all():
 
     :return:        json string of list of CDs
     """
-
     # Create the list of CDs from our data
     cd = db.session.query(CD).order_by(CD.id).all()
     app.logger.debug(pformat(cd))
@@ -26,7 +23,6 @@ def read_all():
     data = cd_schema.dump(cd)
     return data
 
-
 def read_keyValues():
     """
     This function responds to a request for /keyValues/cd
@@ -34,7 +30,6 @@ def read_keyValues():
 
     :return:        json string of list of CDs 
     """
-
     # Create the list of CDs from our data
     cd = db.session.query(CD).order_by(CD.id).all()
     app.logger.debug(pformat(cd))
@@ -58,7 +53,6 @@ def read_one(id):
     :param application:   id of cd to find
     :return:              cd matching id
     """
-
     cd = db.session.query(CD).filter(CD.id == id).one_or_none()
 
     if cd is not None:
@@ -68,7 +62,6 @@ def read_one(id):
         return data
     else:
         abort(404, "CD with id {id} not found".format(id=id))
-
 
 def create(cdDetails):
     """
@@ -100,7 +93,6 @@ def create(cdDetails):
     else:
         abort(406, f"CD already exists")
 
-
 def update(id, cdDetails):
     """
     This function updates an existing cd in the cd list
@@ -109,7 +101,6 @@ def update(id, cdDetails):
     :param cd:   cd to update
     :return:       updated cd
     """
-
     app.logger.debug(pformat(cdDetails))
 
     if cdDetails["id"] != id:
@@ -135,7 +126,6 @@ def update(id, cdDetails):
     # otherwise, nope, deployment doesn't exist, so that's an error
     else:
         abort(404, f"CD not found")
-
 
 def delete(id):
     """

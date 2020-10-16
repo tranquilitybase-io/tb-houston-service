@@ -2,13 +2,11 @@
 This is the deployments module and supports all the ReST actions for the
 ci collection
 """
-
-# 3rd party modules
-from flask import make_response, abort
-from config import db, app
-from tb_houston_service.models import CI, CISchema
 from pprint import pformat
+from flask import make_response, abort
 
+from config import db, app
+from models import CI, CISchema
 
 def read_all():
     """
@@ -17,7 +15,6 @@ def read_all():
 
     :return:        json string of list of CIs 
     """
-
     # Create the list of CIs from our data
     ci = db.session.query(CI).order_by(CI.id).all()
     app.logger.debug(pformat(ci))
@@ -25,7 +22,6 @@ def read_all():
     ci_schema = CISchema(many=True)
     data = ci_schema.dump(ci)
     return data
-
 
 def read_one(id):
     """
@@ -35,7 +31,6 @@ def read_one(id):
     :param application:   id of ci to find
     :return:              ci matching id
     """
-
     ci = db.session.query(CI).filter(CI.id == id).one_or_none()
 
     if ci is not None:
@@ -53,7 +48,6 @@ def read_keyValues():
 
     :return:        json string of list of CIs 
     """
-
     # Create the list of CIs from our data
     ci = db.session.query(CI).order_by(CI.id).all()
     app.logger.debug(pformat(ci))
@@ -68,8 +62,6 @@ def read_keyValues():
         keyValues.append(keyValuePair)
     print(keyValues)
     return keyValues
-
-
 
 def create(ciDetails):
     """
@@ -101,7 +93,6 @@ def create(ciDetails):
     else:
         abort(406, f"CI already exists")
 
-
 def update(id, ciDetails):
     """
     This function updates an existing ci in the ci list
@@ -110,7 +101,6 @@ def update(id, ciDetails):
     :param ci:   ci to update
     :return:       updated ci
     """
-
     app.logger.debug(pformat(ciDetails))
 
     if ciDetails["id"] != id:
@@ -136,7 +126,6 @@ def update(id, ciDetails):
     # otherwise, nope, deployment doesn't exist, so that's an error
     else:
         abort(404, f"CI not found")
-
 
 def delete(id):
     """

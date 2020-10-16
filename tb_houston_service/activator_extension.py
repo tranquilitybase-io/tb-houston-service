@@ -1,13 +1,9 @@
 import logging
-from tb_houston_service import activator_ci, activator_cd, activator_environment, activatorByURL
-from tb_houston_service.models import User
-from tb_houston_service.models import SourceControl
-from tb_houston_service.models import BusinessUnit
-from tb_houston_service.models import ActivatorMetadata
-from tb_houston_service.models import ActivatorMetadataVariable
-from tb_houston_service.models import ActivatorMetadataPlatform
-from tb_houston_service.tools import ModelTools
 
+from tb_houston_service import activator_ci, activator_cd, activator_environment, activatorByURL
+from tb_houston_service.tools import ModelTools
+from models import  User, SourceControl, BusinessUnit, ActivatorMetadata, \
+                    ActivatorMetadataVariable, ActivatorMetadataPlatform
 
 logger = logging.getLogger("tb_houston_service.activator_extension")
 
@@ -45,7 +41,6 @@ def expand_activator(act, dbsession):
     return act
 
 def refine_activator_details(activatorDetails):
-    
     extraFields = {}
     if "ci" in activatorDetails:
         extraFields["ci"] = activatorDetails["ci"]
@@ -77,7 +72,6 @@ def refine_activator_details(activatorDetails):
 
     return extraFields
 
-
 def update_activator_metadata(activator_id, act_metadata, dbsession):
     actMetaDetails = dbsession.query(ActivatorMetadata).filter(ActivatorMetadata.activatorId == activator_id).one_or_none() 
     if actMetaDetails:
@@ -92,7 +86,6 @@ def update_activator_metadata(activator_id, act_metadata, dbsession):
         dbsession.flush()
     return actMetaDetails
 
-
 def update_activator_metadata_platforms(platforms, activator_metadata_id, dbsession):
     for platform in platforms:
         platform = dbsession.query(ActivatorMetadataPlatform).filter(
@@ -103,7 +96,6 @@ def update_activator_metadata_platforms(platforms, activator_metadata_id, dbsess
         platform.isActive = True
         dbsession.add(platform)
         dbsession.flush()
-
 
 def update_activator_metadata_variables(variables, dbsession):
     for variable in variables:
@@ -117,9 +109,7 @@ def update_activator_metadata_variables(variables, dbsession):
             dbsession.merge(variableDetails)
             dbsession.flush()
 
-
 def create_activator_associations(extraFields, activator, dbsession):
-
     if "ci" in extraFields:
         act_ci_list = extraFields["ci"]
     
@@ -151,11 +141,7 @@ def create_activator_associations(extraFields, activator, dbsession):
     activator_environment.create_activator_environment(activator.id, act_env_list, dbsession)
     dbsession.commit()
 
-
 def delete_activator_associations(id, dbsession):
-
     activator_ci.delete_activator_ci(id , dbsession)
     activator_cd.delete_activator_cd(id , dbsession)
     activator_environment.delete_activator_environment(id , dbsession)
-
-

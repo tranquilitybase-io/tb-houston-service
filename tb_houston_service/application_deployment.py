@@ -1,28 +1,23 @@
 import json
 import time
 import logging
-import requests
 import os
 from pprint import pformat
+import requests
 from flask import make_response, abort
+
 from config import db, executor
+from config.db_lib import db_session
+from models import  Application, Activator, ActivatorMetadata, \
+                    ApplicationDeployment, ApplicationDeploymentSchema, \
+                    LZLanVpc, LZEnvironment, LZLanVpcEnvironment, \
+                    Solution, SolutionEnvironment, SolutionResource
+from tb_houston_service import security
+from tb_houston_service import notification
 from tb_houston_service.DeploymentStatus import DeploymentStatus
-from tb_houston_service.models import Application
-from tb_houston_service.models import Activator, ActivatorMetadata
-from tb_houston_service.models import ApplicationDeployment, ApplicationDeploymentSchema
-from tb_houston_service.models import LZLanVpc
-from tb_houston_service.models import LZEnvironment
-from tb_houston_service.models import LZLanVpcEnvironment
-from tb_houston_service.models import Solution
-from tb_houston_service.models import SolutionEnvironment
-from tb_houston_service.models import SolutionResource
 from tb_houston_service.tools import ModelTools
 from tb_houston_service.extendedSchemas import ExtendedApplicationDeploymentSchema
 from tb_houston_service.extendedSchemas import ExtendedApplicationForDACSchema
-from config.db_lib import db_session
-from tb_houston_service import security
-from tb_houston_service import notification
-
 
 logger = logging.getLogger("tb_houston_service.application_deployment")
 
@@ -32,7 +27,6 @@ deployment_create_result_url = (
 )
 headers = {"Content-Type": "application/json"}
 
-
 def notify_user(applicationId):
     """
     Notify the user the application deployment has completed.
@@ -40,7 +34,6 @@ def notify_user(applicationId):
     Args:
         applicationId ([int]): [The application id]
     """
-
     with db_session() as dbs:
         user = security.get_valid_user_from_token(dbsession=dbs)
         logger.debug("user: %s", user)        
@@ -68,7 +61,6 @@ def notify_user(applicationId):
                 logger.warning("Cannot send notification, unable to find the application (%s).", app.id)
         else:
             logger.warning("Cannot send notification, unable to validate the token.")
-
 
 def start_deployment(applicationId):
     logger.info("start_deployment::applicationId: %s", applicationId)
@@ -106,7 +98,6 @@ def start_deployment(applicationId):
     notify_user(applicationId = applicationId)     
     return True
 
-
 def deployment_create(applicationDeploymentDetails):
     """
     This function queries a application forwards the request to the DaC
@@ -116,7 +107,6 @@ def deployment_create(applicationDeploymentDetails):
     :               404 if application not found
     :               500 if other failure
     """
-
     logger.debug("deployment_create: %s", pformat(applicationDeploymentDetails))
     app_id = applicationDeploymentDetails["id"]
 
@@ -197,7 +187,6 @@ def deployment_create(applicationDeploymentDetails):
 
     return make_response("Application deployment is complete.", 200)
 
-
 def deployment_read_all():
     with db_session() as dbs:
         app_deployments = (
@@ -211,7 +200,6 @@ def deployment_read_all():
         #logger.debug("deployment_read_all::applications data: %s", data)
         return data, 200
 
-
 def deployment_update(app_id, lzEnvId, applicationDeploymentDetails, dbsession):
     """
     Updates an existing applications in the application list with the deployed status.
@@ -220,7 +208,6 @@ def deployment_update(app_id, lzEnvId, applicationDeploymentDetails, dbsession):
     :param solutionDetails:   application details to update
     :return:       updated application
     """
-
     logger.debug("deployment_update::applicationDeploymentDetails: %s", applicationDeploymentDetails)
 
     # Does the application exist in application list?
@@ -241,7 +228,6 @@ def deployment_update(app_id, lzEnvId, applicationDeploymentDetails, dbsession):
         dbsession.merge(existing_application_deployment)
     else:
         logger.debug("deployment_update::existing application deployment not found, %s, %s", app_id, lzEnvId)
-
 
 def deploy_application(app_deployment, dbsession):
     logger.debug("deploy_application:: %s", app_deployment)
@@ -281,7 +267,6 @@ def deploy_application(app_deployment, dbsession):
         return send_application_deployment_to_the_dac(app_deployment, dbsession = dbsession)
     else:
         logger.error("deploy_application::activator not found, %s!", app.activatorId)
-
 
 # Send the application to the DAC
 def send_application_deployment_to_the_dac(app_deployment, dbsession):
@@ -335,14 +320,12 @@ def send_application_deployment_to_the_dac(app_deployment, dbsession):
             "send_application_deployment_to_the_dac::Failed updating the database with the response from the DAC."
         )
 
-
 def validate_json(some_json):
     try:
         json.loads(some_json)
         return True
     except ValueError:
         return False
-
 
 def get_application_results_from_the_dac(app_id, lzEnvId, task_id, dbsession):
     """

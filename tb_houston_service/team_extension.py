@@ -1,9 +1,9 @@
 import logging
+
 from config import db
-from tb_houston_service.models import BusinessUnit, TeamMember, User
+from models import BusinessUnit, TeamMember, User
 
 logger = logging.getLogger("tb_houston_service.solution")
-
 
 def expand_team(a_team):
     logger.debug("team: %s", a_team)
@@ -44,7 +44,6 @@ def expand_team(a_team):
             a_team.accessRequestedBy = accessRequestedBy
 
     return a_team
-
 
 def expand_team_with_users(a_team):
     bu = (

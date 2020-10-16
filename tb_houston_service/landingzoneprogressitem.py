@@ -2,25 +2,18 @@
 This is the landingZoneProgressItem module and supports all the ReST actions for the
 landingZoneProgressItem collection
 """
-
-# 3rd party modules
 from pprint import pformat
 from flask import make_response, abort
-from config import db, app
-from tb_houston_service.models import (
-    LandingZoneProgressItem,
-    LandingZoneProgressItemSchema,
-)
 
+from config import db, app
+from models import LandingZoneProgressItem, LandingZoneProgressItemSchema
 
 def apply_state_transition(lz_progress_items):
     # If all action locked status are False, set WAN action locked status to True
     # labels: WAN, VPN, Interconnect, Peering, DNS, Directory Services, Internet, SSO, Logging, Billing, Security Centre, Example
     # if (lz_progress_items['label'] == "WAN" and lz_progress_items[':
     # TODO
-
     return lz_progress_items
-
 
 def read_all():
     """
@@ -29,7 +22,6 @@ def read_all():
 
     :return:        json string of list of landingZoneProgressItems
     """
-
     # Create the list of people from our data
     landingZoneProgressItems = db.session.query(LandingZoneProgressItem).all()
     modifiedLandingZoneProgressItems = apply_state_transition(landingZoneProgressItems)
@@ -41,7 +33,6 @@ def read_all():
     app.logger.debug(pformat(data))
     return data
 
-
 def read_one(oid):
     """
     This function responds to a request for /api/landingZoneProgressItem/{oid}
@@ -50,7 +41,6 @@ def read_one(oid):
     :param landingZoneProgressItem:   id of the landingZoneProgressItem to find
     :return:              landingZoneProgressItem matching the id
     """
-
     landingZoneProgressItem = (
         db.session.query(LandingZoneProgressItem)
         .filter(LandingZoneProgressItem.id == oid)
@@ -67,7 +57,6 @@ def read_one(oid):
     else:
         abort(404, f"LandingZoneProgressItem with id {oid} not found".format(id=oid))
 
-
 def create(landingZoneProgressItemDetails):
     """
     This function creates a new landingZoneProgressItem in the landingZoneProgressItem structure
@@ -76,7 +65,6 @@ def create(landingZoneProgressItemDetails):
     :param landingZoneProgressItem:  landingZoneProgressItem to create in landingZoneProgressItem list
     :return:             201 on success, 406 on landingZoneProgressItem exists
     """
-
     # we don't need the id, the is generated automatically on the database
     if "id" in landingZoneProgressItemDetails:
         del landingZoneProgressItemDetails["id"]
@@ -96,7 +84,6 @@ def create(landingZoneProgressItemDetails):
 
     return data, 201
 
-
 def update(oid, landingZoneProgressItemDetails):
     """
     This function updates an existing landingZoneProgressItem in the landingZoneProgressItem list
@@ -105,7 +92,6 @@ def update(oid, landingZoneProgressItemDetails):
     :param landingZoneProgressItem:   landingZoneProgressItem to update
     :return: updated landingZoneProgressItem
     """
-
     app.logger.debug("landingZoneProgressItem: ")
     app.logger.debug(pformat(landingZoneProgressItemDetails))
 
@@ -142,7 +128,6 @@ def update(oid, landingZoneProgressItemDetails):
     # otherwise, nope, landingZoneProgressItem doesn't exist, so that's an error
     else:
         abort(404, f"LandingZoneProgressItem not found")
-
 
 def delete(oid):
     """

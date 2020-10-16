@@ -2,14 +2,11 @@
 This is the deployments module and supports all the ReST actions for the
 vpnOnPremiseVendor collection
 """
-
-# 3rd party modules
 from pprint import pformat
 from flask import make_response, abort
 
 from config import db, app
-from tb_houston_service.models import VPNOnPremiseVendor, VPNOnPremiseVendorSchema
-
+from models import VPNOnPremiseVendor, VPNOnPremiseVendorSchema
 
 def read_all():
     """
@@ -18,7 +15,6 @@ def read_all():
 
     :return:        json string of list of vpnOnPremiseVendors
     """
-
     # Create the list of vpnOnPremiseVendors from our data
     vpnOnPremiseVendor = (
         db.session.query(VPNOnPremiseVendor).order_by(VPNOnPremiseVendor.key).all()
@@ -29,7 +25,6 @@ def read_all():
     data = vpnOnPremiseVendor_schema.dump(vpnOnPremiseVendor)
     return data
 
-
 def read_one(oid):
     """
     This function responds to a request for /api/subnetmode/{oid}
@@ -38,7 +33,6 @@ def read_one(oid):
     :param application:   id of vpnOnPremiseVendor to find
     :return:              vpnOnPremiseVendor matching key
     """
-
     vpnOnPremiseVendor = (
         db.session.query(VPNOnPremiseVendor)
         .filter(VPNOnPremiseVendor.id == oid)
@@ -53,7 +47,6 @@ def read_one(oid):
     else:
         abort(404, f"VPNOnPremiseVendor with id {oid} not found")
 
-
 def create(vpnOnPremiseVendorDetails):
     """
     This function creates a new vpnOnPremiseVendor in the vpnOnPremiseVendor list
@@ -62,7 +55,6 @@ def create(vpnOnPremiseVendorDetails):
     :param vpnOnPremiseVendor:  vpnOnPremiseVendor to create in vpnOnPremiseVendor structure
     :return:        201 on success, 406 on vpnOnPremiseVendor exists
     """
-
     # Remove id as it's created automatically
     if "id" in vpnOnPremiseVendorDetails:
         del vpnOnPremiseVendorDetails["id"]
@@ -77,7 +69,6 @@ def create(vpnOnPremiseVendorDetails):
     data = schema.dump(new_vpnOnPremiseVendor)
     return data, 201
 
-
 def update(oid, vpnOnPremiseVendorDetails):
     """
     This function updates an existing vpnOnPremiseVendor in the vpnOnPremiseVendor list
@@ -86,9 +77,7 @@ def update(oid, vpnOnPremiseVendorDetails):
     :param vpnOnPremiseVendor:   vpnOnPremiseVendor to update
     :return:       updated vpnOnPremiseVendor
     """
-
     app.logger.debug(pformat(vpnOnPremiseVendorDetails))
-
     if vpnOnPremiseVendorDetails.get("id", oid) != oid:
         abort(400, f"Key mismatch in path and body")
 
@@ -100,7 +89,6 @@ def update(oid, vpnOnPremiseVendorDetails):
     )
 
     # Does vpnOnPremiseVendor exist?
-
     if existing_vpnOnPremiseVendor is not None:
         db.session.query(VPNOnPremiseVendor).filter(
             VPNOnPremiseVendor.id == oid
@@ -113,7 +101,6 @@ def update(oid, vpnOnPremiseVendorDetails):
         return data, 200
     else:
         abort(404, f"VPNOnPremiseVendor {oid} not found")
-
 
 def delete(oid):
     """

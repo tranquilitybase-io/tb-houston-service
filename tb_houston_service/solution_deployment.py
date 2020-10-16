@@ -2,8 +2,6 @@
 This is the deployments module and supports all the ReST actions for the
 solutions collection
 """
-
-# 3rd party modules
 from pprint import pformat
 import time
 import os
@@ -14,7 +12,8 @@ import requests
 from flask import make_response, abort
 
 from config import db, executor
-from tb_houston_service.models import Solution, SolutionSchema
+from config.db_lib import db_session
+from models import Solution, SolutionSchema
 from tb_houston_service.DeploymentStatus import DeploymentStatus
 from tb_houston_service.tools import ModelTools
 from tb_houston_service.extendedSchemas import ExtendedSolutionForDACSchema
@@ -27,8 +26,6 @@ from tb_houston_service import solutionresourcejson
 from tb_houston_service import security
 from tb_houston_service import notification
 from tb_houston_service import gcp_dac_metadata
-from config.db_lib import db_session
-
 
 logger = logging.getLogger("tb_houston_service.solution_deployment")
 
@@ -47,7 +44,6 @@ def notify_user(solutionId):
     Args:
         solutionId ([int]): [The solution id]
     """
-
     with db_session() as dbs:
         user = security.get_valid_user_from_token(dbsession = dbs)
         logger.debug("user: %s", user)
@@ -73,7 +69,6 @@ def notify_user(solutionId):
         else:
             logger.warning("notify_user::Cannot send notification, unable to validate the token.")
 
-
 def deployment_read_all():
     """
     This function responds to a request for /api/solutiondeployments
@@ -84,7 +79,6 @@ def deployment_read_all():
     :return:        json string of list of deployed solutions
                     id and deployed fields
     """
-
     logger.debug("deployment_read_all")
 
     solutions = db.session.query(Solution).filter(Solution.deploymentState != "").all()
@@ -95,7 +89,6 @@ def deployment_read_all():
     logger.debug("solutions data: %s", data)
     return data, 200
 
-
 def deployment_read_one(oid):
     """
     This function responds to a request for /api/solutiondeployment/{oid}
@@ -104,7 +97,6 @@ def deployment_read_one(oid):
     :param application:   id of solution to find
     :return:              solution matching id
     """
-
     sol = db.session.query(Solution).filter(Solution.id == oid).one_or_none()
     db.session.close()
 
@@ -116,10 +108,8 @@ def deployment_read_one(oid):
     else:
         abort(404, f"Solution with id {oid} not found".format(id=oid))
 
-
 def start_deployment(solutionId):
     logger.debug("start_deployment")
-
     deployment_complete = False 
     while deployment_complete == False:
         sol = db.session.query(Solution).filter(Solution.id == solutionId).one_or_none()
@@ -146,7 +136,6 @@ def start_deployment(solutionId):
     notify_user(solutionId = solutionId)     
     return True
 
-
 def deployment_create(solutionDeploymentDetails):
     """
     This function queries a solution forwards the request to the DaC
@@ -156,7 +145,6 @@ def deployment_create(solutionDeploymentDetails):
     :               404 if solution not found
     :               500 if other failure
     """
-
     logger.debug(pformat(solutionDeploymentDetails))
 
     oid = solutionDeploymentDetails["id"]
@@ -184,7 +172,6 @@ def deployment_create(solutionDeploymentDetails):
 
     return make_response(resp_json, 200)
 
-
 def deployment_update(oid, solutionDeploymentDetails):
     """
     Updates an existing solutions in the solutions list with the deployed status.
@@ -193,7 +180,6 @@ def deployment_update(oid, solutionDeploymentDetails):
     :param solutionDetails:   solution details to update
     :return:       updated solution
     """
-
     logger.debug(solutionDeploymentDetails)
 
     # Does the solutions exist in solutions list?
@@ -241,7 +227,6 @@ def deployment_update(oid, solutionDeploymentDetails):
     # otherwise, nope, deployment doesn't exist, so that's an error
     else:
         abort(404, f"Solution {oid} not found")
-
 
 def create_folder(folderId, folderName):
     # retrieve+create folder from folder table
@@ -308,7 +293,6 @@ def create_folder(folderId, folderName):
     # if not available may be available in the next iteration.
     return (next_folder_id, status)
 
-
 # Return SUCCESS if all folders have been created on the DB and DAC
 def create_folders(solution):
     logger.debug("create_folders::solution: %s", pformat(solution))
@@ -338,8 +322,6 @@ def create_folders(solution):
     logger.debug("create_folders::return %s", data)
     return data
 
-
-#
 def deploy_folders_and_solution(sol_deployment):
     logger.debug("deploy_folders_and_solution")
     with db_session() as dbs:
@@ -356,7 +338,6 @@ def deploy_folders_and_solution(sol_deployment):
             solution.deploymentFolderId = deploymentFolderId
             status = send_solution_deployment_to_the_dac(solution, dbsession = dbs)
         return status, 200
-
 
 # Send the solution to the DAC
 def send_solution_deployment_to_the_dac(sol_deployment, dbsession):
@@ -415,14 +396,12 @@ def send_solution_deployment_to_the_dac(sol_deployment, dbsession):
             500,
         )
 
-
 def validate_json(some_json):
     try:
         json.loads(some_json)
         return True
     except ValueError:
         return False
-
 
 def get_solution_results_from_the_dac(oid, task_id):
     """

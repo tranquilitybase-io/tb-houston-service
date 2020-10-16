@@ -2,14 +2,11 @@
 Deployments module, supports all the ReST actions for the
 subnetMode collection
 """
-
 from pprint import pformat
 from flask import make_response, abort
 
-# 3rd party modules
 from config import db, app
-from tb_houston_service.models import SubnetMode, SubnetModeSchema
-
+from models import SubnetMode, SubnetModeSchema
 
 def read_all():
     """
@@ -18,7 +15,6 @@ def read_all():
 
     :return:        json string of list of subnetModes
     """
-
     # Create the list of subnetModes from our data
     subnetMode = db.session.query(SubnetMode).order_by(SubnetMode.key).all()
     app.logger.debug(pformat(subnetMode))
@@ -26,7 +22,6 @@ def read_all():
     subnetMode_schema = SubnetModeSchema(many=True)
     data = subnetMode_schema.dump(subnetMode)
     return data
-
 
 def read_one(oid):
     """
@@ -36,7 +31,6 @@ def read_one(oid):
     :param application:   id of subnetMode to find
     :return:              subnetMode matching key
     """
-
     subnetMode = db.session.query(SubnetMode).filter(SubnetMode.id == oid).one_or_none()
 
     if subnetMode is not None:
@@ -47,7 +41,6 @@ def read_one(oid):
     else:
         abort(404, f"SubnetMode with id {oid} not found")
 
-
 def create(subnetModeDetails):
     """
     Creates a new subnetMode in the subnetMode list
@@ -56,7 +49,6 @@ def create(subnetModeDetails):
     :param subnetMode:  subnetMode to create in subnetMode structure
     :return:        201 on success, 406 on subnetMode exists
     """
-
     # Remove id as it's created automatically
     if "id" in subnetModeDetails:
         del subnetModeDetails["id"]
@@ -71,7 +63,6 @@ def create(subnetModeDetails):
     data = schema.dump(new_subnetMode)
     return data, 201
 
-
 def update(oid, subnetModeDetails):
     """
     Updates an existing subnetMode in the subnetMode list
@@ -80,7 +71,6 @@ def update(oid, subnetModeDetails):
     :param subnetMode:   subnetMode to update
     :return:       updated subnetMode
     """
-
     app.logger.debug(pformat(subnetModeDetails))
 
     if "id" in subnetModeDetails and subnetModeDetails["id"] != oid:
@@ -100,7 +90,6 @@ def update(oid, subnetModeDetails):
         return data, 200
     else:
         abort(404, f"SubnetMode {oid} not found")
-
 
 def delete(oid):
     """

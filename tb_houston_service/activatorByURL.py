@@ -1,26 +1,21 @@
 import logging
-import yaml
+from pprint import pformat
 import os
-import git
 import shutil
 import tempfile
+import yaml
+import git
 
 from config.db_lib import db_session
-from pprint import pformat
-from tb_houston_service.tools import ModelTools
-from tb_houston_service.models import Activator
-from tb_houston_service.models import ActivatorSchema, ActivatorMetadataSchema
-from tb_houston_service.models import ActivatorMetadataPlatformSchema, ActivatorMetadataVariableSchema
-from tb_houston_service.models import ActivatorMetadata, ActivatorMetadataPlatform, ActivatorMetadataVariable
-from tb_houston_service.models import Type ,Platform
-from tb_houston_service.extendedSchemas import ExtendedActivatorMetadataSchema
+from models import  Activator, ActivatorSchema, ActivatorMetadata, ActivatorMetadataSchema, \
+                    ActivatorMetadataPlatform, ActivatorMetadataPlatformSchema, \
+                    ActivatorMetadataVariable, ActivatorMetadataVariableSchema, Type, Platform
 from tb_houston_service import activator_extension
 from tb_houston_service import security
 from tb_houston_service.extendedSchemas import ExtendedActivatorSchema
-
+from tb_houston_service.tools import ModelTools
 
 logger = logging.getLogger("tb_houston_service.activatorMetadata")
-
 
 def create(activatorByURLDetails):
     """
@@ -85,10 +80,7 @@ def get_file_from_repo(url):
     shutil.rmtree(t)
     return act_metadata_yml_dict
 
-
-
 def create_activator(dbs, act_metadata_yml, url):
-
     schema = ActivatorSchema()
     activatorDetails = {}
     activatorDetails["name"] = act_metadata_yml["name"]
@@ -100,7 +92,6 @@ def create_activator(dbs, act_metadata_yml, url):
     return activator.id
 
 def create_activator_metadata(dbs, act_metadata_yml, activator_id, url):
-
     schema = ActivatorMetadataSchema()
     actMetaDetails = {}
     actMetaDetails["activatorId"] = activator_id
@@ -116,9 +107,7 @@ def create_activator_metadata(dbs, act_metadata_yml, activator_id, url):
     dbs.flush()
     return activator_metadata
 
-
 def create_activator_metadata_platforms(dbs, act_metadata_yml, activator_metadata_id):
-
     schema = ActivatorMetadataPlatformSchema()
     platforms = act_metadata_yml["platforms"]
     
@@ -132,9 +121,7 @@ def create_activator_metadata_platforms(dbs, act_metadata_yml, activator_metadat
         dbs.add(activator_metadata_platform)
         dbs.flush()
 
-
 def create_activator_metadata_variables(dbs, activator_metadata_id, variables,isOptional):
-
     schema = ActivatorMetadataVariableSchema()
     
     for variable in (variables or ()):
@@ -152,9 +139,7 @@ def create_activator_metadata_variables(dbs, activator_metadata_id, variables,is
         dbs.add(activator_metadata_variable)
         dbs.flush()
 
-
 def expand_activator_metadata(act_metadata, dbs):
-    
     act_metadata.type = dbs.query(Type).filter(
         Type.id == act_metadata.typeId).one_or_none()
     
@@ -169,9 +154,3 @@ def expand_activator_metadata(act_metadata, dbs):
         ActivatorMetadata.id == act_metadata.id).all()
 
     return act_metadata
-
-
-
-
-
-

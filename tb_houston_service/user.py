@@ -3,13 +3,11 @@ deployments module
 supports all the ReST actions for the
 user collection
 """
-
-# 3rd party modules
 from pprint import pformat
 from flask import make_response, abort
 
 from config import db, app
-from tb_houston_service.models import User, UserSchema
+from models import User, UserSchema
 from tb_houston_service.extendedSchemas import ExtendedUserSchema
 from tb_houston_service.extendedSchemas import ExtendedUserTeamsSchema
 from tb_houston_service import user_extension
@@ -20,7 +18,6 @@ def read_all():
 
     :return:        json string of list of users
     """
-
     # Create the list of users from our data
     users = db.session.query(User).order_by(User.id).all()
     for user in users:
@@ -31,7 +28,6 @@ def read_all():
     data = user_schema.dump(users)
     return data, 200
 
-
 def read_one(oid):
     """
     Responds to a request for /api/user/{oid}.
@@ -40,7 +36,6 @@ def read_one(oid):
     :param application:   oid of user to find
     :return:              user matching oid
     """
-
     user = db.session.query(User).filter(User.id == oid).one_or_none()
 
     if user is not None:
@@ -50,7 +45,6 @@ def read_one(oid):
         data = user_schema.dump(user)
         return data, 200
     return abort(404, f"User with id {oid} not found")
-
 
 def create(userDetails):
     """
@@ -96,7 +90,6 @@ def create(userDetails):
     # Otherwise, it already exists, that's an error
     return abort(406, "User already exists")
 
-
 def update(oid, userDetails):
     """
     Updates an existing user in the user list.
@@ -105,9 +98,7 @@ def update(oid, userDetails):
     :param user:   user to update
     :return:       updated user
     """
-
     app.logger.debug(pformat(userDetails))
-
     if userDetails.get("id") and userDetails.get("id") != oid:
         abort(400, f"Id {oid} mismatch in path and body")
 
@@ -133,7 +124,6 @@ def update(oid, userDetails):
 
     # otherwise, nope, deployment doesn't exist, so that's an error
     return abort(404, f"User {oid} not found")
-
 
 def delete(oid):
     """

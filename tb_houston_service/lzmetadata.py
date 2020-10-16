@@ -2,17 +2,14 @@
 This is the lzmetadata module and supports all the ReST actions for the
 LZMetadata collection
 """
-
-# 3rd party modules
 import logging
 from flask import abort
+
 from config import db, app
 from config.db_lib import db_session
-from tb_houston_service.models import LZMetadata, LZMetadataSchema
-
+from models import LZMetadata, LZMetadataSchema
 
 logger = logging.getLogger("lzmetadata")
-
 
 def read(key):
     """
@@ -22,7 +19,6 @@ def read(key):
     :param application:   key of lzmetadata to find
     :return:              LZMetadata matching key
     """
-
     with db_session() as dbs:
         lzmetadata = (
             dbs.query(LZMetadata).filter(LZMetadata.key == key).one_or_none()
@@ -36,7 +32,6 @@ def read(key):
             return data, 200
         else:
             abort(404, f"LZMetadata with key {key} not found")
-
 
 def create(keyValueDetails):
     """
@@ -63,7 +58,6 @@ def create(keyValueDetails):
         return data, 201
     abort("500", "Problem encountered creating an LZMetadata.")
 
-
 def update(key, keyValueDetails):
     """
     Updates an existing lzmetadata in the lzmetadata list
@@ -72,7 +66,6 @@ def update(key, keyValueDetails):
     :param lzmetadata:   lzmetadata to update
     :return:       updated lzmetadata.
     """
-
     if "key" in keyValueDetails and keyValueDetails["key"] != key:
         abort(400, "Key mismatch in path and body")
     else:
@@ -100,7 +93,6 @@ def update(key, keyValueDetails):
             abort(404, f"LZMetadata with key {key} not found")
     abort(500, "Problem encountered updating lzmetadata.")
 
-
 def get_gcp_project_id(projectId):
     local_key = "GCP_PROJECT_URL"
     logger.debug("get_gcp_project_id: projectId=%s", local_key)
@@ -116,4 +108,3 @@ def get_gcp_project_id(projectId):
             data = schema.dump(val)
             return data, 200
     abort(500, "Problem encountered getting the GCP Project URL.")
-

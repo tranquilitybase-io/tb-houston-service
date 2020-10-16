@@ -2,15 +2,11 @@
 This is the deployments module and supports all the ReST actions for the
 sourceControl collection
 """
-
-# System modules
 from pprint import pformat
 from flask import make_response, abort
 
-# 3rd party modules
 from config import db, app
-from tb_houston_service.models import SourceControl, SourceControlSchema
-
+from models import SourceControl, SourceControlSchema
 
 def read_all():
     """
@@ -19,7 +15,6 @@ def read_all():
 
     :return:        json string of list of sourceControls
     """
-
     # Create the list of sourceControls from our data
     sourceControl = db.session.query(SourceControl).order_by(SourceControl.id).all()
     app.logger.debug(pformat(sourceControl))
@@ -35,7 +30,6 @@ def read_keyValues():
 
     :return:        json string of list of SourceControls 
     """
-
     # Create the list of SourceControls from our data
     sourceControl = db.session.query(SourceControl).order_by(SourceControl.id).all()
     app.logger.debug(pformat(sourceControl))
@@ -59,7 +53,6 @@ def read_one(id):
     :param application:   id of sourceControl to find
     :return:              sourceControl matching id
     """
-
     sourceControl = (
         db.session.query(SourceControl).filter(SourceControl.id == id).one_or_none()
     )
@@ -71,7 +64,6 @@ def read_one(id):
         return data
     else:
         abort(404, "SourceControl with id {id} not found".format(id=id))
-
 
 def create(sourceControlDetails):
     """
@@ -86,7 +78,6 @@ def create(sourceControlDetails):
         del sourceControlDetails['id']
     # Does the sourceControl exist already?
     existing_sourceControl = db.session.query(SourceControl).filter(SourceControl.value == sourceControlDetails["value"]).one_or_none()
-
 
     if existing_sourceControl is None:
         schema = SourceControlSchema()
@@ -104,7 +95,6 @@ def create(sourceControlDetails):
     else:
         abort(406, "SourceControl already exists")
 
-
 def update(id, sourceControlDetails):
     """
     This function updates an existing sourceControl in the sourceControl list
@@ -113,7 +103,6 @@ def update(id, sourceControlDetails):
     :param sourceControl:   sourceControl to update
     :return:       updated sourceControl
     """
-
     app.logger.debug(pformat(sourceControlDetails))
 
     if sourceControlDetails["id"] != id:
@@ -141,7 +130,6 @@ def update(id, sourceControlDetails):
     # otherwise, nope, deployment doesn't exist, so that's an error
     else:
         abort(404, "SourceControl not found")
-
 
 def delete(id):
     """

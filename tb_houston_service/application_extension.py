@@ -1,11 +1,10 @@
 import logging
-from tb_houston_service.models import Application, Activator, ApplicationDeployment
+
+from models import Activator, ApplicationDeployment
 from tb_houston_service.DeploymentStatus import DeploymentStatus
 from tb_houston_service import activator_extension
 
-
 logger = logging.getLogger("tb_houston_service.application_extension")
-
 
 def expand_application(app, dbsession):
     app.activator = (

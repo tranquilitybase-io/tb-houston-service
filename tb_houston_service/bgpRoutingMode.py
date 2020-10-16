@@ -2,13 +2,11 @@
 This is the deployments module and supports all the ReST actions for the
 bgpRoutingMode collection
 """
-
-# 3rd party modules
 from pprint import pformat
 from flask import make_response, abort
-from config import db, app
-from tb_houston_service.models import BGPRoutingMode, BGPRoutingModeSchema
 
+from config import db, app
+from models import BGPRoutingMode, BGPRoutingModeSchema
 
 def read_all():
     """
@@ -17,7 +15,6 @@ def read_all():
 
     :return:        json string of list of bgpRoutingModes
     """
-
     # Create the list of bgpRoutingModes from our data
     bgpRoutingMode = db.session.query(BGPRoutingMode).order_by(BGPRoutingMode.key).all()
     db.session.close()
@@ -27,7 +24,6 @@ def read_all():
     data = bgpRoutingMode_schema.dump(bgpRoutingMode)
     return data
 
-
 def read_one(oid):
     """
     This function responds to a request for /api/bgproutingmode/{oid}
@@ -36,7 +32,6 @@ def read_one(oid):
     :param application:   oid of bgpRoutingMode to find
     :return:              bgpRoutingMode matching key
     """
-
     bgpRoutingMode = (
         db.session.query(BGPRoutingMode).filter(BGPRoutingMode.id == oid).one_or_none()
     )
@@ -49,7 +44,6 @@ def read_one(oid):
     else:
         abort(404, f"BGPRoutingMode with id {oid} not found")
 
-
 def create(bgpRoutingModeDetails):
     """
     This function creates a new bgpRoutingMode in the bgpRoutingMode list
@@ -58,7 +52,6 @@ def create(bgpRoutingModeDetails):
     :param bgpRoutingMode:  bgpRoutingMode to create in bgpRoutingMode structure
     :return:        201 on success, 406 on bgpRoutingMode exists
     """
-
     # Remove id as it's created automatically
     if "id" in bgpRoutingModeDetails:
         del bgpRoutingModeDetails["id"]
@@ -73,7 +66,6 @@ def create(bgpRoutingModeDetails):
     data = schema.dump(new_bgpRoutingMode)
     return data, 201
 
-
 def update(oid, bgpRoutingModeDetails):
     """
     This function updates an existing bgpRoutingMode in the bgpRoutingMode list
@@ -82,7 +74,6 @@ def update(oid, bgpRoutingModeDetails):
     :param bgpRoutingMode:   bgpRoutingMode to update
     :return:       updated bgpRoutingMode
     """
-
     app.logger.debug(pformat(bgpRoutingModeDetails))
 
     if bgpRoutingModeDetails.get("id", oid) != oid:
@@ -110,7 +101,6 @@ def update(oid, bgpRoutingModeDetails):
     else:
         db.session.close()
         abort(404, f"BGPRoutingMode not found")
-
 
 def delete(oid):
     """

@@ -2,25 +2,17 @@ import logging
 from flask import abort
 from sqlalchemy import literal_column
 from sqlalchemy.exc import SQLAlchemyError
-from tb_houston_service.models import Notification, NotificationSchema
-from tb_houston_service.models import NotificationActivator
-from tb_houston_service.models import NotificationActivatorSchema
-from tb_houston_service.models import NotificationType
-from tb_houston_service.models import NotificationTeam
-from tb_houston_service.models import NotificationTeamSchema
-from tb_houston_service.models import NotificationApplicationDeployment
-from tb_houston_service.models import NotificationApplicationDeploymentSchema
-from tb_houston_service.models import NotificationSolutionDeployment
-from tb_houston_service.models import NotificationSolutionDeploymentSchema
+
+from models import  Notification, NotificationSchema, \
+                    NotificationActivator, NotificationActivatorSchema, \
+                    NotificationType, NotificationTeam, NotificationTeamSchema, \
+                    NotificationApplicationDeployment, NotificationApplicationDeploymentSchema, \
+                    NotificationSolutionDeployment, NotificationSolutionDeploymentSchema, \
+                    Activator, Team, Application, Solution
 from tb_houston_service.extendedSchemas import ExtendedNotificationSchema
-from tb_houston_service.models import Activator
-from tb_houston_service.models import Team
-from tb_houston_service.models import Application
-from tb_houston_service.models import Solution
 from config.db_lib import db_session
 from tb_houston_service.tools import ModelTools
 from tb_houston_service import security
-
 
 logger = logging.getLogger("tb_houston_service.notification")
 
@@ -48,7 +40,6 @@ def read_all(typeId = None, isRead = None, isActive = None, page = None, page_si
             except SQLAlchemyError as e:
                 logger.warning("Exception: %s", e)
                 notifications_query = dbs.query(Notification).order_by(Notification.lastUpdated + " desc")
-
 
         user = security.get_valid_user_from_token(dbsession = dbs)
         if not user:
@@ -93,7 +84,6 @@ def read_all(typeId = None, isRead = None, isActive = None, page = None, page_si
         data = schema.dump(notifications)
         return data, 200
 
-
 def create(notification, typeId, dbsession):
     # if id is zero or None (null), we create a a new notification otherwise
     #  we update an existing notification.
@@ -109,7 +99,6 @@ def create(notification, typeId, dbsession):
             notification["isActive"] = True
         if notification.get('isRead', None) == None:
             notification["isRead"] = False            
-    
         if notification.get("typeId") == 1:
             tmp_notification = {}
             tmp_notification["typeId"] = notification.get("typeId")
@@ -247,10 +236,8 @@ def create(notification, typeId, dbsession):
     logger.debug("processed: %s", notification)
     return notification
 
-
 def create_all(notificationListDetails, typeId, isRead = None, isActive = None, page = None, page_size = None, sort = None):
     logger.debug("create_all: %s", notificationListDetails)    
-
     with db_session() as dbs:
         for n in notificationListDetails:
             create(n, typeId, dbsession = dbs)
@@ -259,7 +246,6 @@ def create_all(notificationListDetails, typeId, isRead = None, isActive = None, 
     logger.debug("data: %s, resp_code: %s", data, resp_code)
     return data, 201
 
-
 def meta(typeId = None, isRead = None, isActive = None):
     """
     Responds to a request for /api/notificationsMeta/.
@@ -267,7 +253,6 @@ def meta(typeId = None, isRead = None, isActive = None):
     :param activator:
     :return:              total count of notifications
     """
-
     with db_session() as dbs:
         user = security.get_valid_user_from_token(dbsession = dbs)
         if not user:
@@ -282,11 +267,9 @@ def meta(typeId = None, isRead = None, isActive = None):
         data = { "count": count }
         return data, 200
 
-
 # service functions
 def delete(oid, dbsession):
     logger.debug("delete: %s", oid)    
-
     na = dbsession.query(NotificationActivator).filter(NotificationActivator.notificationId == oid, NotificationActivator.isActive).one_or_none()
     if na: 
         na.isActive = False
@@ -311,7 +294,6 @@ def delete(oid, dbsession):
     if n:
         n.isActive = False
         n.lastUpdated = ModelTools.get_utc_timestamp()
-
 
 def dismiss(fromUserId, dbsession, activatorId = None, teamId = None, applicationId = None, solutionId = None):
     if activatorId:

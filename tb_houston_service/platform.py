@@ -2,13 +2,11 @@
 This is the deployments module and supports all the ReST actions for the
 platform collection
 """
-
-# 3rd party modules
-from flask import make_response, abort
-from config import db, app
-from tb_houston_service.models import Platform, PlatformSchema
 from pprint import pformat
+from flask import make_response, abort
 
+from config import db, app
+from models import Platform, PlatformSchema
 
 def read_all():
     """
@@ -17,7 +15,6 @@ def read_all():
 
     :return:        json string of list of Platforms 
     """
-
     # Create the list of Platforms from our data
     platform = db.session.query(Platform).order_by(Platform.id).all()
     app.logger.debug(pformat(platform))
@@ -25,7 +22,6 @@ def read_all():
     platform_schema = PlatformSchema(many=True)
     data = platform_schema.dump(platform)
     return data
-
 
 def read_one(id):
     """
@@ -35,7 +31,6 @@ def read_one(id):
     :param application:   id of platform to find
     :return:              platform matching id
     """
-
     platform = db.session.query(Platform).filter(Platform.id == id).one_or_none()
 
     if platform is not None:
@@ -53,7 +48,6 @@ def read_keyValues():
 
     :return:        json string of list of Platforms 
     """
-
     # Create the list of Platforms from our data
     platform = db.session.query(Platform).order_by(Platform.id).all()
     app.logger.debug(pformat(platform))
@@ -68,8 +62,6 @@ def read_keyValues():
         keyValues.append(keyValuePair)
     print(keyValues)
     return keyValues
-
-
 
 def create(platformDetails):
     """
@@ -101,7 +93,6 @@ def create(platformDetails):
     else:
         abort(406, "Platform already exists")
 
-
 def update(id, platformDetails):
     """
     This function updates an existing platform in the platform list
@@ -110,9 +101,7 @@ def update(id, platformDetails):
     :param platform:   platform to update
     :return:       updated platform
     """
-
     app.logger.debug(pformat(platformDetails))
-
     if platformDetails["id"] != id:
         abort(400, "Key mismatch in path and body")
 
@@ -136,7 +125,6 @@ def update(id, platformDetails):
     # otherwise, nope, deployment doesn't exist, so that's an error
     else:
         abort(404, "Platform not found")
-
 
 def delete(id):
     """

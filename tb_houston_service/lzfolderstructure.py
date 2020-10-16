@@ -2,22 +2,18 @@
 This is the deployments module and supports all the ReST actions for the
 Landing Zone folder structure collection
 """
-
-# 3rd party modules
 import logging
 import json
 from pprint import pformat
-from flask import make_response
+
 from config import db
-from tb_houston_service.models import LZFolderStructure
-from tb_houston_service.models import LZFolderStructureChild
+from models import LZFolderStructure, LZFolderStructureChild
 from tb_houston_service.extendedSchemas import ExtendedLZMetadataFSApplicationSchema
 
 logger = logging.getLogger("tb_houston_service.lzFolderStructure")
 
 # At time of writing max number of levels is ten
 max_levels = 10
-
 
 def add_folders(folders):
     for folder in folders:
@@ -91,7 +87,6 @@ def add_folders(folders):
                 fsc = LZFolderStructureChild(folderId=folder["id"], childId=None)
                 db.session.add(fsc)
 
-
 def read():
     """
     This function responds to a request for /api/lzfolderstructure
@@ -99,7 +94,6 @@ def read():
 
     :return:        json string of list of Folder Structure
     """
-
     schema = ExtendedLZMetadataFSApplicationSchema(many=True)
     fss = (
         db.session.query(LZFolderStructure).order_by(LZFolderStructure.id.desc()).all()
@@ -141,7 +135,6 @@ def read():
     print(f"fs: {json.dumps(data, indent=4)}")
     return data, 200
 
-
 def create(lzFolderStructureDetails):
     """
     This function updates folder structure relationships.
@@ -149,7 +142,6 @@ def create(lzFolderStructureDetails):
     :param folder structure details:  folder structure to update
     :return:       updated folder structure
     """
-
     logger.debug("create_all: %s", pformat(lzFolderStructureDetails))
 
     try:

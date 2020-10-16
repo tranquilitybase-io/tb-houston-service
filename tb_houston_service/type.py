@@ -2,13 +2,11 @@
 This is the deployments module and supports all the ReST actions for the
 type collection
 """
-
-# 3rd party modules
-from flask import make_response, abort
-from config import db, app
-from tb_houston_service.models import Type, TypeSchema
 from pprint import pformat
+from flask import make_response, abort
 
+from config import db, app
+from models import Type, TypeSchema
 
 def read_all():
     """
@@ -26,7 +24,6 @@ def read_all():
     data = type_schema.dump(type)
     return data
 
-
 def read_one(id):
     """
     This function responds to a request for /type/{id}
@@ -35,9 +32,7 @@ def read_one(id):
     :param application:   id of type to find
     :return:              type matching id
     """
-
     type = db.session.query(Type).filter(Type.id == id).one_or_none()
-
     if type is not None:
         # Serialize the data for the response
         type_schema = TypeSchema()
@@ -53,7 +48,6 @@ def read_keyValues():
 
     :return:        json string of list of Types 
     """
-
     # Create the list of Types from our data
     type = db.session.query(Type).order_by(Type.id).all()
     app.logger.debug(pformat(type))
@@ -68,8 +62,6 @@ def read_keyValues():
         keyValues.append(keyValuePair)
     print(keyValues)
     return keyValues
-
-
 
 def create(typeDetails):
     """
@@ -101,7 +93,6 @@ def create(typeDetails):
     else:
         abort(406, "Type already exists")
 
-
 def update(id, typeDetails):
     """
     This function updates an existing type in the type list
@@ -110,9 +101,7 @@ def update(id, typeDetails):
     :param type:   type to update
     :return:       updated type
     """
-
     app.logger.debug(pformat(typeDetails))
-
     if typeDetails["id"] != id:
         abort(400, "Key mismatch in path and body")
 
@@ -136,7 +125,6 @@ def update(id, typeDetails):
     # otherwise, nope, deployment doesn't exist, so that's an error
     else:
         abort(404, "Type not found")
-
 
 def delete(id):
     """

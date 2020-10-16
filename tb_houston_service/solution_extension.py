@@ -1,19 +1,13 @@
 import logging
-from tb_houston_service.models import Application
-from tb_houston_service.models import Team
-from tb_houston_service.models import BusinessUnit
-from tb_houston_service.models import LZEnvironment
-from tb_houston_service.models import LZLanVpc
-from tb_houston_service.models import LZLanVpcEnvironment
-from tb_houston_service.models import SolutionEnvironment
-from tb_houston_service.models import CI,CD,SourceControl
+
+from models import  Application, Team, BusinessUnit, LZEnvironment, LZLanVpc, LZLanVpcEnvironment, \
+                    SolutionEnvironment, CI, CD, SourceControl
 from tb_houston_service.tools import ModelTools
 from tb_houston_service import application_extension
 from tb_houston_service import team_extension
 from tb_houston_service import security
 
 logger = logging.getLogger('tb_houston_service.solution_extension')
-
 
 def expand_solution(sol, dbsession):
     logger.debug("dbs: %s", dbsession)    
@@ -52,7 +46,6 @@ def expand_solution(sol, dbsession):
         sol.sourceControl = dbsession.query(SourceControl).filter(SourceControl.id == sol.sourceControlId).one_or_none()
     
     return sol
-
 
 def expand_solution_for_dac(sol, dbsession):
     environments = (
@@ -108,7 +101,6 @@ def expand_solution_for_dac(sol, dbsession):
         sol.createdBy = f"{logged_in_user.firstName} {logged_in_user.lastName}"
     return sol
 
-
 def create_solution_environments(solutionId, list_of_env_ids, dbsession):
     """
     Args:
@@ -120,7 +112,6 @@ def create_solution_environments(solutionId, list_of_env_ids, dbsession):
         3. Create the solution env that are not in this list.
 
     """
-
     # Inactivates the active solution environments for this Solution (solutionId)
     envs = dbsession.query(SolutionEnvironment).filter(
         SolutionEnvironment.solutionId == solutionId,
