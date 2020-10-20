@@ -575,208 +575,6 @@ paths:
         "200":
           description: Successfully deleted a teammember
 
-  /cloudRoles/:
-    get:
-      operationId: tb_houston_service.cloudRole.read_all
-      tags:
-        - Cloud Role
-      summary: Read the entire list of roles
-      description: Read the list of roles
-      responses:
-        "200":
-          description: Successfully read role list operation
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/CloudRole"
-
-  /cloudRole/:
-    post:
-      operationId: tb_houston_service.cloudRole.create
-      tags:
-        - Cloud Role
-      summary: Create a role and add it to the role list
-      description: Create a new role in the role list
-      requestBody:
-        $ref: '#/components/requestBodies/cloudRole.cloudRoleDetails'
-      responses:
-        "201":
-          description: Successfully created a cloud role
-
-  "/cloudRole/{id}":
-    get:
-      operationId: tb_houston_service.cloudRole.read_one
-      tags:
-        - Cloud Role
-      summary: Read one cloud role from the list
-      description: Read one cloud role from the list
-      parameters:
-        - name: id
-          in: path
-          description: key of the cloud role to get from the list
-          required: true
-          schema:
-            type: integer
-      responses:
-        "200":
-          description: Successfully read an role from the list
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/CloudRole"
-    put:
-      operationId: tb_houston_service.cloudRole.update
-      tags:
-        - Cloud Role
-      summary: Update a cloud role in the list
-      description: Update a cloud role in the list
-      parameters:
-        - name: id
-          in: path
-          description: key of the cloud role to update
-          required: true
-          schema:
-            type: integer
-      requestBody:
-        $ref: "#/components/requestBodies/cloudRole.cloudRoleDetails"
-      responses:
-        "200":
-          description: Successfully updated a cloud role
-
-    delete:
-      operationId: tb_houston_service.cloudRole.delete
-      tags:
-        - Cloud Role
-      summary: Delete a cloud role from the list
-      description: Delete a cloud role
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-      responses:
-        "200":
-          description: Successfully deleted a cloud account
-
-  /userCloudRoles/:
-    get:
-      operationId: tb_houston_service.userCloudRole.read_all
-      tags:
-        - User Cloud Role
-      summary: Read the entire list of user roles 
-      description: Read the list of user roles
-      parameters:
-        - in: query
-          name: userId
-          schema:
-            type: integer
-        - in: query
-          name: roleId
-          schema:
-            type: integer
-        - in: query
-          name: active
-          schema:
-            type: boolean
-        - in: query
-          name: page
-          schema:
-            type: integer 
-        - in: query
-          name: page_size
-          schema:
-            type: integer 
-        - in: query
-          name: sort
-          schema:
-            type: array
-            items:
-              type: string
-          explode: true
-      responses:
-        "200":
-          description: Successfully read team member list operation
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/UserRole"
-
-  /userCloudRole/:
-    post:
-      operationId: tb_houston_service.userCloudRole.create
-      tags:
-        - User Cloud Role
-      summary: Add a role to an user 
-      description: Add a role to an user 
-      requestBody:
-        $ref: '#/components/requestBodies/userCloudRole.userCloudRoleDetails'
-      responses:
-        "201":
-          description: Successfully added a role for an user
-
-  "/userCloudRole/{oid}":
-    get:
-      operationId: tb_houston_service.userCloudRole.read_one
-      tags:
-        - User Cloud Role
-      summary: Read one user role from the list
-      description: Read oneuser role from the list
-      parameters:
-        - name: oid
-          in: path
-          description: id of the user role to get from the list
-          required: true
-          schema:
-            type: integer
-      responses:
-        "200":
-          description: Successfully read an user role from the list
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/UserRole"
-    put:
-      operationId: tb_houston_service.userCloudRole.update
-      tags:
-        - User Cloud Role
-      summary: Update a user role in the list
-      description: Update a user role in the list
-      parameters:
-        - name: oid
-          in: path
-          description: id of the user role to update
-          required: true
-          schema:
-            type: integer
-      requestBody:
-        $ref: "#/components/requestBodies/userCloudRole.userCloudRoleDetails"
-      responses:
-        "200":
-          description: Successfully updated a user-role
-
-    delete:
-      operationId: tb_houston_service.userCloudRole.delete
-      tags:
-        -  User Cloud Role
-      summary: Delete a user role from the list
-      description: Delete a user role
-      parameters:
-        - name: oid
-          in: path
-          description: id of the user role to delete
-          required: true
-          schema:
-            type: integer
-      responses:
-        "200":
-          description: Successfully deleted a user-role 
-
-
   /keyValues/environment/:
     get:
       operationId: tb_houston_service.lzmetadata_env.read_all_key_values
@@ -3321,15 +3119,6 @@ components:
       description: teamMemberDetails to create
       required: true
 
-    cloudRole.cloudRoleDetails:
-      content:
-        application/json:
-          schema:
-            x-body-name: cloudRoleDetails
-            $ref: "#/components/schemas/CloudRole"
-      description: cloudRoleDetails to create
-      required: true
-
     user.userDetails:
       content:
         application/json:
@@ -3337,15 +3126,6 @@ components:
             x-body-name: userDetails
             $ref: "#/components/schemas/User"
       description: userDetails to create
-      required: true
-
-    userCloudRole.userCloudRoleDetails:
-      content:
-        application/json:
-          schema:
-            x-body-name: userCloudRoleDetails
-            $ref: "#/components/schemas/UserRole"
-      description: userCloudRoleDetails to create
       required: true
 
     environment.environmentDetails:
@@ -3683,6 +3463,9 @@ components:
         description:
           type: string
           description: more details about the team
+        cloudIdentityGroup:
+          type: string
+          description: Cloud Identity Group related to this team in GCP
         businessUnitId:
           type: integer
           description: business unit to which the team belongs to
@@ -3716,22 +3499,6 @@ components:
           type: boolean
           description: to activate/deactivate user role from a team
 
-    CloudRole:
-      type: object
-      properties:
-        id:
-          type: integer
-          description:  id of the cloud urole
-        name:
-          type: string
-          description: name of the role in eagle console
-        cloudIdentityGroup:
-          type: string
-          description: name of the cloud identity group
-        description:
-          type: string
-          description: description of the role
-               
     BGPRoutingMode:
       type: object
       properties:

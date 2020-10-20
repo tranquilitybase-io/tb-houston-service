@@ -3,7 +3,7 @@ import json
 from marshmallow import Schema, fields, post_load, post_dump
 from marshmallow_oneofschema import OneOfSchema
 
-from models import  BusinessUnitSchema, LZEnvironmentSchema, CloudRoleSchema, UserSchema, \
+from models import  BusinessUnitSchema, LZEnvironmentSchema, \
                     CISchema, CDSchema, SourceControlSchema, NotificationTypeSchema, \
                     NotificationActivatorSchema, NotificationTeamSchema, \
                     NotificationApplicationDeploymentSchema, NotificationSolutionDeploymentSchema, \
@@ -43,21 +43,9 @@ class ExtendedUserSchema(Schema):
     lastName = fields.Str()
     isAdmin = fields.Boolean()
     showWelcome = fields.Boolean()
-    cloudRoles = fields.Nested(CloudRoleSchema(many=True))
     isActive = fields.Boolean()
     lastUpdated = fields.Str()
     teamCount = fields.Int()
-
-class ExtendedUserCloudRoleSchema(Schema):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
-    id = fields.Int()
-    userId = fields.Int()
-    user = fields.Nested(UserSchema(many=False))
-    cloudRoleId = fields.Int()
-    cloudRole = fields.Nested(CloudRoleSchema(many=False))
-    isActive = fields.Boolean()
 
 class ExtendedActivatorMetadataSchema(Schema):
     def __init__(self, **kwargs):
@@ -167,6 +155,7 @@ class ExtendedTeamSchema(Schema):
     id = fields.Int()
     name = fields.Str()
     description = fields.Str()
+    cloudIdentityGroup = fields.Str()
     businessUnitId = fields.Int()
     isActive = fields.Boolean()
     businessUnit = fields.Nested(BusinessUnitSchema(many=False))
@@ -234,7 +223,6 @@ class ExtendedUserTeamsSchema(Schema):
     lastName = fields.Str()
     isAdmin = fields.Boolean()
     showWelcome = fields.Boolean()
-    cloudRole = fields.Nested(CloudRoleSchema(many=True))
     isActive = fields.Boolean()
     lastUpdated = fields.Str()
     teamMembers = fields.Nested(ExtendedTeamMemberFullSchema(many=True))

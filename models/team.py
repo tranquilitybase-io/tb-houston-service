@@ -13,6 +13,7 @@ class Team(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
     description = db.Column(db.String(200))
+    cloudIdentityGroup = db.Column(db.String(200))
     businessUnitId = db.Column(db.Integer)
     lastUpdated = db.Column(db.String(20))
     isActive = db.Column(db.Boolean())
@@ -32,5 +33,7 @@ class TeamSchema(ma.ModelSchema):
             data['isActive'] = True
         if data.get('accessRequestedById') == 0:
             data['accessRequestedById'] = None
+        if data.get('cloudIdentityGroup') is None:
+            data['cloudIdentityGroup'] = ''
 
         return data

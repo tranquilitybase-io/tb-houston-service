@@ -11,7 +11,6 @@ from .bgp_routing_mode import BGPRoutingMode, BGPRoutingModeSchema
 from .business_unit import BusinessUnit, BusinessUnitSchema
 from .cd import CD, CDSchema
 from .ci import CI, CISchema
-from .cloud_role import CloudRole, CloudRoleSchema
 from .folder import Folder, FolderSchema
 from .landing_zone_action import LandingZoneAction, LandingZoneActionSchema
 from .landing_zone_progress_item import LandingZoneProgressItem, LandingZoneProgressItemSchema
@@ -38,7 +37,6 @@ from .subnet_mode import SubnetMode, SubnetModeSchema
 from .team_member import TeamMember, TeamMemberSchema
 from .team import Team, TeamSchema
 from .type import Type, TypeSchema
-from .user_cloud_role import UserCloudRole, UserCloudRoleSchema
 from .user import User, UserSchema
 from .vpn_onpremise_vendor import VPNOnPremiseVendor, VPNOnPremiseVendorSchema
 
@@ -56,7 +54,6 @@ __all__ = \
     'BusinessUnit', 'BusinessUnitSchema', \
     'CD', 'CDSchema', \
     'CI', 'CISchema', \
-    'CloudRole', 'CloudRoleSchema', \
     'Folder', 'FolderSchema', \
     'LandingZoneAction', 'LandingZoneActionSchema', \
     'LandingZoneProgressItem', 'LandingZoneProgressItemSchema', \
@@ -83,6 +80,5 @@ __all__ = \
     'TeamMember', 'TeamMemberSchema', \
     'Team', 'TeamSchema', \
     'Type', 'TypeSchema', \
-    'UserCloudRole', 'UserCloudRoleSchema', \
     'User', 'UserSchema', \
     'VPNOnPremiseVendor', 'VPNOnPremiseVendorSchema'
