@@ -3463,6 +3463,9 @@ components:
         description:
           type: string
           description: more details about the team
+        cloudIdentityGroup:
+          type: string
+          description: Cloud Identity Group related to this team in GCP
         businessUnitId:
           type: integer
           description: business unit to which the team belongs to

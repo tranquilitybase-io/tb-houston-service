@@ -98,6 +98,9 @@ def update(oid, teamDetails):
         update_team.description = teamDetails.get(
             "description", existing_team.description
         )
+        update_team.cloudIdentityGroup = teamDetails.get(
+            "cloudIdentityGroup", existing_team.cloudIdentityGroup
+        )
         update_team.businessUnitId = teamDetails.get(
             "businessUnitId", existing_team.businessUnitId
         )
@@ -140,6 +143,9 @@ def patch(oid, teamDetails):
         update_team.name = teamDetails.get("name", existing_team.name)
         update_team.description = teamDetails.get(
             "description", existing_team.description
+        )
+        update_team.cloudIdentityGroup = teamDetails.get(
+            "cloudIdentityGroup", existing_team.cloudIdentityGroup
         )
         update_team.businessUnitId = teamDetails.get(
             "businessUnitId", existing_team.businessUnitId

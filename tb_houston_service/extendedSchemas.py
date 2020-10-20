@@ -3,7 +3,7 @@ import json
 from marshmallow import Schema, fields, post_load, post_dump
 from marshmallow_oneofschema import OneOfSchema
 
-from models import  BusinessUnitSchema, LZEnvironmentSchema, UserSchema, \
+from models import  BusinessUnitSchema, LZEnvironmentSchema, \
                     CISchema, CDSchema, SourceControlSchema, NotificationTypeSchema, \
                     NotificationActivatorSchema, NotificationTeamSchema, \
                     NotificationApplicationDeploymentSchema, NotificationSolutionDeploymentSchema, \
@@ -155,6 +155,7 @@ class ExtendedTeamSchema(Schema):
     id = fields.Int()
     name = fields.Str()
     description = fields.Str()
+    cloudIdentityGroup = fields.Str()
     businessUnitId = fields.Int()
     isActive = fields.Boolean()
     businessUnit = fields.Nested(BusinessUnitSchema(many=False))
