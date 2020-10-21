@@ -17,7 +17,7 @@ from tb_houston_service import security
 
 logger = logging.getLogger("tb_houston_service.solution")
 
-def read_all(isActive=None, isFavourite=None, namesonly=None, page=None, page_size=None, sort=None):
+def read_all(isActive=None, isFavourite=None, isSandbox=None, namesonly=None, page=None, page_size=None, sort=None):
     """
     This function responds to a request for /api/solutions
     with the complete lists of solutions
@@ -25,8 +25,8 @@ def read_all(isActive=None, isFavourite=None, namesonly=None, page=None, page_si
     :return:        json string of list of solutions
     """
     logger.debug("solution.read_all")
-    logger.debug("Parameters: isActive: %s, isFavourite: %s, namesonly: %s, page: %s, page_size: %s, sort: %s", 
-    isActive, isFavourite, namesonly, page, page_size, sort)
+    logger.debug("Parameters: isActive: %s, isFavourite: %s, isSandbox: %s, namesonly: %s, page: %s, page_size: %s, sort: %s", 
+    isActive, isFavourite, isSandbox, namesonly, page, page_size, sort)
     with db_session() as dbs:
         # pre-process sort instructions
         if sort == None:
@@ -57,6 +57,7 @@ def read_all(isActive=None, isFavourite=None, namesonly=None, page=None, page_si
         solution_query = solution_query.filter(
             (isActive == None or Solution.isActive == isActive),
             (isFavourite == None or Solution.isFavourite == isFavourite),
+            (isSandbox == None or Solution.isSandbox == isSandbox),
             (business_unit_ids == None or Solution.businessUnitId.in_(business_unit_ids))
         )
 
@@ -135,6 +136,9 @@ def create(solutionDetails):
 
         if solutionDetails.get("statusMessage") == None:
             solutionDetails["statusMessage"] = ""
+
+        if solutionDetails.get("isSandbox") == None:
+            solutionDetails["isSandbox"] = False
 
         # Remove applications because Solutions don't have
         # any applications when they are first created

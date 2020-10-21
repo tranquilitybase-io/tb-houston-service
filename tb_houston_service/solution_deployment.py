@@ -215,6 +215,9 @@ def deployment_update(oid, solutionDeploymentDetails):
         update_solution.deploymentFolderId = solutionDeploymentDetails.get(
             "deploymentFolderId", existing_solution.deploymentFolderId
         )
+        update_solution.isSandbox = solutionDeploymentDetails.get(
+            "isSandbox", existing_solution.isSandbox
+        )
 
         db.session.merge(update_solution)
         db.session.commit()

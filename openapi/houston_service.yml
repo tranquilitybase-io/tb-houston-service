@@ -1254,6 +1254,10 @@ paths:
           schema:
             type: boolean             
         - in: query
+          name: isSandbox
+          schema:
+            type: boolean
+        - in: query
           name: namesonly
           schema:
             type: boolean
@@ -3773,6 +3777,9 @@ components:
           items:
             type: integer
             description: environment ids
+        isSandbox:
+          type: boolean
+          description: Defines if the Solution is or not a Sandbox - without Workspace
 
     SolutionDeployment:
       type: object

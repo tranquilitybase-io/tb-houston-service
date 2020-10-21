@@ -189,6 +189,7 @@ class ExtendedSolutionSchema(Schema):
     deploymentFolderId = fields.Str()
     businessUnit = fields.Nested(BusinessUnitSchema(many=False))
     deploymentState = fields.Str()
+    isSandbox = fields.Boolean()
 
 class ExtendedTeamMemberSchema(Schema):
     id = fields.Int()

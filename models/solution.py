@@ -29,6 +29,7 @@ class Solution(db.Model):
     statusMessage = db.Column(db.String(255))
     taskId = db.Column(db.String(100))
     deploymentFolderId = db.Column(db.String(50))
+    isSandbox = db.Column(db.Boolean)
 
     def __repr__(self):
         return "<Solution(id={self.id!r}, name={self.name!r})>".format(self=self)
