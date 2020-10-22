@@ -213,8 +213,9 @@ class ExtendedTeamDACSchema(Schema):
     description = fields.Str()
     businessUnitId = fields.Int()
     isActive = fields.Boolean()
-    businessUnit = fields.Nested(BusinessUnitSchema(many=False))
+    # businessUnit = fields.Nested(BusinessUnitSchema(many=False))
     lastUpdated = fields.Str()
+    cloudIdentityGroup = fields.Str()
     teamMembers = fields.Nested(ExtendedTeamMemberFullSchema(many=True))
 
 class ExtendedUserTeamsSchema(Schema):
@@ -256,6 +257,21 @@ class ExtendedSolutionForDACSchema(Schema):
     deploymentFolderId = fields.Str()
     createdBy = fields.Str()
 
+class ExtendedSolutionSandboxForDACSchema(Schema):
+    __envelope__ = {"single": "sandbox", "many": "sandboxes"}
+
+    id = fields.Int()
+    name = fields.Str()
+    description = fields.Str()
+    businessUnit = fields.Str()
+    costCentre = fields.Str()
+    teamId = fields.Int()
+    team = fields.Nested(ExtendedTeamDACSchema(many=False))
+    teamName = fields.Pluck(ExtendedTeamDACSchema, 'name')
+    teamcloudIdentityGroup = fields.Pluck(ExtendedTeamDACSchema, 'cloudIdentityGroup')
+    deploymentFolderId = fields.Str()
+    createdBy = fields.Str()
+
 class SolutionNamesOnlySchema(Schema):
     __envelope__ = {"single": "solution", "many": "solutions"}
 
@@ -267,6 +283,7 @@ class SolutionDeploymentSchema(Schema):
 
     id = fields.Int()
     deployed = fields.Boolean()
+    isSandbox = fields.Boolean()
     deploymentState = fields.Str()
     statusId = fields.Int()
     statusCode = fields.Str()
