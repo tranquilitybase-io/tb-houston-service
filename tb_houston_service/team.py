@@ -6,6 +6,7 @@ team collection
 from pprint import pformat
 from http import HTTPStatus
 from flask import make_response, abort
+from sqlalchemy import exc
 
 from config import db, app
 from models import Team, TeamMember, TeamSchema
@@ -66,7 +67,19 @@ def create(teamDetails):
     new_team.lastUpdated = ModelTools.get_utc_timestamp()
     app.logger.debug(f"new_team: {new_team} type: {type(new_team)}")
     db.session.add(new_team)
-    db.session.commit()
+    try:
+        db.session.commit()
+    except exc.IntegrityError as err:
+        db.session.rollback()
+        app.logger.debug(str(err))
+        if "Duplicate entry" in str(err):
+            return abort(400, "Team already exists")
+        else:
+            return abort(400, "Unknown Integrity Error adding team")
+    except Exception as err:
+        db.session.rollback()
+        app.logger.debug(str(err))
+        return abort(400, "Unknown error adding team")
 
     # Serialize and return the newly created deployment
     # in the response
@@ -111,7 +124,19 @@ def update(oid, teamDetails):
         update_team.isActive = teamDetails.get("isActive", existing_team.isActive)
 
         db.session.merge(update_team)
-        db.session.commit()
+        try:
+            db.session.commit()
+        except exc.IntegrityError as err:
+            db.session.rollback()
+            app.logger.debug(str(err))
+            if "Duplicate entry" in str(err):
+                return abort(400, "Team already exists")
+            else:
+                return abort(400, "Unknown Integrity Error adding team")
+        except Exception as err:
+            db.session.rollback()
+            app.logger.debug(str(err))
+            return abort(400, "Unknown error adding team")
 
         # return the updted team in the response
         data = schema.dump(update_team)
@@ -154,7 +179,19 @@ def patch(oid, teamDetails):
         update_team.isActive = teamDetails.get("isActive", existing_team.isActive)
 
         db.session.merge(update_team)
-        db.session.commit()
+        try:
+            db.session.commit()
+        except exc.IntegrityError as err:
+            db.session.rollback()
+            app.logger.debug(str(err))
+            if "Duplicate entry" in str(err):
+                return abort(400, "Team already exists")
+            else:
+                return abort(400, "Unknown Integrity Error adding team")
+        except Exception as err:
+            db.session.rollback()
+            app.logger.debug(str(err))
+            return abort(400, "Unknown error adding team")
 
         # return the updted team in the response
         data = schema.dump(update_team)
