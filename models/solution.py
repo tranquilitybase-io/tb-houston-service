@@ -51,4 +51,14 @@ class SolutionSchema(ma.ModelSchema):
             data["isFavourite"] = False
         if "name" in data:
             data["name"] = data["name"][: Solution.name.type.length]
+        if data.get('ciId') is 0:
+            data["ciId"] = None
+        if data.get('cdId') is 0:
+            data["cdId"] = None
+        if data.get('sourceControlId') is 0:
+            data["sourceControlId"] = None
+        if data.get('isSandbox'):
+            data["ciId"] = None
+            data["cdId"] = None
+            data["sourceControlId"] = None
         return data
