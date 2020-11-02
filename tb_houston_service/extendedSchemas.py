@@ -3,11 +3,11 @@ import json
 from marshmallow import Schema, fields, post_load, post_dump
 from marshmallow_oneofschema import OneOfSchema
 
-from models import  BusinessUnitSchema, LZEnvironmentSchema, \
-                    CISchema, CDSchema, SourceControlSchema, NotificationTypeSchema, \
-                    NotificationActivatorSchema, NotificationTeamSchema, \
-                    NotificationApplicationDeploymentSchema, NotificationSolutionDeploymentSchema, \
-                    TypeSchema, PlatformSchema, ActivatorMetadataVariableSchema
+from models import BusinessUnitSchema, LZEnvironmentSchema, \
+    CISchema, CDSchema, SourceControlSchema, NotificationTypeSchema, \
+    NotificationActivatorSchema, NotificationTeamSchema, \
+    NotificationApplicationDeploymentSchema, NotificationSolutionDeploymentSchema, \
+    TypeSchema, PlatformSchema, ActivatorMetadataVariableSchema, TeamSchema
 
 logger = logging.getLogger("tb_houston_service.extendedSchemas")
 
@@ -266,11 +266,26 @@ class ExtendedSolutionSandboxForDACSchema(Schema):
     businessUnit = fields.Str()
     costCentre = fields.Str()
     teamId = fields.Int()
-    team = fields.Nested(ExtendedTeamDACSchema(many=False))
-    teamName = fields.Pluck(ExtendedTeamDACSchema, 'name')
-    teamcloudIdentityGroup = fields.Pluck(ExtendedTeamDACSchema, 'cloudIdentityGroup')
+    team = fields.Nested(TeamSchema, only=('name','cloudIdentityGroup'))
     deploymentFolderId = fields.Str()
     createdBy = fields.Str()
+
+    @post_dump(pass_many=True)
+    def make_dump(self, data, many, **kwargs):
+        return {
+            'id': data['id'],
+            'name': data['name'],
+            'description': data['description'],
+            'businessUnit': data['businessUnit'],
+            'costCode': data['costCentre'],
+            'deploymentFolderId': data['deploymentFolderId'],
+            'createdBy': data['createdBy'],
+            'teamId': data['teamId'],
+            'teamName': data['team']['name'],
+            'teamcloudIdentityGroup': data['team']['cloudIdentityGroup']
+        }
+
+
 
 class SolutionNamesOnlySchema(Schema):
     __envelope__ = {"single": "solution", "many": "solutions"}

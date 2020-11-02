@@ -360,10 +360,12 @@ def deploy_folders_and_solution(sol_deployment):
 
 
 def send_solution_deployment_to_the_dac(sol_deployment, dbsession):
+    logger.debug("send_solution_deployment_to_the_dac")
     oid = sol_deployment.id
     solution = solution_extension.expand_solution_for_dac(sol_deployment, dbsession=dbsession)
+    logger.debug("is sandbox {}".format(solution.isSandbox))
     if solution.isSandbox:
-        send_sandbox_deployment_to_the_dac(sol_deployment, solution)
+        return send_sandbox_deployment_to_the_dac(sol_deployment, solution)
     schema = ExtendedSolutionForDACSchema(many=False)
     solution_data = schema.dump(solution)
     solution_data = json.dumps(solution_data, indent=4)
@@ -421,7 +423,7 @@ def send_solution_deployment_to_the_dac(sol_deployment, dbsession):
 # Send the sandbox to the DAC
 def send_sandbox_deployment_to_the_dac(sol_deployment, solution):
     oid = sol_deployment.id
-    schema = ExtendedSolutionSandboxForDACSchema(many=False)
+    schema = ExtendedSolutionSandboxForDACSchema()
     sandbox_data = schema.dump(solution)
     sandbox_data = json.dumps(sandbox_data, indent=4)
 
