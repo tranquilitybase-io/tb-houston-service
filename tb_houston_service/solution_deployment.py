@@ -493,7 +493,6 @@ def get_solution_results_from_the_dac(sol, task_id):
     """
     oid = sol.id
     isSandbox: bool = sol.isSandbox
-    logger.debug(f"Solution is a sandbox %s", isSandbox)
     logger.debug(f"get_solution_results_from_the_dac: oid: %s taskId: %s", oid, task_id)
     resp_json = None
     try:
