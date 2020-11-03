@@ -3752,9 +3752,9 @@ components:
         description:
           type: string
           description: description
-        businessUnit:
-          type: string
-          description: businessUnit
+        businessUnitId:
+          type: integer
+          description: id of businessUnit
         costCentre:
           type: string
           description: costCentre
