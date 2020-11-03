@@ -2,40 +2,46 @@
 This is the deployments module and supports all the ReST actions for the
 solutions collection
 """
-from pprint import pformat
-import time
-import os
 import json
 import logging
+import os
+import time
 from http import HTTPStatus
+from pprint import pformat
+
 import requests
 from flask import make_response, abort
 
 from config import db, executor
 from config.db_lib import db_session
 from models import Solution, SolutionSchema
-from tb_houston_service.DeploymentStatus import DeploymentStatus
-from tb_houston_service.tools import ModelTools
-from tb_houston_service.extendedSchemas import ExtendedSolutionForDACSchema
-from tb_houston_service.extendedSchemas import SolutionDeploymentSchema
 from tb_houston_service import folder
-from tb_houston_service import team
 from tb_houston_service import gcp_dac_folder_deployment
+from tb_houston_service import gcp_dac_metadata
+from tb_houston_service import notification
+from tb_houston_service import security
 from tb_houston_service import solution_extension
 from tb_houston_service import solutionresourcejson
-from tb_houston_service import security
-from tb_houston_service import notification
-from tb_houston_service import gcp_dac_metadata
+from tb_houston_service import team
+from tb_houston_service.DeploymentStatus import DeploymentStatus
+from tb_houston_service.extendedSchemas import ExtendedSolutionForDACSchema, ExtendedSolutionSandboxForDACSchema
+from tb_houston_service.extendedSchemas import SolutionDeploymentSchema
+from tb_houston_service.tools import ModelTools
 
 logger = logging.getLogger("tb_houston_service.solution_deployment")
 
-deployment_create_url = f"http://{os.environ['GCP_DAC_URL']}/dac/solution_async/"
-deployment_create_result_url = (
+solution_deployment_create_url = f"http://{os.environ['GCP_DAC_URL']}/dac/solution_async/"
+solution_deployment_create_result_url = (
     f"http://{os.environ['GCP_DAC_URL']}/dac/solution_async/result/create/"
+)
+sandbox_deployment_create_url = f"http://{os.environ['GCP_DAC_URL']}/dac/sandbox_async/"
+sandbox_deployment_create_result_url = (
+    f"http://{os.environ['GCP_DAC_URL']}/dac/sandbox_async/result/create/"
 )
 headers = {"Content-Type": "application/json"}
 
 authorization_token = None
+
 
 def notify_user(solutionId):
     """
@@ -45,7 +51,7 @@ def notify_user(solutionId):
         solutionId ([int]): [The solution id]
     """
     with db_session() as dbs:
-        user = security.get_valid_user_from_token(dbsession = dbs)
+        user = security.get_valid_user_from_token(dbsession=dbs)
         logger.debug("user: %s", user)
         if user:
             sol = dbs.query(Solution).filter(Solution.id == solutionId).one_or_none()
@@ -63,11 +69,12 @@ def notify_user(solutionId):
                     "isRead": False,
                     "solutionId": sol.id
                 }
-                notification.create(notification = payload, typeId = 4, dbsession = dbs)
+                notification.create(notification=payload, typeId=4, dbsession=dbs)
             else:
                 logger.warning("notify_user::Cannot send notification, unable to find the solution (%s).", sol.id)
         else:
             logger.warning("notify_user::Cannot send notification, unable to validate the token.")
+
 
 def deployment_read_all():
     """
@@ -89,6 +96,7 @@ def deployment_read_all():
     logger.debug("solutions data: %s", data)
     return data, 200
 
+
 def deployment_read_one(oid):
     """
     This function responds to a request for /api/solutiondeployment/{oid}
@@ -108,33 +116,37 @@ def deployment_read_one(oid):
     else:
         abort(404, f"Solution with id {oid} not found".format(id=oid))
 
+
 def start_deployment(solutionId):
     logger.debug("start_deployment")
-    deployment_complete = False 
+    deployment_complete = False
     while deployment_complete == False:
         sol = db.session.query(Solution).filter(Solution.id == solutionId).one_or_none()
+        logger.debug("Is Sandbox : {}".format(sol.isSandbox))
         if sol:
             if sol.deploymentState == DeploymentStatus.SUCCESS or sol.deploymentState == DeploymentStatus.FAILURE:
                 deployment_complete = True
-                logger.debug("start_deployment::deployment complete for Solution: %s", sol.id)                
+                logger.debug("start_deployment::deployment complete for Solution: %s", sol.id)
             else:
                 oid = sol.id
                 task_id = sol.taskId
-                logger.debug("start_deployment: deploymentState: %s, oid: %s, task_id %s", sol.deploymentState, oid, task_id)
+                logger.debug("start_deployment: deploymentState: %s, oid: %s, task_id %s", sol.deploymentState, oid,
+                             task_id)
                 if task_id is None or task_id == "":
                     response = deploy_folders_and_solution(sol)
                     logger.debug("start_deployment::deploy_folders_and_solution: oid: %s", oid)
                     logger.debug(pformat(response))
                 else:
                     logger.debug("start_deployment::polling_results_from_the_DaC: oid: %s task_id: %s", oid, task_id)
-                    response = get_solution_results_from_the_dac(oid, task_id)
+                    response = get_solution_results_from_the_dac(sol, task_id)
                     logger.debug(pformat(response))
                 logger.debug("Sleep 2")
                 time.sleep(2)
         else:
-            logger.debug("start_deployment::deployment Solution not found: %s", sol.id)                       
-    notify_user(solutionId = solutionId)     
+            logger.debug("start_deployment::deployment Solution not found: %s", sol.id)
+    notify_user(solutionId=solutionId)
     return True
+
 
 def deployment_create(solutionDeploymentDetails):
     """
@@ -167,10 +179,11 @@ def deployment_create(solutionDeploymentDetails):
         db.session.commit()
         resp_json = {"id": oid, "deploymentState": update_solution.deploymentState}
         # This step is in a separate thread.
-        db.session.close()        
+        db.session.close()
         executor.submit(start_deployment, sol.id)
 
     return make_response(resp_json, 200)
+
 
 def deployment_update(oid, solutionDeploymentDetails):
     """
@@ -230,6 +243,7 @@ def deployment_update(oid, solutionDeploymentDetails):
     # otherwise, nope, deployment doesn't exist, so that's an error
     else:
         abort(404, f"Solution {oid} not found")
+
 
 def create_folder(folderId, folderName):
     # retrieve+create folder from folder table
@@ -296,6 +310,7 @@ def create_folder(folderId, folderName):
     # if not available may be available in the next iteration.
     return (next_folder_id, status)
 
+
 # Return SUCCESS if all folders have been created on the DB and DAC
 def create_folders(solution):
     logger.debug("create_folders::solution: %s", pformat(solution))
@@ -325,10 +340,11 @@ def create_folders(solution):
     logger.debug("create_folders::return %s", data)
     return data
 
+
 def deploy_folders_and_solution(sol_deployment):
     logger.debug("deploy_folders_and_solution")
     with db_session() as dbs:
-        solution = solution_extension.expand_solution(sol_deployment, dbsession = dbs)
+        solution = solution_extension.expand_solution(sol_deployment, dbsession=dbs)
         create_folders_resp = create_folders(solution)
         deploymentFolderId = create_folders_resp.get("deploymentFolderId")
         status = create_folders_resp.get("status")
@@ -339,13 +355,17 @@ def deploy_folders_and_solution(sol_deployment):
         )
         if deploymentFolderId and status == DeploymentStatus.SUCCESS:
             solution.deploymentFolderId = deploymentFolderId
-            status = send_solution_deployment_to_the_dac(solution, dbsession = dbs)
+            status = send_solution_deployment_to_the_dac(solution, dbsession=dbs)
         return status, 200
 
-# Send the solution to the DAC
+
 def send_solution_deployment_to_the_dac(sol_deployment, dbsession):
+    logger.debug("send_solution_deployment_to_the_dac")
     oid = sol_deployment.id
-    solution = solution_extension.expand_solution_for_dac(sol_deployment, dbsession = dbsession)
+    solution = solution_extension.expand_solution_for_dac(sol_deployment, dbsession=dbsession)
+    logger.debug("is sandbox {}".format(solution.isSandbox))
+    if solution.isSandbox:
+        return send_sandbox_deployment_to_the_dac(sol_deployment, solution)
     schema = ExtendedSolutionForDACSchema(many=False)
     solution_data = schema.dump(solution)
     solution_data = json.dumps(solution_data, indent=4)
@@ -355,7 +375,7 @@ def send_solution_deployment_to_the_dac(sol_deployment, dbsession):
     resp_json = None
     try:
         response = requests.post(
-            deployment_create_url, data=solution_data, headers=headers
+            solution_deployment_create_url, data=solution_data, headers=headers
         )
         resp_json = response.json()
         logger.debug(
@@ -399,6 +419,65 @@ def send_solution_deployment_to_the_dac(sol_deployment, dbsession):
             500,
         )
 
+
+# Send the sandbox to the DAC
+def send_sandbox_deployment_to_the_dac(sol_deployment, solution):
+    oid = sol_deployment.id
+    schema = ExtendedSolutionSandboxForDACSchema()
+    sandbox_data = schema.dump(solution)
+    sandbox_data = json.dumps(sandbox_data, indent=4)
+
+    logger.debug(
+        "send_sandbox_deployment_to_the_dac::sandbox_deployment: %s", sandbox_data
+    )
+    resp_json = None
+    try:
+        response = requests.post(
+            sandbox_deployment_create_url, data=sandbox_data, headers=headers
+        )
+        resp_json = response.json()
+        logger.debug(
+            "send_sandbox_deployment_to_the_dac::ResponseFromDAC: %s",
+            pformat(resp_json),
+        )
+    except requests.exceptions.RequestException as e:
+        logger.debug(
+            "send_sandbox_deployment_to_the_dac::Failed during request to DAC %s", e
+        )
+        abort("Failed communicating with the DAC", 500)
+
+    try:
+        taskid = resp_json.get("taskid", None)
+        # update with taskId
+        deployment_json = {
+            "id": oid,
+            "taskId": taskid,
+            "deployed": False,
+            "deploymentState": DeploymentStatus.PENDING,
+            "statusId": 200,
+            "statusCode": "200",
+            "statusMessage": "sandbox deployment sent.",
+            "deploymentFolderId": sol_deployment.deploymentFolderId,
+        }
+
+        logger.debug(
+            "send_sandbox_deployment_to_the_dac::deployment_json: %s",
+            pformat(deployment_json),
+        )
+        logger.debug(pformat(deployment_json))
+        deployment_update(oid, deployment_json)
+        return deployment_json
+    except requests.exceptions.RequestException as e:
+        logger.debug(
+            "send_sandbox_deployment_to_the_dac::Failed updating the database with the response from the DAC, %s.",
+            e,
+        )
+        abort(
+            "send_sandbox_deployment_to_the_dac::Failed updating the database with the response from the DAC.",
+            500,
+        )
+
+
 def validate_json(some_json):
     try:
         json.loads(some_json)
@@ -406,15 +485,21 @@ def validate_json(some_json):
     except ValueError:
         return False
 
-def get_solution_results_from_the_dac(oid, task_id):
+
+def get_solution_results_from_the_dac(sol, task_id):
     """
     Get the solution deployment results from the DAC.
     params: task_id
     """
+    oid = sol.id
+    isSandbox: bool = sol.isSandbox
     logger.debug(f"get_solution_results_from_the_dac: oid: %s taskId: %s", oid, task_id)
     resp_json = None
     try:
-        response = requests.get(deployment_create_result_url + task_id, headers=headers)
+        if isSandbox:
+            response = requests.get(sandbox_deployment_create_result_url + task_id, headers=headers)
+        else:
+            response = requests.get(solution_deployment_create_result_url + task_id, headers=headers)
         resp_json = response.json()
         logger.debug("Response from Dac: %s", resp_json)
     except requests.exceptions.RequestException as e:
@@ -462,9 +547,9 @@ def get_solution_results_from_the_dac(oid, task_id):
     try:
         # Update Solution Resource JSON
         if (
-            is_valid_json
-            and resp_json.get("status", "") == DeploymentStatus.SUCCESS
-            and len(my_json) > 0
+                is_valid_json
+                and resp_json.get("status", "") == DeploymentStatus.SUCCESS
+                and len(my_json) > 0
         ):
             tf_json = {"solutionId": oid, "json": my_json}
             # print("tf_json: " + pformat(tf_json))
