@@ -424,16 +424,36 @@ def send_solution_deployment_to_the_dac(sol_deployment, dbsession):
 def send_sandbox_deployment_to_the_dac(sol_deployment, solution):
     oid = sol_deployment.id
     schema = ExtendedSolutionSandboxForDACSchema()
-    sandbox_data = schema.dump(solution)
-    sandbox_data = json.dumps(sandbox_data, indent=4)
-
+    sandbox_data: dict = schema.dump(solution)
+    sandbox_data_json: str = json.dumps(sandbox_data, indent=4)
     logger.debug(
-        "send_sandbox_deployment_to_the_dac::sandbox_deployment: %s", sandbox_data
+        "send_sandbox_deployment_to_the_dac::sandbox_deployment: %s", sandbox_data_json
     )
+    # check sandbox params - fail if these aren't sent
+    logger.debug("createdBy {}".format(sandbox_data["createdBy"]))
+    logger.debug("teamcloudIdentityGroup {}".format(sandbox_data["teamcloudIdentityGroup"]))
+    if sandbox_data["createdBy"] is None or sandbox_data["teamcloudIdentityGroup"] is None:
+        # FAILURE
+        deployment_json = {
+            "id": oid,
+            "taskId": "",
+            "deployed": False,
+            "deploymentState": DeploymentStatus.FAILURE,
+            "statusId": 200,
+            "statusCode": "200",
+            "statusMessage": "sandbox deployment failed (not started) due to missing parameters created by or team cloud identity group",
+            "deploymentFolderId": sol_deployment.deploymentFolderId,
+        }
+
+        logger.debug(pformat(deployment_json))
+        deployment_update(oid, deployment_json)
+        return deployment_json
+
+
     resp_json = None
     try:
         response = requests.post(
-            sandbox_deployment_create_url, data=sandbox_data, headers=headers
+            sandbox_deployment_create_url, data=sandbox_data_json, headers=headers
         )
         resp_json = response.json()
         logger.debug(
