@@ -282,7 +282,7 @@ class ExtendedSolutionSandboxForDACSchema(Schema):
             'createdBy': data['createdBy'],
             'teamId': data['teamId'],
             'teamName': data['team']['name'],
-            'teamcloudIdentityGroup': data['team']['cloudIdentityGroup']
+            'teamCloudIdentityGroup': data['team']['cloudIdentityGroup']
         }
 
 

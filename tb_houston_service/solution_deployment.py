@@ -431,7 +431,7 @@ def send_sandbox_deployment_to_the_dac(sol_deployment, solution):
     )
     # check sandbox params - fail and do not deploy if these aren't sent
     created_by = sandbox_data["createdBy"]
-    identity_group = sandbox_data["teamcloudIdentityGroup"]
+    identity_group = sandbox_data["teamCloudIdentityGroup"]
     if created_by is None or identity_group is None:
         logger.debug("Deployment not sent to DAC")
         deployment_json = {
