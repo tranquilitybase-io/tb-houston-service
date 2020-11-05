@@ -100,7 +100,7 @@ def expand_solution_for_dac(sol, dbsession):
     if logged_in_user:
         sol.createdBy = f"{logged_in_user.firstName} {logged_in_user.lastName}"
     else:
-        sol.createdBy = "USERNOTFOUND"
+        sol.createdBy = None
     return sol
 
 def create_solution_environments(solutionId, list_of_env_ids, dbsession):
