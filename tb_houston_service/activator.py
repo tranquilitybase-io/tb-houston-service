@@ -3,6 +3,10 @@ This is the activator module and supports all the ReST actions for the
 activators collection
 """
 import logging
+import requests
+import os
+import json
+
 from pprint import pformat
 from flask import make_response, abort
 from sqlalchemy import literal_column
@@ -16,6 +20,8 @@ from tb_houston_service.extendedSchemas import ExtendedActivatorSchema
 from tb_houston_service.extendedSchemas import ExtendedActivatorCategorySchema
 from tb_houston_service import activator_extension
 from tb_houston_service import security
+
+onboard_repo_url = f"http://{os.environ['GCP_DAC_URL']}/dac/application_async/get_repo_uri/"
 
 logger = logging.getLogger("tb_houston_service.activator")
 
@@ -450,24 +456,59 @@ def categories():
         data = schema.dump(categories_arr)
         return data, 200
 
+
+def post_repo_data_to_dac(activatorOnboardDetails):
+    """
+    Posts repository details for cloning by the DAC
+
+    :param activator:  dictionary with repoName, repoURL, tagName
+    :return:        response code from the post
+    """
+
+    repo_name = activatorOnboardDetails["repoName"]
+    repo_url = activatorOnboardDetails["repoURL"]
+    tag_name = activatorOnboardDetails["tagName"]
+
+    payload = {
+        "repoName": repo_name,
+        "repoURL": repo_url,
+        "tagName": tag_name
+    }
+
+    headers = {"Content-Type": "application/json"}
+    resp = requests.post(onboard_repo_url, headers=headers, data=json.dumps(payload, indent=4))
+
+    return resp.status_code
+
+
 def onboard(activatorOnboardDetails):
     """
     This function onboards an activator given an activator id
 
     :param activator:  activator to create in activator list
-    :return:        200 on success, 406 on activator not-exists
+    :return:        200 on success, 406 on activator not-exists, 500 DAC call failed
     """
-    with db_session() as dbs:
-        oid = activatorOnboardDetails["id"]
-        act = dbs.query(Activator).filter(Activator.id == oid).one_or_none()
-        if act:
-            act.status = "Available"
-            dbs.merge(act)
-            dbs.commit()
-        else:
-            abort(406, "Unable to find activator.")
-         # Expand Activator
-        act = activator_extension.expand_activator(act, dbs)
-        schema = ExtendedActivatorSchema(many=False)
-        data = schema.dump(act)
-        return data, 201
+
+    response = post_repo_data_to_dac(activatorOnboardDetails)
+
+    if response is 201:
+
+        with db_session() as dbs:
+            oid = activatorOnboardDetails["id"]
+            act = dbs.query(Activator).filter(Activator.id == oid).one_or_none()
+
+            if act:
+                act.status = "Available"
+                dbs.merge(act)
+                dbs.commit()
+            else:
+                abort(406, "Unable to find activator.")
+
+            act = activator_extension.expand_activator(act, dbs)
+            schema = ExtendedActivatorSchema(many=False)
+            data = schema.dump(act)
+            return data, 201
+
+    else:
+        abort(500, "Unable to clone repository")
+        return 500
