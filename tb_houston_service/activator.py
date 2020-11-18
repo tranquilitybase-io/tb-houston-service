@@ -21,7 +21,7 @@ from tb_houston_service.extendedSchemas import ExtendedActivatorCategorySchema
 from tb_houston_service import activator_extension
 from tb_houston_service import security
 
-onboard_repo_url = f"http://{os.environ['GCP_DAC_URL']}/dac/application_async/get_repo_uri/"
+onboard_repo_url = f"http://{os.environ['GCP_DAC_URL']}/dac/get_repo_uri/"
 
 logger = logging.getLogger("tb_houston_service.activator")
 
@@ -491,14 +491,14 @@ def onboard(activatorOnboardDetails):
 
     response = post_repo_data_to_dac(activatorOnboardDetails)
 
-    if response is 201:
+    if response == 201:
 
         with db_session() as dbs:
             oid = activatorOnboardDetails["id"]
             act = dbs.query(Activator).filter(Activator.id == oid).one_or_none()
 
             if act:
-                act.status = "Available"
+                act.status = "Onboarded"
                 dbs.merge(act)
                 dbs.commit()
             else:
@@ -511,4 +511,3 @@ def onboard(activatorOnboardDetails):
 
     else:
         abort(500, "Unable to clone repository")
-        return 500
