@@ -33,9 +33,11 @@ class Activator(db.Model):
     accessRequestedById = db.Column(db.Integer, db.ForeignKey("eagle_db.user.id"))
     source = db.Column(db.String(100))
     gitRepoUrl = db.Column(db.String(255))
+    gitSnapshotJson = db.Column(db.String(2048))
 
     def __repr__(self):
         return "<Activator(id={self.id!r}, name={self.name!r})>".format(self=self)
+
 
 class ActivatorSchema(ma.ModelSchema):
     class Meta:

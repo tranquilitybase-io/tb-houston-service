@@ -25,6 +25,7 @@ onboard_repo_url = f"http://{os.environ['GCP_DAC_URL']}/dac/get_repo_uri/"
 
 logger = logging.getLogger("tb_houston_service.activator")
 
+
 def read_all(
         isActive=None,
         isFavourite=None,
@@ -126,6 +127,7 @@ def read_all(
     else:
         abort(404, "No Activators found with matching criteria")
 
+
 def read_one(oid):
     """
     This function responds to a request for /api/activator/{key}
@@ -150,6 +152,7 @@ def read_one(oid):
             return data, 200
         else:
             abort(404, f"Activator with id {oid} not found".format(id=oid))
+
 
 def create(activatorDetails):
     """
@@ -191,6 +194,7 @@ def create(activatorDetails):
         schema = ExtendedActivatorSchema(many=False)
         data = schema.dump(new_activator)
         return data, 201
+
 
 def update(oid, activatorDetails):
     """
@@ -264,6 +268,7 @@ def update(oid, activatorDetails):
         else:
             abort(404, f"Activator id {oid} not found")
 
+
 def delete(oid):
     """
     This function deletes an activator from the activators list
@@ -306,6 +311,7 @@ def delete(oid):
         else:
             abort(404, f"Activator id {oid} not found")
 
+
 def notify_user(message, activatorId, toUserId, importance=1):
     logger.debug(
         "notify_users fromUserId: %s message: %s activatorId: %s",
@@ -338,6 +344,7 @@ def notify_user(message, activatorId, toUserId, importance=1):
             notification.dismiss(
                 fromUserId=toUserId, activatorId=activatorId, dbsession=dbs
             )
+
 
 def notify_admins(message, activatorId, fromUserId, importance=1):
     logger.debug(
@@ -375,6 +382,7 @@ def notify_admins(message, activatorId, fromUserId, importance=1):
                 notification.create(notification_payload, typeId=1, dbsession=dbs)
                 # Auto-dismiss the previous notification from the user
                 # notification.dismiss(fromUserId = fromUserId, activatorId = activatorId, dbsession = dbs)
+
 
 def setActivatorStatus(activatorDetails):
     """
@@ -441,6 +449,7 @@ def setActivatorStatus(activatorDetails):
             actid = activatorDetails["id"]
             abort(404, f"Activator id {actid} not found")
 
+
 def categories():
     """
     :return:        distinct list of activator categories.
@@ -476,9 +485,7 @@ def post_repo_data_to_dac(activatorOnboardDetails):
     }
 
     headers = {"Content-Type": "application/json"}
-    resp = requests.post(onboard_repo_url, headers=headers, data=json.dumps(payload, indent=4))
-
-    return resp.status_code
+    return requests.post(onboard_repo_url, headers=headers, data=json.dumps(payload, indent=4))
 
 
 def onboard(activatorOnboardDetails):
@@ -488,10 +495,9 @@ def onboard(activatorOnboardDetails):
     :param activator:  activator to create in activator list
     :return:        200 on success, 406 on activator not-exists, 500 DAC call failed
     """
-
     response = post_repo_data_to_dac(activatorOnboardDetails)
 
-    if response == 201:
+    if response.status_code == 201:
 
         with db_session() as dbs:
             oid = activatorOnboardDetails["id"]
@@ -499,6 +505,7 @@ def onboard(activatorOnboardDetails):
 
             if act:
                 act.status = "Onboarded"
+                act.gitSnapshotJson = str(response.json())
                 dbs.merge(act)
                 dbs.commit()
             else:
