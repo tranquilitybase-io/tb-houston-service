@@ -1,7 +1,6 @@
 import json
 import time
 import logging
-import os
 from pprint import pformat
 import requests
 from flask import make_response, abort
@@ -18,14 +17,10 @@ from tb_houston_service.DeploymentStatus import DeploymentStatus
 from tb_houston_service.tools import ModelTools
 from tb_houston_service.extendedSchemas import ExtendedApplicationDeploymentSchema
 from tb_houston_service.extendedSchemas import ExtendedApplicationForDACSchema
+from tb_common.remote.standard_request import Dac
 
 logger = logging.getLogger("tb_houston_service.application_deployment")
 
-deployment_create_url = f"http://{os.environ['GCP_DAC_URL']}/dac/application_async/"
-deployment_create_result_url = (
-    f"http://{os.environ['GCP_DAC_URL']}/dac/application_async/result/create/"
-)
-headers = {"Content-Type": "application/json"}
 
 def notify_user(applicationId):
     """
@@ -62,6 +57,7 @@ def notify_user(applicationId):
         else:
             logger.warning("Cannot send notification, unable to validate the token.")
 
+
 def start_deployment(applicationId):
     logger.info("start_deployment::applicationId: %s", applicationId)
     # can only deploy an application if the solution it belong's to has already been
@@ -97,6 +93,7 @@ def start_deployment(applicationId):
         logger.debug("start_deployment::deployment complete for Application: %s", applicationId)                       
     notify_user(applicationId = applicationId)     
     return True
+
 
 def deployment_create(applicationDeploymentDetails):
     """
@@ -187,6 +184,7 @@ def deployment_create(applicationDeploymentDetails):
 
     return make_response("Application deployment is complete.", 200)
 
+
 def deployment_read_all():
     with db_session() as dbs:
         app_deployments = (
@@ -199,6 +197,7 @@ def deployment_read_all():
         data = schema.dump(app_deployments)
         #logger.debug("deployment_read_all::applications data: %s", data)
         return data, 200
+
 
 def deployment_update(app_id, lzEnvId, applicationDeploymentDetails, dbsession):
     """
@@ -228,6 +227,7 @@ def deployment_update(app_id, lzEnvId, applicationDeploymentDetails, dbsession):
         dbsession.merge(existing_application_deployment)
     else:
         logger.debug("deployment_update::existing application deployment not found, %s, %s", app_id, lzEnvId)
+
 
 def deploy_application(app_deployment, dbsession):
     logger.debug("deploy_application:: %s", app_deployment)
@@ -268,6 +268,7 @@ def deploy_application(app_deployment, dbsession):
     else:
         logger.error("deploy_application::activator not found, %s!", app.activatorId)
 
+
 # Send the application to the DAC
 def send_application_deployment_to_the_dac(app_deployment, dbsession):
     app_id = app_deployment.applicationId
@@ -281,9 +282,7 @@ def send_application_deployment_to_the_dac(app_deployment, dbsession):
     )
     resp_json = None
     try:
-        response = requests.post(
-            deployment_create_url, data=application_deployment_data, headers=headers
-        )
+        response = Dac().post("/application_async", application_deployment_data)
         resp_json = response.json()
         logger.debug(
             "send_application_deployment_to_the_dac::ResponseFromDAC: %s",
@@ -320,12 +319,14 @@ def send_application_deployment_to_the_dac(app_deployment, dbsession):
             "send_application_deployment_to_the_dac::Failed updating the database with the response from the DAC."
         )
 
+
 def validate_json(some_json):
     try:
         json.loads(some_json)
         return True
     except ValueError:
         return False
+
 
 def get_application_results_from_the_dac(app_id, lzEnvId, task_id, dbsession):
     """
@@ -337,7 +338,7 @@ def get_application_results_from_the_dac(app_id, lzEnvId, task_id, dbsession):
     )
     resp_json = None
     try:
-        response = requests.get(deployment_create_result_url + task_id, headers=headers)
+        response = Dac().get("/application_async/result/create/" + task_id)
         resp_json = response.json()
         logger.debug("Response from Dac: %s", resp_json)
     except requests.exceptions.RequestException as e:
@@ -400,3 +401,4 @@ def get_application_results_from_the_dac(app_id, lzEnvId, task_id, dbsession):
     #         "get_application_results_from_the_dac::Failed updating the ApplicationResourceJSON with the response from the DAC.",
     #         500,
     #     )
+

@@ -3,9 +3,7 @@ This is the activator module and supports all the ReST actions for the
 activators collection
 """
 import logging
-import requests
 import os
-import json
 
 from pprint import pformat
 from flask import make_response, abort
@@ -15,15 +13,15 @@ from sqlalchemy.exc import SQLAlchemyError
 from config.db_lib import db_session
 from models import Activator, ActivatorSchema, ActivatorMetadata, User, Notification
 from tb_houston_service import notification
+from tb_common.remote.standard_request import Dac
 from tb_houston_service.tools import ModelTools
 from tb_houston_service.extendedSchemas import ExtendedActivatorSchema
 from tb_houston_service.extendedSchemas import ExtendedActivatorCategorySchema
 from tb_houston_service import activator_extension
 from tb_houston_service import security
 
-onboard_repo_url = f"http://{os.environ['GCP_DAC_URL']}/dac/application_async/get_repo_uri/"
-
 logger = logging.getLogger("tb_houston_service.activator")
+
 
 def read_all(
         isActive=None,
@@ -306,6 +304,7 @@ def delete(oid):
         else:
             abort(404, f"Activator id {oid} not found")
 
+
 def notify_user(message, activatorId, toUserId, importance=1):
     logger.debug(
         "notify_users fromUserId: %s message: %s activatorId: %s",
@@ -338,6 +337,7 @@ def notify_user(message, activatorId, toUserId, importance=1):
             notification.dismiss(
                 fromUserId=toUserId, activatorId=activatorId, dbsession=dbs
             )
+
 
 def notify_admins(message, activatorId, fromUserId, importance=1):
     logger.debug(
@@ -375,6 +375,7 @@ def notify_admins(message, activatorId, fromUserId, importance=1):
                 notification.create(notification_payload, typeId=1, dbsession=dbs)
                 # Auto-dismiss the previous notification from the user
                 # notification.dismiss(fromUserId = fromUserId, activatorId = activatorId, dbsession = dbs)
+
 
 def setActivatorStatus(activatorDetails):
     """
@@ -441,6 +442,7 @@ def setActivatorStatus(activatorDetails):
             actid = activatorDetails["id"]
             abort(404, f"Activator id {actid} not found")
 
+
 def categories():
     """
     :return:        distinct list of activator categories.
@@ -462,7 +464,7 @@ def post_repo_data_to_dac(activatorOnboardDetails):
     Posts repository details for cloning by the DAC
 
     :param activator:  dictionary with repoName, repoURL, tagName
-    :return:        response code from the post
+    :return:        response from the post
     """
 
     repo_name = activatorOnboardDetails["repoName"]
@@ -475,10 +477,7 @@ def post_repo_data_to_dac(activatorOnboardDetails):
         "tagName": tag_name
     }
 
-    headers = {"Content-Type": "application/json"}
-    resp = requests.post(onboard_repo_url, headers=headers, data=json.dumps(payload, indent=4))
-
-    return resp.status_code
+    return Dac().post("/get_repo_uri", payload)
 
 
 def onboard(activatorOnboardDetails):
