@@ -3395,9 +3395,6 @@ components:
         gitRepoUrl:
           type: string
           description: gitRepoUrl
-        gitSnapshotJson:
-          type: string
-          description: gitSnapshotJson
 
     Application:
       type: object

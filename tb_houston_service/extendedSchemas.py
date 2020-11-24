@@ -96,7 +96,6 @@ class ExtendedActivatorSchema(Schema):
     accessRequestedBy = fields.Nested(ExtendedUserSchema(many=False))
     source = fields.Str()
     gitRepoUrl = fields.Str()
-    gitSnapshotJson = fields.Str()
     activatorMetadata = fields.Nested(ExtendedActivatorMetadataSchema(many=False))
 
     @post_load(pass_original=True)
