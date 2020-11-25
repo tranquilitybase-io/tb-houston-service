@@ -2948,7 +2948,6 @@ components:
                 type: string
       required: true
 
-
     activator.activatorOnboardDetails:
       content:
         application/json:
@@ -2958,14 +2957,13 @@ components:
             properties:
               id:
                 type: integer
-              repoName:
+              activatorName:
                 type: string
               repoURL:
                 type: string
               tagName:
                 type: string
       required: true
-
 
     businessUnit.businessUnitDetails:
       content:

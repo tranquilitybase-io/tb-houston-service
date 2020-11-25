@@ -474,16 +474,19 @@ def post_repo_data_to_dac(activatorOnboardDetails):
     :return:        response code from the post
     """
 
-    repo_name = activatorOnboardDetails["repoName"]
+    activator_name = activatorOnboardDetails["activatorName"]
     repo_url = activatorOnboardDetails["repoURL"]
     tag_name = activatorOnboardDetails["tagName"]
 
     payload = {
-        "repoName": repo_name,
-        "repoURL": repo_url,
-        "tagName": tag_name
+        "repo":{
+            "activatorName": activator_name,
+            "repoURL": repo_url,
+            "tagName": tag_name
+        }
     }
 
+    print(" " + str(payload), flush=True)
     headers = {"Content-Type": "application/json"}
     return requests.post(onboard_repo_url, headers=headers, data=json.dumps(payload, indent=4))
 
