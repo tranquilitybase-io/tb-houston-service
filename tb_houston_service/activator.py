@@ -466,7 +466,7 @@ def categories():
         return data, 200
 
 
-def post_repo_data_to_dac(activatorOnboardDetails):
+def post_repo_data_to_dac(oid: int):
     """
     Posts repository details for cloning by the DAC
 
@@ -474,9 +474,16 @@ def post_repo_data_to_dac(activatorOnboardDetails):
     :return:        response code from the post
     """
 
-    activator_name = activatorOnboardDetails["activatorName"]
-    repo_url = activatorOnboardDetails["repoURL"]
-    tag_name = activatorOnboardDetails["tagName"]
+    with db_session() as dbs:
+        act = dbs.query(Activator).filter(Activator.id == oid).one_or_none()
+        act_meta = dbs.query(ActivatorMetadata).filter(ActivatorMetadata.activatorId == oid).one_or_none()
+
+        if act and act_meta:
+            activator_name = act.name
+            repo_url = act.gitRepoUrl
+            tag_name = act_meta.latestVersion
+        else:
+            raise Exception("Error retrieving data from db")
 
     payload = {
         "repo":{
@@ -498,12 +505,15 @@ def onboard(activatorOnboardDetails):
     :param activator:  activator to create in activator list
     :return:        200 on success, 406 on activator not-exists, 500 DAC call failed
     """
-    response = post_repo_data_to_dac(activatorOnboardDetails)
+
+    oid = activatorOnboardDetails["id"]
+    response = post_repo_data_to_dac(oid)
 
     if response.status_code == 201:
 
         with db_session() as dbs:
-            oid = activatorOnboardDetails["id"]
+            print("db_session", flush=True)
+            print("oid", flush=True)
             act = dbs.query(Activator).filter(Activator.id == oid).one_or_none()
 
             if act:
@@ -514,10 +524,7 @@ def onboard(activatorOnboardDetails):
             else:
                 abort(406, "Unable to find activator.")
 
-            act = activator_extension.expand_activator(act, dbs)
-            schema = ExtendedActivatorSchema(many=False)
-            data = schema.dump(act)
-            return data, 201
+            return 201
 
     else:
         abort(500, "Unable to clone repository")

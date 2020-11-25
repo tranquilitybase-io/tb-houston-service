@@ -2957,12 +2957,6 @@ components:
             properties:
               id:
                 type: integer
-              activatorName:
-                type: string
-              repoURL:
-                type: string
-              tagName:
-                type: string
       required: true
 
     businessUnit.businessUnitDetails:
