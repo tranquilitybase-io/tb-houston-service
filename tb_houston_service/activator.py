@@ -476,24 +476,22 @@ def post_repo_data_to_dac(oid: int):
 
     with db_session() as dbs:
         act = dbs.query(Activator).filter(Activator.id == oid).one_or_none()
-        act_meta = dbs.query(ActivatorMetadata).filter(ActivatorMetadata.activatorId == oid).one_or_none()
 
-        if act and act_meta:
-            activator_name = act.name
+        if act:
             repo_url = act.gitRepoUrl
-            tag_name = act_meta.latestVersion
+            activator_name = repo_url.rsplit('/', 1)[-1]
+            if not activator_name or ' ' in activator_name:
+                raise Exception("repo name from url invalid, is activator 'draft'?")
         else:
             raise Exception("Error retrieving data from db")
 
     payload = {
         "repo":{
-            "activatorName": activator_name,
-            "repoURL": repo_url,
-            "tagName": tag_name
+            "name": activator_name,
+            "url": repo_url
         }
     }
 
-    print(" " + str(payload), flush=True)
     headers = {"Content-Type": "application/json"}
     return requests.post(onboard_repo_url, headers=headers, data=json.dumps(payload, indent=4))
 
@@ -507,13 +505,16 @@ def onboard(activatorOnboardDetails):
     """
 
     oid = activatorOnboardDetails["id"]
-    response = post_repo_data_to_dac(oid)
+    response = False
 
-    if response.status_code == 201:
+    try:
+        response = post_repo_data_to_dac(oid)
+    except Exception as ex:
+        logger.exception(ex)
+
+    if response and response.status_code == 201:
 
         with db_session() as dbs:
-            print("db_session", flush=True)
-            print("oid", flush=True)
             act = dbs.query(Activator).filter(Activator.id == oid).one_or_none()
 
             if act:
