@@ -474,15 +474,19 @@ def post_repo_data_to_dac(oid: int):
     :return:        response code from the post
     """
 
+    logger.debug("running post_repo_data_to_dac")
     with db_session() as dbs:
         act = dbs.query(Activator).filter(Activator.id == oid).one_or_none()
 
         if act:
+            logger.debug("DB entry found")
             repo_url = act.gitRepoUrl
             activator_name = repo_url.rsplit('/', 1)[-1]
             if not activator_name or ' ' in activator_name:
+                logger.debug("repo name from url invalid, is activator 'draft'?")
                 raise Exception("repo name from url invalid, is activator 'draft'?")
         else:
+            logger.debug("DB entry not found")
             raise Exception("Error retrieving data from db")
 
     payload = {
@@ -492,8 +496,11 @@ def post_repo_data_to_dac(oid: int):
         }
     }
 
+    logger.debug("post_repo_data_to_dac sending post")
     headers = {"Content-Type": "application/json"}
-    return requests.post(onboard_repo_url, headers=headers, data=json.dumps(payload, indent=4))
+    response = requests.post(onboard_repo_url, headers=headers, data=json.dumps(payload, indent=4))
+    logger.debug("post_repo_data_to_dac response received")
+    return response
 
 
 def onboard(activatorOnboardDetails):
@@ -510,10 +517,11 @@ def onboard(activatorOnboardDetails):
     try:
         response = post_repo_data_to_dac(oid)
     except Exception as ex:
+        logger.debug("exception encountered running post_repo_data_to_dac")
         logger.exception(ex)
 
-    if response and response.status_code == 201:
-
+    if 200 <= response.status_code <= 299:
+        logger.debug("response.status_code in range " + str(response.status_code))
         with db_session() as dbs:
             act = dbs.query(Activator).filter(Activator.id == oid).one_or_none()
 
@@ -523,9 +531,12 @@ def onboard(activatorOnboardDetails):
                 dbs.merge(act)
                 dbs.commit()
             else:
+                logger.debug("Unable to clone repository, return 406")
                 abort(406, "Unable to find activator.")
 
+            logger.debug("Success, return 201")
             return 201
 
     else:
+        logger.debug("Unable to clone repository, return 500")
         abort(500, "Unable to clone repository")
