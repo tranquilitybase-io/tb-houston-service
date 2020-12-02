@@ -475,14 +475,14 @@ def post_repo_data_to_dac(oid: int):
     """
 
     logger.debug("running post_repo_data_to_dac")
-    activator_name = "not found"
+    activator_name: str = "not found"
     with db_session() as dbs:
         act = dbs.query(Activator).filter(Activator.id == oid).one_or_none()
 
         if act:
             logger.debug("DB entry found")
             repo_url = act.gitRepoUrl
-            activator_name = repo_url.rsplit('/', 1)[-1]
+            activator_name = repo_url.split('/')[-4].strip()
             if not activator_name or ' ' in activator_name:
                 logger.debug("repo name from url invalid, is activator 'draft'?")
                 raise Exception("repo name from url invalid, is activator 'draft'?")
@@ -539,7 +539,7 @@ def onboard(activatorOnboardDetails):
                 abort(406, "Unable to find activator.")
 
             logger.debug("Success, return 201")
-            return 201 # , "Activator {0} has been successfully onboarded".format(activator_name)
+            return "Activator {0} has been successfully onboarded".format(activator_name), 200
 
     else:
         logger.debug("Unable to clone repository, return 500")
