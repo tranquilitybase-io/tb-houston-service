@@ -475,6 +475,7 @@ def post_repo_data_to_dac(oid: int):
     """
 
     logger.debug("running post_repo_data_to_dac")
+    activator_name = "not found"
     with db_session() as dbs:
         act = dbs.query(Activator).filter(Activator.id == oid).one_or_none()
 
@@ -500,7 +501,7 @@ def post_repo_data_to_dac(oid: int):
     headers = {"Content-Type": "application/json"}
     response = requests.post(onboard_repo_url, headers=headers, data=json.dumps(payload, indent=4))
     logger.debug("post_repo_data_to_dac response received")
-    return response
+    return response, activator_name
 
 
 def onboard(activatorOnboardDetails):
@@ -513,9 +514,12 @@ def onboard(activatorOnboardDetails):
 
     oid = activatorOnboardDetails["id"]
     response = False
+    activator_name = "not found"
 
     try:
-        response = post_repo_data_to_dac(oid)
+        ret = post_repo_data_to_dac(oid)
+        response = ret[0]
+        activator_name = ret[1]
     except Exception as ex:
         logger.debug("exception encountered running post_repo_data_to_dac")
         logger.exception(ex)
@@ -535,7 +539,7 @@ def onboard(activatorOnboardDetails):
                 abort(406, "Unable to find activator.")
 
             logger.debug("Success, return 201")
-            return 201
+            return 201 # , "Activator {0} has been successfully onboarded".format(activator_name)
 
     else:
         logger.debug("Unable to clone repository, return 500")
