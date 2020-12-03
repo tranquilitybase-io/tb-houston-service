@@ -540,7 +540,7 @@ def onboard(activatorOnboardDetails):
     :param activator:  activator to create in activator list
     :return:        200 on success, 406 on activator not-exists, 500 DAC call failed
     """
-
+    onboarded_state = "Onboarded"
     oid = activatorOnboardDetails["id"]
     response = False
     activator_name = "not found"
@@ -553,13 +553,13 @@ def onboard(activatorOnboardDetails):
         logger.debug("exception encountered running post_repo_data_to_dac")
         logger.exception(ex)
 
-    if 200 <= response.status_code <= 299:
+    if response and 200 <= response.status_code <= 299:
         logger.debug("response.status_code in range " + str(response.status_code))
         with db_session() as dbs:
             act = dbs.query(Activator).filter(Activator.id == oid).one_or_none()
 
             if act:
-                act.status = "Onboarded"
+                act.status = onboarded_state
                 act.gitSnapshotJson = str(response.json())
                 dbs.merge(act)
                 dbs.commit()
@@ -568,7 +568,14 @@ def onboard(activatorOnboardDetails):
                 abort(406, "Unable to find activator.")
 
             logger.debug("Success, return 201")
-            return "Activator {0} has been successfully onboarded".format(activator_name), 200
+
+            payload = {
+                "message": "Activator {0} has been successfully onboarded".format(activator_name),
+                "onboardingState": onboarded_state,
+                "id": oid
+            }
+
+            return make_response(payload, 200)
 
     else:
         logger.debug("Unable to clone repository, return 500")
