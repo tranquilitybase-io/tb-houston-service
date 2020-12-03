@@ -466,6 +466,33 @@ def categories():
         return data, 200
 
 
+def generate_name_from_repo_url(repo_url: str) -> str:
+    logger.debug("generate_name_from_repo_url from argument: " + repo_url)
+
+    if "https://github.com/" in repo_url:
+        repo_url = repo_url.replace("https://github.com/", "")
+
+    if "/blob/master/main.tf" in repo_url:
+        repo_url = repo_url.replace("/blob/master/main.tf", "")
+
+    if repo_url.count("/") > 0:
+        repo_url = repo_url.split("/")[1]
+    else:
+        raise Exception("Error generating name from repo, unexpected slash count")
+
+    return repo_url
+
+
+def check_url_valid(repo_url: str) -> bool:
+    if not repo_url or ' ' in repo_url:
+        return False
+
+    if not "https://github.com/" in repo_url:
+        return False
+
+    return True
+
+
 def post_repo_data_to_dac(oid: int):
     """
     Posts repository details for cloning by the DAC
@@ -482,8 +509,10 @@ def post_repo_data_to_dac(oid: int):
         if act:
             logger.debug("DB entry found")
             repo_url = act.gitRepoUrl
-            activator_name = repo_url.split('/')[-4].strip()
-            if not activator_name or ' ' in activator_name:
+            url_valid = check_url_valid(repo_url)
+            if url_valid:
+                activator_name = generate_name_from_repo_url(repo_url)
+            else:
                 logger.debug("repo name from url invalid, is activator 'draft'?")
                 raise Exception("repo name from url invalid, is activator 'draft'?")
         else:
