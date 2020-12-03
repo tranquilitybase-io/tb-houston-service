@@ -3,6 +3,10 @@ This is the activator module and supports all the ReST actions for the
 activators collection
 """
 import logging
+import requests
+import os
+import json
+
 from pprint import pformat
 from flask import make_response, abort
 from sqlalchemy import literal_column
@@ -17,7 +21,10 @@ from tb_houston_service.extendedSchemas import ExtendedActivatorCategorySchema
 from tb_houston_service import activator_extension
 from tb_houston_service import security
 
+onboard_repo_url = f"http://{os.environ['GCP_DAC_URL']}/dac/get_repo_uri/"
+
 logger = logging.getLogger("tb_houston_service.activator")
+
 
 def read_all(
         isActive=None,
@@ -120,6 +127,7 @@ def read_all(
     else:
         abort(404, "No Activators found with matching criteria")
 
+
 def read_one(oid):
     """
     This function responds to a request for /api/activator/{key}
@@ -144,6 +152,7 @@ def read_one(oid):
             return data, 200
         else:
             abort(404, f"Activator with id {oid} not found".format(id=oid))
+
 
 def create(activatorDetails):
     """
@@ -185,6 +194,7 @@ def create(activatorDetails):
         schema = ExtendedActivatorSchema(many=False)
         data = schema.dump(new_activator)
         return data, 201
+
 
 def update(oid, activatorDetails):
     """
@@ -258,6 +268,7 @@ def update(oid, activatorDetails):
         else:
             abort(404, f"Activator id {oid} not found")
 
+
 def delete(oid):
     """
     This function deletes an activator from the activators list
@@ -300,6 +311,7 @@ def delete(oid):
         else:
             abort(404, f"Activator id {oid} not found")
 
+
 def notify_user(message, activatorId, toUserId, importance=1):
     logger.debug(
         "notify_users fromUserId: %s message: %s activatorId: %s",
@@ -332,6 +344,7 @@ def notify_user(message, activatorId, toUserId, importance=1):
             notification.dismiss(
                 fromUserId=toUserId, activatorId=activatorId, dbsession=dbs
             )
+
 
 def notify_admins(message, activatorId, fromUserId, importance=1):
     logger.debug(
@@ -369,6 +382,7 @@ def notify_admins(message, activatorId, fromUserId, importance=1):
                 notification.create(notification_payload, typeId=1, dbsession=dbs)
                 # Auto-dismiss the previous notification from the user
                 # notification.dismiss(fromUserId = fromUserId, activatorId = activatorId, dbsession = dbs)
+
 
 def setActivatorStatus(activatorDetails):
     """
@@ -435,6 +449,7 @@ def setActivatorStatus(activatorDetails):
             actid = activatorDetails["id"]
             abort(404, f"Activator id {actid} not found")
 
+
 def categories():
     """
     :return:        distinct list of activator categories.
@@ -450,24 +465,118 @@ def categories():
         data = schema.dump(categories_arr)
         return data, 200
 
+
+def generate_name_from_repo_url(repo_url: str) -> str:
+    logger.debug("generate_name_from_repo_url from argument: " + repo_url)
+
+    if "https://github.com/" in repo_url:
+        repo_url = repo_url.replace("https://github.com/", "")
+
+    if "/blob/master/main.tf" in repo_url:
+        repo_url = repo_url.replace("/blob/master/main.tf", "")
+
+    if repo_url.count("/") > 0:
+        repo_url = repo_url.split("/")[1]
+    else:
+        raise Exception("Error generating name from repo, unexpected slash count")
+
+    return repo_url
+
+
+def check_url_valid(repo_url: str) -> bool:
+    if not repo_url or ' ' in repo_url:
+        return False
+
+    if not "https://github.com/" in repo_url:
+        return False
+
+    return True
+
+
+def post_repo_data_to_dac(oid: int):
+    """
+    Posts repository details for cloning by the DAC
+
+    :param activator:  dictionary with repoName, repoURL, tagName
+    :return:        response code from the post
+    """
+
+    logger.debug("running post_repo_data_to_dac")
+    activator_name: str = "not found"
+    with db_session() as dbs:
+        act = dbs.query(Activator).filter(Activator.id == oid).one_or_none()
+
+        if act:
+            logger.debug("DB entry found")
+            repo_url = act.gitRepoUrl
+            url_valid = check_url_valid(repo_url)
+            if url_valid:
+                activator_name = generate_name_from_repo_url(repo_url)
+            else:
+                logger.debug("repo name from url invalid, is activator 'draft'?")
+                raise Exception("repo name from url invalid, is activator 'draft'?")
+        else:
+            logger.debug("DB entry not found")
+            raise Exception("Error retrieving data from db")
+
+    payload = {
+        "repo":{
+            "name": activator_name,
+            "url": repo_url
+        }
+    }
+
+    logger.debug("post_repo_data_to_dac sending post")
+    headers = {"Content-Type": "application/json"}
+    response = requests.post(onboard_repo_url, headers=headers, data=json.dumps(payload, indent=4))
+    logger.debug("post_repo_data_to_dac response received")
+    return response, activator_name
+
+
 def onboard(activatorOnboardDetails):
     """
     This function onboards an activator given an activator id
 
     :param activator:  activator to create in activator list
-    :return:        200 on success, 406 on activator not-exists
+    :return:        200 on success, 406 on activator not-exists, 500 DAC call failed
     """
-    with db_session() as dbs:
-        oid = activatorOnboardDetails["id"]
-        act = dbs.query(Activator).filter(Activator.id == oid).one_or_none()
-        if act:
-            act.status = "Available"
-            dbs.merge(act)
-            dbs.commit()
-        else:
-            abort(406, "Unable to find activator.")
-         # Expand Activator
-        act = activator_extension.expand_activator(act, dbs)
-        schema = ExtendedActivatorSchema(many=False)
-        data = schema.dump(act)
-        return data, 201
+    onboarded_state = "Onboarded"
+    oid = activatorOnboardDetails["id"]
+    response = False
+    activator_name = "not found"
+
+    try:
+        ret = post_repo_data_to_dac(oid)
+        response = ret[0]
+        activator_name = ret[1]
+    except Exception as ex:
+        logger.debug("exception encountered running post_repo_data_to_dac")
+        logger.exception(ex)
+
+    if response and 200 <= response.status_code <= 299:
+        logger.debug("response.status_code in range " + str(response.status_code))
+        with db_session() as dbs:
+            act = dbs.query(Activator).filter(Activator.id == oid).one_or_none()
+
+            if act:
+                act.status = onboarded_state
+                act.gitSnapshotJson = str(response.json())
+                dbs.merge(act)
+                dbs.commit()
+            else:
+                logger.debug("Unable to clone repository, return 406")
+                abort(406, "Unable to find activator.")
+
+            logger.debug("Success, return 201")
+
+            payload = {
+                "message": "Activator {0} has been successfully onboarded".format(activator_name),
+                "onboardingState": onboarded_state,
+                "id": oid
+            }
+
+            return make_response(payload, 200)
+
+    else:
+        logger.debug("Unable to clone repository, return 500")
+        abort(500, "Unable to clone repository")

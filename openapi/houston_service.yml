@@ -2948,7 +2948,6 @@ components:
                 type: string
       required: true
 
-
     activator.activatorOnboardDetails:
       content:
         application/json:
@@ -2959,7 +2958,6 @@ components:
               id:
                 type: integer
       required: true
-
 
     businessUnit.businessUnitDetails:
       content:

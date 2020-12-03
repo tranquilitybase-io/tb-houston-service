@@ -292,11 +292,25 @@ def get_meta():
 def get_categories():
 
     url = f"http://{HOUSTON_SERVICE_URL}/api/activatorcategories/"
+
     resp = requests.get(url, headers=headers)
     pprint(resp.json())
     # Validate response
     assert resp.status_code == 200
 
 
+def post_onboard():
+
+    url = f"http://{HOUSTON_SERVICE_URL}/api/activatorOnboard/"
+
+    payload = {"repoName": "repoName", "repoURL": "repoURL", "tagName": "tagName"}
+    resp = requests.post(url, headers=headers, data=json.dumps(payload, indent=4))
+    pprint(resp.json())
+
+    # Validate response, expecting 500 as we do not want to clone an actual repo for a unit test
+    assert resp.status_code == 500
+
+
 if __name__ == "__main__":
     test_activators()
+    post_onboard()
