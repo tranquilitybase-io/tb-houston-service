@@ -8,7 +8,6 @@ from tb_houston_service.tools import ModelTools
 
 logger = logging.getLogger("tb_houston_service.models")
 
-
 class Activator(db.Model):
     __tablename__ = "activator"
     __table_args__ = {'schema': 'eagle_db'}
@@ -38,14 +37,14 @@ class Activator(db.Model):
 
     def get_git_clone_url(self) -> str:
         try:
-            git_clone = self.gitSnapshotJson["git_clone"]
-            return git_clone
+            project_id = self.gitSnapshotJson["project_id"]
+            repo_name = self.gitSnapshotJson["repo_name"]
+            return f"https://source.cloud.google.com/p/{project_id}/r/{repo_name}"
         except Exception as ex:
             logger.exception(ex)
 
     def __repr__(self):
         return "<Activator(id={self.id!r}, name={self.name!r})>".format(self=self)
-
 
 
 class ActivatorSchema(ma.ModelSchema):

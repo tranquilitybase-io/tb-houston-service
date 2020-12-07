@@ -200,7 +200,6 @@ def deployment_read_all():
         #logger.debug("deployment_read_all::applications data: %s", data)
         return data, 200
 
-
 def deployment_update(app_id, lzEnvId, applicationDeploymentDetails, dbsession):
     """
     Updates an existing applications in the application list with the deployed status.
@@ -230,7 +229,6 @@ def deployment_update(app_id, lzEnvId, applicationDeploymentDetails, dbsession):
     else:
         logger.debug("deployment_update::existing application deployment not found, %s, %s", app_id, lzEnvId)
 
-
 def deploy_application(app_deployment, dbsession):
     logger.debug("deploy_application:: %s", app_deployment)
     # expand fields for DaC application deployment
@@ -242,7 +240,6 @@ def deploy_application(app_deployment, dbsession):
         ApplicationDeployment.lzEnvironmentId == LZEnvironment.id,
         LZEnvironment.id == app_deployment.lzEnvironmentId            
     ).one_or_none()
-
     if act:
         app_deployment.activatorGitUrl = Activator.get_git_clone_url()
         #app_deployment.deploymentEnvironment = lzenv.name.lower()
