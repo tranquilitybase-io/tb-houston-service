@@ -35,10 +35,11 @@ class Activator(db.Model):
     gitRepoUrl = db.Column(db.String(255))
     gitSnapshotJson = db.Column(db.String(2048))
 
-    def get_git_clone_url(self) -> str:
+    @staticmethod
+    def get_git_clone_url() -> str:
         try:
-            project_id = self.gitSnapshotJson["project_id"]
-            repo_name = self.gitSnapshotJson["repo_name"]
+            project_id = Activator.gitSnapshotJson["project_id"]
+            repo_name = Activator.gitSnapshotJson["repo_name"]
             return f"https://source.cloud.google.com/p/{project_id}/r/{repo_name}"
         except Exception as ex:
             logger.exception(ex)
