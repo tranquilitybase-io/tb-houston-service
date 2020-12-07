@@ -35,13 +35,6 @@ class Activator(db.Model):
     gitRepoUrl = db.Column(db.String(255))
     gitSnapshotJson = db.Column(db.String(2048))
 
-    @staticmethod
-    def get_git_clone_url() -> str:
-        try:
-            return Activator.gitSnapshotJson["git_clone_url"]
-        except Exception as ex:
-            logger.exception(ex)
-
     def __repr__(self):
         return "<Activator(id={self.id!r}, name={self.name!r})>".format(self=self)
 
