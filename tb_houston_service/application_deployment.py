@@ -244,8 +244,7 @@ def deploy_application(app_deployment, dbsession):
     ).one_or_none()
 
     if act:
-        app_deployment.activatorGitUrl = actMetadata.activatorLinks
-        app_deployment.gitSnapshotJson = Activator.get_git_clone_url()
+        app_deployment.activatorGitUrl = Activator.get_git_clone_url()
         #app_deployment.deploymentEnvironment = lzenv.name.lower()
         app_deployment.workspaceProjectId = app_deployment.workspaceProjectId
         app_deployment.deploymentProjectId = app_deployment.deploymentProjectId
