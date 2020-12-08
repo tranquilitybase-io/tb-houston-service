@@ -2881,7 +2881,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/KeyValue"
 
-
 components:
 
   # Define the security scheme type (HTTP bearer)
@@ -3270,6 +3269,17 @@ components:
             $ref: "#/components/schemas/KeyValue"                         
       description: the key value to create
       required: true
+
+
+    systemsettings.settingsDetails:
+      content:
+        application/json:
+          schema:
+            x-body-name: settingsDetails
+            $ref: "#/components/schemas/settings"
+      description: settingsDetails to create
+      required: true
+
 
   schemas:
     Activator:
@@ -4103,6 +4113,20 @@ components:
         value: 
           type: string
           description: The value
-                       
 
 
+    Systemsettings:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: id
+        userId:
+          type: integer
+          description: id
+        username:
+          type: string
+          description: Git username
+        token:
+          type: string
+          description: Git access token
