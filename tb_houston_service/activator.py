@@ -523,6 +523,10 @@ def post_repo_data_to_dac(oid: int):
         "repo":{
             "name": activator_name,
             "url": repo_url
+        },
+        "cred":{
+            "user": "",
+            "token": ""
         }
     }
 
