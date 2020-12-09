@@ -505,7 +505,8 @@ def post_repo_data_to_dac(oid: int, userId: int):
     activator_name: str = "not found"
     with db_session() as dbs:
         act = dbs.query(Activator).filter(Activator.id == oid).one_or_none()
-        user_settings = systemsettings.read_one(userId)
+        user_settings = systemsettings.get_onboard_token(userId)
+        logger.debug(f"System settings {user_settings}")
         if act:
             logger.debug("DB entry found")
             repo_url = act.gitRepoUrl
@@ -544,20 +545,20 @@ def onboard(activatorOnboardDetails):
     :param activator:  activator to create in activator list
     :return:        200 on success, 406 on activator not-exists, 500 DAC call failed
     """
-    with db_session() as dbs:
-        user = security.get_valid_user_from_token(dbsession=dbs)
-        if not (user and user.isAdmin):
-            abort(401, f"Not Authorized")
-
     onboarded_state = "Locked"
     oid = activatorOnboardDetails["id"]
     response = False
     activator_name = "not found"
 
     try:
-        ret = post_repo_data_to_dac(oid, user.id)
-        response = ret[0]
-        activator_name = ret[1]
+        with db_session() as dbs:
+            user = security.get_valid_user_from_token(dbsession=dbs)
+            if not (user and user.isAdmin):
+                abort(401, f"Not Authorized")
+
+            ret = post_repo_data_to_dac(oid, user.id)
+            response = ret[0]
+            activator_name = ret[1]
     except Exception as ex:
         logger.debug("exception encountered running post_repo_data_to_dac")
         logger.exception(ex)
