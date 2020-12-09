@@ -14,10 +14,11 @@ class Systemsettings(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     userId = db.Column(db.Integer)
     username = db.Column(db.String(255))
-    token = db.Column(db.Bytes(255))
+    token = db.Column(db.String(255))
+    lastUpdated = db.Column(db.String(20))
 
     def __repr__(self):
-        return "<Systemsettings(id={self.id!r}, user={self.user!r})>".format(
+        return "<Systemsettings(id={self.id!r}, username={self.username!r}, token={self.token!r})>".format(
             self=self
         )
 

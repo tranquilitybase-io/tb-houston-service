@@ -4,31 +4,16 @@ supports all the ReST actions for the
 system settings collection
 """
 from pprint import pformat
-from typing import Final
 
-from cryptography.fernet import Fernet
 from flask import make_response, abort
+from sqlalchemy import text
 
 from config import db, app
 from models import Systemsettings, SystemsettingsSchema
 from tb_houston_service.extendedSchemas import ExtendedSystemsettingsSchema
+from tb_houston_service.key_utils import _KEY, encrypt, decrypt
 
-# db hash key
-K: Final[bytes] = Fernet.generate_key()
-
-
-def read_all():
-    """
-    Gets the complete lists of system settings
-    :return:        json string of list of system settings
-    """
-    # Create the list of system settings from our data
-    settings = db.session.query(Systemsettings).order_by(Systemsettings.id).all()
-    app.logger.debug(pformat(settings))
-    # Serialize the data for the response
-    settings_schema = ExtendedSystemsettingsSchema(many=True)
-    data = settings_schema.dump(settings)
-    return data, 200
+K = _KEY.VAL
 
 
 def read_one(oid):
@@ -42,7 +27,11 @@ def read_one(oid):
     s = db.session.query(Systemsettings).filter(Systemsettings.id == oid).one_or_none()
     if s is not None:
         # Serialize the data for the response decrypt token
-        s['token'] = decrypt(s['token'], K) if s['token'] is not None else s['token']
+        if s.token is not None:
+            t = bytes(s.token, 'ascii')
+            s.token = decrypt(t, K).decode('ascii')
+        else:
+            raise RuntimeError('Unable to decrypt git access token')
         settings_schema = ExtendedSystemsettingsSchema()
         data = settings_schema.dump(s)
         return data, 200
@@ -63,23 +52,18 @@ def create(settingsDetails):
 
     # Does the settings entry exists for given git username?
     s = (
-        db.session.query(Systemsettings)
-            .filter(Systemsettings.username == settingsDetails["username"])
-            .one_or_none()
+        db.session.query(Systemsettings).filter(Systemsettings.username == settingsDetails["username"]).one_or_none()
     )
 
     if s is None:
         schema = SystemsettingsSchema()
         new_entry = schema.load(settingsDetails, session=db.session)
-        new_entry['token'] = encrypt(new_entry['token'], K) if new_entry['token'] is not None else new_entry['token']
+        t = bytes(new_entry.token, 'ascii')
+        new_entry.token = encrypt(t, K).decode('ascii')
         db.session.add(new_entry)
         db.session.commit()
 
-        # Serialize and return the newly created deployment
-        # in the response
-        data = schema.dump(new_entry)
-
-        return data, 201
+        return make_response(f"Created system settings for {new_entry.username}", 200)
 
     # Otherwise, it already exists, that's an error
     return abort(406, "System settings already exists")
@@ -105,14 +89,14 @@ def update(oid, settingsDetails):
         schema = SystemsettingsSchema()
         update_settings = schema.load(settingsDetails, session=db.session)
         # Encrypt token
-        update_settings['token'] = encrypt(update_settings['token'], K) if update_settings['token'] is not None else \
-            update_settings['token']
+        t = bytes(update_settings.token, 'ascii')
+        update_settings.token = encrypt(t, K).decode('ascii')
         db.session.merge(update_settings)
         db.session.commit()
 
         # return the updated settings in the response
         data = schema.dump(update_settings)
-        return data, 200
+        return make_response(f"{oid} - system settings updated successfully deleted", 200)
 
     # otherwise, nope, deployment doesn't exist, so that's an error
     return abort(404, f"System settings {oid} not found")
@@ -128,6 +112,8 @@ def delete(oid):
     # Does entry exist?
     settings_to_del = db.session.query(Systemsettings).filter(Systemsettings.id == oid).one_or_none()
 
+    print(delete_text(oid))
+
     if settings_to_del is not None:
         db.session.merge(settings_to_del)
         db.session.commit()
@@ -138,9 +124,8 @@ def delete(oid):
     return abort(404, f"System settings {oid} not found")
 
 
-def encrypt(token: bytes, key: bytes) -> bytes:
-    return Fernet(key).encrypt(token)
-
-
-def decrypt(token: bytes, key: bytes) -> bytes:
-    return Fernet(key).decrypt(token)
+def delete_text(oid):
+    return db.session.execute(
+        text("DElETE FROM systemsettings WHERE id=:param"),
+        {"param": oid}
+    )

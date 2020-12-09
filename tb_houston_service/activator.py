@@ -20,7 +20,7 @@ from tb_houston_service.extendedSchemas import ExtendedActivatorSchema
 from tb_houston_service.extendedSchemas import ExtendedActivatorCategorySchema
 from tb_houston_service import activator_extension
 from tb_houston_service import security
-
+from tb_houston_service import systemsettings
 onboard_repo_url = f"http://{os.environ['GCP_DAC_URL']}/dac/get_repo_uri/"
 
 logger = logging.getLogger("tb_houston_service.activator")
@@ -505,7 +505,11 @@ def post_repo_data_to_dac(oid: int):
     activator_name: str = "not found"
     with db_session() as dbs:
         act = dbs.query(Activator).filter(Activator.id == oid).one_or_none()
-
+        user = security.get_valid_user_from_token(dbsession=dbs)
+        if user:
+            user_settings = systemsettings.read_one(user.id)
+            t = user_settings['token']
+            u = user_settings['username']
         if act:
             logger.debug("DB entry found")
             repo_url = act.gitRepoUrl
@@ -525,8 +529,8 @@ def post_repo_data_to_dac(oid: int):
             "url": repo_url
         },
         "cred":{
-            "user": "",
-            "token": ""
+            "user": u,
+            "token": t
         }
     }
 

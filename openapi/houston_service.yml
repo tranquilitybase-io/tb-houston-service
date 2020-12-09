@@ -54,7 +54,6 @@ paths:
                     type: boolean
                     description: is the user an admin user?
 
-                                      
   /health:
     get:
       operationId: tb_houston_service.health.check
@@ -252,6 +251,7 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Team"
+
   /team/:
     post:
       operationId: tb_houston_service.team.create
@@ -402,7 +402,6 @@ paths:
       responses:
         "201":
           description: Successfully created a user
-
   "/user/{oid}":
     get:
       operationId: tb_houston_service.user.read_one
@@ -458,7 +457,6 @@ paths:
       responses:
         "200":
           description: Successfully deleted a user
-
 
   /teamMembers/:
     get:
@@ -650,7 +648,6 @@ paths:
       responses:
         "201":
           description: Successfully created an ci
-
   "/ci/{id}":
     get:
       operationId: tb_houston_service.ci.read_one
@@ -1010,7 +1007,6 @@ paths:
       responses:
         "200":
           description: Successfully deleted a type
-
 
   /keyValues/sourceControl/:
     get:
@@ -1500,7 +1496,6 @@ paths:
         "200":
           description: Successfully retrieved a list of solution environments
 
-
   /solutionresources/:
     get:
       operationId: tb_houston_service.solutionresource.read_all
@@ -1640,7 +1635,6 @@ paths:
       responses:
         "200":
           description: Successfully deleted a solution resource JSON
-
 
   /activators/:
     get:
@@ -2199,7 +2193,6 @@ paths:
         "200":
           description: Successfully deleted a landing zone WAN
 
-
   "/lzmetadataEnv/":
     post:
       operationId: tb_houston_service.lzmetadata_env.create_all
@@ -2243,8 +2236,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/LZMetaDataEnvList"          
-
+                $ref: "#/components/schemas/LZMetaDataEnvList"
 
   "/lzmetadataLanVpc/":
     post:
@@ -2290,8 +2282,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/LZLanVpcResponseList"
-        
-                
+
   "/lzmetadataFolderStructure/":
     post:
       operationId: tb_houston_service.lzfolderstructure.create
@@ -2332,7 +2323,6 @@ paths:
       responses:
         "200":
           description: Successfully deleted the landing zone folder structure metadata
-
 
   /keyValues/bgproutingmode/:
     get:
@@ -2594,7 +2584,6 @@ paths:
         "200":
           description: Successfully deleted a vpnOnPremiseVendor
 
-
   /folders/:
     get:
       operationId: tb_houston_service.folder.read_all
@@ -2683,7 +2672,6 @@ paths:
       responses:
         "200":
           description: Successfully deleted a folder
-
 
   "/notifications/":
     post:
@@ -2799,7 +2787,6 @@ paths:
                   count:
                     type: integer
 
-
   "/getGCPProjectURL/{projectId}":
     get:
       operationId: tb_houston_service.lzmetadata.get_gcp_project_id
@@ -2821,7 +2808,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/KeyValue"
-
 
   "/lzmetadata/":
     post:
@@ -2880,6 +2866,74 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/KeyValue"
+
+  /settings/:
+    post:
+      operationId: tb_houston_service.systemsettings.create
+      tags:
+        - systemsettings
+      summary: Create systemsettings and adds to list
+      description: Create systemsettings and adds to list
+      requestBody:
+        $ref: '#/components/requestBodies/systemsettings.settingsDetails'
+      responses:
+        "201":
+          description: Successfully created a system settings
+  "/settings/{oid}":
+    get:
+      operationId: tb_houston_service.systemsettings.read_one
+      tags:
+        - systemsettings
+      summary: Read one from the list
+      description: Read one from the list
+      parameters:
+        - name: oid
+          in: path
+          description: settings key to get from the list
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successfully read an settings from the list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Systemsettings"
+    put:
+      operationId: tb_houston_service.systemsettings.update
+      tags:
+        - systemsettings
+      summary: Update a settings in the list
+      description: Update a settings in the list
+      parameters:
+        - name: oid
+          in: path
+          description: key of the settings to update
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        $ref: "#/components/requestBodies/systemsettings.settingsDetails"
+      responses:
+        "200":
+          description: Successfully updated a settings
+
+    delete:
+      operationId: tb_houston_service.systemsettings.delete
+      tags:
+        - systemsettings
+      summary: Delete a settings from the list
+      description: Delete a settings
+      parameters:
+        - name: oid
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successfully deleted a settings
 
 components:
 
@@ -3146,7 +3200,7 @@ components:
             $ref: "#/components/schemas/Login"
       description: login details
       required: true
-      
+
     solution.solutionDetails:
       content:
         application/json:
@@ -3270,13 +3324,12 @@ components:
       description: the key value to create
       required: true
 
-
     systemsettings.settingsDetails:
       content:
         application/json:
           schema:
             x-body-name: settingsDetails
-            $ref: "#/components/schemas/settings"
+            $ref: "#/components/schemas/Systemsettings"
       description: settingsDetails to create
       required: true
 
@@ -4114,7 +4167,6 @@ components:
           type: string
           description: The value
 
-
     Systemsettings:
       type: object
       properties:
@@ -4130,3 +4182,6 @@ components:
         token:
           type: string
           description: Git access token
+        lastUpdated:
+          type: string
+          description: last updated datetime
