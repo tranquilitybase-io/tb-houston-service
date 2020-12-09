@@ -11,6 +11,7 @@ from pprint import pformat
 from flask import make_response, abort
 from sqlalchemy import literal_column
 from sqlalchemy.exc import SQLAlchemyError
+from werkzeug.exceptions import Unauthorized
 
 from config.db_lib import db_session
 from models import Activator, ActivatorSchema, ActivatorMetadata, User, Notification
@@ -553,12 +554,16 @@ def onboard(activatorOnboardDetails):
     try:
         with db_session() as dbs:
             user = security.get_valid_user_from_token(dbsession=dbs)
+            logger.debug(f"Logged in user {user}")
             if not (user and user.isAdmin):
-                abort(401, f"Not Authorized")
+                abort(401)
 
             ret = post_repo_data_to_dac(oid, user.id)
             response = ret[0]
             activator_name = ret[1]
+    except Unauthorized as ex:
+        logger.debug("JWT not valid or user is not an Admin")
+        abort(401, f"Not Authorized")
     except Exception as ex:
         logger.debug("exception encountered running post_repo_data_to_dac")
         logger.exception(ex)
