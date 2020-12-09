@@ -247,10 +247,16 @@ def deploy_application(app_deployment, dbsession):
         app_deployment.workspaceProjectId = app_deployment.workspaceProjectId
         app_deployment.deploymentProjectId = app_deployment.deploymentProjectId
         app_deployment.mandatoryVariables = []
-        app_deployment.optionalVariables = []
+
+        if actMetadata:
+            app_deployment.optionalVariables = actMetadata
+        else:
+            app_deployment.optionalVariables = []
+
         app_deployment.id = app.id
         app_deployment.name = app.name
         app_deployment.description = app.description
+        # app_deployment.actMetadata = actMetadata
 
         environment, lzlanvpc = dbsession.query(LZEnvironment, LZLanVpc).filter(
             LZLanVpcEnvironment.lzlanvpcId == LZLanVpc.id, 
