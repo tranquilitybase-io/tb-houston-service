@@ -548,7 +548,7 @@ def onboard(activatorOnboardDetails):
     :param activator:  activator to create in activator list
     :return:        200 on success, 406 on activator not-exists, 500 DAC call failed
     """
-    onboarded_state = "Onboarded"
+    onboarded_state = "Locked"
     oid = activatorOnboardDetails["id"]
     response = False
     activator_name = "not found"
