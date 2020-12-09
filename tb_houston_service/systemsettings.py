@@ -129,3 +129,18 @@ def delete_text(oid):
         text("DElETE FROM systemsettings WHERE id=:param"),
         {"param": oid}
     )
+
+
+def get_onboard_token(oid):
+    s = db.session.query(Systemsettings).filter(Systemsettings.userId == oid).one_or_none()
+    if s is not None:
+        # Serialize the data for the response decrypt token
+        if s.token is not None:
+            t = bytes(s.token, 'ascii')
+            s.token = decrypt(t, K).decode('ascii')
+        else:
+            raise RuntimeError('Unable to decrypt git access token')
+        settings_schema = ExtendedSystemsettingsSchema()
+        data = settings_schema.dump(s)
+        return data, 200
+    return abort(401, f"Invalid JWT token {oid}")
