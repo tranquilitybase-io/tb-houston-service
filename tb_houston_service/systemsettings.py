@@ -141,6 +141,5 @@ def get_onboard_token(oid):
             s.token = decrypt(t, K).decode('ascii')
         else:
             raise RuntimeError('Unable to decrypt git access token')
-        data = settings_schema.dump(s)
-        return data, 200
-    return settings_schema
+    data = settings_schema.dump(s)
+    return data, 200

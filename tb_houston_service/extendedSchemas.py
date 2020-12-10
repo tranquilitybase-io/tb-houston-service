@@ -547,6 +547,6 @@ class ExtendedNotificationSchema(OneOfSchema):
 
 class ExtendedSystemsettingsSchema(Schema):
     id = fields.Int()
-    userId = fields.Nested(ExtendedUserSchema(many=False))
+    userId = fields.Nested(ExtendedUserSchema(many=True))
     username = fields.Str()
     token = fields.Str()

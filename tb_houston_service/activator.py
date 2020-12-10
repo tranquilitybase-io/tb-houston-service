@@ -50,7 +50,8 @@ def read_all(
     """
     # Create the list of activators from our data
     logger.debug(
-        "Parameters: isActive: %s, isFavourite: %s, category: %s, status: %s, environment: %s, platform: %s, type: %s, source: %s, sensitivity: %s, page: %s, page_size: %s, sort: %s",
+        "Parameters: isActive: %s, isFavourite: %s, category: %s, status: %s, environment: %s, platform: %s, "
+        "type: %s, source: %s, sensitivity: %s, page: %s, page_size: %s, sort: %s",
         isActive,
         isFavourite,
         category,
@@ -67,7 +68,7 @@ def read_all(
 
     with db_session() as dbs:
         # pre-process sort instructions
-        if sort == None:
+        if sort is None:
             activator_query = dbs.query(Activator).order_by(Activator.id)
         else:
             try:
@@ -88,30 +89,30 @@ def read_all(
                 logger.warning(e)
                 activator_query = dbs.query(Activator).order_by(Activator.id)
 
-    # filter activators by logged in user 
+    # filter activators by logged in user
     business_unit_ids = security.get_business_units_ids_for_user(dbsession=dbs)
 
     activator_metadatas = dbs.query(ActivatorMetadata).filter(
-        (category == None or ActivatorMetadata.category == category),
-        (type == None or ActivatorMetadata.typeId == type)
+        (category is None or ActivatorMetadata.category == category),
+        (type is None or ActivatorMetadata.typeId == type)
     ).all()
     act_ids = None
     if activator_metadatas:
         act_ids = [am.activatorId for am in activator_metadatas]
 
     activator_query = activator_query.filter(
-        (status == None or Activator.status == status),
-        (environment == None or Activator.envs.like('%"{}"%'.format(environment))),
-        (source == None or Activator.sourceControl.like('%"{}"%'.format(source))),
-        (sensitivity == None or Activator.sensitivity == sensitivity),
-        (isActive == None or Activator.isActive == isActive),
-        (isFavourite == None or Activator.isFavourite == isFavourite),
-        (act_ids == None or Activator.id.in_(act_ids)),
-        (business_unit_ids == None or Activator.businessUnitId.in_(business_unit_ids))
+        (status is None or Activator.status == status),
+        (environment is None or Activator.envs.like('%"{}"%'.format(environment))),
+        (source is None or Activator.sourceControl.like('%"{}"%'.format(source))),
+        (sensitivity is None or Activator.sensitivity == sensitivity),
+        (isActive is None or Activator.isActive == isActive),
+        (isFavourite is None or Activator.isFavourite == isFavourite),
+        (act_ids is None or Activator.id.in_(act_ids)),
+        (business_unit_ids is None or Activator.businessUnitId.in_(business_unit_ids))
     )
     if act_ids is None:
         activators = None
-    elif page == None or page_size == None:
+    elif page is None or page_size is None:
         activators = activator_query.all()
     else:
         activators = activator_query.limit(page_size).offset(page * page_size).all()
@@ -139,11 +140,11 @@ def read_one(oid):
     :return:              activator matching key
     """
     with db_session() as dbs:
-        # filter activators by logged in user 
+        # filter activators by logged in user
         business_unit_ids = security.get_business_units_ids_for_user(dbsession=dbs)
         act = dbs.query(Activator).filter(
             Activator.id == oid,
-            (business_unit_ids == None or Activator.businessUnitId.in_(business_unit_ids))
+            (business_unit_ids is None or Activator.businessUnitId.in_(business_unit_ids))
         ).one_or_none()
 
         if act is not None:
@@ -528,8 +529,8 @@ def post_repo_data_to_dac(oid: int, userId: int):
             "url": repo_url
         },
         "cred": {
-            "user": user_settings.username,
-            "token": user_settings.token
+            "user": user_settings['username'],
+            "token": user_settings['token']
         }
     }
 
