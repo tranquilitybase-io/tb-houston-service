@@ -95,8 +95,7 @@ def update(oid, settingsDetails):
         db.session.commit()
 
         # return the updated settings in the response
-        data = schema.dump(update_settings)
-        return make_response(f"{oid} - system settings updated successfully deleted", 200)
+        return make_response(f"{oid} - system settings successfully deleted", 200)
 
     # otherwise, nope, deployment doesn't exist, so that's an error
     return abort(404, f"System settings {oid} not found")

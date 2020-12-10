@@ -563,9 +563,9 @@ def onboard(activatorOnboardDetails):
             ret = post_repo_data_to_dac(oid, user.id)
             response = ret[0]
             activator_name = ret[1]
-    except Unauthorized as ex:
+    except Unauthorized:
         logger.debug("JWT not valid or user is not an Admin")
-        abort(401, f"Not Authorized")
+        abort(401, "Not Authorized")
     except Exception as ex:
         logger.debug("exception encountered running post_repo_data_to_dac")
         logger.exception(ex)
