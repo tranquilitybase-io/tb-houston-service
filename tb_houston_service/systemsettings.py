@@ -93,27 +93,17 @@ def delete(oid):
     """
     settings_to_del = db.session.query(Systemsettings).filter(Systemsettings.id == oid).one_or_none()
 
-    print(delete_text(oid))
-
     if settings_to_del is not None:
-        db.session.merge(settings_to_del)
+        db.session.delete(settings_to_del)
         db.session.commit()
 
         return '', 204
 
     return abort(404, f"System settings {oid} not found")
 
-
-def delete_text(oid):
-    return db.session.execute(
-        text("DELETE FROM systemsettings WHERE id=:param"),
-        {"param": oid}
-    )
-
-
-def get_github_credentials(oid):
+def get_github_credentials(userId):
     settings_schema = ExtendedSystemsettingsSchema()
-    s = db.session.query(Systemsettings).filter(Systemsettings.userId == oid).one_or_none()
+    s = db.session.query(Systemsettings).filter(Systemsettings.userId == userId).one_or_none()
     if s is None:
         s = {
             "username": "",
