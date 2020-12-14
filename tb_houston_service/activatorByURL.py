@@ -74,10 +74,11 @@ def get_file_from_repo(url):
     # Create temporary dir
     t = tempfile.mkdtemp()
     # user/token
-    u = get_user_token()
-    if u['username'] is not blank and u['token'] is not blank:
+    github_account = get_user_token()
+    logger.debug(f"GitHub account {github_account}")
+    if github_account['username'] and github_account['token']:
         # Update url to clone private repo
-        url = 'https://' + u['username'] + ':' + u['token'] + '@' + \
+        url = 'https://' + github_account['username'] + ':' + github_account['token'] + '@' + \
               url.split("https://")[1]
     # Clone into temporary dir
     repo = git.Repo.clone_from(url, t, depth=1)
@@ -185,19 +186,3 @@ def get_user_token():
     except Exception as ex:
         logger.warning("exception encountered running activatorByURL", ex.__traceback__)
 
-# def get_metadata_yml(url):
-#     out = BytesIO()
-#     curl = pycurl.Curl()
-#     try:
-#         user = get_user_token()
-#         if user['token'] is not blank and user['username'] is not blank:
-#             curl.setopt(curl.URL,
-#                         f'https://${user["token"]}@raw.githubusercontent.com/{user["username"]}/tranquilitybase-io/tb'
-#                         f'-activator-gft-base/blob/master/.tb/activator_metadata.yml')
-#             curl.setopt(curl.WRITEDATA, out)
-#             curl.perform()
-#             curl.close()
-#             return out.getvalue()
-#     except RuntimeError as e:
-#         logger.error("Invalid user or token - ", e.__traceback__)
-#         raise e
