@@ -508,8 +508,8 @@ def post_repo_data_to_dac(oid: int, userId: int):
     activator_name: str = "not found"
     with db_session() as dbs:
         act = dbs.query(Activator).filter(Activator.id == oid).one_or_none()
-        user_settings = systemsettings.get_onboard_token(userId)
-        logger.debug(f"System settings {user_settings}")
+        github_credentials = systemsettings.get_github_credentials(userId)
+        logger.debug(f"GitHub Credentials {github_credentials}")
         if act:
             logger.debug("DB entry found")
             repo_url = act.gitRepoUrl
@@ -529,8 +529,8 @@ def post_repo_data_to_dac(oid: int, userId: int):
             "url": repo_url
         },
         "cred": {
-            "user": user_settings['username'],
-            "token": user_settings['token']
+            "user": github_credentials['username'],
+            "token": github_credentials['token']
         }
     }
 

@@ -130,7 +130,7 @@ def delete_text(oid):
     )
 
 
-def get_onboard_token(oid):
+def get_github_credentials(oid):
     settings_schema = ExtendedSystemsettingsSchema()
     s = db.session.query(Systemsettings).filter(Systemsettings.userId == oid).one_or_none()
     if s is not None:

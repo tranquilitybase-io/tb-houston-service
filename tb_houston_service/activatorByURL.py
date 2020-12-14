@@ -14,7 +14,7 @@ from config.db_lib import db_session
 from models import Activator, ActivatorSchema, ActivatorMetadata, ActivatorMetadataSchema, \
     ActivatorMetadataPlatform, ActivatorMetadataPlatformSchema, \
     ActivatorMetadataVariable, ActivatorMetadataVariableSchema, Type, Platform
-from tb_houston_service import activator_extension
+from tb_houston_service import activator_extension, systemsettings
 from tb_houston_service import security
 from tb_houston_service.extendedSchemas import ExtendedActivatorSchema
 from tb_houston_service.tools import ModelTools
@@ -37,49 +37,61 @@ def create(activatorByURLDetails):
         7. Read 'optionalVariables' from yaml and insert into 'activatorVariables' table with 'isOptional'=True
 
     """
-    # get Yaml from gitgub and read the contents of the yaml file
-    act_metadata_yml_dict = get_file_from_repo(activatorByURLDetails["url"])
+    try:
+        with db_session() as dbs:
+            user = security.get_valid_user_from_token(dbsession=dbs)
+            if not (user and user.isAdmin):
+                abort(401)
 
-    with db_session() as dbs:
-        activator_id = create_activator(dbs, act_metadata_yml_dict, activatorByURLDetails["url"])
+            github_credentials = systemsettings.get_github_credentials(user.id)
+            
+            # get Yaml from gitgub and read the contents of the yaml file
+            act_metadata_yml_dict = get_file_from_repo(activatorByURLDetails["url"], github_credentials)
 
-        activator_metadata = create_activator_metadata(dbs, act_metadata_yml_dict, activator_id,
-                                                       activatorByURLDetails["url"])
+            activator_id = create_activator(dbs, act_metadata_yml_dict, activatorByURLDetails["url"])
 
-        create_activator_metadata_platforms(dbs, act_metadata_yml_dict, activator_metadata.id)
+            activator_metadata = create_activator_metadata(dbs, act_metadata_yml_dict, activator_id,
+                                                        activatorByURLDetails["url"])
 
-        mandatoryVariables = act_metadata_yml_dict["mandatoryVariables"]
-        create_activator_metadata_variables(dbs, activator_metadata.id, mandatoryVariables, False)
+            create_activator_metadata_platforms(dbs, act_metadata_yml_dict, activator_metadata.id)
 
-        optionalVariables = act_metadata_yml_dict["optionalVariables"]
-        create_activator_metadata_variables(dbs, activator_metadata.id, optionalVariables, True)
+            mandatoryVariables = act_metadata_yml_dict["mandatoryVariables"]
+            create_activator_metadata_variables(dbs, activator_metadata.id, mandatoryVariables, False)
 
-        # return the activator
-        # filter activators by logged in user 
-        business_unit_ids = security.get_business_units_ids_for_user(dbsession=dbs)
-        act = dbs.query(Activator).filter(
-            Activator.id == activator_id,
-            (business_unit_ids == None or Activator.businessUnitId.in_(business_unit_ids))
-        ).one_or_none()
+            optionalVariables = act_metadata_yml_dict["optionalVariables"]
+            create_activator_metadata_variables(dbs, activator_metadata.id, optionalVariables, True)
 
-        if act is not None:
-            # Expand Activator
-            act = activator_extension.expand_activator(act, dbs)
-            schema = ExtendedActivatorSchema(many=False)
-            data = schema.dump(act)
-            return data, 200
+            # return the activator
+            # filter activators by logged in user 
+            business_unit_ids = security.get_business_units_ids_for_user(dbsession=dbs)
+            act = dbs.query(Activator).filter(
+                Activator.id == activator_id,
+                (business_unit_ids == None or Activator.businessUnitId.in_(business_unit_ids))
+            ).one_or_none()
+
+            if act is not None:
+                # Expand Activator
+                act = activator_extension.expand_activator(act, dbs)
+                schema = ExtendedActivatorSchema(many=False)
+                data = schema.dump(act)
+                return data, 200
+
+    except Unauthorized:
+        logger.debug("JWT not valid or user is not an Admin")
+        abort(401, "Not Authorized")
+    except Exception as ex:
+        logger.exception(ex)
+        abort(500, "Internal Server Error")
 
 
-def get_file_from_repo(url):
+def get_file_from_repo(url, github_credentials):
     # Create temporary dir
     t = tempfile.mkdtemp()
     # user/token
-    github_account = get_user_token()
-    logger.debug(f"GitHub account {github_account}")
-    if github_account['username'] and github_account['token']:
+    logger.debug(f"GitHub Credentials {github_credentials}")
+    if github_credentials['username'] and github_credentials['token']:
         # Update url to clone private repo
-        url = 'https://' + github_account['username'] + ':' + github_account['token'] + '@' + \
-              url.split("https://")[1]
+        url = f"https://{github_credentials['username']}:{github_credentials['token']}@{url.split('https://')[1]}"
     # Clone into temporary dir
     repo = git.Repo.clone_from(url, t, depth=1)
     tag = repo.tags.pop()
@@ -170,19 +182,3 @@ def expand_activator_metadata(act_metadata, dbs):
         ActivatorMetadata.id == act_metadata.id).all()
 
     return act_metadata
-
-
-def get_user_token():
-    try:
-        with db_session() as dbs:
-            user = security.get_valid_user_from_token(dbsession=dbs)
-            logger.debug(f"Logged in user {user}")
-            if not (user and user.isAdmin):
-                abort(401)
-            return user
-    except Unauthorized as ex:
-        logger.warning("JWT not valid or user is not an Admin", ex.__traceback__)
-        abort(401, f"Not Authorized")
-    except Exception as ex:
-        logger.warning("exception encountered running activatorByURL", ex.__traceback__)
-
