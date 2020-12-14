@@ -2895,7 +2895,7 @@ paths:
             type: integer
       responses:
         "200":
-          description: Successfully read an settings from the list
+          description: Successfully read a system settings from the list
           content:
             application/json:
               schema:
@@ -2904,12 +2904,12 @@ paths:
       operationId: tb_houston_service.systemsettings.update
       tags:
         - systemsettings
-      summary: Update a settings in the list
-      description: Update a settings in the list
+      summary: Update a system settings in the list
+      description: Update a system settings in the list
       parameters:
         - name: oid
           in: path
-          description: key of the settings to update
+          description: key of the system settings to update
           required: true
           schema:
             type: integer
@@ -2917,14 +2917,14 @@ paths:
         $ref: "#/components/requestBodies/systemsettings.settingsDetails"
       responses:
         "200":
-          description: Successfully updated a settings
+          description: Successfully updated a system settings
 
     delete:
       operationId: tb_houston_service.systemsettings.delete
       tags:
         - systemsettings
-      summary: Delete a settings from the list
-      description: Delete a settings
+      summary: Delete a system settings from the list
+      description: Delete a system settings
       parameters:
         - name: oid
           in: path
@@ -2932,8 +2932,8 @@ paths:
           schema:
             type: integer
       responses:
-        "200":
-          description: Successfully deleted a settings
+        "204":
+          description: Successfully deleted a system settings
 
 components:
 
