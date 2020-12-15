@@ -8,11 +8,11 @@ from flask import make_response, abort
 
 from config import db, executor
 from config.db_lib import db_session
-from models import  Application, Activator, ActivatorMetadata, \
-                    ApplicationDeployment, ApplicationDeploymentSchema, \
-                    LZLanVpc, LZEnvironment, LZLanVpcEnvironment, \
-                    Solution, SolutionEnvironment, SolutionResource
-from tb_houston_service import security
+from models import Application, Activator, ActivatorMetadata, \
+    ApplicationDeployment, ApplicationDeploymentSchema, \
+    LZLanVpc, LZEnvironment, LZLanVpcEnvironment, \
+    Solution, SolutionEnvironment, SolutionResource, ActivatorMetadataVariable
+from tb_houston_service import security, activator_extension
 from tb_houston_service import notification
 from tb_houston_service.DeploymentStatus import DeploymentStatus
 from tb_houston_service.tools import ModelTools
@@ -230,6 +230,8 @@ def deployment_update(app_id, lzEnvId, applicationDeploymentDetails, dbsession):
         logger.debug("deployment_update::existing application deployment not found, %s, %s", app_id, lzEnvId)
 
 def deploy_application(app_deployment, dbsession):
+
+
     logger.debug("deploy_application:: %s", app_deployment)
     # expand fields for DaC application deployment
     app, act, actMetadata, lzenv = dbsession.query(Application, Activator, ActivatorMetadata, LZEnvironment).filter(
@@ -238,25 +240,51 @@ def deploy_application(app_deployment, dbsession):
         Application.id == app_deployment.applicationId,
         ApplicationDeployment.applicationId == Application.id,
         ApplicationDeployment.lzEnvironmentId == LZEnvironment.id,
-        LZEnvironment.id == app_deployment.lzEnvironmentId            
+        LZEnvironment.id == app_deployment.lzEnvironmentId
     ).one_or_none()
+
+    act = activator_extension.expand_activator(act, dbsession)
+
+    actMetadataVariable = dbsession.query(ActivatorMetadataVariable).filter(
+        ActivatorMetadataVariable.activatorMetadataId == actMetadata.id,
+    ).all()
+
+    for mvar in actMetadataVariable:
+        print(str(mvar.__dict__), flush=True)
+
+    optional_pairs = {}
+    mandatory_pairs = {}
+    for mvar in actMetadataVariable:
+        key = mvar.name
+        if mvar.defaultValue is None:
+            val = mvar.value
+        else:
+            val = mvar.value
+        pair = {key: val}
+
+        if mvar.isOptional:
+            optional_pairs.update(pair)
+        else:
+            mandatory_pairs.update(pair)
+
+    print(str("== optional_pairs =="), flush=True)
+    print(str(optional_pairs), flush=True)
+    print(str("== mandatory_pairs =="), flush=True)
+    print(str(mandatory_pairs), flush=True)
+
     if act:
         gitSnapshot = json.loads(act.gitSnapshotJson)
-        app_deployment.activatorGitUrl = gitSnapshot["git_clone_url"]
-        #app_deployment.deploymentEnvironment = lzenv.name.lower()
+        if gitSnapshot and "git_clone_url" in gitSnapshot.keys():
+            app_deployment.activatorGitUrl = gitSnapshot["git_clone_url"]
+
+        app_deployment.optionalVariables = optional_pairs
+        app_deployment.mandatoryVariables = mandatory_pairs
         app_deployment.workspaceProjectId = app_deployment.workspaceProjectId
         app_deployment.deploymentProjectId = app_deployment.deploymentProjectId
-        app_deployment.mandatoryVariables = []
-
-        if actMetadata:
-            app_deployment.optionalVariables = actMetadata
-        else:
-            app_deployment.optionalVariables = []
 
         app_deployment.id = app.id
         app_deployment.name = app.name
         app_deployment.description = app.description
-        # app_deployment.actMetadata = actMetadata
 
         environment, lzlanvpc = dbsession.query(LZEnvironment, LZLanVpc).filter(
             LZLanVpcEnvironment.lzlanvpcId == LZLanVpc.id, 
