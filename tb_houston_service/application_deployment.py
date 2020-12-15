@@ -255,10 +255,15 @@ def deploy_application(app_deployment, dbsession):
     optional_pairs = {}
     mandatory_pairs = {}
     for mvar in actMetadataVariable:
+        print(str("adding pair "), flush=True)
         key = mvar.name
+        print(str("key " + key), flush=True)
+
         if mvar.defaultValue is None:
+            print(str("value " + str(mvar.value)), flush=True)
             val = mvar.value
         else:
+            print(str("defaultValue " + str(mvar.defaultValue)), flush=True)
             val = mvar.defaultValue
 
         key_pair = {"key": key}
