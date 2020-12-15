@@ -507,9 +507,10 @@ def post_repo_data_to_dac(oid: int, userId: int):
     logger.debug("running post_repo_data_to_dac")
     activator_name: str = "not found"
     with db_session() as dbs:
-        act = dbs.query(Activator).filter(Activator.id == oid).one_or_none()
         github_credentials = systemsettings.get_github_credentials(userId)
         logger.debug(f"GitHub Credentials {github_credentials}")
+
+        act = dbs.query(Activator).filter(Activator.id == oid).one_or_none()
         if act:
             logger.debug("DB entry found")
             repo_url = act.gitRepoUrl
@@ -523,16 +524,16 @@ def post_repo_data_to_dac(oid: int, userId: int):
             logger.debug("DB entry not found")
             raise Exception("Error retrieving data from db")
 
-    payload = {
-        "repo": {
-            "name": activator_name,
-            "url": repo_url
-        },
-        "cred": {
-            "user": github_credentials['username'],
-            "token": github_credentials['token']
+        payload = {
+            "repo": {
+                "name": activator_name,
+                "url": repo_url
+            },
+            "cred": {
+                "user": github_credentials.username,
+                "token": github_credentials.token
+            }
         }
-    }
 
     logger.debug("post_repo_data_to_dac sending post")
     headers = {"Content-Type": "application/json"}

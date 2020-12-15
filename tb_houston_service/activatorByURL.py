@@ -89,10 +89,10 @@ def get_file_from_repo(url, github_credentials):
     t = tempfile.mkdtemp()
     # user/token
     logger.debug(f"GitHub Credentials {github_credentials}")
-    if github_credentials['username'] and github_credentials['token']:
+    if github_credentials.username and github_credentials.token:
         # Update url to clone private repo
-        url = f"https://{github_credentials['username']}:{github_credentials['token']}@{url.split('https://')[1]}"
-    # Clone into temporary dir
+        url = f"https://{github_credentials.username}:{github_credentials.token}@{url.split('https://')[1]}"
+    logger.debug(f"Cloning {url} into temporary dir")
     repo = git.Repo.clone_from(url, t, depth=1)
     tag = repo.tags.pop()
     act_metadata_yaml_file = open(os.path.join(t, ".tb/activator_metadata.yml"))

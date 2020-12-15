@@ -102,12 +102,9 @@ def delete(oid):
     return abort(404, f"System settings {oid} not found")
 
 def get_github_credentials(userId):
-    settings_schema = ExtendedSystemsettingsSchema()
     s = db.session.query(Systemsettings).filter(Systemsettings.userId == userId).one_or_none()
     if s is None:
-        s = {
-            "username": "",
-            "token": ""
-        }
-    data = settings_schema.dump(s)
-    return data
+        s = Systemsettings()
+        s.username = ''
+        s.token = ''
+    return s
