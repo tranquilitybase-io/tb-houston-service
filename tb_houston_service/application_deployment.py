@@ -252,8 +252,8 @@ def deploy_application(app_deployment, dbsession):
     for mvar in actMetadataVariable:
         print(str(mvar.__dict__), flush=True)
 
-    optional_pairs = {}
-    mandatory_pairs = {}
+    optional_pairs = list()
+    mandatory_pairs = list()
     for mvar in actMetadataVariable:
         print(str("adding pair "), flush=True)
         key = mvar.name
@@ -266,15 +266,15 @@ def deploy_application(app_deployment, dbsession):
             print(str("defaultValue " + str(mvar.defaultValue)), flush=True)
             val = mvar.defaultValue
 
-        key_pair = {"key": key}
-        val_pair = {"value": val}
+        print(str("val " + val), flush=True)
+
+        key_val_pair = {"key": key,
+                        "value": val}
 
         if mvar.isOptional:
-            optional_pairs.update(key_pair)
-            optional_pairs.update(val_pair)
+            optional_pairs.append(key_val_pair)
         else:
-            mandatory_pairs.update(key_pair)
-            mandatory_pairs.update(val_pair)
+            mandatory_pairs.append(key_val_pair)
 
     print(str("== optional_pairs =="), flush=True)
     print(str(optional_pairs), flush=True)
