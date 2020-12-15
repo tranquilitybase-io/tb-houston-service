@@ -276,6 +276,8 @@ def deploy_application(app_deployment, dbsession):
         gitSnapshot = json.loads(act.gitSnapshotJson)
         if gitSnapshot and "git_clone_url" in gitSnapshot.keys():
             app_deployment.activatorGitUrl = gitSnapshot["git_clone_url"]
+        else:
+            raise Exception("Error, could not retrieve git_clone_url from gitSnapshot Json")
 
         app_deployment.optionalVariables = optional_pairs
         app_deployment.mandatoryVariables = mandatory_pairs
@@ -299,6 +301,7 @@ def deploy_application(app_deployment, dbsession):
             environment.sharedVPCProjectId = ""
         app_deployment.deploymentEnvironment = environment
 
+        print(str("== send_application_deployment_to_the_dac =="), flush=True)
         return send_application_deployment_to_the_dac(app_deployment, dbsession = dbsession)
     else:
         logger.error("deploy_application::activator not found, %s!", app.activatorId)
