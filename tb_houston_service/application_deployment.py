@@ -259,13 +259,17 @@ def deploy_application(app_deployment, dbsession):
         if mvar.defaultValue is None:
             val = mvar.value
         else:
-            val = mvar.value
-        pair = {key: val}
+            val = mvar.defaultValue
+
+        key_pair = {"key": key}
+        val_pair = {"value": val}
 
         if mvar.isOptional:
-            optional_pairs.update(pair)
+            optional_pairs.update(key_pair)
+            optional_pairs.update(val_pair)
         else:
-            mandatory_pairs.update(pair)
+            mandatory_pairs.update(key_pair)
+            mandatory_pairs.update(val_pair)
 
     print(str("== optional_pairs =="), flush=True)
     print(str(optional_pairs), flush=True)
