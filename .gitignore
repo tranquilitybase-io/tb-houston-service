@@ -135,3 +135,6 @@ dmypy.json
 
 #VSCode
 .vscode/
+
+#local compose
+/docker_compose_local.yml

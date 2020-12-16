@@ -38,6 +38,7 @@ from .team_member import TeamMember, TeamMemberSchema
 from .team import Team, TeamSchema
 from .type import Type, TypeSchema
 from .user import User, UserSchema
+from .system_settings import SystemSettings, SystemSettingsSchema
 from .vpn_onpremise_vendor import VPNOnPremiseVendor, VPNOnPremiseVendorSchema
 
 __all__ = \
@@ -81,4 +82,5 @@ __all__ = \
     'Team', 'TeamSchema', \
     'Type', 'TypeSchema', \
     'User', 'UserSchema', \
+    'SystemSettings', 'SystemSettingsSchema', \
     'VPNOnPremiseVendor', 'VPNOnPremiseVendorSchema'
