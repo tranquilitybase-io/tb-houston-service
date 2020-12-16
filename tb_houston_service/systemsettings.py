@@ -3,29 +3,39 @@ deployments module
 supports all the ReST actions for the
 system settings collection
 """
+import logging
+from tb_houston_service.tools import ModelTools
+from models.system_settings import SystemSettingsResultSchema
 from pprint import pformat
+from tb_houston_service import security
 
-from flask import make_response, abort
-from sqlalchemy import text
+from flask import abort
 
-from config import db, app
-from models import Systemsettings, SystemsettingsSchema
-from tb_houston_service.extendedSchemas import ExtendedSystemsettingsSchema
+from config import db
+from models import SystemSettings, SystemSettingsSchema
 
-def read_one(oid):
+logger = logging.getLogger("tb_houston_service.systemsettings")
+
+def read_one():
     """
-    Responds to a request for /api/settings/{oid}.
+    Responds to a request for /api/settings/.
     with one matching settings from system settings
 
-    :param application:   oid of system settings to find
-    :return:              system settings matching oid
+    :return:              system settings matching user id
     """
-    s = db.session.query(Systemsettings).filter(Systemsettings.id == oid).one_or_none()
+    user = security.get_valid_user_from_token(dbsession=db.session)
+    logger.debug(f"Logged in user {user}")
+    if not (user and user.isAdmin):
+        return abort(401, "JWT not valid or user is not an Admin")
+
+    s:SystemSettings = db.session.query(SystemSettings).filter(SystemSettings.userId == user.id).one_or_none()
     if s is not None:
-        schema = SystemsettingsSchema()
-        data = schema.dump(s)
+        resultSchema = SystemSettingsResultSchema()
+        data = resultSchema.dump(s)
+
         return data, 200
-    return abort(404, f"System settings with id {oid} not found")
+
+    return abort(404, f"System settings not found")
 
 
 def create(settingsDetails):
@@ -36,75 +46,81 @@ def create(settingsDetails):
     :param systemsettings:  details to create in system settings structure
     :return:        201 on success, 406 on settings exists
     """
-    if "id" in settingsDetails:
-        del settingsDetails["id"]
+    user = security.get_valid_user_from_token(dbsession=db.session)
+    logger.debug(f"Logged in user {user}")
+    if not (user and user.isAdmin):
+        return abort(401, "JWT not valid or user is not an Admin")
 
-    s = db.session.query(Systemsettings).filter(Systemsettings.username == settingsDetails["username"]).one_or_none()
-
+    s:SystemSettings = db.session.query(SystemSettings).filter(SystemSettings.userId == user.id).one_or_none()
     if s is None:
-        schema = SystemsettingsSchema()
+        schema = SystemSettingsSchema()
         new_entry = schema.load(settingsDetails, session=db.session)
+        new_entry.userId = user.id
 
         db.session.add(new_entry)
         db.session.commit()
 
-        data = schema.dump(new_entry)
+        resultSchema = SystemSettingsResultSchema()
+        data = resultSchema.dump(new_entry)
 
         return data, 201
 
     return abort(409, "System settings already exists")
 
 
-def update(oid, settingsDetails):
+def update(settingsDetails):
     """
     Updates an existing settings entry in the system settings.
 
-    :param id:    oid of the settings to update
     :param settingsDetails:     details to update
     :return:       updated settings
     """
-    app.logger.debug(pformat(settingsDetails))
-    if settingsDetails.get("id") and settingsDetails.get("id") != oid:
-        abort(400, f"Id {oid} mismatch in path and body")
+    user = security.get_valid_user_from_token(dbsession=db.session)
+    logger.debug(f"Logged in user {user}")
+    if not (user and user.isAdmin):
+        return abort(401, "JWT not valid or user is not an Admin")
 
-    s = db.session.query(Systemsettings).filter(Systemsettings.id == oid).one_or_none()
-
+    s:SystemSettings = db.session.query(SystemSettings).filter(SystemSettings.userId == user.id).one_or_none()
     if s is not None:
-        settingsDetails['id'] = oid
-        schema = SystemsettingsSchema()
-        update_settings = schema.load(settingsDetails, session=db.session)
+        s.username = settingsDetails['username']
+        s.token = settingsDetails['token']
+        s.lastUpdated = ModelTools.get_utc_timestamp()
 
-        db.session.merge(update_settings)
+        db.session.merge(s)
         db.session.commit()
 
-        data = schema.dump(update_settings)
+        resultSchema = SystemSettingsResultSchema()
+        data = resultSchema.dump(s)
 
         return data, 200
 
-    return abort(404, f"System settings {oid} not found")
+    return abort(404, f"System settings not found")
 
 
-def delete(oid):
+def delete():
     """
     Deletes a system settings from list.
 
-    :param id: oid of the system settings to delete
     :return:    200 on successful delete, 404 if not found
     """
-    settings_to_del = db.session.query(Systemsettings).filter(Systemsettings.id == oid).one_or_none()
+    user = security.get_valid_user_from_token(dbsession=db.session)
+    logger.debug(f"Logged in user {user}")
+    if not (user and user.isAdmin):
+        return abort(401, "JWT not valid or user is not an Admin")
 
-    if settings_to_del is not None:
-        db.session.delete(settings_to_del)
+    s:SystemSettings = db.session.query(SystemSettings).filter(SystemSettings.userId == user.id).one_or_none()
+    if s is not None:
+        db.session.delete(s)
         db.session.commit()
 
         return '', 204
 
-    return abort(404, f"System settings {oid} not found")
+    return abort(404, f"System settings not found")
 
 def get_github_credentials(userId):
-    s = db.session.query(Systemsettings).filter(Systemsettings.userId == userId).one_or_none()
+    s = db.session.query(SystemSettings).filter(SystemSettings.userId == userId).one_or_none()
     if s is None:
-        s = Systemsettings()
+        s = SystemSettings()
         s.username = ''
         s.token = ''
     return s

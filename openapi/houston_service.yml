@@ -2879,40 +2879,25 @@ paths:
       responses:
         "201":
           description: Successfully created a system settings
-  "/settings/{oid}":
     get:
       operationId: tb_houston_service.systemsettings.read_one
       tags:
         - systemsettings
       summary: Read one from the list
       description: Read one from the list
-      parameters:
-        - name: oid
-          in: path
-          description: settings key to get from the list
-          required: true
-          schema:
-            type: integer
       responses:
         "200":
           description: Successfully read a system settings from the list
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Systemsettings"
+                $ref: "#/components/schemas/SystemSettings"
     put:
       operationId: tb_houston_service.systemsettings.update
       tags:
         - systemsettings
       summary: Update a system settings in the list
       description: Update a system settings in the list
-      parameters:
-        - name: oid
-          in: path
-          description: key of the system settings to update
-          required: true
-          schema:
-            type: integer
       requestBody:
         $ref: "#/components/requestBodies/systemsettings.settingsDetails"
       responses:
@@ -2925,12 +2910,6 @@ paths:
         - systemsettings
       summary: Delete a system settings from the list
       description: Delete a system settings
-      parameters:
-        - name: oid
-          in: path
-          required: true
-          schema:
-            type: integer
       responses:
         "204":
           description: Successfully deleted a system settings
@@ -3329,7 +3308,7 @@ components:
         application/json:
           schema:
             x-body-name: settingsDetails
-            $ref: "#/components/schemas/Systemsettings"
+            $ref: "#/components/schemas/SystemSettings"
       description: settingsDetails to create
       required: true
 
@@ -4167,21 +4146,15 @@ components:
           type: string
           description: The value
 
-    Systemsettings:
+    SystemSettings:
       type: object
       properties:
-        id:
-          type: integer
-          description: id
-        userId:
-          type: integer
-          description: id
         username:
           type: string
-          description: Git username
+          description: GitHub username
         token:
           type: string
-          description: Git access token
+          description: GitHub access token
         lastUpdated:
           type: string
           description: last updated datetime

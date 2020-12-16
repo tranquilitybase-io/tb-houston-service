@@ -41,7 +41,7 @@ def create(activatorByURLDetails):
         with db_session() as dbs:
             user = security.get_valid_user_from_token(dbsession=dbs)
             if not (user and user.isAdmin):
-                abort(401)
+                return abort(401, "JWT not valid or user is not an Admin")
 
             github_credentials = systemsettings.get_github_credentials(user.id)
             
@@ -76,9 +76,6 @@ def create(activatorByURLDetails):
                 data = schema.dump(act)
                 return data, 200
 
-    except Unauthorized:
-        logger.debug("JWT not valid or user is not an Admin")
-        abort(401, "Not Authorized")
     except Exception as ex:
         logger.exception(ex)
         abort(500, "Internal Server Error")

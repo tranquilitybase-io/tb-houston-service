@@ -543,10 +543,3 @@ class ExtendedNotificationSchema(OneOfSchema):
             return "SOLUTION_DEPLOYMENT"
         else:
             raise Exception("Unknown object type: {}".format(obj.__class__.__name__))
-
-
-class ExtendedSystemsettingsSchema(Schema):
-    id = fields.Int()
-    userId = fields.Nested(ExtendedUserSchema(many=True))
-    username = fields.Str()
-    token = fields.Str()
