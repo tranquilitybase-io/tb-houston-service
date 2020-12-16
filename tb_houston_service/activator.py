@@ -11,7 +11,6 @@ import requests
 from flask import make_response, abort
 from sqlalchemy import literal_column
 from sqlalchemy.exc import SQLAlchemyError
-from werkzeug.exceptions import Unauthorized
 
 from config.db_lib import db_session
 from models import Activator, ActivatorSchema, ActivatorMetadata, User, Notification

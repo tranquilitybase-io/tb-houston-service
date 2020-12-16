@@ -8,7 +8,6 @@ from pprint import pformat
 import git
 import yaml
 from flask import abort
-from werkzeug.exceptions import Unauthorized
 
 from config.db_lib import db_session
 from models import Activator, ActivatorSchema, ActivatorMetadata, ActivatorMetadataSchema, \

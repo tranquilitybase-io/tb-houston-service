@@ -6,7 +6,6 @@ system settings collection
 import logging
 from tb_houston_service.tools import ModelTools
 from models.system_settings import SystemSettingsResultSchema
-from pprint import pformat
 from tb_houston_service import security
 
 from flask import abort
@@ -35,7 +34,7 @@ def read_one():
 
         return data, 200
 
-    return abort(404, f"System settings not found")
+    return abort(404, "System settings not found")
 
 
 def create(settingsDetails):
@@ -94,7 +93,7 @@ def update(settingsDetails):
 
         return data, 200
 
-    return abort(404, f"System settings not found")
+    return abort(404, "System settings not found")
 
 
 def delete():
@@ -115,7 +114,7 @@ def delete():
 
         return '', 204
 
-    return abort(404, f"System settings not found")
+    return abort(404, "System settings not found")
 
 def get_github_credentials(userId):
     s = db.session.query(SystemSettings).filter(SystemSettings.userId == userId).one_or_none()
