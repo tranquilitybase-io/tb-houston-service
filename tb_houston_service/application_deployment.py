@@ -229,8 +229,29 @@ def deployment_update(app_id, lzEnvId, applicationDeploymentDetails, dbsession):
     else:
         logger.debug("deployment_update::existing application deployment not found, %s, %s", app_id, lzEnvId)
 
-def deploy_application(app_deployment, dbsession):
 
+def get_variables_from_metadata(actMetadataVariable: ActivatorMetadataVariable):
+    optional_pairs = list()
+    mandatory_pairs = list()
+    for mvar in actMetadataVariable:
+        key = mvar.name
+
+        if mvar.defaultValue is None:
+            val = mvar.value
+        else:
+            val = mvar.defaultValue
+
+        key_val_pair = {"key": key, "value": val}
+
+        if mvar.isOptional:
+            optional_pairs.append(key_val_pair)
+        else:
+            mandatory_pairs.append(key_val_pair)
+
+    return optional_pairs, mandatory_pairs
+
+
+def deploy_application(app_deployment, dbsession):
 
     logger.debug("deploy_application:: %s", app_deployment)
     # expand fields for DaC application deployment
@@ -249,38 +270,6 @@ def deploy_application(app_deployment, dbsession):
         ActivatorMetadataVariable.activatorMetadataId == actMetadata.id,
     ).all()
 
-    for mvar in actMetadataVariable:
-        print(str(mvar.__dict__), flush=True)
-
-    optional_pairs = list()
-    mandatory_pairs = list()
-    for mvar in actMetadataVariable:
-        print(str("adding pair "), flush=True)
-        key = mvar.name
-        print(str("key " + key), flush=True)
-
-        if mvar.defaultValue is None:
-            print(str("value " + str(mvar.value)), flush=True)
-            val = mvar.value
-        else:
-            print(str("defaultValue " + str(mvar.defaultValue)), flush=True)
-            val = mvar.defaultValue
-
-        print(str("val " + val), flush=True)
-
-        key_val_pair = {"key": key,
-                        "value": val}
-
-        if mvar.isOptional:
-            optional_pairs.append(key_val_pair)
-        else:
-            mandatory_pairs.append(key_val_pair)
-
-    print(str("== optional_pairs =="), flush=True)
-    print(str(optional_pairs), flush=True)
-    print(str("== mandatory_pairs =="), flush=True)
-    print(str(mandatory_pairs), flush=True)
-
     if act:
         gitSnapshot = json.loads(act.gitSnapshotJson)
         if gitSnapshot and "git_clone_url" in gitSnapshot.keys():
@@ -288,8 +277,10 @@ def deploy_application(app_deployment, dbsession):
         else:
             raise Exception("Error, could not retrieve git_clone_url from gitSnapshot Json")
 
+        optional_pairs, mandatory_pairs = get_variables_from_metadata(actMetadataVariable)
         app_deployment.optionalVariables = optional_pairs
         app_deployment.mandatoryVariables = mandatory_pairs
+
         app_deployment.workspaceProjectId = app_deployment.workspaceProjectId
         app_deployment.deploymentProjectId = app_deployment.deploymentProjectId
 
@@ -298,7 +289,7 @@ def deploy_application(app_deployment, dbsession):
         app_deployment.description = app.description
 
         environment, lzlanvpc = dbsession.query(LZEnvironment, LZLanVpc).filter(
-            LZLanVpcEnvironment.lzlanvpcId == LZLanVpc.id, 
+            LZLanVpcEnvironment.lzlanvpcId == LZLanVpc.id,
             LZLanVpcEnvironment.environmentId == lzenv.id,
             LZLanVpcEnvironment.environmentId == LZEnvironment.id,
             LZLanVpcEnvironment.isActive,
@@ -310,7 +301,6 @@ def deploy_application(app_deployment, dbsession):
             environment.sharedVPCProjectId = ""
         app_deployment.deploymentEnvironment = environment
 
-        print(str("== send_application_deployment_to_the_dac =="), flush=True)
         return send_application_deployment_to_the_dac(app_deployment, dbsession = dbsession)
     else:
         logger.error("deploy_application::activator not found, %s!", app.activatorId)
