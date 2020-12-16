@@ -8,11 +8,11 @@ from flask import make_response, abort
 
 from config import db, executor
 from config.db_lib import db_session
-from models import  Application, Activator, ActivatorMetadata, \
-                    ApplicationDeployment, ApplicationDeploymentSchema, \
-                    LZLanVpc, LZEnvironment, LZLanVpcEnvironment, \
-                    Solution, SolutionEnvironment, SolutionResource
-from tb_houston_service import security
+from models import Application, Activator, ActivatorMetadata, \
+    ApplicationDeployment, ApplicationDeploymentSchema, \
+    LZLanVpc, LZEnvironment, LZLanVpcEnvironment, \
+    Solution, SolutionEnvironment, SolutionResource, ActivatorMetadataVariable
+from tb_houston_service import security, activator_extension
 from tb_houston_service import notification
 from tb_houston_service.DeploymentStatus import DeploymentStatus
 from tb_houston_service.tools import ModelTools
@@ -229,7 +229,30 @@ def deployment_update(app_id, lzEnvId, applicationDeploymentDetails, dbsession):
     else:
         logger.debug("deployment_update::existing application deployment not found, %s, %s", app_id, lzEnvId)
 
+
+def get_variables_from_metadata(actMetadataVariable: ActivatorMetadataVariable):
+    optional_pairs = list()
+    mandatory_pairs = list()
+    for mvar in actMetadataVariable:
+        key = mvar.name
+
+        if mvar.defaultValue is None:
+            val = mvar.value
+        else:
+            val = mvar.defaultValue
+
+        key_val_pair = {"key": key, "value": val}
+
+        if mvar.isOptional:
+            optional_pairs.append(key_val_pair)
+        else:
+            mandatory_pairs.append(key_val_pair)
+
+    return optional_pairs, mandatory_pairs
+
+
 def deploy_application(app_deployment, dbsession):
+
     logger.debug("deploy_application:: %s", app_deployment)
     # expand fields for DaC application deployment
     app, act, actMetadata, lzenv = dbsession.query(Application, Activator, ActivatorMetadata, LZEnvironment).filter(
@@ -238,22 +261,35 @@ def deploy_application(app_deployment, dbsession):
         Application.id == app_deployment.applicationId,
         ApplicationDeployment.applicationId == Application.id,
         ApplicationDeployment.lzEnvironmentId == LZEnvironment.id,
-        LZEnvironment.id == app_deployment.lzEnvironmentId            
+        LZEnvironment.id == app_deployment.lzEnvironmentId
     ).one_or_none()
+
+    act = activator_extension.expand_activator(act, dbsession)
+
+    actMetadataVariable = dbsession.query(ActivatorMetadataVariable).filter(
+        ActivatorMetadataVariable.activatorMetadataId == actMetadata.id,
+    ).all()
+
     if act:
         gitSnapshot = json.loads(act.gitSnapshotJson)
-        app_deployment.activatorGitUrl = gitSnapshot["git_clone_url"]
-        #app_deployment.deploymentEnvironment = lzenv.name.lower()
+        if gitSnapshot and "git_clone_url" in gitSnapshot.keys():
+            app_deployment.activatorGitUrl = gitSnapshot["git_clone_url"]
+        else:
+            raise Exception("Error, could not retrieve git_clone_url from gitSnapshot Json")
+
+        optional_pairs, mandatory_pairs = get_variables_from_metadata(actMetadataVariable)
+        app_deployment.optionalVariables = optional_pairs
+        app_deployment.mandatoryVariables = mandatory_pairs
+
         app_deployment.workspaceProjectId = app_deployment.workspaceProjectId
         app_deployment.deploymentProjectId = app_deployment.deploymentProjectId
-        app_deployment.mandatoryVariables = []
-        app_deployment.optionalVariables = []
+
         app_deployment.id = app.id
         app_deployment.name = app.name
         app_deployment.description = app.description
 
         environment, lzlanvpc = dbsession.query(LZEnvironment, LZLanVpc).filter(
-            LZLanVpcEnvironment.lzlanvpcId == LZLanVpc.id, 
+            LZLanVpcEnvironment.lzlanvpcId == LZLanVpc.id,
             LZLanVpcEnvironment.environmentId == lzenv.id,
             LZLanVpcEnvironment.environmentId == LZEnvironment.id,
             LZLanVpcEnvironment.isActive,
