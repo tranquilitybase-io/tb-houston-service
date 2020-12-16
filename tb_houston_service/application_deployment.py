@@ -185,7 +185,7 @@ def deployment_create(applicationDeploymentDetails):
     # above db transaction should be complete before the next steps
     executor.submit(start_deployment, app_id)
 
-    return make_response("Application deployment is complete.", 200)
+    return make_response({"id": app_id, "deploymentState": DeploymentStatus.PENDING}, 200)
 
 def deployment_read_all():
     with db_session() as dbs:
