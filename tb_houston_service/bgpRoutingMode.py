@@ -3,10 +3,12 @@ This is the deployments module and supports all the ReST actions for the
 bgpRoutingMode collection
 """
 from pprint import pformat
-from flask import make_response, abort
 
-from config import db, app
+from flask import abort, make_response
+
+from config import app, db
 from models import BGPRoutingMode, BGPRoutingModeSchema
+
 
 def read_all():
     """
@@ -23,6 +25,7 @@ def read_all():
     bgpRoutingMode_schema = BGPRoutingModeSchema(many=True)
     data = bgpRoutingMode_schema.dump(bgpRoutingMode)
     return data
+
 
 def read_one(oid):
     """
@@ -43,6 +46,7 @@ def read_one(oid):
         return data
     else:
         abort(404, f"BGPRoutingMode with id {oid} not found")
+
 
 def create(bgpRoutingModeDetails):
     """
@@ -66,6 +70,7 @@ def create(bgpRoutingModeDetails):
     data = schema.dump(new_bgpRoutingMode)
     return data, 201
 
+
 def update(oid, bgpRoutingModeDetails):
     """
     This function updates an existing bgpRoutingMode in the bgpRoutingMode list
@@ -77,7 +82,7 @@ def update(oid, bgpRoutingModeDetails):
     app.logger.debug(pformat(bgpRoutingModeDetails))
 
     if bgpRoutingModeDetails.get("id", oid) != oid:
-        abort(400, f"Key mismatch in path and body")
+        abort(400, "Key mismatch in path and body")
 
     # Does the bgpRoutingMode exist in bgpRoutingMode list?
     existing_bgpRoutingMode = (
@@ -100,7 +105,8 @@ def update(oid, bgpRoutingModeDetails):
     # otherwise, nope, deployment doesn't exist, so that's an error
     else:
         db.session.close()
-        abort(404, f"BGPRoutingMode not found")
+        abort(404, "BGPRoutingMode not found")
+
 
 def delete(oid):
     """

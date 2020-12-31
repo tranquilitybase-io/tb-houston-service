@@ -3,10 +3,12 @@ Deployments module, supports all the ReST actions for the
 cd collection
 """
 from pprint import pformat
-from flask import make_response, abort
 
-from config import db, app
+from flask import abort, make_response
+
+from config import app, db
 from models import CD, CDSchema
+
 
 def read_all():
     """
@@ -23,12 +25,13 @@ def read_all():
     data = cd_schema.dump(cd)
     return data
 
+
 def read_keyValues():
     """
     This function responds to a request for /keyValues/cd
-    with the complete lists of CDs 
+    with the complete lists of CDs
 
-    :return:        json string of list of CDs 
+    :return:        json string of list of CDs
     """
     # Create the list of CDs from our data
     cd = db.session.query(CD).order_by(CD.id).all()
@@ -45,10 +48,11 @@ def read_keyValues():
     print(keyValues)
     return keyValues
 
+
 def read_one(id):
     """
     This function responds to a request for /api/cd/{id}
-    with one matching cd from CDs 
+    with one matching cd from CDs
 
     :param application:   id of cd to find
     :return:              cd matching id
@@ -63,6 +67,7 @@ def read_one(id):
     else:
         abort(404, "CD with id {id} not found".format(id=id))
 
+
 def create(cdDetails):
     """
     This function creates a new cd in the cd list
@@ -72,10 +77,12 @@ def create(cdDetails):
     :return:        201 on success, 406 on cd exists
     """
     # Remove id as it's created automatically
-    if 'id' in cdDetails:
-        del cdDetails['id']
+    if "id" in cdDetails:
+        del cdDetails["id"]
     # Does the cd exist already?
-    existing_cd = db.session.query(CD).filter(CD.value == cdDetails["value"]).one_or_none()
+    existing_cd = (
+        db.session.query(CD).filter(CD.value == cdDetails["value"]).one_or_none()
+    )
 
     if existing_cd is None:
         schema = CDSchema()
@@ -91,7 +98,8 @@ def create(cdDetails):
 
     # Otherwise, it already exists, that's an error
     else:
-        abort(406, f"CD already exists")
+        abort(406, "CD already exists")
+
 
 def update(id, cdDetails):
     """
@@ -104,7 +112,7 @@ def update(id, cdDetails):
     app.logger.debug(pformat(cdDetails))
 
     if cdDetails["id"] != id:
-        abort(400, f"Id mismatch in path and body")
+        abort(400, "Id mismatch in path and body")
 
     # Does the cd exist in cd list?
     existing_cd = db.session.query(CD).filter(CD.id == id).one_or_none()
@@ -125,7 +133,8 @@ def update(id, cdDetails):
 
     # otherwise, nope, deployment doesn't exist, so that's an error
     else:
-        abort(404, f"CD not found")
+        abort(404, "CD not found")
+
 
 def delete(id):
     """

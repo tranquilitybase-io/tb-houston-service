@@ -1,7 +1,8 @@
-import requests
 import json
 import logging
 import os
+
+import requests
 
 LOG_LEVEL = logging.INFO  # DEBUG, INFO, WARNING, ERROR, CRITICAL
 
@@ -10,6 +11,7 @@ url = f"http://{HOUSTON_SERVICE_URL}/api/sourceControl/"
 
 # Additional headers.
 headers = {"Content-Type": "application/json"}
+
 
 def test_sourcecontrol():
     # Testing POST request
@@ -24,6 +26,7 @@ def test_sourcecontrol():
     # Testing GETALL request
     get_all()
 
+
 def post():
 
     # Test POST Then GET
@@ -37,7 +40,6 @@ def post():
     assert resp.status_code == 201
     assert resp_json["value"] == "test-post-value"
     id = str(resp_json["id"])
-
 
     # Get Request to check Post has created item as expected
     resp = requests.get(url + id, headers=headers)

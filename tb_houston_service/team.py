@@ -3,17 +3,18 @@ deployments module
 supports all the ReST actions for the
 team collection
 """
-from pprint import pformat
 from http import HTTPStatus
-from flask import make_response, abort
+from pprint import pformat
+
+from flask import abort, make_response
 from sqlalchemy import exc
 
-from config import db, app
+from config import app, db
 from models import Team, TeamMember, TeamSchema
-from tb_houston_service.extendedSchemas import KeyValueSchema
-from tb_houston_service.extendedSchemas import ExtendedTeamSchema
+from tb_houston_service.extendedSchemas import ExtendedTeamSchema, KeyValueSchema
 from tb_houston_service.team_extension import expand_team
 from tb_houston_service.tools import ModelTools
+
 
 def read_all():
     """
@@ -32,6 +33,7 @@ def read_all():
     data = team_schema.dump(teams)
     return data, 200
 
+
 def read_one(oid):
     """
     Responds to a request for /api/team/{key}
@@ -49,6 +51,7 @@ def read_one(oid):
         data = team_schema.dump(team)
         return data
     return abort(404, f"Team with id {oid} not found")
+
 
 def create(teamDetails):
     """
@@ -86,6 +89,7 @@ def create(teamDetails):
     data = schema.dump(new_team)
 
     return data, 201
+
 
 def update(oid, teamDetails):
     """
@@ -143,7 +147,8 @@ def update(oid, teamDetails):
         return data, 200
 
     # otherwise, nope, deployment doesn't exist, so that's an error
-    abort(404, f"Team not found")
+    abort(404, "Team not found")
+
 
 def patch(oid, teamDetails):
     """
@@ -198,7 +203,8 @@ def patch(oid, teamDetails):
         return data, 200
 
     # otherwise, nope, deployment doesn't exist, so that's an error
-    abort(404, f"Team not found")
+    abort(404, "Team not found")
+
 
 def delete(oid):
     """
@@ -221,6 +227,7 @@ def delete(oid):
     # Otherwise, nope, team to delete not found
     abort(404, f"Team {oid} not found")
 
+
 # Other queries
 def read_all_by_user_id(userId):
     teams = (
@@ -240,6 +247,7 @@ def read_all_by_user_id(userId):
     data = schema.dump(teams)
     app.logger.debug(f"{data} type: {type(data)}")
     return data, 200
+
 
 def read_key_values_by_user_id(userId):
     teams_resp = read_all_by_user_id(userId)
@@ -261,6 +269,7 @@ def read_key_values_by_user_id(userId):
     else:
         return abort(teams_resp[0], "Error reading key / values by user id.")
 
+
 def read_list_by_user_id(userId):
     teams_resp = read_all_by_user_id(userId)
     if teams_resp[1] == HTTPStatus.OK:
@@ -273,6 +282,7 @@ def read_list_by_user_id(userId):
         return data, 200
     else:
         return abort(teams_resp[0], "Error reading key / values by user id.")
+
 
 def read_keyValues():
     """

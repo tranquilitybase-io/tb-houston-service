@@ -1,11 +1,9 @@
-import requests
-import time
-import os
 import json
-from pprint import pformat
-from pprint import pprint
+import os
 import unittest
-from tests.Spinner import Spinner
+from pprint import pformat
+
+import requests
 
 
 class TestLZMetadata(unittest.TestCase):
@@ -27,32 +25,23 @@ class TestLZMetadata(unittest.TestCase):
         # Testing PUT request
         self.put(key)
 
-
     def post(self, key):
         print("Post Tests")
         # Test POST Then GET
         # Body
-        payload = {
-            "key": key,
-            "value": "new lzmetadata"
-        }
+        payload = {"key": key, "value": "new lzmetadata"}
 
         # convert dict to json by json.dumps() for body data.
-        resp = requests.post(
-            self.url, headers=self.headers, data=json.dumps(payload)
-        )
+        resp = requests.post(self.url, headers=self.headers, data=json.dumps(payload))
 
         # Validate response headers and body contents, e.g. status code.
         print(pformat(resp.json()))
         self.assertEqual(resp.status_code, 201)
         self.assertEqual(resp.headers["content-type"], "application/json")
 
-
     def put(self, key):
         # Test Update Then get new value
-        newpayload = {
-            "value": "updated value"
-        }
+        newpayload = {"value": "updated value"}
 
         resp = requests.put(
             self.url + key,
@@ -67,16 +56,12 @@ class TestLZMetadata(unittest.TestCase):
         # Validate update/Put response
         self.assertEqual(resp.status_code, 200)
 
-
     def get(self, key):
-        resp = requests.get(
-            self.url + key,
-            headers=self.headers
-        )
+        resp = requests.get(self.url + key, headers=self.headers)
         resp_json = resp.json()
         print(f"get resp_json: {resp_json}")
         self.assertEqual(resp_json["key"], key)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main(verbosity=2)

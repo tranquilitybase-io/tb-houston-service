@@ -1,5 +1,5 @@
-import logging
 import json
+import logging
 
 from marshmallow import pre_load
 
@@ -8,9 +8,10 @@ from tb_houston_service.tools import ModelTools
 
 logger = logging.getLogger("tb_houston_service.models")
 
+
 class Activator(db.Model):
     __tablename__ = "activator"
-    __table_args__ = {'schema': 'eagle_db'}
+    __table_args__ = {"schema": "eagle_db"}
     id = db.Column(db.Integer, primary_key=True)
     isActive = db.Column(db.Boolean)
     lastUpdated = db.Column(db.String(20))

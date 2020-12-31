@@ -1,6 +1,7 @@
 from config import db
 from models import Application
 
+
 def read_one(activatorId):
     """
     Responds to a request for /api/application_meta/{activatorId}

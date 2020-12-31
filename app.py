@@ -1,9 +1,7 @@
-import os
 import logging
-import config
+import os
 
-# print("DEBUG: {}".format(os.environ['DEBUG']))
-# print("SQLALCHEMY_DATABASE_URI: {}".format(os.environ['SQLALCHEMY_DATABASE_URI']))
+import config
 
 # Get theapplication instance
 connex_app = config.connex_app
@@ -15,7 +13,7 @@ gunicorn_logger = logging.getLogger("gunicorn.info")
 connex_app.app.logger.handlers = gunicorn_logger.handlers
 connex_app.app.logger.setLevel(gunicorn_logger.level)
 
-logging.basicConfig(level=int(os.environ.get("DEBUG")))
+logging.basicConfig(level=int(os.environ.get("LOGLEVEL") or 20))
 ch = logging.StreamHandler()
 formatter = logging.Formatter(
     "[%(asctime)s] p%(process)s {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s",

@@ -3,11 +3,13 @@ This is the deployments module and supports all the ReST actions for the
 environment collection
 """
 from pprint import pformat
+
 from flask import abort
 
-from config import db, app
+from config import app, db
 from models import LZEnvironment, LZEnvironmentSchema
 from tb_houston_service.extendedSchemas import KeyValueSchema
+
 
 def read_all(readActiveOnly=False):
     """
@@ -28,6 +30,7 @@ def read_all(readActiveOnly=False):
     environment_schema = LZEnvironmentSchema(many=True)
     data = environment_schema.dump(lzenvironment)
     return data, 200
+
 
 def read_all_key_values():
     """
@@ -50,6 +53,7 @@ def read_all_key_values():
     data = schema.dump(keyvalues)
     return data, 200
 
+
 def create(lzenvDetails):
     app.logger.debug(f"lzmetadata_env::create: {lzenvDetails}")
     # Does the environment exist in environment list?
@@ -71,8 +75,8 @@ def create(lzenvDetails):
             db.session.commit()
             data = schema.dump(updated_env)
             return data, 201
-    
-    # Can't find without the id, so search using the name 
+
+    # Can't find without the id, so search using the name
     if lzenvDetails.get("name"):
         existing_environment = (
             db.session.query(LZEnvironment)
@@ -100,11 +104,13 @@ def create(lzenvDetails):
             return data, 201
     abort("Create: Unable to create without the id or name!", 500)
 
+
 def logical_delete_all_active():
-    objs = db.session.query(LZEnvironment).filter(LZEnvironment.isActive == True).all()
+    objs = db.session.query(LZEnvironment).filter(LZEnvironment.isActive is True).all()
     for o in objs:
         o.isActive = False
         db.session.add(o)
+
 
 def create_all(lzMetadataEnvListDetails, readActiveOnly=False, bulkDelete=False):
     """
@@ -123,7 +129,7 @@ def create_all(lzMetadataEnvListDetails, readActiveOnly=False, bulkDelete=False)
         for lze in lzMetadataEnvListDetails:
             create(lze)
         db.session.commit()
-    except:
+    except BaseException:
         db.session.rollback()
         raise
     finally:

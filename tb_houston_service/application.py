@@ -4,19 +4,20 @@ application collection
 """
 import logging
 from pprint import pformat
-from flask import make_response, abort
+
+from flask import abort, make_response
 from sqlalchemy import literal_column
 from sqlalchemy.exc import SQLAlchemyError
 
 from config import db
 from config.db_lib import db_session
-from models import Application, ApplicationSchema, Activator
+from models import Activator, Application, ApplicationSchema
+from tb_houston_service import application_extension, security
 from tb_houston_service.extendedSchemas import ExtendedApplicationSchema
 from tb_houston_service.tools import ModelTools
-from tb_houston_service import application_extension
-from tb_houston_service import security
 
 logger = logging.getLogger("tb_houston_service.application")
+
 
 def read_all(
     isActive=None,
@@ -34,13 +35,22 @@ def read_all(
 
     :return:        json string of list of applications
     """
-    logger.debug("read_all::Parameters: isActive: %s, isFavourite: %s, status: %s, activatorId: %s, environment: %s, page: %s, page_size: %s, sort: %s",
-     isActive, isFavourite, status, activatorId, environment, page, page_size, sort)
+    logger.debug(
+        "read_all::Parameters: isActive: %s, isFavourite: %s, status: %s, activatorId: %s, environment: %s, page: %s, page_size: %s, sort: %s",
+        isActive,
+        isFavourite,
+        status,
+        activatorId,
+        environment,
+        page,
+        page_size,
+        sort,
+    )
     # Create the list of applications from our data
     # pre-process sort instructions
 
     with db_session() as dbs:
-        if sort == None:
+        if sort is None:
             application_query = db.session.query(Application).order_by(Application.id)
         else:
             try:
@@ -62,27 +72,31 @@ def read_all(
                 logger.warning(e)
                 application_query = dbs.query(Application).order_by(Application.id)
 
-        # filter activators by logged in user 
-        business_unit_ids = security.get_business_units_ids_for_user(dbsession = dbs)
+        # filter activators by logged in user
+        business_unit_ids = security.get_business_units_ids_for_user(dbsession=dbs)
 
         application_query = application_query.filter(
             Activator.id == Application.activatorId,
-            (status == None or Application.status == status),
-            (activatorId == None or Application.activatorId == activatorId),
-            (environment == None or Application.env == environment),
-            (isActive == None or Application.isActive == isActive),
-            (isFavourite == None or Application.isFavourite == isFavourite), 
-            (business_unit_ids == None or Activator.businessUnitId.in_(business_unit_ids))
+            (status is None or Application.status == status),
+            (activatorId is None or Application.activatorId == activatorId),
+            (environment is None or Application.env == environment),
+            (isActive is None or Application.isActive == isActive),
+            (isFavourite is None or Application.isFavourite == isFavourite),
+            (
+                business_unit_ids is None
+                or Activator.businessUnitId.in_(business_unit_ids)
+            ),
         )
 
-        if page == None or page_size == None:
+        if page is None or page_size is None:
             applications = application_query.all()
         else:
-            applications = application_query.limit(page_size).offset(page * page_size).all()
-
+            applications = (
+                application_query.limit(page_size).offset(page * page_size).all()
+            )
 
         for app in applications:
-            application_extension.expand_application(app, dbsession = dbs)
+            application_extension.expand_application(app, dbsession=dbs)
 
         # Serialize the data for the response
         application_schema = ExtendedApplicationSchema(many=True)
@@ -90,6 +104,7 @@ def read_all(
         logger.debug("read_all::application data:")
         logger.debug(pformat(data))
         return data
+
 
 def read_one(oid):
     """
@@ -100,20 +115,28 @@ def read_one(oid):
     :return:              application matching the id
     """
     with db_session() as dbs:
-        # filter activators by logged in user 
-        business_unit_ids = security.get_business_units_ids_for_user(dbsession = dbs)
+        # filter activators by logged in user
+        business_unit_ids = security.get_business_units_ids_for_user(dbsession=dbs)
         application = (
-            dbs.query(Application).filter(Application.id == oid,
-            Activator.id == Application.activatorId,
-            (business_unit_ids == None or Activator.businessUnitId.in_(business_unit_ids))
-            ).one_or_none()
+            dbs.query(Application)
+            .filter(
+                Application.id == oid,
+                Activator.id == Application.activatorId,
+                (
+                    business_unit_ids is None
+                    or Activator.businessUnitId.in_(business_unit_ids)
+                ),
+            )
+            .one_or_none()
         )
 
         logger.debug("application data:")
         logger.debug(pformat(application))
 
         if application is not None:
-            application = application_extension.expand_application(application, dbsession = dbs)
+            application = application_extension.expand_application(
+                application, dbsession=dbs
+            )
             # Serialize the data for the response
             application_schema = ExtendedApplicationSchema()
             data = application_schema.dump(application)
@@ -122,6 +145,7 @@ def read_one(oid):
             return data
         else:
             abort(404, f"Application with id {oid} not found".format(id=oid))
+
 
 def create(applicationDetails):
     """
@@ -139,14 +163,22 @@ def create(applicationDetails):
             del applicationDetails["id"]
 
         # Validate the business unit
-        business_unit_ids = security.get_business_units_ids_for_user(dbsession = dbs)
+        business_unit_ids = security.get_business_units_ids_for_user(dbsession=dbs)
         if business_unit_ids:
-            activator = dbs.query(Activator).filter(Activator.id == applicationDetails.get("activatorId")).one_or_none()
+            activator = (
+                dbs.query(Activator)
+                .filter(Activator.id == applicationDetails.get("activatorId"))
+                .one_or_none()
+            )
             business_unit = activator.businessUnitId
             if business_unit not in business_unit_ids:
-                abort(400, f"Unauthorized to create applications for business unit {business_unit}")
+                abort(
+                    400,
+                    f"Unauthorized to create applications for business unit {business_unit}",
+                )
         else:
-            # initially will let this pass, but in future we could abort if user is not a member of any business units
+            # initially will let this pass, but in future we could abort if user is
+            # not a member of any business units
             pass
 
         schema = ApplicationSchema()
@@ -160,6 +192,7 @@ def create(applicationDetails):
         logger.debug("application data:")
         logger.debug(pformat(data))
         return data, 201
+
 
 def update(oid, applicationDetails):
     """
@@ -183,19 +216,26 @@ def update(oid, applicationDetails):
         # Does application exist?
         if existing_application is not None:
             # Validate the business unit
-            business_unit_ids = security.get_business_units_ids_for_user(dbsession = dbs)
+            business_unit_ids = security.get_business_units_ids_for_user(dbsession=dbs)
             if business_unit_ids:
-                activator = dbs.query(Activator).filter(Activator.id == applicationDetails.get("activatorId")).one_or_none()
+                activator = (
+                    dbs.query(Activator)
+                    .filter(Activator.id == applicationDetails.get("activatorId"))
+                    .one_or_none()
+                )
                 business_unit = activator.businessUnitId
                 if business_unit and business_unit not in business_unit_ids:
-                    abort(400, f"Unauthorized to update solutions for business unit {business_unit}")                
+                    abort(
+                        400,
+                        f"Unauthorized to update solutions for business unit {business_unit}",
+                    )
             else:
-                # initially will let this pass, but in future we could abort if user is not a member of any business units
+                # initially will let this pass, but in future we could abort if user is
+                # not a member of any business units
                 pass
 
-
             schema = ApplicationSchema()
-            applicationDetails['id'] = oid
+            applicationDetails["id"] = oid
             schema.load(applicationDetails, session=db.session)
             dbs.merge(existing_application)
             dbs.commit()
@@ -208,6 +248,7 @@ def update(oid, applicationDetails):
         # otherwise, nope, application doesn't exist, so that's an error
         else:
             abort(404, f"Application {oid} not found")
+
 
 def delete(oid):
     """
@@ -225,15 +266,23 @@ def delete(oid):
         # if found?
         if existing_application is not None:
 
-           # Validate the business unit
-            business_unit_ids = security.get_business_units_ids_for_user(dbsession = dbs)
+            # Validate the business unit
+            business_unit_ids = security.get_business_units_ids_for_user(dbsession=dbs)
             if business_unit_ids:
-                activator = dbs.query(Activator).filter(Activator.id == existing_application.activatorId).one_or_none()
-                business_unit = activator.businessUnitId                
+                activator = (
+                    dbs.query(Activator)
+                    .filter(Activator.id == existing_application.activatorId)
+                    .one_or_none()
+                )
+                business_unit = activator.businessUnitId
                 if business_unit and business_unit not in business_unit_ids:
-                    abort(400, f"Unauthorized to delete applications for business unit {business_unit}")                
+                    abort(
+                        400,
+                        f"Unauthorized to delete applications for business unit {business_unit}",
+                    )
             else:
-                # initially will let this pass, but in future we could abort if user is not a member of any business units
+                # initially will let this pass, but in future we could abort if user is
+                # not a member of any business units
                 pass
 
             existing_application.isActive = False

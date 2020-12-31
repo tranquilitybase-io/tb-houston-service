@@ -3,10 +3,12 @@ This is the deployments module and supports all the ReST actions for the
 vpnOnPremiseVendor collection
 """
 from pprint import pformat
-from flask import make_response, abort
 
-from config import db, app
+from flask import abort, make_response
+
+from config import app, db
 from models import VPNOnPremiseVendor, VPNOnPremiseVendorSchema
+
 
 def read_all():
     """
@@ -24,6 +26,7 @@ def read_all():
     vpnOnPremiseVendor_schema = VPNOnPremiseVendorSchema(many=True)
     data = vpnOnPremiseVendor_schema.dump(vpnOnPremiseVendor)
     return data
+
 
 def read_one(oid):
     """
@@ -47,6 +50,7 @@ def read_one(oid):
     else:
         abort(404, f"VPNOnPremiseVendor with id {oid} not found")
 
+
 def create(vpnOnPremiseVendorDetails):
     """
     This function creates a new vpnOnPremiseVendor in the vpnOnPremiseVendor list
@@ -69,6 +73,7 @@ def create(vpnOnPremiseVendorDetails):
     data = schema.dump(new_vpnOnPremiseVendor)
     return data, 201
 
+
 def update(oid, vpnOnPremiseVendorDetails):
     """
     This function updates an existing vpnOnPremiseVendor in the vpnOnPremiseVendor list
@@ -79,7 +84,7 @@ def update(oid, vpnOnPremiseVendorDetails):
     """
     app.logger.debug(pformat(vpnOnPremiseVendorDetails))
     if vpnOnPremiseVendorDetails.get("id", oid) != oid:
-        abort(400, f"Key mismatch in path and body")
+        abort(400, "Key mismatch in path and body")
 
     # Does the vpnOnPremiseVendor exist in vpnOnPremiseVendor list?
     existing_vpnOnPremiseVendor = (
@@ -101,6 +106,7 @@ def update(oid, vpnOnPremiseVendorDetails):
         return data, 200
     else:
         abort(404, f"VPNOnPremiseVendor {oid} not found")
+
 
 def delete(oid):
     """

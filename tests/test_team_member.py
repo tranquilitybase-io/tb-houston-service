@@ -1,13 +1,11 @@
-  
-import requests
 import json
 import logging
 import os
 from pprint import pprint
-from tests import pytest_lib
-from tests import test_team
-from tests import test_user
 
+import requests
+
+from tests import pytest_lib, test_team, test_user
 
 LOG_LEVEL = logging.INFO  # DEBUG, INFO, WARNING, ERROR, CRITICAL
 
@@ -20,6 +18,7 @@ team_members_url = f"http://{HOUSTON_SERVICE_URL}/api/teamMembers/"
 # Additional headers.
 headers = {"Content-Type": "application/json"}
 test_email_account = "new_team@test.com"
+
 
 def typestest(resp):
     assert isinstance(resp["userId"], int)
@@ -34,13 +33,13 @@ def test_teammember():
     # Testing POST request
     user_id = test_user.post()
     test_user.put(user_id)
-    team_id = test_team.post() 
+    team_id = test_team.post()
 
-    team_member_id = post_team_member(userId = user_id,  teamId = team_id)
+    team_member_id = post_team_member(userId=user_id, teamId=team_id)
     # Testing PUT request
-    put_team_member(teamMemberId = team_member_id, userId = user_id, teamId = team_id)
+    put_team_member(teamMemberId=team_member_id, userId=user_id, teamId=team_id)
     # Test GET all teammbers with parameters
-    get_all_params(userId = user_id, teamId = team_id)
+    get_all_params(userId=user_id, teamId=team_id)
     # Testing DELETE request
     pytest_lib.logical_delete(team_member_url, str(team_member_id))
     # Testing DELETE Request Error
@@ -62,7 +61,9 @@ def post_team_member(userId, teamId):
     }
 
     # convert dict to json by json.dumps() for body data.
-    resp = requests.post(team_member_url, headers=headers, data=json.dumps(payload, indent=4))
+    resp = requests.post(
+        team_member_url, headers=headers, data=json.dumps(payload, indent=4)
+    )
 
     # Validate response headers and body contents, e.g. status code.
     resp_json = resp.json()
@@ -95,7 +96,9 @@ def put_team_member(teamMemberId, userId, teamId):
     }
 
     resp = requests.put(
-        team_member_url + str(teamMemberId), headers=headers, data=json.dumps(newpayload, indent=4)
+        team_member_url + str(teamMemberId),
+        headers=headers,
+        data=json.dumps(newpayload, indent=4),
     )
 
     # Validate update/Put response
@@ -104,13 +107,13 @@ def put_team_member(teamMemberId, userId, teamId):
     # Get Request to get updated values
     resp = requests.get(team_member_url + str(teamMemberId), headers=headers)
     resp_json = resp.json()
-    #id = resp_json["id"]
+    # id = resp_json["id"]
 
     # Validate response body for updated values
     assert resp.status_code == 200
     assert resp_json["userId"] == userId
     assert resp_json["teamId"] == teamId
-    assert resp_json["isActive"] == False
+    assert resp_json["isActive"] is False
 
     typestest(resp_json)
 

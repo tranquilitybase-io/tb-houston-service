@@ -3,17 +3,19 @@ This is the deployments module and supports all the ReST actions for the
 type collection
 """
 from pprint import pformat
-from flask import make_response, abort
 
-from config import db, app
+from flask import abort, make_response
+
+from config import app, db
 from models import Type, TypeSchema
+
 
 def read_all():
     """
     This function responds to a request for /api/type
-    with the complete lists of Types 
+    with the complete lists of Types
 
-    :return:        json string of list of Types 
+    :return:        json string of list of Types
     """
 
     # Create the list of Types from our data
@@ -23,6 +25,7 @@ def read_all():
     type_schema = TypeSchema(many=True)
     data = type_schema.dump(type)
     return data
+
 
 def read_one(id):
     """
@@ -41,12 +44,13 @@ def read_one(id):
     else:
         abort(404, "Type with id {id} not found".format(id=id))
 
+
 def read_keyValues():
     """
     This function responds to a request for /keyValues/type
-    with the complete lists of Types 
+    with the complete lists of Types
 
-    :return:        json string of list of Types 
+    :return:        json string of list of Types
     """
     # Create the list of Types from our data
     type = db.session.query(Type).order_by(Type.id).all()
@@ -63,6 +67,7 @@ def read_keyValues():
     print(keyValues)
     return keyValues
 
+
 def create(typeDetails):
     """
     This function creates a new type in the type list
@@ -72,10 +77,12 @@ def create(typeDetails):
     :return:        201 on success, 406 on type exists
     """
     # Remove id as it's created automatically
-    if 'id' in typeDetails:
-        del typeDetails['id']
+    if "id" in typeDetails:
+        del typeDetails["id"]
     # Does the type exist already?
-    existing_type = db.session.query(Type).filter(Type.value == typeDetails["value"]).one_or_none()
+    existing_type = (
+        db.session.query(Type).filter(Type.value == typeDetails["value"]).one_or_none()
+    )
 
     if existing_type is None:
         schema = TypeSchema()
@@ -92,6 +99,7 @@ def create(typeDetails):
     # Otherwise, it already exists, that's an error
     else:
         abort(406, "Type already exists")
+
 
 def update(id, typeDetails):
     """
@@ -125,6 +133,7 @@ def update(id, typeDetails):
     # otherwise, nope, deployment doesn't exist, so that's an error
     else:
         abort(404, "Type not found")
+
 
 def delete(id):
     """

@@ -1,7 +1,8 @@
-import requests
 import json
 import logging
 import os
+
+import requests
 
 LOG_LEVEL = logging.INFO  # DEBUG, INFO, WARNING, ERROR, CRITICAL
 
@@ -12,6 +13,7 @@ url = f"http://{HOUSTON_SERVICE_URL}/api/ci/"
 headers = {"Content-Type": "application/json"}
 
 # key = 'test/'
+
 
 def test_ci():
     # Testing POST request
@@ -25,6 +27,7 @@ def test_ci():
     delete_error(id)
     # Testing GETALL request
     get_all()
+
 
 def post():
 
@@ -41,7 +44,7 @@ def post():
     id = str(resp_json["id"])
 
     # Get Request to check Post has created item as expected
-    resp = requests.get(url +id, headers=headers)
+    resp = requests.get(url + id, headers=headers)
     resp_json = resp.json()
     resp_headers = resp.headers
     # Validate response

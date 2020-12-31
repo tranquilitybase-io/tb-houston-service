@@ -1,39 +1,42 @@
-import requests
-import time
-import os
 import json
-from pprint import pformat
-from pprint import pprint
+import os
+import time
 import unittest
-from tests.Spinner import Spinner
+from pprint import pformat, pprint
+
+import requests
 
 from tb_houston_service.DeploymentStatus import DeploymentStatus
+from tests.Spinner import Spinner
 
 
 class TestDeployment(unittest.TestCase):
     HOUSTON_SERVICE_URL = os.environ["HOUSTON_SERVICE_URL"]
-    lzenvironment_deployment_url = f"http://{HOUSTON_SERVICE_URL}/api/lzEnvironmentDeployment/"
+    lzenvironment_deployment_url = (
+        f"http://{HOUSTON_SERVICE_URL}/api/lzEnvironmentDeployment/"
+    )
     solution_url = f"http://{HOUSTON_SERVICE_URL}/api/solution/"
     solution_deployment_url = f"http://{HOUSTON_SERVICE_URL}/api/solutiondeployment/"
     solution_deployments_url = f"http://{HOUSTON_SERVICE_URL}/api/solutiondeployments/"
 
     application_url = f"http://{HOUSTON_SERVICE_URL}/api/application/"
-    application_deployment_url = f"http://{HOUSTON_SERVICE_URL}/api/applicationDeployment/"
-    application_deployments_url = f"http://{HOUSTON_SERVICE_URL}/api/applicationDeployments/"
-
+    application_deployment_url = (
+        f"http://{HOUSTON_SERVICE_URL}/api/applicationDeployment/"
+    )
+    application_deployments_url = (
+        f"http://{HOUSTON_SERVICE_URL}/api/applicationDeployments/"
+    )
 
     # Additional headers.
     headers = {"Content-Type": "application/json"}
     solution_oid = None
     application_oid = None
 
-
     # Main tests are prefix with test_
     def lzenvironment_deployment(self):
         resp = requests.post(self.lzenvironment_deployment_url, headers=self.headers)
         print(f"resp: {resp}")
         self.assertEqual(resp.status_code, 200)
-        
 
     def solution_deployment(self):
         # Testing POST request
@@ -48,7 +51,6 @@ class TestDeployment(unittest.TestCase):
         # Testing get deployment results
         self.get_solution_deployment_results()
 
-
     def typestest_solution_deployment(self, resp):
         self.assertTrue(isinstance(resp["id"], int))
         self.assertTrue(isinstance(resp["deployed"], bool))
@@ -58,7 +60,6 @@ class TestDeployment(unittest.TestCase):
         self.assertTrue(isinstance(resp["statusId"], int))
         self.assertTrue(isinstance(resp["taskId"], str) or resp["taskId"] is None)
         pprint(resp)
-
 
     def post_solution_deployment(self):
         print("Post Solution Deployment Tests")
@@ -72,7 +73,9 @@ class TestDeployment(unittest.TestCase):
 
         # convert dict to json by json.dumps() for body data.
         resp = requests.post(
-            self.solution_deployment_url, headers=self.headers, data=payload.format(self.solution_oid)
+            self.solution_deployment_url,
+            headers=self.headers,
+            data=payload.format(self.solution_oid),
         )
 
         # Validate response headers and body contents, e.g. status code.
@@ -82,7 +85,9 @@ class TestDeployment(unittest.TestCase):
         self.assertEqual(resp.headers["content-type"], "application/json")
 
         # Get Request to get updated values
-        resp = requests.get(self.solution_deployment_url + self.solution_oid, headers=self.headers)
+        resp = requests.get(
+            self.solution_deployment_url + self.solution_oid, headers=self.headers
+        )
         resp_json = resp.json()
         print("solution_post")
         pprint(resp_json)
@@ -124,7 +129,9 @@ class TestDeployment(unittest.TestCase):
         self.assertEqual(resp.status_code, 200)
 
         # Get Request to get updated values
-        resp = requests.get(self.solution_deployment_url + self.solution_oid, headers=self.headers)
+        resp = requests.get(
+            self.solution_deployment_url + self.solution_oid, headers=self.headers
+        )
         resp_json = resp.json()
 
         # Validate response body for updated values
@@ -153,17 +160,19 @@ class TestDeployment(unittest.TestCase):
             "name": "test solution",
             "sourceControlId": 1,
             "teamId": 1,
-            "environments": [1, 2]
+            "environments": [1, 2],
         }
-    
+
         # convert dict to json by json.dumps() for body data.
-        resp = requests.post(self.solution_url, headers=self.headers, data=json.dumps(payload, indent=4))
-    
+        resp = requests.post(
+            self.solution_url, headers=self.headers, data=json.dumps(payload, indent=4)
+        )
+
         # Validate response headers and body contents, e.g. status code.
         resp_json = resp.json()
         id = str(resp_json["id"])
         assert resp.status_code == 201
-    
+
         # Get Request to check Post has created item as expected
         resp = requests.get(self.solution_url + id, headers=self.headers)
         resp_json = resp.json()
@@ -177,21 +186,31 @@ class TestDeployment(unittest.TestCase):
         assert resp_headers["content-type"] == "application/json"
         return id
 
-
     def get_solution_deployment_results(self):
         print("Get Solution Test Results")
         with Spinner():
-            resp = requests.get(self.solution_deployment_url+str(self.solution_oid), headers=self.headers)
+            resp = requests.get(
+                self.solution_deployment_url + str(self.solution_oid),
+                headers=self.headers,
+            )
             resp_json = resp.json()
-            while resp_json["deploymentState"] != DeploymentStatus.SUCCESS and resp_json["deploymentState"] != DeploymentStatus.FAILURE:
+            while (
+                resp_json["deploymentState"] != DeploymentStatus.SUCCESS
+                and resp_json["deploymentState"] != DeploymentStatus.FAILURE
+            ):
                 time.sleep(1)
-                resp = requests.get(self.solution_deployment_url+str(self.solution_oid), headers=self.headers)
+                resp = requests.get(
+                    self.solution_deployment_url + str(self.solution_oid),
+                    headers=self.headers,
+                )
                 resp_json = resp.json()
                 print(f" Solution Deployment {resp_json['deploymentState']}")
             # Validate Get All response
             self.assertEqual(resp.status_code, 200)
-            self.assertTrue(resp_json["deploymentState"] == DeploymentStatus.SUCCESS or resp_json["deploymentState"] == DeploymentStatus.FAILURE)
-
+            self.assertTrue(
+                resp_json["deploymentState"] == DeploymentStatus.SUCCESS
+                or resp_json["deploymentState"] == DeploymentStatus.FAILURE
+            )
 
     # Main tests are prefix with test_
     def application_deployment(self):
@@ -202,8 +221,7 @@ class TestDeployment(unittest.TestCase):
         self.get_application_deployment_results()
 
         # Testing PUT request
-        #self.put_deployment()
-
+        # self.put_deployment()
 
     def typestest_application_deployment(self, resp):
         self.assertTrue(isinstance(resp["id"], int))
@@ -214,7 +232,6 @@ class TestDeployment(unittest.TestCase):
         self.assertTrue(isinstance(resp["statusId"], int))
         self.assertTrue(isinstance(resp["taskId"], str) or resp["taskId"] is None)
         pprint(resp)
-
 
     def post_application_deployment(self):
         print("Post Application Deployment Tests")
@@ -229,12 +246,13 @@ class TestDeployment(unittest.TestCase):
         new_payload = payload.format(int(self.application_oid))
         print(f"application deployment payload: {new_payload}")
         # convert dict to json by json.dumps() for body data.
-        resp = requests.post(self.application_deployment_url, headers=self.headers, data=new_payload)
+        resp = requests.post(
+            self.application_deployment_url, headers=self.headers, data=new_payload
+        )
 
         # Validate response headers and body contents, e.g. status code.
         print(resp)
         self.assertEqual(resp.status_code, 200)
-
 
     def put_application_deployment(self):
         print("Put Tests, example of redeploying an application.")
@@ -264,7 +282,6 @@ class TestDeployment(unittest.TestCase):
         # Validate update/Put response
         self.assertEqual(resp.status_code, 200)
 
-
     def post_application(self):
         print("Create an Application Test")
         # Test POST Then GET
@@ -288,18 +305,22 @@ class TestDeployment(unittest.TestCase):
             "status": "Available"
         }}
         """
-    
+
         new_payload = payload.format(int(self.solution_oid))
         print("post_application payload: %s", new_payload)
-        resp = requests.post(self.application_url, headers=self.headers, data=new_payload)
-    
+        resp = requests.post(
+            self.application_url, headers=self.headers, data=new_payload
+        )
+
         # Validate response headers and body contents, e.g. status code.
         resp_json = resp.json()
         self.application_oid = str(resp_json["id"])
         assert resp.status_code == 201
-    
+
         # Get Request to check Post has created item as expected
-        resp = requests.get(self.application_url + self.application_oid, headers=self.headers)
+        resp = requests.get(
+            self.application_url + self.application_oid, headers=self.headers
+        )
         resp_json = resp.json()
         resp_headers = resp.headers
         # Validate response
@@ -308,36 +329,36 @@ class TestDeployment(unittest.TestCase):
         assert resp_json["description"] == "New Application"
         assert resp_headers["content-type"] == "application/json"
 
-
     def find_application_deployment(self):
         resps = requests.get(self.application_deployments_url, headers=self.headers)
         resps_json = resps.json()
         for j in resps_json:
-            if j['id'] == self.application_oid:
+            if j["id"] == self.application_oid:
                 return j
         time.sleep(1)
         return j
-
 
     def get_application_deployment_results(self):
         print("Get Test Results")
         with Spinner():
             foundTaskId = False
-            while foundTaskId == False:
+            while foundTaskId is False:
                 j = self.find_application_deployment()
                 print(f"Found application deployment: {j}")
-                taskId = j['taskId']
+                taskId = j["taskId"]
                 if taskId:
                     foundTaskId = True
 
             done = False
-            while done == False:
+            while done is False:
                 k = self.find_application_deployment()
-                if k['deploymentState'] == DeploymentStatus.SUCCESS or k['deploymentState'] == DeploymentStatus.FAILURE:
-                    done = True  
+                if (
+                    k["deploymentState"] == DeploymentStatus.SUCCESS
+                    or k["deploymentState"] == DeploymentStatus.FAILURE
+                ):
+                    done = True
                     print(f"Finish application deployment: {k}")
             self.assertTrue(done)
-
 
     def test_deployment(self):
         self.lzenvironment_deployment()
@@ -345,5 +366,5 @@ class TestDeployment(unittest.TestCase):
         self.application_deployment()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main(verbosity=2)

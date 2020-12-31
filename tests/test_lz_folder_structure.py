@@ -1,11 +1,11 @@
 """
    Tests for the solutionresource endpoint.
 """
-from pprint import pprint
 import json
 import os
-import requests
+from pprint import pprint
 
+import requests
 
 HOUSTON_SERVICE_URL = os.environ["HOUSTON_SERVICE_URL"]
 url = f"http://{HOUSTON_SERVICE_URL}/api/lzmetadataFolderStructure/"

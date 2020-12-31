@@ -1,8 +1,9 @@
 from config import db, ma
 
+
 class ApplicationDeployment(db.Model):
     __tablename__ = "applicationDeployment"
-    __table_args__ = {'schema': 'eagle_db'}
+    __table_args__ = {"schema": "eagle_db"}
     applicationId = db.Column(db.Integer, primary_key=True)
     solutionId = db.Column(db.Integer, primary_key=True)
     lzEnvironmentId = db.Column(db.Integer, primary_key=True)
@@ -16,6 +17,7 @@ class ApplicationDeployment(db.Model):
         return "<ApplicationDeployment(applicationId={self.applicationId!r}, solutionId={self.solutionId!r})>".format(
             self=self
         )
+
 
 class ApplicationDeploymentSchema(ma.ModelSchema):
     class Meta:

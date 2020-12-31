@@ -1,7 +1,8 @@
-import requests
 import json
 import logging
 import os
+
+import requests
 
 LOG_LEVEL = logging.INFO  # DEBUG, INFO, WARNING, ERROR, CRITICAL
 
@@ -25,11 +26,12 @@ def test_cd():
     # Testing GETALL request
     get_all()
 
+
 def post():
 
     # Test POST Then GET
     # Body
-    payload = {"id":0, "value": "test-post-platform"}
+    payload = {"id": 0, "value": "test-post-platform"}
     # convert dict to json by json.dumps() for body data.
     resp = requests.post(url, headers=headers, data=json.dumps(payload, indent=4))
 
@@ -77,11 +79,13 @@ def delete(id):
     resp = requests.delete(url + id, headers=headers)
     assert resp.status_code == 200
 
+
 def delete_error(id):
 
     # Test Delete for an non existing item
     resp = requests.delete(url + id, headers=headers)
     assert resp.status_code == 404
+
 
 def get_error():
 

@@ -3,21 +3,32 @@ This is the deployments module and supports all the ReST actions for the
 solutions collection
 """
 import logging
-from flask import make_response, abort
+
+from flask import abort, make_response
 from sqlalchemy import literal_column
 from sqlalchemy.exc import SQLAlchemyError
 
 from config.db_lib import db_session
 from models import Solution, SolutionSchema
+from tb_houston_service import security, solution_extension
+from tb_houston_service.extendedSchemas import (
+    ExtendedSolutionSchema,
+    SolutionNamesOnlySchema,
+)
 from tb_houston_service.tools import ModelTools
-from tb_houston_service.extendedSchemas import ExtendedSolutionSchema
-from tb_houston_service.extendedSchemas import SolutionNamesOnlySchema
-from tb_houston_service import solution_extension
-from tb_houston_service import security
 
 logger = logging.getLogger("tb_houston_service.solution")
 
-def read_all(isActive=None, isFavourite=None, isSandbox=None, namesonly=None, page=None, page_size=None, sort=None):
+
+def read_all(
+    isActive=None,
+    isFavourite=None,
+    isSandbox=None,
+    namesonly=None,
+    page=None,
+    page_size=None,
+    sort=None,
+):
     """
     This function responds to a request for /api/solutions
     with the complete lists of solutions
@@ -25,11 +36,19 @@ def read_all(isActive=None, isFavourite=None, isSandbox=None, namesonly=None, pa
     :return:        json string of list of solutions
     """
     logger.debug("solution.read_all")
-    logger.debug("Parameters: isActive: %s, isFavourite: %s, isSandbox: %s, namesonly: %s, page: %s, page_size: %s, sort: %s", 
-    isActive, isFavourite, isSandbox, namesonly, page, page_size, sort)
+    logger.debug(
+        "Parameters: isActive: %s, isFavourite: %s, isSandbox: %s, namesonly: %s, page: %s, page_size: %s, sort: %s",
+        isActive,
+        isFavourite,
+        isSandbox,
+        namesonly,
+        page,
+        page_size,
+        sort,
+    )
     with db_session() as dbs:
         # pre-process sort instructions
-        if sort == None:
+        if sort is None:
             solution_query = dbs.query(Solution).order_by(Solution.id)
         else:
             try:
@@ -51,34 +70,38 @@ def read_all(isActive=None, isFavourite=None, isSandbox=None, namesonly=None, pa
                 solution_query = dbs.query(Solution).order_by(Solution.id)
 
         # filter solutions by logged in user id
-        business_unit_ids = security.get_business_units_ids_for_user(dbsession = dbs)
+        business_unit_ids = security.get_business_units_ids_for_user(dbsession=dbs)
 
         # Create the list of solutions from our data
         solution_query = solution_query.filter(
-            (isActive == None or Solution.isActive == isActive),
-            (isFavourite == None or Solution.isFavourite == isFavourite),
-            (isSandbox == None or Solution.isSandbox == isSandbox),
-            (business_unit_ids == None or Solution.businessUnitId.in_(business_unit_ids))
+            (isActive is None or Solution.isActive == isActive),
+            (isFavourite is None or Solution.isFavourite == isFavourite),
+            (isSandbox is None or Solution.isSandbox == isSandbox),
+            (
+                business_unit_ids is None
+                or Solution.businessUnitId.in_(business_unit_ids)
+            ),
         )
 
         # do limit and offset last
-        if page == None or page_size == None:
+        if page is None or page_size is None:
             solutions = solution_query.all()
         else:
             solutions = solution_query.limit(page_size).offset(page * page_size)
 
-        if namesonly == True:
+        if namesonly is True:
             # Serialize the data for the response
             schema = SolutionNamesOnlySchema(many=True)
             data = schema.dump(solutions)
         else:
             for sol in solutions:
-                sol = solution_extension.expand_solution(sol, dbsession = dbs)
+                sol = solution_extension.expand_solution(sol, dbsession=dbs)
             schema = ExtendedSolutionSchema(many=True)
             data = schema.dump(solutions)
 
         logger.debug("read_all: %s", data)
         return data, 200
+
 
 def read_one(oid):
     """
@@ -89,21 +112,29 @@ def read_one(oid):
     :return:              solution matching id
     """
     with db_session() as dbs:
-        # filter solutions by logged in user 
-        business_unit_ids = security.get_business_units_ids_for_user(dbsession = dbs)
-        sol = dbs.query(Solution).filter(
-            Solution.id == oid,
-            (business_unit_ids == None or Solution.businessUnitId.in_(business_unit_ids))
-        ).one_or_none()
+        # filter solutions by logged in user
+        business_unit_ids = security.get_business_units_ids_for_user(dbsession=dbs)
+        sol = (
+            dbs.query(Solution)
+            .filter(
+                Solution.id == oid,
+                (
+                    business_unit_ids is None
+                    or Solution.businessUnitId.in_(business_unit_ids)
+                ),
+            )
+            .one_or_none()
+        )
 
         if sol is not None:
-            solution = solution_extension.expand_solution(sol, dbsession = dbs)
+            solution = solution_extension.expand_solution(sol, dbsession=dbs)
             # Serialize the data for the response
             solution_schema = ExtendedSolutionSchema()
             data = solution_schema.dump(solution)
             return data, 200
         else:
             abort(404, f"Solution with id {oid} not found".format(id=oid))
+
 
 def create(solutionDetails):
     """
@@ -116,28 +147,28 @@ def create(solutionDetails):
     data = None
     with db_session() as dbs:
         # Defaults
-        if solutionDetails.get("isActive") == None:
+        if solutionDetails.get("isActive") is None:
             solutionDetails["isActive"] = True
 
-        if solutionDetails.get("isFavourite") == None:
+        if solutionDetails.get("isFavourite") is None:
             solutionDetails["isFavourite"] = False
 
-        if solutionDetails.get("deployed") == None:
+        if solutionDetails.get("deployed") is None:
             solutionDetails["deployed"] = False
 
-        if solutionDetails.get("deploymentState") == None:
+        if solutionDetails.get("deploymentState") is None:
             solutionDetails["deploymentState"] = ""
 
-        if solutionDetails.get("statusId") == None:
+        if solutionDetails.get("statusId") is None:
             solutionDetails["statusId"] = 0
 
-        if solutionDetails.get("statusCode") == None:
+        if solutionDetails.get("statusCode") is None:
             solutionDetails["statusCode"] = ""
 
-        if solutionDetails.get("statusMessage") == None:
+        if solutionDetails.get("statusMessage") is None:
             solutionDetails["statusMessage"] = ""
 
-        if solutionDetails.get("isSandbox") == None:
+        if solutionDetails.get("isSandbox") is None:
             solutionDetails["isSandbox"] = False
 
         # Remove applications because Solutions don't have
@@ -150,16 +181,20 @@ def create(solutionDetails):
             del solutionDetails["id"]
 
         solutionDetails["lastUpdated"] = ModelTools.get_utc_timestamp()
-        envs = solutionDetails.get('environments')
+        envs = solutionDetails.get("environments")
 
         # Validate the business unit
-        business_unit_ids = security.get_business_units_ids_for_user(dbsession = dbs)
+        business_unit_ids = security.get_business_units_ids_for_user(dbsession=dbs)
         if business_unit_ids:
             business_unit = solutionDetails.get("businessUnitId")
             if business_unit not in business_unit_ids:
-                abort(400, f"Unauthorized to create solutions for business unit {business_unit}")
+                abort(
+                    400,
+                    f"Unauthorized to create solutions for business unit {business_unit}",
+                )
         else:
-            # initially will let this pass, but in future we could abort if user is not a member of any business units
+            # initially will let this pass, but in future we could abort if user is
+            # not a member of any business units
             pass
 
         # Removing this as the below schema is not expecting this field.
@@ -173,15 +208,18 @@ def create(solutionDetails):
         dbs.add(new_solution)
         dbs.flush()
         if envs:
-            solution_extension.create_solution_environments(new_solution.id, envs, dbsession = dbs)
-        new_solution = solution_extension.expand_solution(new_solution, dbsession = dbs)        
+            solution_extension.create_solution_environments(
+                new_solution.id, envs, dbsession=dbs
+            )
+        new_solution = solution_extension.expand_solution(new_solution, dbsession=dbs)
         schema = ExtendedSolutionSchema()
-        data = schema.dump(new_solution)        
-        
+        data = schema.dump(new_solution)
+
     # Serialize and return the newly created solution
     # in the response
 
     return data, 201
+
 
 def update(oid, solutionDetails):
     """
@@ -194,40 +232,49 @@ def update(oid, solutionDetails):
     logger.debug("update::solutionDetails: %s", solutionDetails)
     with db_session() as dbs:
         # Does the solutions exist in solutions list?
-        existing_solution = (
-            dbs.query(Solution).filter(Solution.id == oid).one_or_none()
-        )
+        existing_solution = dbs.query(Solution).filter(Solution.id == oid).one_or_none()
 
         # Does solutions exist?
 
         if existing_solution is not None:
-            solutionDetails['id'] = oid
+            solutionDetails["id"] = oid
 
             # Validate the business unit
-            business_unit_ids = security.get_business_units_ids_for_user(dbsession = dbs)
+            business_unit_ids = security.get_business_units_ids_for_user(dbsession=dbs)
             if business_unit_ids:
                 business_unit = solutionDetails.get("businessUnitId")
                 if business_unit and business_unit not in business_unit_ids:
-                    abort(400, f"Unauthorized to update solutions for business unit {business_unit}")
+                    abort(
+                        400,
+                        f"Unauthorized to update solutions for business unit {business_unit}",
+                    )
                 business_unit = existing_solution.businessUnitId
                 if business_unit and business_unit not in business_unit_ids:
-                    abort(400, f"Unauthorized to update solutions for business unit {business_unit}")                
+                    abort(
+                        400,
+                        f"Unauthorized to update solutions for business unit {business_unit}",
+                    )
             else:
-                # initially will let this pass, but in future we could abort if user is not a member of any business units
+                # initially will let this pass, but in future we could abort if user is
+                # not a member of any business units
                 pass
 
-            envs = solutionDetails.get('environments')
+            envs = solutionDetails.get("environments")
             # Remove envs as it's processed separately, but in the same transaction.
             if "environments" in solutionDetails:
                 del solutionDetails["environments"]
-                solution_extension.create_solution_environments(oid, envs, dbsession = dbs)
+                solution_extension.create_solution_environments(
+                    oid, envs, dbsession=dbs
+                )
             schema = SolutionSchema(many=False)
             new_solution = schema.load(solutionDetails, session=dbs)
-            new_solution.lastUpdated = ModelTools.get_utc_timestamp()            
+            new_solution.lastUpdated = ModelTools.get_utc_timestamp()
             dbs.merge(new_solution)
             dbs.commit()
 
-            new_solution = solution_extension.expand_solution(new_solution, dbsession = dbs)  
+            new_solution = solution_extension.expand_solution(
+                new_solution, dbsession=dbs
+            )
             # return the updted solutions in the response
             schema = ExtendedSolutionSchema(many=False)
             data = schema.dump(new_solution)
@@ -236,6 +283,7 @@ def update(oid, solutionDetails):
             # otherwise, nope, deployment doesn't exist, so that's an error
         else:
             abort(404, f"Solution {oid} not found")
+
 
 def delete(oid):
     """
@@ -246,18 +294,19 @@ def delete(oid):
     """
     with db_session() as dbs:
         # Does the solution to delete exist?
-        existing_solution = (
-            dbs.query(Solution).filter(Solution.id == oid).one_or_none()
-        )
+        existing_solution = dbs.query(Solution).filter(Solution.id == oid).one_or_none()
 
         # Validate the business unit
-        business_unit_ids = security.get_business_units_ids_for_user(dbsession = dbs)
+        business_unit_ids = security.get_business_units_ids_for_user(dbsession=dbs)
         if business_unit_ids:
             business_unit = existing_solution.businessUnitId
             if business_unit and business_unit not in business_unit_ids:
-                abort(400, f"Unauthorized to delete solutions for business unit {business_unit}") 
+                abort(
+                    400,
+                    f"Unauthorized to delete solutions for business unit {business_unit}",
+                )
         else:
-            pass 
+            pass
 
         # if found?
         if existing_solution is not None:

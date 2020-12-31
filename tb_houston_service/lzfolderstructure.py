@@ -2,8 +2,8 @@
 This is the deployments module and supports all the ReST actions for the
 Landing Zone folder structure collection
 """
-import logging
 import json
+import logging
 from pprint import pformat
 
 from config import db
@@ -14,6 +14,7 @@ logger = logging.getLogger("tb_houston_service.lzFolderStructure")
 
 # At time of writing max number of levels is ten
 max_levels = 10
+
 
 def add_folders(folders):
     for folder in folders:
@@ -75,7 +76,7 @@ def add_folders(folders):
                 db.session.query(LZFolderStructureChild)
                 .filter(
                     LZFolderStructureChild.folderId == folder["id"],
-                    LZFolderStructureChild.childId == None,
+                    LZFolderStructureChild.childId is None,
                 )
                 .one_or_none()
             )
@@ -86,6 +87,7 @@ def add_folders(folders):
             else:
                 fsc = LZFolderStructureChild(folderId=folder["id"], childId=None)
                 db.session.add(fsc)
+
 
 def read():
     """
@@ -135,6 +137,7 @@ def read():
     print(f"fs: {json.dumps(data, indent=4)}")
     return data, 200
 
+
 def create(lzFolderStructureDetails):
     """
     This function updates folder structure relationships.
@@ -147,7 +150,7 @@ def create(lzFolderStructureDetails):
     try:
         add_folders(lzFolderStructureDetails)
         db.session.commit()
-    except:
+    except BaseException:
         db.session.rollback()
         raise
     finally:

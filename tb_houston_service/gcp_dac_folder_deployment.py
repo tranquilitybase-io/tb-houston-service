@@ -1,11 +1,12 @@
 """
 folder_deployment module.
 """
-from pprint import pformat
 import json
+import logging
 import os
 import re
-import logging
+from pprint import pformat
+
 import requests
 
 from config import app
@@ -21,12 +22,15 @@ delete_folder_result_url = f"{gcp_dac_url}/dac/folder_async/result/delete/"
 folderid_regex = re.compile(r"folders/(?P<folder>\w+)")
 
 # Send the payload to the DAC
+
+
 def create(details):
     response = requests.post(folder_url, data=json.dumps(details), headers=headers)
     resp_json = response.json()
     logger.debug("create::Response from DAC")
     logger.debug("create::%s", pformat(resp_json))
     return resp_json, 200
+
 
 def get_create_results(task_id):
     """
@@ -37,6 +41,7 @@ def get_create_results(task_id):
     resp_json = response.json()
     return resp_json, 200
 
+
 def get_delete_results(task_id):
     """
     Get the deployment results from the DAC.
@@ -46,9 +51,10 @@ def get_delete_results(task_id):
     resp_json = response.json()
     return resp_json, 200
 
+
 def get_folder_id_from_payload(payload):
     """
-    Get the folder id from the payload. 
+    Get the folder id from the payload.
 
     Arguments:
         payload {string} -- The payload returned from the DAC.

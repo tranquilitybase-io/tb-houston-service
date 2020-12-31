@@ -1,10 +1,11 @@
-import requests
 import json
 import logging
 import os
 from pprint import pprint
-from tests import pytest_lib
 
+import requests
+
+from tests import pytest_lib
 
 LOG_LEVEL = logging.INFO  # DEBUG, INFO, WARNING, ERROR, CRITICAL
 
@@ -69,7 +70,7 @@ def post():
     assert resp.status_code == 200
     assert resp_json["name"] == "BU-Test"
     assert resp_json["description"] == "Test BU desc"
-    assert resp_json["isActive"] == True
+    assert resp_json["isActive"] is True
     assert resp_headers["content-type"] == "application/json"
     typestest(resp_json)
     return id
@@ -102,6 +103,6 @@ def put(id):
     assert resp.status_code == 200
     assert resp_json["name"] == "BU-Test"
     assert resp_json["description"] == "Test BU desc"
-    assert resp_json["isActive"] == False
+    assert resp_json["isActive"] is False
 
     typestest(resp_json)

@@ -1,8 +1,9 @@
 from config import db, ma
 
+
 class LZFolderStructure(db.Model):
     __tablename__ = "lzfolderstructure"
-    __table_args__ = {'schema': 'eagle_db'}
+    __table_args__ = {"schema": "eagle_db"}
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
     isActive = db.Column(db.Boolean)
@@ -11,6 +12,7 @@ class LZFolderStructure(db.Model):
         return "<LZFolderStructure(id={self.id!r}, name={self.name!r})>".format(
             self=self
         )
+
 
 class LZFolderStructureSchema(ma.ModelSchema):
     class Meta:

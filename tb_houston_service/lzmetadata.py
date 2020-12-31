@@ -3,13 +3,15 @@ This is the lzmetadata module and supports all the ReST actions for the
 LZMetadata collection
 """
 import logging
+
 from flask import abort
 
-from config import db, app
+from config import app, db
 from config.db_lib import db_session
 from models import LZMetadata, LZMetadataSchema
 
 logger = logging.getLogger("lzmetadata")
+
 
 def read(key):
     """
@@ -20,9 +22,7 @@ def read(key):
     :return:              LZMetadata matching key
     """
     with db_session() as dbs:
-        lzmetadata = (
-            dbs.query(LZMetadata).filter(LZMetadata.key == key).one_or_none()
-        )
+        lzmetadata = dbs.query(LZMetadata).filter(LZMetadata.key == key).one_or_none()
 
         if lzmetadata is not None:
             # Serialize the data for the response
@@ -32,6 +32,7 @@ def read(key):
             return data, 200
         else:
             abort(404, f"LZMetadata with key {key} not found")
+
 
 def create(keyValueDetails):
     """
@@ -57,6 +58,7 @@ def create(keyValueDetails):
         app.logger.debug(data)
         return data, 201
     abort("500", "Problem encountered creating an LZMetadata.")
+
 
 def update(key, keyValueDetails):
     """
@@ -93,11 +95,14 @@ def update(key, keyValueDetails):
             abort(404, f"LZMetadata with key {key} not found")
     abort(500, "Problem encountered updating lzmetadata.")
 
+
 def get_gcp_project_id(projectId):
     local_key = "GCP_PROJECT_URL"
     logger.debug("get_gcp_project_id: projectId=%s", local_key)
     with db_session() as dbs:
-        lzmetadata = dbs.query(LZMetadata).filter(LZMetadata.key == local_key).one_or_none()
+        lzmetadata = (
+            dbs.query(LZMetadata).filter(LZMetadata.key == local_key).one_or_none()
+        )
         logger.debug("lzmetadata: %s", lzmetadata)
         if lzmetadata:
             val = {}

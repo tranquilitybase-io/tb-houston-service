@@ -1,23 +1,35 @@
 import json
-import time
 import logging
 import os
+import time
 from pprint import pformat
+
 import requests
-from flask import make_response, abort
+from flask import abort, make_response
 
 from config import db, executor
 from config.db_lib import db_session
-from models import Application, Activator, ActivatorMetadata, \
-    ApplicationDeployment, ApplicationDeploymentSchema, \
-    LZLanVpc, LZEnvironment, LZLanVpcEnvironment, \
-    Solution, SolutionEnvironment, SolutionResource, ActivatorMetadataVariable
-from tb_houston_service import security, activator_extension
-from tb_houston_service import notification
+from models import (
+    Activator,
+    ActivatorMetadata,
+    ActivatorMetadataVariable,
+    Application,
+    ApplicationDeployment,
+    ApplicationDeploymentSchema,
+    LZEnvironment,
+    LZLanVpc,
+    LZLanVpcEnvironment,
+    Solution,
+    SolutionEnvironment,
+    SolutionResource,
+)
+from tb_houston_service import activator_extension, notification, security
 from tb_houston_service.DeploymentStatus import DeploymentStatus
+from tb_houston_service.extendedSchemas import (
+    ExtendedApplicationDeploymentSchema,
+    ExtendedApplicationForDACSchema,
+)
 from tb_houston_service.tools import ModelTools
-from tb_houston_service.extendedSchemas import ExtendedApplicationDeploymentSchema
-from tb_houston_service.extendedSchemas import ExtendedApplicationForDACSchema
 
 logger = logging.getLogger("tb_houston_service.application_deployment")
 
@@ -26,6 +38,7 @@ deployment_create_result_url = (
     f"http://{os.environ['GCP_DAC_URL']}/dac/application_async/result/create/"
 )
 headers = {"Content-Type": "application/json"}
+
 
 def notify_user(applicationId):
     """
@@ -36,67 +49,98 @@ def notify_user(applicationId):
     """
     with db_session() as dbs:
         user = security.get_valid_user_from_token(dbsession=dbs)
-        logger.debug("user: %s", user)        
+        logger.debug("user: %s", user)
         if user:
-            (app, app_deploy) = dbs.query(Application, ApplicationDeployment).filter(
-                ApplicationDeployment.applicationId == applicationId,
-                ApplicationDeployment.applicationId == Application.id
-                ).one_or_none()
+            (app, app_deploy) = (
+                dbs.query(Application, ApplicationDeployment)
+                .filter(
+                    ApplicationDeployment.applicationId == applicationId,
+                    ApplicationDeployment.applicationId == Application.id,
+                )
+                .one_or_none()
+            )
             if app:
                 deploymentState = app_deploy.deploymentState
                 if deploymentState == DeploymentStatus.SUCCESS:
                     message = f"Your Application {applicationId} ({app.name}) deployment has completed successfully"
                 else:
-                    message = f"Your Application {applicationId} ({app.name}) deployment has failed."                    
+                    message = f"Your Application {applicationId} ({app.name}) deployment has failed."
                 payload = {
                     "isActive": True,
                     "toUserId": user.id,
                     "importance": 1,
                     "message": message,
                     "isRead": False,
-                    "applicationId": app.id
+                    "applicationId": app.id,
                 }
-                notification.create(notification = payload, typeId = 3, dbsession = dbs)
+                notification.create(notification=payload, typeId=3, dbsession=dbs)
             else:
-                logger.warning("Cannot send notification, unable to find the application (%s).", app.id)
+                logger.warning(
+                    "Cannot send notification, unable to find the application (%s).",
+                    app.id,
+                )
         else:
             logger.warning("Cannot send notification, unable to validate the token.")
+
 
 def start_deployment(applicationId):
     logger.info("start_deployment::applicationId: %s", applicationId)
     # can only deploy an application if the solution it belong's to has already been
     # deployed successfully.
     with db_session() as dbs:
-        deployment_complete = False 
-        while deployment_complete == False:
-            app_dep = dbs.query(ApplicationDeployment).filter(
-                ApplicationDeployment.applicationId == applicationId,
-                ApplicationDeployment.deploymentState.notin_((
-                    DeploymentStatus.SUCCESS, 
-                    DeploymentStatus.FAILURE
-                ))
-            ).first()
+        deployment_complete = False
+        while deployment_complete is False:
+            app_dep = (
+                dbs.query(ApplicationDeployment)
+                .filter(
+                    ApplicationDeployment.applicationId == applicationId,
+                    ApplicationDeployment.deploymentState.notin_(
+                        (DeploymentStatus.SUCCESS, DeploymentStatus.FAILURE)
+                    ),
+                )
+                .first()
+            )
             logger.debug("start_deployment::app_dep *** %s", app_dep)
             if app_dep:
                 app_id = app_dep.applicationId
                 task_id = app_dep.taskId
-                logger.debug("start_deployment: deploymentState: %s, app_id: %s, workspaceProjectId %s, task_id %s", app_dep.deploymentState, app_id, app_dep.workspaceProjectId, task_id)
+                logger.debug(
+                    "start_deployment: deploymentState: %s, app_id: %s, workspaceProjectId %s, task_id %s",
+                    app_dep.deploymentState,
+                    app_id,
+                    app_dep.workspaceProjectId,
+                    task_id,
+                )
                 if task_id is None or task_id == "":
-                    response = deploy_application(app_dep, dbsession = dbs)
+                    response = deploy_application(app_dep, dbsession=dbs)
                     dbs.flush()
-                    logger.debug("start_deployment::deploy_application: app_id: %s", app_id)
+                    logger.debug(
+                        "start_deployment::deploy_application: app_id: %s", app_id
+                    )
                     logger.debug(pformat(response))
                 else:
-                    logger.debug("start_deployment::polling_results_from_the_DaC: app_id: %s task_id: %s", app_id, task_id)
-                    get_application_results_from_the_dac(app_id = app_id, lzEnvId = app_dep.lzEnvironmentId, task_id = task_id, dbsession = dbs)
+                    logger.debug(
+                        "start_deployment::polling_results_from_the_DaC: app_id: %s task_id: %s",
+                        app_id,
+                        task_id,
+                    )
+                    get_application_results_from_the_dac(
+                        app_id=app_id,
+                        lzEnvId=app_dep.lzEnvironmentId,
+                        task_id=task_id,
+                        dbsession=dbs,
+                    )
                     dbs.flush()
                 print("Sleep 2")
                 time.sleep(2)
             else:
-                deployment_complete = True   
-        logger.debug("start_deployment::deployment complete for Application: %s", applicationId)                       
-    notify_user(applicationId = applicationId)     
+                deployment_complete = True
+        logger.debug(
+            "start_deployment::deployment complete for Application: %s", applicationId
+        )
+    notify_user(applicationId=applicationId)
     return True
+
 
 def deployment_create(applicationDeploymentDetails):
     """
@@ -116,52 +160,81 @@ def deployment_create(applicationDeploymentDetails):
         if not app:
             abort("This application doesn't exist.", 404)
 
-        sol = dbs.query(Solution).filter(
-            Application.id == app_id, 
-            Application.solutionId == Solution.id
-            ).one_or_none()
+        sol = (
+            dbs.query(Solution)
+            .filter(Application.id == app_id, Application.solutionId == Solution.id)
+            .one_or_none()
+        )
         if sol and sol.deploymentState != DeploymentStatus.SUCCESS:
-            logger.warning("Cannot deploy an application if the solution deployment has not completed successfully.")
-            abort(400, "Cannot deploy an application if the solution deployment has not completed successfully.")
+            logger.warning(
+                "Cannot deploy an application if the solution deployment has not completed successfully."
+            )
+            abort(
+                400,
+                "Cannot deploy an application if the solution deployment has not completed successfully.",
+            )
 
+        sol_envs = (
+            dbs.query(LZEnvironment)
+            .filter(
+                SolutionEnvironment.environmentId == LZEnvironment.id,
+                SolutionEnvironment.solutionId == sol.id,
+                SolutionEnvironment.isActive,
+                LZEnvironment.isActive,
+            )
+            .all()
+        )
 
-        sol_envs = dbs.query(LZEnvironment).filter(
-            SolutionEnvironment.environmentId == LZEnvironment.id,
-            SolutionEnvironment.solutionId == sol.id,
-            SolutionEnvironment.isActive,
-            LZEnvironment.isActive
-        ).all()
-    
         for lzenv in sol_envs:
             workspace_resource_key = "project-id-workspace"
-            workspace_resource = dbs.query(SolutionResource).filter(
-                SolutionResource.solutionId == sol.id,
-                SolutionResource.key == workspace_resource_key
-            ).one_or_none()
+            workspace_resource = (
+                dbs.query(SolutionResource)
+                .filter(
+                    SolutionResource.solutionId == sol.id,
+                    SolutionResource.key == workspace_resource_key,
+                )
+                .one_or_none()
+            )
 
-            if workspace_resource:            
+            if workspace_resource:
                 workspaceProjectId = workspace_resource.value
             else:
-                logger.error("deployment_create: This application deployment %s is missing the workspaceProjectId, resourceKey: %s, skipping...", app_id, workspace_resource_key)
+                logger.error(
+                    "deployment_create: This application deployment %s is missing the workspaceProjectId, resourceKey: %s, skipping...",
+                    app_id,
+                    workspace_resource_key,
+                )
                 continue
 
             resource_key = f"project-id-{lzenv.name.lower()}"
-            solution_resource = dbs.query(SolutionResource).filter(
-                SolutionResource.solutionId == sol.id,
-                SolutionResource.key == resource_key
-            ).one_or_none()
+            solution_resource = (
+                dbs.query(SolutionResource)
+                .filter(
+                    SolutionResource.solutionId == sol.id,
+                    SolutionResource.key == resource_key,
+                )
+                .one_or_none()
+            )
 
-            if solution_resource:            
+            if solution_resource:
                 projectId = solution_resource.value
             else:
-                logger.error("deployment_create: This application deployment %s is missing the projectId, resourceKey: %s, skipping...", app_id, resource_key)
+                logger.error(
+                    "deployment_create: This application deployment %s is missing the projectId, resourceKey: %s, skipping...",
+                    app_id,
+                    resource_key,
+                )
                 continue
 
-            app_deployment = dbs.query(ApplicationDeployment).filter(
-                ApplicationDeployment.solutionId == sol.id,
-                ApplicationDeployment.applicationId == app_id,
-                ApplicationDeployment.lzEnvironmentId == lzenv.id
-            ).one_or_none()
+            app_deployment = (
+                dbs.query(ApplicationDeployment)
+                .filter(
+                    ApplicationDeployment.solutionId == sol.id,
+                    ApplicationDeployment.applicationId == app_id,
+                    ApplicationDeployment.lzEnvironmentId == lzenv.id,
+                )
+                .one_or_none()
+            )
             if not app_deployment:
                 schema = ApplicationDeploymentSchema(many=False)
                 app_deployment_dict = {}
@@ -171,10 +244,10 @@ def deployment_create(applicationDeploymentDetails):
                 app_deployment_dict["taskId"] = None
                 app_deployment_dict["solutionId"] = app.solutionId
                 app_deployment_dict["deploymentProjectId"] = projectId
-                app_deployment_dict["lzEnvironmentId"] = lzenv.id                
-                app_deployment_dict["workspaceProjectId"] = workspaceProjectId 
+                app_deployment_dict["lzEnvironmentId"] = lzenv.id
+                app_deployment_dict["workspaceProjectId"] = workspaceProjectId
 
-                app_deployment = schema.load(app_deployment_dict, session=db.session)      
+                app_deployment = schema.load(app_deployment_dict, session=db.session)
                 dbs.add(app_deployment)
             else:
                 # Allow re-deployment of a previously unsuccessful deployment
@@ -185,20 +258,30 @@ def deployment_create(applicationDeploymentDetails):
     # above db transaction should be complete before the next steps
     executor.submit(start_deployment, app_id)
 
-    return make_response({"id": app_id, "deploymentState": DeploymentStatus.PENDING}, 200)
+    return make_response(
+        {"id": app_id, "deploymentState": DeploymentStatus.PENDING}, 200
+    )
+
 
 def deployment_read_all():
     with db_session() as dbs:
         app_deployments = (
-            dbs.query(ApplicationDeployment).filter(ApplicationDeployment.deploymentState != "").all()
+            dbs.query(ApplicationDeployment)
+            .filter(ApplicationDeployment.deploymentState != "")
+            .all()
         )
         for ad in app_deployments:
-            ad.lzEnvironment=dbs.query(LZEnvironment).filter(LZEnvironment.id == ad.lzEnvironmentId).one_or_none()
+            ad.lzEnvironment = (
+                dbs.query(LZEnvironment)
+                .filter(LZEnvironment.id == ad.lzEnvironmentId)
+                .one_or_none()
+            )
 
         schema = ExtendedApplicationDeploymentSchema(many=True)
         data = schema.dump(app_deployments)
-        #logger.debug("deployment_read_all::applications data: %s", data)
+        # logger.debug("deployment_read_all::applications data: %s", data)
         return data, 200
+
 
 def deployment_update(app_id, lzEnvId, applicationDeploymentDetails, dbsession):
     """
@@ -208,26 +291,39 @@ def deployment_update(app_id, lzEnvId, applicationDeploymentDetails, dbsession):
     :param solutionDetails:   application details to update
     :return:       updated application
     """
-    logger.debug("deployment_update::applicationDeploymentDetails: %s", applicationDeploymentDetails)
+    logger.debug(
+        "deployment_update::applicationDeploymentDetails: %s",
+        applicationDeploymentDetails,
+    )
 
     # Does the application exist in application list?
     existing_application_deployment = (
-        dbsession.query(ApplicationDeployment).filter(
+        dbsession.query(ApplicationDeployment)
+        .filter(
             ApplicationDeployment.applicationId == app_id,
-            ApplicationDeployment.lzEnvironmentId == lzEnvId
-        ).one_or_none()
+            ApplicationDeployment.lzEnvironmentId == lzEnvId,
+        )
+        .one_or_none()
     )
 
     # Does the application deployment exist?
-    if existing_application_deployment:   
+    if existing_application_deployment:
         existing_application_deployment.lastUpdated = ModelTools.get_utc_timestamp()
         if "deploymentState" in applicationDeploymentDetails:
-            existing_application_deployment.deploymentState = applicationDeploymentDetails["deploymentState"]
+            existing_application_deployment.deploymentState = (
+                applicationDeploymentDetails["deploymentState"]
+            )
         if "taskId" in applicationDeploymentDetails:
-            existing_application_deployment.taskId = applicationDeploymentDetails["taskId"]            
+            existing_application_deployment.taskId = applicationDeploymentDetails[
+                "taskId"
+            ]
         dbsession.merge(existing_application_deployment)
     else:
-        logger.debug("deployment_update::existing application deployment not found, %s, %s", app_id, lzEnvId)
+        logger.debug(
+            "deployment_update::existing application deployment not found, %s, %s",
+            app_id,
+            lzEnvId,
+        )
 
 
 def get_variables_from_metadata(actMetadataVariable: ActivatorMetadataVariable):
@@ -255,29 +351,41 @@ def deploy_application(app_deployment, dbsession):
 
     logger.debug("deploy_application:: %s", app_deployment)
     # expand fields for DaC application deployment
-    app, act, actMetadata, lzenv = dbsession.query(Application, Activator, ActivatorMetadata, LZEnvironment).filter(
-        Activator.id == Application.activatorId,
-        ActivatorMetadata.activatorId == Application.activatorId,
-        Application.id == app_deployment.applicationId,
-        ApplicationDeployment.applicationId == Application.id,
-        ApplicationDeployment.lzEnvironmentId == LZEnvironment.id,
-        LZEnvironment.id == app_deployment.lzEnvironmentId
-    ).one_or_none()
+    app, act, actMetadata, lzenv = (
+        dbsession.query(Application, Activator, ActivatorMetadata, LZEnvironment)
+        .filter(
+            Activator.id == Application.activatorId,
+            ActivatorMetadata.activatorId == Application.activatorId,
+            Application.id == app_deployment.applicationId,
+            ApplicationDeployment.applicationId == Application.id,
+            ApplicationDeployment.lzEnvironmentId == LZEnvironment.id,
+            LZEnvironment.id == app_deployment.lzEnvironmentId,
+        )
+        .one_or_none()
+    )
 
     act = activator_extension.expand_activator(act, dbsession)
 
-    actMetadataVariable = dbsession.query(ActivatorMetadataVariable).filter(
-        ActivatorMetadataVariable.activatorMetadataId == actMetadata.id,
-    ).all()
+    actMetadataVariable = (
+        dbsession.query(ActivatorMetadataVariable)
+        .filter(
+            ActivatorMetadataVariable.activatorMetadataId == actMetadata.id,
+        )
+        .all()
+    )
 
     if act:
         gitSnapshot = json.loads(act.gitSnapshotJson)
         if gitSnapshot and "git_clone_url" in gitSnapshot.keys():
             app_deployment.activatorGitUrl = gitSnapshot["git_clone_url"]
         else:
-            raise Exception("Error, could not retrieve git_clone_url from gitSnapshot Json")
+            raise Exception(
+                "Error, could not retrieve git_clone_url from gitSnapshot Json"
+            )
 
-        optional_pairs, mandatory_pairs = get_variables_from_metadata(actMetadataVariable)
+        optional_pairs, mandatory_pairs = get_variables_from_metadata(
+            actMetadataVariable
+        )
         app_deployment.optionalVariables = optional_pairs
         app_deployment.mandatoryVariables = mandatory_pairs
 
@@ -288,22 +396,29 @@ def deploy_application(app_deployment, dbsession):
         app_deployment.name = app.name
         app_deployment.description = app.description
 
-        environment, lzlanvpc = dbsession.query(LZEnvironment, LZLanVpc).filter(
-            LZLanVpcEnvironment.lzlanvpcId == LZLanVpc.id,
-            LZLanVpcEnvironment.environmentId == lzenv.id,
-            LZLanVpcEnvironment.environmentId == LZEnvironment.id,
-            LZLanVpcEnvironment.isActive,
-            LZEnvironment.isActive,
-        ).one_or_none()
+        environment, lzlanvpc = (
+            dbsession.query(LZEnvironment, LZLanVpc)
+            .filter(
+                LZLanVpcEnvironment.lzlanvpcId == LZLanVpc.id,
+                LZLanVpcEnvironment.environmentId == lzenv.id,
+                LZLanVpcEnvironment.environmentId == LZEnvironment.id,
+                LZLanVpcEnvironment.isActive,
+                LZEnvironment.isActive,
+            )
+            .one_or_none()
+        )
         if lzlanvpc:
             environment.sharedVPCProjectId = lzlanvpc.sharedVPCProjectId
         else:
             environment.sharedVPCProjectId = ""
         app_deployment.deploymentEnvironment = environment
 
-        return send_application_deployment_to_the_dac(app_deployment, dbsession = dbsession)
+        return send_application_deployment_to_the_dac(
+            app_deployment, dbsession=dbsession
+        )
     else:
         logger.error("deploy_application::activator not found, %s!", app.activatorId)
+
 
 # Send the application to the DAC
 def send_application_deployment_to_the_dac(app_deployment, dbsession):
@@ -353,9 +468,11 @@ def send_application_deployment_to_the_dac(app_deployment, dbsession):
             "send_application_deployment_to_the_dac::Failed updating the database with the response from the DAC, %s.",
             e,
         )
-        abort(500,
-            "send_application_deployment_to_the_dac::Failed updating the database with the response from the DAC."
+        abort(
+            500,
+            "send_application_deployment_to_the_dac::Failed updating the database with the response from the DAC.",
         )
+
 
 def validate_json(some_json):
     try:
@@ -363,6 +480,7 @@ def validate_json(some_json):
         return True
     except ValueError:
         return False
+
 
 def get_application_results_from_the_dac(app_id, lzEnvId, task_id, dbsession):
     """
@@ -383,28 +501,28 @@ def get_application_results_from_the_dac(app_id, lzEnvId, task_id, dbsession):
         )
         abort(
             500,
-            "get_application_results_from_the_dac::failed communicating with the DAC"
+            "get_application_results_from_the_dac::failed communicating with the DAC",
         )
 
     # update ApplicationDeployment with results
     deployment_json = {
-      "applicationId": app_id,
-      "deploymentState": resp_json.get("status", "ERROR")
+        "applicationId": app_id,
+        "deploymentState": resp_json.get("status", "ERROR"),
     }
     logger.debug(
         "get_application_results_from_the_dac::deployment_json: %s",
         pformat(deployment_json),
     )
     try:
-        deployment_update(app_id, lzEnvId, deployment_json, dbsession = dbsession)
+        deployment_update(app_id, lzEnvId, deployment_json, dbsession=dbsession)
     except requests.exceptions.RequestException as e:
         logger.debug(
             "get_application_results_from_the_dac::Failed updating the ApplicationDeployment with the response from the DAC, %s",
             e,
         )
         abort(
-            500, 
-            "get_application_results_from_the_dac::Failed updating the ApplicationDeployment with the response from the DAC."
+            500,
+            "get_application_results_from_the_dac::Failed updating the ApplicationDeployment with the response from the DAC.",
         )
 
     if resp_json.get("status", "ERROR") != DeploymentStatus.SUCCESS:
@@ -413,7 +531,6 @@ def get_application_results_from_the_dac(app_id, lzEnvId, task_id, dbsession):
     my_json = resp_json.get("payload", "")
     is_valid_json = validate_json(my_json)
     logger.debug("is_valid_json: %s", is_valid_json)
-
 
     # TODO
     # try:

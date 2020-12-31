@@ -1,7 +1,8 @@
-import requests
 import json
 import logging
 import os
+
+import requests
 
 LOG_LEVEL = logging.DEBUG  # DEBUG, INFO, WARNING, ERROR, CRITICAL
 
@@ -32,7 +33,7 @@ def test_post():
     for j in resp_json:
         print(j)
         if j["name"] == "test-env":
-            assert j["isActive"] == True
+            assert j["isActive"] is True
     assert resp_headers["content-type"] == "application/json"
 
 

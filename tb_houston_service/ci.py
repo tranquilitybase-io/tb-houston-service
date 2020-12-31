@@ -3,17 +3,19 @@ This is the deployments module and supports all the ReST actions for the
 ci collection
 """
 from pprint import pformat
-from flask import make_response, abort
 
-from config import db, app
+from flask import abort, make_response
+
+from config import app, db
 from models import CI, CISchema
+
 
 def read_all():
     """
     This function responds to a request for /api/ci
-    with the complete lists of CIs 
+    with the complete lists of CIs
 
-    :return:        json string of list of CIs 
+    :return:        json string of list of CIs
     """
     # Create the list of CIs from our data
     ci = db.session.query(CI).order_by(CI.id).all()
@@ -22,6 +24,7 @@ def read_all():
     ci_schema = CISchema(many=True)
     data = ci_schema.dump(ci)
     return data
+
 
 def read_one(id):
     """
@@ -41,12 +44,13 @@ def read_one(id):
     else:
         abort(404, "CI with id {id} not found".format(id=id))
 
+
 def read_keyValues():
     """
     This function responds to a request for /keyValues/ci
-    with the complete lists of CIs 
+    with the complete lists of CIs
 
-    :return:        json string of list of CIs 
+    :return:        json string of list of CIs
     """
     # Create the list of CIs from our data
     ci = db.session.query(CI).order_by(CI.id).all()
@@ -63,6 +67,7 @@ def read_keyValues():
     print(keyValues)
     return keyValues
 
+
 def create(ciDetails):
     """
     This function creates a new ci in the ci list
@@ -72,10 +77,12 @@ def create(ciDetails):
     :return:        201 on success, 406 on ci exists
     """
     # Remove id as it's created automatically
-    if 'id' in ciDetails:
-        del ciDetails['id']
+    if "id" in ciDetails:
+        del ciDetails["id"]
     # Does the ci exist already?
-    existing_ci = db.session.query(CI).filter(CI.value == ciDetails["value"]).one_or_none()
+    existing_ci = (
+        db.session.query(CI).filter(CI.value == ciDetails["value"]).one_or_none()
+    )
 
     if existing_ci is None:
         schema = CISchema()
@@ -91,7 +98,8 @@ def create(ciDetails):
 
     # Otherwise, it already exists, that's an error
     else:
-        abort(406, f"CI already exists")
+        abort(406, "CI already exists")
+
 
 def update(id, ciDetails):
     """
@@ -104,7 +112,7 @@ def update(id, ciDetails):
     app.logger.debug(pformat(ciDetails))
 
     if ciDetails["id"] != id:
-        abort(400, f"Key mismatch in path and body")
+        abort(400, "Key mismatch in path and body")
 
     # Does the ci exist in ci list?
     existing_ci = db.session.query(CI).filter(CI.id == id).one_or_none()
@@ -125,7 +133,8 @@ def update(id, ciDetails):
 
     # otherwise, nope, deployment doesn't exist, so that's an error
     else:
-        abort(404, f"CI not found")
+        abort(404, "CI not found")
+
 
 def delete(id):
     """

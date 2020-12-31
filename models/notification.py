@@ -1,8 +1,9 @@
 from config import db, ma
 
+
 class Notification(db.Model):
     __tablename__ = "notification"
-    __table_args__ = {'schema': 'eagle_db'}
+    __table_args__ = {"schema": "eagle_db"}
     id = db.Column(db.Integer(), primary_key=True)
     isActive = db.Column(db.Boolean())
     lastUpdated = db.Column(db.String(20))
@@ -15,6 +16,7 @@ class Notification(db.Model):
 
     def __repr__(self):
         return "<Notification(id={self.id!r})>".format(self=self)
+
 
 class NotificationSchema(ma.ModelSchema):
     class Meta:

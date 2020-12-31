@@ -4,11 +4,13 @@ solution resource JSON collection
 """
 import json
 from pprint import pformat
-from flask import make_response, abort
 
-from config import db, app
+from flask import abort, make_response
+
+from config import app, db
 from models import SolutionResourceJSON, SolutionResourceJSONSchema
 from tb_houston_service import solutionresource
+
 
 def read_all():
     """
@@ -28,6 +30,7 @@ def read_all():
     solutionresourcejson_schema = SolutionResourceJSONSchema(many=True)
     data = solutionresourcejson_schema.dump(solutionresourcejson)
     return data, 200
+
 
 def read_one(solutionId):
     """
@@ -51,6 +54,7 @@ def read_one(solutionId):
     else:
         abort(404, f"SolutionResourceJSON with solution id {solutionId} not found")
 
+
 def create_solution_resources(resources_dict):
     app.logger.debug("resources_dict")
     app.logger.debug(pformat(resources_dict))
@@ -73,16 +77,17 @@ def create_solution_resources(resources_dict):
         ws = {
             "solutionId": solutionId,
             "key": "project-id-workspace",
-            "value": wc_project_id_value
+            "value": wc_project_id_value,
         }
         solutionresource.create(ws)
 
+
 def create(solutionResourceJSONDetails):
     """
-    This function updates an existing or creates a 
+    This function updates an existing or creates a
     solutionresource json in the solution resource json list
 
-    :param key:    solutionId and key of the solutionresource json 
+    :param key:    solutionId and key of the solutionresource json
                    to update in the solution resource json  list
     :param solutionresourcejson:   solutionresourcejson to update
     :return:       updated solutionresourcejson
@@ -117,6 +122,7 @@ def create(solutionResourceJSONDetails):
     app.logger.debug(pformat(data))
     create_solution_resources(data)
     return data, 201
+
 
 def delete(solutionId):
     """

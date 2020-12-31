@@ -3,10 +3,12 @@ The landingZoneAction module and supports all the ReST actions for the
 landingZoneAction collection
 """
 from pprint import pformat
-from flask import make_response, abort
 
-from config import db, app
+from flask import abort, make_response
+
+from config import app, db
 from models import LandingZoneAction, LandingZoneActionSchema
+
 
 def read_all():
     """
@@ -24,6 +26,7 @@ def read_all():
     app.logger.debug("landingZoneAction data:")
     app.logger.debug(pformat(data))
     return data
+
 
 def read_one(oid):
     """
@@ -48,6 +51,7 @@ def read_one(oid):
         return data
     else:
         abort(404, f"LandingZoneAction with id {oid} not found")
+
 
 def create(landingZoneActionDetails):
     """
@@ -74,6 +78,7 @@ def create(landingZoneActionDetails):
 
     return data, 201
 
+
 def update(oid, landingZoneActionDetails):
     """
     Updates an existing landingZoneAction in the landingZoneAction list
@@ -86,7 +91,7 @@ def update(oid, landingZoneActionDetails):
     app.logger.debug(pformat(landingZoneActionDetails))
 
     if landingZoneActionDetails["id"] != oid:
-        abort(400, f"Key mismatch in path and body")
+        abort(400, "Key mismatch in path and body")
 
     # Does the landingZoneAction exist in landingZoneActions?
     existing_landingZoneAction = (
@@ -114,7 +119,8 @@ def update(oid, landingZoneActionDetails):
 
     # otherwise, nope, landingZoneAction doesn't exist, so that's an error
     else:
-        abort(404, f"LandingZoneAction not found")
+        abort(404, "LandingZoneAction not found")
+
 
 def delete(oid):
     """

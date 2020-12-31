@@ -3,10 +3,12 @@ This is the deployments module and supports all the ReST actions for the
 businessunit collection
 """
 from pprint import pformat
-from flask import make_response, abort
 
-from config import db, app
+from flask import abort, make_response
+
+from config import app, db
 from models import BusinessUnit, BusinessUnitSchema
+
 
 def read_all():
     """
@@ -23,6 +25,7 @@ def read_all():
     data = businessUnit_schema.dump(businessUnit)
     app.logger.debug(data)
     return data, 200
+
 
 def read_keyvalues():
     """
@@ -46,6 +49,7 @@ def read_keyvalues():
     print(keyValues)
     return keyValues
 
+
 def read_keyValues():
     """
     Responds to a request for /api/keyValues/businessUnit
@@ -68,10 +72,11 @@ def read_keyValues():
     print(keyValues)
     return keyValues
 
+
 def read_one(oid):
     """
     Responds to a request for /api/businessunit/{id}
-    with one matching businessUnit from BusinessUnits 
+    with one matching businessUnit from BusinessUnits
 
     :param application:   id of businessUnit to find
     :return:              businessUnit matching id
@@ -88,6 +93,7 @@ def read_one(oid):
         return data, 200
     else:
         abort(404, f"BusinessUnit with id {oid} not found")
+
 
 def create(businessUnitDetails):
     """
@@ -126,6 +132,7 @@ def create(businessUnitDetails):
             406, f"BusinessUnit with name {businessUnitDetails['name']} already exists"
         )
 
+
 def update(oid, businessUnitDetails):
     """
     Updates an existing businessUnit in the businessUnit list
@@ -135,7 +142,7 @@ def update(oid, businessUnitDetails):
     :return:       updated businessUnit.
     """
     if businessUnitDetails["id"] != oid:
-        abort(400, f"id mismatch in path and body")
+        abort(400, "id mismatch in path and body")
 
     # Does the businessUnit exist in businessUnit list?
     existing_businessUnit = (
@@ -161,6 +168,7 @@ def update(oid, businessUnitDetails):
     # otherwise, nope, businessUnit doesn't exist, so that's an error
     else:
         abort(404, f"BusinessUnit with id {oid} not found")
+
 
 def delete(oid):
     """

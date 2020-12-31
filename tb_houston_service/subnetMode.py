@@ -3,10 +3,12 @@ Deployments module, supports all the ReST actions for the
 subnetMode collection
 """
 from pprint import pformat
-from flask import make_response, abort
 
-from config import db, app
+from flask import abort, make_response
+
+from config import app, db
 from models import SubnetMode, SubnetModeSchema
+
 
 def read_all():
     """
@@ -22,6 +24,7 @@ def read_all():
     subnetMode_schema = SubnetModeSchema(many=True)
     data = subnetMode_schema.dump(subnetMode)
     return data
+
 
 def read_one(oid):
     """
@@ -40,6 +43,7 @@ def read_one(oid):
         return data
     else:
         abort(404, f"SubnetMode with id {oid} not found")
+
 
 def create(subnetModeDetails):
     """
@@ -63,6 +67,7 @@ def create(subnetModeDetails):
     data = schema.dump(new_subnetMode)
     return data, 201
 
+
 def update(oid, subnetModeDetails):
     """
     Updates an existing subnetMode in the subnetMode list
@@ -74,7 +79,7 @@ def update(oid, subnetModeDetails):
     app.logger.debug(pformat(subnetModeDetails))
 
     if "id" in subnetModeDetails and subnetModeDetails["id"] != oid:
-        abort(400, f"Key mismatch in path and body")
+        abort(400, "Key mismatch in path and body")
 
     existing_subnetMode = (
         db.session.query(SubnetMode).filter(SubnetMode.id == oid).one_or_none()
@@ -90,6 +95,7 @@ def update(oid, subnetModeDetails):
         return data, 200
     else:
         abort(404, f"SubnetMode {oid} not found")
+
 
 def delete(oid):
     """

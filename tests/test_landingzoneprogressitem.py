@@ -1,5 +1,7 @@
-import requests
 import json
+
+import requests
+
 from tests import pytest_lib
 
 plural_url = f"http://{pytest_lib.HOUSTON_SERVICE_URL}/api/landingzoneprogressitems/"
@@ -77,5 +79,5 @@ def put(url, oid):
     oid = resp_json["id"]
     # Validate response body for updated values
     assert resp.status_code == 200
-    assert resp_json["completed"] == False
+    assert resp_json["completed"] is False
     assert resp_json["label"] == "Testing-new-progress-item-post"

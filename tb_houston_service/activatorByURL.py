@@ -4,17 +4,24 @@ import shutil
 import tempfile
 from pprint import pformat
 
-# import pycurl
 import git
 import yaml
 from flask import abort
 
 from config.db_lib import db_session
-from models import Activator, ActivatorSchema, ActivatorMetadata, ActivatorMetadataSchema, \
-    ActivatorMetadataPlatform, ActivatorMetadataPlatformSchema, \
-    ActivatorMetadataVariable, ActivatorMetadataVariableSchema, Type, Platform
-from tb_houston_service import activator_extension, systemsettings
-from tb_houston_service import security
+from models import (
+    Activator,
+    ActivatorMetadata,
+    ActivatorMetadataPlatform,
+    ActivatorMetadataPlatformSchema,
+    ActivatorMetadataSchema,
+    ActivatorMetadataVariable,
+    ActivatorMetadataVariableSchema,
+    ActivatorSchema,
+    Platform,
+    Type,
+)
+from tb_houston_service import activator_extension, security, systemsettings
 from tb_houston_service.extendedSchemas import ExtendedActivatorSchema
 from tb_houston_service.tools import ModelTools
 
@@ -43,30 +50,48 @@ def create(activatorByURLDetails):
                 return abort(401, "JWT not valid or user is not an Admin")
 
             github_credentials = systemsettings.get_github_credentials(user.id)
-            
+
             # get Yaml from gitgub and read the contents of the yaml file
-            act_metadata_yml_dict = get_file_from_repo(activatorByURLDetails["url"], github_credentials)
+            act_metadata_yml_dict = get_file_from_repo(
+                activatorByURLDetails["url"], github_credentials
+            )
 
-            activator_id = create_activator(dbs, act_metadata_yml_dict, activatorByURLDetails["url"])
+            activator_id = create_activator(
+                dbs, act_metadata_yml_dict, activatorByURLDetails["url"]
+            )
 
-            activator_metadata = create_activator_metadata(dbs, act_metadata_yml_dict, activator_id,
-                                                        activatorByURLDetails["url"])
+            activator_metadata = create_activator_metadata(
+                dbs, act_metadata_yml_dict, activator_id, activatorByURLDetails["url"]
+            )
 
-            create_activator_metadata_platforms(dbs, act_metadata_yml_dict, activator_metadata.id)
+            create_activator_metadata_platforms(
+                dbs, act_metadata_yml_dict, activator_metadata.id
+            )
 
             mandatoryVariables = act_metadata_yml_dict["mandatoryVariables"]
-            create_activator_metadata_variables(dbs, activator_metadata.id, mandatoryVariables, False)
+            create_activator_metadata_variables(
+                dbs, activator_metadata.id, mandatoryVariables, False
+            )
 
             optionalVariables = act_metadata_yml_dict["optionalVariables"]
-            create_activator_metadata_variables(dbs, activator_metadata.id, optionalVariables, True)
+            create_activator_metadata_variables(
+                dbs, activator_metadata.id, optionalVariables, True
+            )
 
             # return the activator
-            # filter activators by logged in user 
+            # filter activators by logged in user
             business_unit_ids = security.get_business_units_ids_for_user(dbsession=dbs)
-            act = dbs.query(Activator).filter(
-                Activator.id == activator_id,
-                (business_unit_ids == None or Activator.businessUnitId.in_(business_unit_ids))
-            ).one_or_none()
+            act = (
+                dbs.query(Activator)
+                .filter(
+                    Activator.id == activator_id,
+                    (
+                        business_unit_ids is None
+                        or Activator.businessUnitId.in_(business_unit_ids)
+                    ),
+                )
+                .one_or_none()
+            )
 
             if act is not None:
                 # Expand Activator
@@ -93,7 +118,7 @@ def get_file_from_repo(url, github_credentials):
     tag = repo.tags.pop()
     act_metadata_yaml_file = open(os.path.join(t, ".tb/activator_metadata.yml"))
     act_metadata_yml_dict = yaml.load(act_metadata_yaml_file, Loader=yaml.FullLoader)
-    act_metadata_yml_dict['latestVersion'] = tag.name
+    act_metadata_yml_dict["latestVersion"] = tag.name
     logger.debug("activator_metadata.yml file :::: %s", pformat(act_metadata_yml_dict))
     # Remove temporary dir
     shutil.rmtree(t)
@@ -120,7 +145,9 @@ def create_activator_metadata(dbs, act_metadata_yml, activator_id, url):
     actMetaDetails["description"] = act_metadata_yml["description"]
     actMetaDetails["category"] = act_metadata_yml["category"]
     actMetaDetails["activatorLink"] = url
-    actMetaDetails["typeId"] = (dbs.query(Type).filter(Type.value == act_metadata_yml["type"]).one_or_none()).id
+    actMetaDetails["typeId"] = (
+        dbs.query(Type).filter(Type.value == act_metadata_yml["type"]).one_or_none()
+    ).id
     actMetaDetails["lastUpdated"] = ModelTools.get_utc_timestamp()
     actMetaDetails["latestVersion"] = act_metadata_yml["latestVersion"]
     activator_metadata = schema.load(actMetaDetails, session=dbs)
@@ -136,7 +163,9 @@ def create_activator_metadata_platforms(dbs, act_metadata_yml, activator_metadat
     for p in platforms:
         actPlatformDetails = {}
         actPlatformDetails["activatorMetadataId"] = activator_metadata_id
-        actPlatformDetails["platformId"] = (dbs.query(Platform).filter(Platform.value == p).one_or_none()).id
+        actPlatformDetails["platformId"] = (
+            dbs.query(Platform).filter(Platform.value == p).one_or_none()
+        ).id
         actPlatformDetails["lastUpdated"] = ModelTools.get_utc_timestamp()
         actPlatformDetails["isActive"] = True
         activator_metadata_platform = schema.load(actPlatformDetails, session=dbs)
@@ -144,10 +173,12 @@ def create_activator_metadata_platforms(dbs, act_metadata_yml, activator_metadat
         dbs.flush()
 
 
-def create_activator_metadata_variables(dbs, activator_metadata_id, variables, isOptional):
+def create_activator_metadata_variables(
+    dbs, activator_metadata_id, variables, isOptional
+):
     schema = ActivatorMetadataVariableSchema()
 
-    for variable in (variables or ()):
+    for variable in variables or ():
         variableDetails = {}
         variableDetails["activatorMetadataId"] = activator_metadata_id
         variableDetails["name"] = variable["name"]
@@ -164,17 +195,28 @@ def create_activator_metadata_variables(dbs, activator_metadata_id, variables, i
 
 
 def expand_activator_metadata(act_metadata, dbs):
-    act_metadata.type = dbs.query(Type).filter(
-        Type.id == act_metadata.typeId).one_or_none()
+    act_metadata.type = (
+        dbs.query(Type).filter(Type.id == act_metadata.typeId).one_or_none()
+    )
 
-    act_metadata.platforms = dbs.query(Platform).filter(
-        Platform.id == ActivatorMetadataPlatform.platformId,
-        ActivatorMetadata.id == ActivatorMetadataPlatform.activatorMetadataId,
-        ActivatorMetadata.id == act_metadata.id,
-        ActivatorMetadataPlatform.isActive).all()
+    act_metadata.platforms = (
+        dbs.query(Platform)
+        .filter(
+            Platform.id == ActivatorMetadataPlatform.platformId,
+            ActivatorMetadata.id == ActivatorMetadataPlatform.activatorMetadataId,
+            ActivatorMetadata.id == act_metadata.id,
+            ActivatorMetadataPlatform.isActive,
+        )
+        .all()
+    )
 
-    act_metadata.variables = dbs.query(ActivatorMetadataVariable).filter(
-        ActivatorMetadata.id == ActivatorMetadataVariable.activatorMetadataId,
-        ActivatorMetadata.id == act_metadata.id).all()
+    act_metadata.variables = (
+        dbs.query(ActivatorMetadataVariable)
+        .filter(
+            ActivatorMetadata.id == ActivatorMetadataVariable.activatorMetadataId,
+            ActivatorMetadata.id == act_metadata.id,
+        )
+        .all()
+    )
 
     return act_metadata

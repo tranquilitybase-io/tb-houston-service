@@ -8,18 +8,22 @@ import os
 from pprint import pformat
 
 import requests
-from flask import make_response, abort
+from flask import abort, make_response
 from sqlalchemy import literal_column
 from sqlalchemy.exc import SQLAlchemyError
 
 from config.db_lib import db_session
-from models import Activator, ActivatorSchema, ActivatorMetadata, User, Notification
-from tb_houston_service import activator_extension
-from tb_houston_service import notification
-from tb_houston_service import security
-from tb_houston_service import systemsettings
-from tb_houston_service.extendedSchemas import ExtendedActivatorCategorySchema
-from tb_houston_service.extendedSchemas import ExtendedActivatorSchema
+from models import Activator, ActivatorMetadata, ActivatorSchema, Notification, User
+from tb_houston_service import (
+    activator_extension,
+    notification,
+    security,
+    systemsettings,
+)
+from tb_houston_service.extendedSchemas import (
+    ExtendedActivatorCategorySchema,
+    ExtendedActivatorSchema,
+)
 from tb_houston_service.tools import ModelTools
 
 onboard_repo_url = f"http://{os.environ['GCP_DAC_URL']}/dac/get_repo_uri/"
@@ -28,18 +32,18 @@ logger = logging.getLogger("tb_houston_service.activator")
 
 
 def read_all(
-        isActive=None,
-        isFavourite=None,
-        category=None,
-        status=None,
-        environment=None,
-        platform=None,
-        type=None,
-        source=None,
-        sensitivity=None,
-        page=None,
-        page_size=None,
-        sort=None,
+    isActive=None,
+    isFavourite=None,
+    category=None,
+    status=None,
+    environment=None,
+    platform=None,
+    type=None,
+    source=None,
+    sensitivity=None,
+    page=None,
+    page_size=None,
+    sort=None,
 ):
     """
     This function responds to a request for /api/activators
@@ -91,10 +95,14 @@ def read_all(
     # filter activators by logged in user
     business_unit_ids = security.get_business_units_ids_for_user(dbsession=dbs)
 
-    activator_metadatas = dbs.query(ActivatorMetadata).filter(
-        (category is None or ActivatorMetadata.category == category),
-        (type is None or ActivatorMetadata.typeId == type)
-    ).all()
+    activator_metadatas = (
+        dbs.query(ActivatorMetadata)
+        .filter(
+            (category is None or ActivatorMetadata.category == category),
+            (type is None or ActivatorMetadata.typeId == type),
+        )
+        .all()
+    )
     act_ids = None
     if activator_metadatas:
         act_ids = [am.activatorId for am in activator_metadatas]
@@ -107,7 +115,7 @@ def read_all(
         (isActive is None or Activator.isActive == isActive),
         (isFavourite is None or Activator.isFavourite == isFavourite),
         (act_ids is None or Activator.id.in_(act_ids)),
-        (business_unit_ids is None or Activator.businessUnitId.in_(business_unit_ids))
+        (business_unit_ids is None or Activator.businessUnitId.in_(business_unit_ids)),
     )
     if act_ids is None:
         activators = None
@@ -141,10 +149,17 @@ def read_one(oid):
     with db_session() as dbs:
         # filter activators by logged in user
         business_unit_ids = security.get_business_units_ids_for_user(dbsession=dbs)
-        act = dbs.query(Activator).filter(
-            Activator.id == oid,
-            (business_unit_ids is None or Activator.businessUnitId.in_(business_unit_ids))
-        ).one_or_none()
+        act = (
+            dbs.query(Activator)
+            .filter(
+                Activator.id == oid,
+                (
+                    business_unit_ids is None
+                    or Activator.businessUnitId.in_(business_unit_ids)
+                ),
+            )
+            .one_or_none()
+        )
 
         if act is not None:
             # Expand Activator
@@ -174,14 +189,16 @@ def create(activatorDetails):
         if business_unit_ids:
             business_unit = activatorDetails.get("businessUnitId")
             if business_unit not in business_unit_ids:
-                abort(400, f"Unauthorized to create activators for business unit {business_unit}")
+                abort(
+                    400,
+                    f"Unauthorized to create activators for business unit {business_unit}",
+                )
         else:
-            # initially will let this pass, but in future we could abort if user is not a member of any business units
+            # initially will let this pass, but in future we could abort if user is
+            # not a member of any business units
             pass
 
-        extraFields = activator_extension.refine_activator_details(
-            activatorDetails
-        )
+        extraFields = activator_extension.refine_activator_details(activatorDetails)
 
         schema = ActivatorSchema()
         new_activator = schema.load(activatorDetails, session=dbs)
@@ -233,17 +250,22 @@ def update(oid, activatorDetails):
             if business_unit_ids:
                 business_unit = activatorDetails.get("businessUnitId")
                 if business_unit and business_unit not in business_unit_ids:
-                    abort(400, f"Unauthorized to update activators for business unit {business_unit}")
+                    abort(
+                        400,
+                        f"Unauthorized to update activators for business unit {business_unit}",
+                    )
                 business_unit = existing_activator.businessUnitId
                 if business_unit and business_unit not in business_unit_ids:
-                    abort(400, f"Unauthorized to update activators for business unit {business_unit}")
+                    abort(
+                        400,
+                        f"Unauthorized to update activators for business unit {business_unit}",
+                    )
             else:
-                # initially will let this pass, but in future we could abort if user is not a member of any business units
+                # initially will let this pass, but in future we could abort if user is
+                # not a member of any business units
                 pass
 
-            extraFields = activator_extension.refine_activator_details(
-                activatorDetails
-            )
+            extraFields = activator_extension.refine_activator_details(activatorDetails)
 
             schema = ActivatorSchema(many=False, session=dbs)
             updatedActivator = schema.load(activatorDetails)
@@ -261,7 +283,9 @@ def update(oid, activatorDetails):
                 abort(response["code"], response["message"])
 
                 # Expand activator
-            updatedActivator = activator_extension.expand_activator(updatedActivator, dbs)
+            updatedActivator = activator_extension.expand_activator(
+                updatedActivator, dbs
+            )
 
             schema = ExtendedActivatorSchema(many=False)
             data = schema.dump(updatedActivator)
@@ -293,9 +317,13 @@ def delete(oid):
                 business_unit = existing_activator.businessUnitId
                 logger.debug("delete: %s, %s", business_unit, business_unit_ids)
                 if business_unit and business_unit not in business_unit_ids:
-                    abort(400, f"Unauthorized to delete activators for business unit {business_unit}")
+                    abort(
+                        400,
+                        f"Unauthorized to delete activators for business unit {business_unit}",
+                    )
             else:
-                # initially will let this pass, but in future we could abort if user is not a member of any business units
+                # initially will let this pass, but in future we could abort if user is
+                # not a member of any business units
                 pass
 
             existing_activator.isActive = False
@@ -323,15 +351,16 @@ def notify_user(message, activatorId, toUserId, importance=1):
     )
     # Notify all user
     with db_session() as dbs:
-        # To avoid sending duplicate notifications, send only if no previous active message.
+        # To avoid sending duplicate notifications, send only if no previous
+        # active message.
         existing_notifications = (
             dbs.query(Notification)
-                .filter(
+            .filter(
                 Notification.message == message,
                 Notification.toUserId == toUserId,
                 Notification.isActive,
             )
-                .count()
+            .count()
         )
         logger.debug("existing_notifications: %s", existing_notifications)
         if existing_notifications == 0:
@@ -368,15 +397,16 @@ def notify_admins(message, activatorId, fromUserId, importance=1):
     with db_session() as dbs:
         admins = dbs.query(User).filter(User.isAdmin, User.isActive).all()
         for admin in admins:
-            # To avoid sending duplicate notifications, send only if no previous active message.
+            # To avoid sending duplicate notifications, send only if no previous
+            # active message.
             existing_notifications = (
                 dbs.query(Notification)
-                    .filter(
+                .filter(
                     Notification.message == message,
                     Notification.toUserId == admin.id,
                     Notification.isActive,
                 )
-                    .count()
+                .count()
             )
             logger.debug("existing_notifications: %s", existing_notifications)
             if existing_notifications == 0:
@@ -397,8 +427,8 @@ def setActivatorStatus(activatorDetails):
         # Does the activator to delete exist?
         existing_activator = (
             dbs.query(Activator)
-                .filter(Activator.id == activatorDetails["id"], Activator.isActive)
-                .one_or_none()
+            .filter(Activator.id == activatorDetails["id"], Activator.isActive)
+            .one_or_none()
         )
 
         # if found?
@@ -409,20 +439,22 @@ def setActivatorStatus(activatorDetails):
             dbs.merge(updated_activator)
 
             # Expand Activator
-            updated_activator = activator_extension.expand_activator(updated_activator, dbs)
+            updated_activator = activator_extension.expand_activator(
+                updated_activator, dbs
+            )
 
             activator_schema = ExtendedActivatorSchema()
             data = activator_schema.dump(updated_activator)
 
             # Create notifications
             if (
-                    updated_activator.status != "Available"
-                    and updated_activator.accessRequestedById
+                updated_activator.status != "Available"
+                and updated_activator.accessRequestedById
             ):
                 full_name = (
-                        (updated_activator.accessRequestedBy.firstName or "")
-                        + " "
-                        + (updated_activator.accessRequestedBy.lastName or "")
+                    (updated_activator.accessRequestedBy.firstName or "")
+                    + " "
+                    + (updated_activator.accessRequestedBy.lastName or "")
                 )
                 message = f"{full_name} has requested access to activator #{updated_activator.id}"
                 notify_admins(
@@ -431,8 +463,8 @@ def setActivatorStatus(activatorDetails):
                     fromUserId=updated_activator.accessRequestedById,
                 )
             elif (
-                    updated_activator.status == "Available"
-                    and updated_activator.accessRequestedById
+                updated_activator.status == "Available"
+                and updated_activator.accessRequestedById
             ):
                 activator_name = (
                     f"Activator {updated_activator.id} ({updated_activator.name})"
@@ -486,10 +518,10 @@ def generate_name_from_repo_url(repo_url: str) -> str:
 
 
 def check_url_valid(repo_url: str) -> bool:
-    if not repo_url or ' ' in repo_url:
+    if repo_url or " " not in repo_url:
         return False
 
-    if not "https://github.com/" in repo_url:
+    if "https://github.com/" not in repo_url:
         return False
 
     return True
@@ -524,19 +556,18 @@ def post_repo_data_to_dac(oid: int, userId: int):
             raise Exception("Error retrieving data from db")
 
         payload = {
-            "repo": {
-                "name": activator_name,
-                "url": repo_url
-            },
+            "repo": {"name": activator_name, "url": repo_url},
             "cred": {
                 "user": github_credentials.username,
-                "token": github_credentials.token
-            }
+                "token": github_credentials.token,
+            },
         }
 
     logger.debug("post_repo_data_to_dac sending post")
     headers = {"Content-Type": "application/json"}
-    response = requests.post(onboard_repo_url, headers=headers, data=json.dumps(payload, indent=4))
+    response = requests.post(
+        onboard_repo_url, headers=headers, data=json.dumps(payload, indent=4)
+    )
     logger.debug("post_repo_data_to_dac response received")
     return response, activator_name
 
@@ -584,9 +615,11 @@ def onboard(activatorOnboardDetails):
             logger.debug("Success, return 201")
 
             payload = {
-                "message": "Activator {0} has been successfully onboarded".format(activator_name),
+                "message": "Activator {0} has been successfully onboarded".format(
+                    activator_name
+                ),
                 "onboardingState": onboarded_state,
-                "id": oid
+                "id": oid,
             }
 
             return make_response(payload, 200)

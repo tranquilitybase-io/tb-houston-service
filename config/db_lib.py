@@ -1,5 +1,7 @@
 from contextlib import contextmanager
+
 from config import db
+
 
 @contextmanager
 def db_session(autocommit=True):

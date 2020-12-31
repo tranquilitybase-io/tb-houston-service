@@ -1,8 +1,9 @@
 from config import db, ma
 
+
 class Folder(db.Model):
     __tablename__ = "folder"
-    __table_args__ = {'schema': 'eagle_db'}
+    __table_args__ = {"schema": "eagle_db"}
     id = db.Column(db.Integer, primary_key=True)
     parentFolderId = db.Column(db.String(45))
     folderId = db.Column(db.String(45))
@@ -12,6 +13,7 @@ class Folder(db.Model):
 
     def __repr__(self):
         return "<Folder(id={self.id!r}, name={self.folderName!r})>".format(self=self)
+
 
 class FolderSchema(ma.ModelSchema):
     class Meta:

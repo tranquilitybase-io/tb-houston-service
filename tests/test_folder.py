@@ -1,8 +1,9 @@
-import requests
 import json
 import os
-from tb_houston_service.DeploymentStatus import DeploymentStatus
 
+import requests
+
+from tb_houston_service.DeploymentStatus import DeploymentStatus
 
 HOUSTON_SERVICE_URL = os.environ["HOUSTON_SERVICE_URL"]
 url = f"http://{HOUSTON_SERVICE_URL}/api/folder/"
@@ -61,10 +62,10 @@ def post():
     # Validate GET response
     assert resp.status_code == 200
     assert resp_json["parentFolderId"] == rootfolderid
-    assert resp_json["folderId"] == None
+    assert resp_json["folderId"] is None
     assert resp_json["folderName"] == testFolder
     assert resp_json["status"] == DeploymentStatus.PENDING
-    assert resp_json["taskId"] == None
+    assert resp_json["taskId"] is None
     assert resp_headers["content-type"] == "application/json"
     return resp_json
 

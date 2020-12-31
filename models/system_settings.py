@@ -1,6 +1,6 @@
 import logging
 
-from marshmallow import pre_load, fields
+from marshmallow import fields, pre_load
 
 from config import db, ma
 from tb_houston_service.tools import ModelTools
@@ -10,7 +10,7 @@ logger = logging.getLogger("tb_houston_service.models")
 
 class SystemSettings(db.Model):
     __tablename__ = "systemsettings"
-    __table_args__ = {'schema': 'eagle_db'}
+    __table_args__ = {"schema": "eagle_db"}
     id = db.Column(db.Integer, primary_key=True)
     userId = db.Column(db.Integer)
     username = db.Column(db.String(255))
@@ -29,8 +29,7 @@ class SystemSettingsSchema(ma.ModelSchema):
 
     @pre_load()
     def serialize_pre_load(self, data, **kwargs):
-        logger.debug(
-            "SystemSettingsSchema::pre_load::serialize_pre_load: %s", data)
+        logger.debug("SystemSettingsSchema::pre_load::serialize_pre_load: %s", data)
         data["lastUpdated"] = ModelTools.get_utc_timestamp()
         if "id" in data:
             del data["id"]

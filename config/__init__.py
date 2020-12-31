@@ -1,10 +1,10 @@
 import os
 import sys
-import connexion
-from flask_sqlalchemy import SQLAlchemy
-from flask_marshmallow import Marshmallow
-from flask_executor import Executor
 
+import connexion
+from flask_executor import Executor
+from flask_marshmallow import Marshmallow
+from flask_sqlalchemy import SQLAlchemy
 
 basedir = os.path.join(os.path.dirname(__file__), "..")
 # print("basedir: {}".format(basedir))
@@ -16,7 +16,7 @@ connex_app = connexion.App(__name__, specification_dir=basedir + "/openapi")
 app = connex_app.app
 
 # We want to see all background exceptions
-app.config['EXECUTOR_PROPAGATE_EXCEPTIONS'] = True 
+app.config["EXECUTOR_PROPAGATE_EXCEPTIONS"] = True
 
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["SQLALCHEMY_DATABASE_URI"]
 app.config["SQLALCHEMY_ECHO"] = os.environ["SQLALCHEMY_ECHO"].lower() == "True".lower()
@@ -24,10 +24,10 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = (
     os.environ["SQLALCHEMY_TRACK_MODIFICATIONS"].lower() == "True".lower()
 )
 app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
-        "pool_size": 10,
-        "max_overflow": 5,
-        "pool_pre_ping": True,
-        "pool_recycle": 1200,
+    "pool_size": 10,
+    "max_overflow": 5,
+    "pool_pre_ping": True,
+    "pool_recycle": 1200,
 }
 
 if app.config["SQLALCHEMY_DATABASE_URI"] is None:

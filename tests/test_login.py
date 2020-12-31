@@ -1,6 +1,7 @@
-import requests
 import json
 import os
+
+import requests
 
 
 def test_login():

@@ -1,8 +1,9 @@
 from config import db, ma
 
+
 class LZEnvironment(db.Model):
     __tablename__ = "lzenvironment"
-    __table_args__ = {'schema': 'eagle_db'}
+    __table_args__ = {"schema": "eagle_db"}
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, unique=True, nullable=False)
     isActive = db.Column(db.Boolean)
@@ -11,6 +12,7 @@ class LZEnvironment(db.Model):
         return "<LZEnvironment(id={self.id!r}, name={self.name!r}, isActive={self.isActive!r})>".format(
             self=self
         )
+
 
 class LZEnvironmentSchema(ma.ModelSchema):
     class Meta:

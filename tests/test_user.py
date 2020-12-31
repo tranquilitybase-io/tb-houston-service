@@ -1,8 +1,10 @@
-import requests
 import json
 import logging
 import os
 from pprint import pprint
+
+import requests
+
 from tests import pytest_lib
 
 LOG_LEVEL = logging.INFO  # DEBUG, INFO, WARNING, ERROR, CRITICAL
@@ -38,6 +40,7 @@ def test_user():
     # Testing GETALL request
     pytest_lib.get_all(urls)
 
+
 def post():
     print("Post Tests")
     # Test POST Then GET
@@ -46,7 +49,7 @@ def post():
         "firstName": "test",
         "lastName": "test",
         "email": "test_email_account",
-        "isActive": True
+        "isActive": True,
     }
 
     # convert dict to json by json.dumps() for body data.
@@ -54,7 +57,7 @@ def post():
 
     # Validate response headers and body contents, e.g. status code.
     resp_json = resp.json()
-    print(f"resp_json: {resp_json}")    
+    print(f"resp_json: {resp_json}")
     assert resp.status_code == 201
     oid = resp_json["id"]
 
@@ -69,7 +72,7 @@ def post():
     assert resp_json["firstName"] == "test"
     assert resp_json["lastName"] == "test"
     assert resp_json["email"] == "test_email_account"
-    assert resp_json["isActive"] == True
+    assert resp_json["isActive"] is True
     assert resp_headers["content-type"] == "application/json"
     typestest(resp_json)
     return oid
@@ -85,7 +88,7 @@ def put(oid):
         "lastName": "test",
         "email": f"test{str(oid)}@test.com",
         "isActive": False,
-        "showWelcome": True
+        "showWelcome": True,
     }
 
     resp = requests.put(
@@ -94,8 +97,8 @@ def put(oid):
 
     # Get Request to get updated values
     resp = requests.get(url + str(oid), headers=headers)
-    resp_json = resp.json()    
-    print(f"resp_json: {resp_json}")    
+    resp_json = resp.json()
+    print(f"resp_json: {resp_json}")
 
     # Validate update/Put response
     assert resp.status_code == 200
@@ -103,8 +106,8 @@ def put(oid):
     # Validate response body for updated values
     assert resp.status_code == 200
     assert resp_json["firstName"] == f"test{str(oid)}"
-    assert resp_json["lastName"] == "test"    
-    assert resp_json["isActive"] == False
+    assert resp_json["lastName"] == "test"
+    assert resp_json["isActive"] is False
     assert resp_json["email"] == f"test{str(oid)}@test.com"
 
     typestest(resp_json)

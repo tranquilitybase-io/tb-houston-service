@@ -1,8 +1,9 @@
 from config import db, ma
 
+
 class LandingZoneWAN(db.Model):
     __tablename__ = "landingzonewan"
-    __table_args__ = {'schema': 'eagle_db'}
+    __table_args__ = {"schema": "eagle_db"}
     id = db.Column(db.Integer, primary_key=True)
     googleEndpoint__primaryGcpVpcSubnet = db.Column(db.String)
     googleEndpoint__primaryRegion = db.Column(db.String)
@@ -32,6 +33,7 @@ class LandingZoneWAN(db.Model):
     vpn__projectName = db.Column(db.String)
     vpn__subnetMode = db.Column(db.String)
     vpn__vpcName = db.Column(db.String)
+
 
 class LandingZoneWANSchema(ma.ModelSchema):
     class Meta:

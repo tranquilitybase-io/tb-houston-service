@@ -1,8 +1,9 @@
 from config import db, ma
 
+
 class LandingZoneAction(db.Model):
     __tablename__ = "landingzoneaction"
-    __table_args__ = {'schema': 'eagle_db'}
+    __table_args__ = {"schema": "eagle_db"}
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String)
     categoryName = db.Column(db.String)
@@ -15,6 +16,7 @@ class LandingZoneAction(db.Model):
         return "<LandingZoneAction(id={self.id!r}, name={self.title!r})>".format(
             self=self
         )
+
 
 class LandingZoneActionSchema(ma.ModelSchema):
     class Meta:
