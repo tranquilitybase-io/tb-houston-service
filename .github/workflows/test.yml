@@ -6,7 +6,7 @@ name: Houston Service - Legacy TEST Workflow
 
 on:
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
   build:
@@ -15,45 +15,45 @@ jobs:
       matrix:
         python-version: [3.6]
     steps:
-    - name: Git checkout current branch
-      uses: actions/checkout@v2
+      - name: Git checkout current branch
+        uses: actions/checkout@v2
 
-    - name: Build and Run Services
-      shell: bash
-      run: |
-        docker-compose -f docker-compose.legacy_test.yml up -d --build
+      - name: Build and Run Services
+        shell: bash
+        run: |
+          docker-compose -f docker-compose.legacy_test.yml up -d --build
 
-    - name: Give Services time to initialize (abort if elapsed time is greater than 10 minutes)
-      shell: bash
-      run: |
-        start_epoch="$(date -u +%s)"
-        elapsed_seconds=0
-        until [ $(docker-compose -f docker-compose.legacy_test.yml ps | grep Up | wc -l) -eq 3 ] || [ $elapsed_seconds -ge 600 ]
-        do
-          sleep 30
-          docker-compose -f docker-compose.legacy_test.yml ps
-          current_epoch="$(date -u +%s)"
-          elapsed_seconds="$(($current_epoch-$start_epoch))"
-          echo "Elapsed seconds: ${elapsed_seconds}"
-        done
+      - name: Give Services time to initialize (abort if elapsed time is greater than 10 minutes)
+        shell: bash
+        run: |
+          start_epoch="$(date -u +%s)"
+          elapsed_seconds=0
+          until [ $(docker-compose -f docker-compose.legacy_test.yml ps | grep Up | wc -l) -eq 3 ] || [ $elapsed_seconds -ge 600 ]
+          do
+            sleep 30
+            docker-compose -f docker-compose.legacy_test.yml ps
+            current_epoch="$(date -u +%s)"
+            elapsed_seconds="$(($current_epoch-$start_epoch))"
+            echo "Elapsed seconds: ${elapsed_seconds}"
+          done
 
-    - name: Set up Python
-      uses: actions/setup-python@v1
-      with:
-        python-version: ${{ matrix.python-version }}
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python-version }}
 
-    - name: Install tests dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r ${GITHUB_WORKSPACE}/tests/requirements.txt
+      - name: Install tests dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r ${GITHUB_WORKSPACE}/tests/requirements.txt
 
-    - name: Test with pytest
-      run: |
-        cd ${GITHUB_WORKSPACE}/tests
-        pip install pytest
-        #HOUSTON_SERVICE_URL="0.0.0.0:3000" pytest
+      - name: Test with pytest
+        run: |
+          cd ${GITHUB_WORKSPACE}/tests
+          pip install pytest
+          #HOUSTON_SERVICE_URL="0.0.0.0:3000" pytest
 
-    - name: Stop Docker Compose
-      shell: bash
-      run: |
-        docker-compose -f docker-compose.legacy_test.yml down
+      - name: Stop Docker Compose
+        shell: bash
+        run: |
+          docker-compose -f docker-compose.legacy_test.yml down
