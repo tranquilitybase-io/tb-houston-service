@@ -1,8 +1,9 @@
 from config import db, ma
 
+
 class ActivatorCI(db.Model):
     __tablename__ = "activatorCI"
-    __table_args__ = {'schema': 'eagle_db'}
+    __table_args__ = {"schema": "eagle_db"}
     id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
     activatorId = db.Column(db.Integer(), db.ForeignKey("eagle_db.activator.id"))
     ciId = db.Column(db.Integer(), db.ForeignKey("eagle_db.ci.id"))
@@ -13,6 +14,7 @@ class ActivatorCI(db.Model):
         return "<Activator(id={self.id!r}, activatorId={self.activatorId!r}, activatorId={self.ciId!r})>".format(
             self=self
         )
+
 
 class ActivatorCISchema(ma.ModelSchema):
     class Meta:

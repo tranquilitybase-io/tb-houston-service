@@ -3,15 +3,16 @@ This is the landingZoneWAN module and supports all the ReST actions for the
 landingZoneWAN collection
 """
 from pprint import pformat
-from flask import make_response, abort
+
+from flask import abort, make_response
 from flatten_json import flatten, unflatten
 
-from config import db, app
+from config import app, db
 from models import LandingZoneWAN, LandingZoneWANSchema
-from tb_houston_service.extendedSchemas import ExtendedLandingZoneWANSchema
-from tb_houston_service.extendedSchemas import IdSchema
+from tb_houston_service.extendedSchemas import ExtendedLandingZoneWANSchema, IdSchema
 
 delimiter = "__"
+
 
 def read_all():
     """
@@ -32,6 +33,7 @@ def read_all():
     app.logger.debug("landingZoneWAN data:")
     app.logger.debug(pformat(data))
     return data
+
 
 def read_one(oid):
     """
@@ -55,6 +57,7 @@ def read_one(oid):
         return data
     else:
         abort(404, f"LandingZoneWAN with id {oid} not found".format(id=oid))
+
 
 def create(landingZoneWANDetails):
     """
@@ -84,6 +87,7 @@ def create(landingZoneWANDetails):
 
     return data, 201
 
+
 def update(oid, landingZoneWANDetails):
     """
     This function updates an existing landingZoneWAN in the landingZoneWAN list
@@ -108,59 +112,59 @@ def update(oid, landingZoneWANDetails):
     # Does landingZoneWAN exist?
     if existing_landingZoneWAN is not None:
         flattened_landingZoneWAN = flatten(flatten(landingZoneWANDetails, delimiter))
-        existing_landingZoneWAN.googleEndpoint__primaryGcpVpcSubnet = flattened_landingZoneWAN.get(
-            "googleEndpoint__primaryGcpVpcSubnet", ""
+        existing_landingZoneWAN.googleEndpoint__primaryGcpVpcSubnet = (
+            flattened_landingZoneWAN.get("googleEndpoint__primaryGcpVpcSubnet", "")
         )
-        existing_landingZoneWAN.googleEndpoint__primaryRegion = flattened_landingZoneWAN.get(
-            "googleEndpoint__primaryRegion", ""
+        existing_landingZoneWAN.googleEndpoint__primaryRegion = (
+            flattened_landingZoneWAN.get("googleEndpoint__primaryRegion", "")
         )
-        existing_landingZoneWAN.googleEndpoint__primarySubnetName = flattened_landingZoneWAN.get(
-            "googleEndpoint__primarySubnetName", ""
+        existing_landingZoneWAN.googleEndpoint__primarySubnetName = (
+            flattened_landingZoneWAN.get("googleEndpoint__primarySubnetName", "")
         )
-        existing_landingZoneWAN.googleEndpoint__secondaryGcpVpcSubnet = flattened_landingZoneWAN.get(
-            "googleEndpoint__secondaryGcpVpcSubnet", ""
+        existing_landingZoneWAN.googleEndpoint__secondaryGcpVpcSubnet = (
+            flattened_landingZoneWAN.get("googleEndpoint__secondaryGcpVpcSubnet", "")
         )
-        existing_landingZoneWAN.googleEndpoint__secondaryRegion = flattened_landingZoneWAN.get(
-            "googleEndpoint__secondaryRegion", ""
+        existing_landingZoneWAN.googleEndpoint__secondaryRegion = (
+            flattened_landingZoneWAN.get("googleEndpoint__secondaryRegion", "")
         )
-        existing_landingZoneWAN.googleEndpoint__secondarySubnetName = flattened_landingZoneWAN.get(
-            "googleEndpoint__secondarySubnetName", ""
+        existing_landingZoneWAN.googleEndpoint__secondarySubnetName = (
+            flattened_landingZoneWAN.get("googleEndpoint__secondarySubnetName", "")
         )
-        existing_landingZoneWAN.remoteEndpoint__primaryBgpPeer = flattened_landingZoneWAN.get(
-            "remoteEndpoint__primaryBgpPeer", ""
+        existing_landingZoneWAN.remoteEndpoint__primaryBgpPeer = (
+            flattened_landingZoneWAN.get("remoteEndpoint__primaryBgpPeer", "")
         )
-        existing_landingZoneWAN.remoteEndpoint__primaryPeerIp = flattened_landingZoneWAN.get(
-            "remoteEndpoint__primaryPeerIp", ""
+        existing_landingZoneWAN.remoteEndpoint__primaryPeerIp = (
+            flattened_landingZoneWAN.get("remoteEndpoint__primaryPeerIp", "")
         )
-        existing_landingZoneWAN.remoteEndpoint__primaryPeerIpSubnet = flattened_landingZoneWAN.get(
-            "remoteEndpoint__primaryPeerIpSubnet", ""
+        existing_landingZoneWAN.remoteEndpoint__primaryPeerIpSubnet = (
+            flattened_landingZoneWAN.get("remoteEndpoint__primaryPeerIpSubnet", "")
         )
-        existing_landingZoneWAN.remoteEndpoint__primarySharedSecret = flattened_landingZoneWAN.get(
-            "remoteEndpoint__primarySharedSecret", ""
+        existing_landingZoneWAN.remoteEndpoint__primarySharedSecret = (
+            flattened_landingZoneWAN.get("remoteEndpoint__primarySharedSecret", "")
         )
-        existing_landingZoneWAN.remoteEndpoint__primaryVpnTunnel = flattened_landingZoneWAN.get(
-            "remoteEndpoint__primaryVpnTunnel", ""
+        existing_landingZoneWAN.remoteEndpoint__primaryVpnTunnel = (
+            flattened_landingZoneWAN.get("remoteEndpoint__primaryVpnTunnel", "")
         )
-        existing_landingZoneWAN.remoteEndpoint__secondaryBgpPeer = flattened_landingZoneWAN.get(
-            "remoteEndpoint__secondaryBgpPeer", ""
+        existing_landingZoneWAN.remoteEndpoint__secondaryBgpPeer = (
+            flattened_landingZoneWAN.get("remoteEndpoint__secondaryBgpPeer", "")
         )
-        existing_landingZoneWAN.remoteEndpoint__secondaryPeerIp = flattened_landingZoneWAN.get(
-            "remoteEndpoint__secondaryPeerIp", ""
+        existing_landingZoneWAN.remoteEndpoint__secondaryPeerIp = (
+            flattened_landingZoneWAN.get("remoteEndpoint__secondaryPeerIp", "")
         )
-        existing_landingZoneWAN.remoteEndpoint__secondaryPeerIpSubnet = flattened_landingZoneWAN.get(
-            "remoteEndpoint__secondaryPeerIpSubnet", ""
+        existing_landingZoneWAN.remoteEndpoint__secondaryPeerIpSubnet = (
+            flattened_landingZoneWAN.get("remoteEndpoint__secondaryPeerIpSubnet", "")
         )
-        existing_landingZoneWAN.remoteEndpoint__secondarySharedSecret = flattened_landingZoneWAN.get(
-            "remoteEndpoint__secondarySharedSecret", ""
+        existing_landingZoneWAN.remoteEndpoint__secondarySharedSecret = (
+            flattened_landingZoneWAN.get("remoteEndpoint__secondarySharedSecret", "")
         )
-        existing_landingZoneWAN.remoteEndpoint__secondaryVpnTunnel = flattened_landingZoneWAN.get(
-            "remoteEndpoint__secondaryVpnTunnel", ""
+        existing_landingZoneWAN.remoteEndpoint__secondaryVpnTunnel = (
+            flattened_landingZoneWAN.get("remoteEndpoint__secondaryVpnTunnel", "")
         )
         existing_landingZoneWAN.remoteEndpoint__vendor = flattened_landingZoneWAN.get(
             "remoteEndpoint__vendor", ""
         )
-        existing_landingZoneWAN.vpn__bgpInterfaceNetLength = flattened_landingZoneWAN.get(
-            "vpn__bgpInterfaceNetLength", ""
+        existing_landingZoneWAN.vpn__bgpInterfaceNetLength = (
+            flattened_landingZoneWAN.get("vpn__bgpInterfaceNetLength", "")
         )
         existing_landingZoneWAN.vpn__bgpRoutingMode = flattened_landingZoneWAN.get(
             "vpn__bgpRoutingMode", ""
@@ -213,6 +217,7 @@ def update(oid, landingZoneWANDetails):
     # otherwise, nope, landingZoneWAN doesn't exist, so that's an error
     else:
         abort(404, f"LandingZoneWAN not found")
+
 
 def delete(oid):
     """

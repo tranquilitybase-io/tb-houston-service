@@ -24,18 +24,18 @@ jobs:
         repository: tranquilitybase-io/TranquilityBase
         path: TranquilityBase
         fetch-depth: 0
-  
+
     - uses: actions/checkout@v2
       with:
         repository: tranquilitybase-io/tb-houston-service
         path: tb-houston-service
         fetch-depth: 0
-  
+
     - name: run semver
       shell: bash
       run: |
-        bash -x ${GITHUB_WORKSPACE}/TranquilityBase/scripts/semver_tag.sh 
-      env: 
+        bash -x ${GITHUB_WORKSPACE}/TranquilityBase/scripts/semver_tag.sh
+      env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SOURCE: "tb-houston-service"
         WITH_V: "true"

@@ -1,12 +1,12 @@
 """
    Tests for the solutionresource endpoint.
 """
-from pprint import pprint
 import json
 import os
-import requests
+from pprint import pprint
 from urllib.parse import urlparse
 
+import requests
 
 HOUSTON_SERVICE_URL = os.environ["HOUSTON_SERVICE_URL"]
 global_url = f"http://{HOUSTON_SERVICE_URL}/api/solutionresource/"

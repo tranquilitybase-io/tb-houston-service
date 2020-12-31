@@ -1,10 +1,10 @@
-import requests
 import json
 import os
-from pprint import pprint
-from pprint import pformat
-from tests import pytest_lib
+from pprint import pformat, pprint
 
+import requests
+
+from tests import pytest_lib
 
 HOUSTON_SERVICE_URL = os.environ["HOUSTON_SERVICE_URL"]
 url = f"http://{HOUSTON_SERVICE_URL}/api/application/"

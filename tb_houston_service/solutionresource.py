@@ -4,12 +4,14 @@ solution resource collection
 """
 import logging
 from pprint import pformat
-from flask import make_response, abort
+
+from flask import abort, make_response
 
 from config import db
 from models import SolutionResource, SolutionResourceSchema
 
 logger = logging.getLogger("tb_houston_service.solutionresource")
+
 
 def read_all():
     """
@@ -27,6 +29,7 @@ def read_all():
     solutionresource_schema = SolutionResourceSchema(many=True)
     data = solutionresource_schema.dump(solutionresource)
     return data, 200
+
 
 def read_one(solutionId, key):
     """
@@ -51,6 +54,7 @@ def read_one(solutionId, key):
         abort(
             404, f"SolutionResource with solutionId {solutionId}, key {key} not found"
         )
+
 
 def create(solutionResourceDetails):
     """
@@ -91,6 +95,7 @@ def create(solutionResourceDetails):
     logger.debug("solutionresource")
     logger.debug(pformat(data))
     return data, 201
+
 
 def delete(solutionId, key):
     """

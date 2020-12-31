@@ -54,6 +54,7 @@ openapi-spec-validator==0.2.8
 packaging==20.3
 pathspec==0.8.0
 pluggy==0.13.1
+pre-commit==2.9.3
 protobuf==3.6.1
 py==1.8.1
 pyasn1==0.4.8

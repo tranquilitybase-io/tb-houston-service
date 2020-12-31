@@ -3,10 +3,12 @@ This is the deployments module and supports all the ReST actions for the
 vpnOnPremiseVendor collection
 """
 from pprint import pformat
-from flask import make_response, abort
 
-from config import db, app
+from flask import abort, make_response
+
+from config import app, db
 from models import VPNOnPremiseVendor, VPNOnPremiseVendorSchema
+
 
 def read_all():
     """
@@ -24,6 +26,7 @@ def read_all():
     vpnOnPremiseVendor_schema = VPNOnPremiseVendorSchema(many=True)
     data = vpnOnPremiseVendor_schema.dump(vpnOnPremiseVendor)
     return data
+
 
 def read_one(oid):
     """
@@ -47,6 +50,7 @@ def read_one(oid):
     else:
         abort(404, f"VPNOnPremiseVendor with id {oid} not found")
 
+
 def create(vpnOnPremiseVendorDetails):
     """
     This function creates a new vpnOnPremiseVendor in the vpnOnPremiseVendor list
@@ -68,6 +72,7 @@ def create(vpnOnPremiseVendorDetails):
     # in the response
     data = schema.dump(new_vpnOnPremiseVendor)
     return data, 201
+
 
 def update(oid, vpnOnPremiseVendorDetails):
     """
@@ -101,6 +106,7 @@ def update(oid, vpnOnPremiseVendorDetails):
         return data, 200
     else:
         abort(404, f"VPNOnPremiseVendor {oid} not found")
+
 
 def delete(oid):
     """

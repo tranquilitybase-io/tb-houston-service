@@ -1,10 +1,11 @@
-import requests
 import json
 import logging
 import os
 from pprint import pprint
-from tests import pytest_lib
 
+import requests
+
+from tests import pytest_lib
 
 LOG_LEVEL = logging.INFO  # DEBUG, INFO, WARNING, ERROR, CRITICAL
 

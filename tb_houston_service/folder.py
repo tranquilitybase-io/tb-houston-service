@@ -3,9 +3,10 @@ This is the deployments module and supports all the ReST actions for the
 folder collection
 """
 from pprint import pformat
-from flask import make_response, abort
 
-from config import db, app
+from flask import abort, make_response
+
+from config import app, db
 from models import Folder, FolderSchema
 from tb_houston_service import lzfolderstructure
 from tb_houston_service.DeploymentStatus import DeploymentStatus
@@ -14,6 +15,7 @@ APPLICATIONS = "Applications"
 BUSINESS_UNIT = "Business Unit"
 TEAM = "Team"
 SOLUTION = "Solutions"
+
 
 def read_all():
     """
@@ -31,10 +33,11 @@ def read_all():
     app.logger.debug(data)
     return data, 200
 
+
 def read_one(oid):
     """
     Responds to a request for /api/folder/{id}
-    with one matching folder from Folders 
+    with one matching folder from Folders
 
     :param application:   id of folder to find
     :return:              folder matching id
@@ -49,6 +52,7 @@ def read_one(oid):
         return data, 200
     else:
         abort(404, "Folder with id {id} not found".format(id=oid))
+
 
 def create(folderDetails):
     """
@@ -72,6 +76,7 @@ def create(folderDetails):
     data = schema.dump(new_folder)
     app.logger.debug(data)
     return data, 201
+
 
 def update(oid, folderDetails):
     """
@@ -109,6 +114,7 @@ def update(oid, folderDetails):
     else:
         abort(404, f"Folder with id {oid} not found")
 
+
 def delete(oid):
     """
     Deletes a Folder from the Folder list.
@@ -130,6 +136,7 @@ def delete(oid):
     else:
         abort(404, f"Folder with id {oid} not found")
 
+
 def get_folder_meta():
     resp = lzfolderstructure.read()
     app.logger.debug(f"get_folder_meta::resp: {resp}")
@@ -146,6 +153,7 @@ def get_folder_meta():
     folder_meta = [k for k in data if data[k] == True]
     print(f"folder::get_folder_meta: {folder_meta}")
     return folder_meta
+
 
 def read_or_create_by_parent_folder_id_and_folder_name(parentFolderId, folderName):
     """

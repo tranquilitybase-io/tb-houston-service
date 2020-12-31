@@ -4,6 +4,7 @@ solution environment collection
 """
 import logging
 from pprint import pformat
+
 from flask import make_response
 
 from config import db
@@ -11,6 +12,7 @@ from models import SolutionEnvironment, SolutionEnvironmentSchema
 from tb_houston_service.tools import ModelTools
 
 logger = logging.getLogger("tb_houston_service.solutionEnvironment")
+
 
 def read_all():
     """
@@ -28,6 +30,7 @@ def read_all():
     schema = SolutionEnvironmentSchema(many=True)
     data = schema.dump(sol_env)
     return data, 200
+
 
 def create(solEnvDetails):
     logger.debug("solutionEnvironment::create: %s", solEnvDetails)
@@ -62,6 +65,7 @@ def create(solEnvDetails):
         db.session.commit()
         data = schema.dump(sol_env_change)
         return data, 201
+
 
 def create_all(solutionEnvironmentListDetails):
     """

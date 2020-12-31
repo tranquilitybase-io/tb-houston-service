@@ -3,10 +3,12 @@ This is the deployments module and supports all the ReST actions for the
 bgpRoutingMode collection
 """
 from pprint import pformat
-from flask import make_response, abort
 
-from config import db, app
+from flask import abort, make_response
+
+from config import app, db
 from models import BGPRoutingMode, BGPRoutingModeSchema
+
 
 def read_all():
     """
@@ -23,6 +25,7 @@ def read_all():
     bgpRoutingMode_schema = BGPRoutingModeSchema(many=True)
     data = bgpRoutingMode_schema.dump(bgpRoutingMode)
     return data
+
 
 def read_one(oid):
     """
@@ -43,6 +46,7 @@ def read_one(oid):
         return data
     else:
         abort(404, f"BGPRoutingMode with id {oid} not found")
+
 
 def create(bgpRoutingModeDetails):
     """
@@ -65,6 +69,7 @@ def create(bgpRoutingModeDetails):
     # in the response
     data = schema.dump(new_bgpRoutingMode)
     return data, 201
+
 
 def update(oid, bgpRoutingModeDetails):
     """
@@ -101,6 +106,7 @@ def update(oid, bgpRoutingModeDetails):
     else:
         db.session.close()
         abort(404, f"BGPRoutingMode not found")
+
 
 def delete(oid):
     """

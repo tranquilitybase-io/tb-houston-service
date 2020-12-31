@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  description: | 
+  description: |
     TranquilityBase Houston Backend REST API Service.
     The Houston Service is the name of the backend service for the Eagle Console.
     There is more information about the Houston Service here.
@@ -30,7 +30,7 @@ paths:
       tags:
         - login
       summary: login credentials check
-      description: This endpoint is used to check login credentials.   
+      description: This endpoint is used to check login credentials.
       requestBody:
         $ref: "#/components/requestBodies/login.loginDetails"
       responses:
@@ -80,7 +80,7 @@ paths:
         - in: query
           name: isFavourite
           schema:
-            type: boolean                    
+            type: boolean
         - in: query
           name: status
           schema:
@@ -93,15 +93,15 @@ paths:
           name: environment
           schema:
             type: string
-        - in: query 
+        - in: query
           name: page
           schema:
             type: integer
-        - in: query 
+        - in: query
           name: page_size
           schema:
             type: integer
-        - in: query 
+        - in: query
           name: sort
           schema:
             type: array
@@ -145,7 +145,7 @@ paths:
           description: oid of the application to get from the list
           required: true
           schema:
-            type: integer          
+            type: integer
       responses:
         "200":
           description: Successfully read an application from the list
@@ -349,7 +349,7 @@ paths:
       operationId: tb_houston_service.team.read_key_values_by_user_id
       tags:
         - team
-      summary: Read list of teams the user is a member of 
+      summary: Read list of teams the user is a member of
       description: Read list of teams the user is a member of.
       parameters:
         - name: userId
@@ -481,11 +481,11 @@ paths:
         - in: query
           name: page
           schema:
-            type: integer 
+            type: integer
         - in: query
           name: page_size
           schema:
-            type: integer 
+            type: integer
         - in: query
           name: sort
           schema:
@@ -707,7 +707,7 @@ paths:
       responses:
         "200":
           description: Successfully deleted an CI
-  
+
 
   /keyValues/cd/:
     get:
@@ -804,7 +804,7 @@ paths:
         $ref: "#/components/requestBodies/cd.cdDetails"
       responses:
         "200":
-          description: Successfully updated a continuous deployment 
+          description: Successfully updated a continuous deployment
     delete:
       operationId: tb_houston_service.cd.delete
       tags:
@@ -820,7 +820,7 @@ paths:
       responses:
         "200":
           description: Successfully deleted a continuous deployment
-  
+
   /platform/:
     get:
       operationId: tb_houston_service.platform.read_all
@@ -898,7 +898,7 @@ paths:
         $ref: "#/components/requestBodies/platform.platformDetails"
       responses:
         "200":
-          description: Successfully updated a platform 
+          description: Successfully updated a platform
     delete:
       operationId: tb_houston_service.platform.delete
       tags:
@@ -914,7 +914,7 @@ paths:
       responses:
         "200":
           description: Successfully deleted a platform
-  
+
   /type/:
     get:
       operationId: tb_houston_service.type.read_all
@@ -991,7 +991,7 @@ paths:
         $ref: "#/components/requestBodies/type.typeDetails"
       responses:
         "200":
-          description: Successfully updated a type 
+          description: Successfully updated a type
     delete:
       operationId: tb_houston_service.type.delete
       tags:
@@ -1152,7 +1152,7 @@ paths:
       operationId: tb_houston_service.businessUnit.read_all
       tags:
         - businessUnit
-      summary: Read the entire list of business units 
+      summary: Read the entire list of business units
       description: Read the list of business units
       responses:
         "200":
@@ -1163,7 +1163,7 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/BusinessUnit"
-                  
+
   /businessunit/:
     post:
       operationId: tb_houston_service.businessUnit.create
@@ -1245,10 +1245,10 @@ paths:
           name: isActive
           schema:
             type: boolean
-        - in: query            
+        - in: query
           name: isFavourite
           schema:
-            type: boolean             
+            type: boolean
         - in: query
           name: isSandbox
           schema:
@@ -1257,15 +1257,15 @@ paths:
           name: namesonly
           schema:
             type: boolean
-        - in: query 
+        - in: query
           name: page
           schema:
             type: integer
-        - in: query 
+        - in: query
           name: page_size
           schema:
             type: integer
-        - in: query 
+        - in: query
           name: sort
           schema:
             type: array
@@ -1300,7 +1300,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Solution"          
+                  $ref: "#/components/schemas/Solution"
 
   "/solution/{oid}":
     get:
@@ -1349,7 +1349,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Solution"          
+                  $ref: "#/components/schemas/Solution"
 
     delete:
       operationId: tb_houston_service.solution.delete
@@ -1434,7 +1434,7 @@ paths:
       operationId: tb_houston_service.solution_deployment.deployment_read_one
       tags:
         - solution
-      summary: Read a solution deployment from the list 
+      summary: Read a solution deployment from the list
       description: Read solution deployment from the list
       parameters:
         - name: oid
@@ -1647,11 +1647,11 @@ paths:
         - in: query
           name: isActive
           schema:
-            type: boolean   
+            type: boolean
         - in: query
           name: isFavourite
           schema:
-            type: boolean                    
+            type: boolean
         - in: query
           name: category
           schema:
@@ -1683,11 +1683,11 @@ paths:
         - in: query
           name: page
           schema:
-            type: integer 
+            type: integer
         - in: query
           name: page_size
           schema:
-            type: integer 
+            type: integer
         - in: query
           name: sort
           schema:
@@ -1731,7 +1731,7 @@ paths:
           description: key of the activator to get from the list
           required: true
           schema:
-            type: string           
+            type: string
       responses:
         "200":
           description: Successfully read an activator from the list
@@ -1795,7 +1795,7 @@ paths:
                     type: integer
                   status:
                     type: string
-  
+
   /activatorByURL/:
     post:
       operationId: tb_houston_service.activatorByURL.create
@@ -1839,16 +1839,16 @@ paths:
 
   /activatorOnboard/:
     post:
-      operationId: tb_houston_service.activator.onboard 
+      operationId: tb_houston_service.activator.onboard
       tags:
         - activator
-      summary: Onboard the activator 
+      summary: Onboard the activator
       description: Onboard the activator
       requestBody:
         $ref: "#/components/requestBodies/activator.activatorOnboardDetails"
       responses:
         "200":
-          description: Successfully onboarded the activator 
+          description: Successfully onboarded the activator
 
   /landingzoneprogressitems/:
     get:
@@ -1894,7 +1894,7 @@ paths:
                   completed:
                     type: boolean
                     description: completed
-                    
+
   "/landingzoneprogressitem/{oid}":
     get:
       operationId: tb_houston_service.landingzoneprogressitem.read_one
@@ -2208,16 +2208,16 @@ paths:
         - in: query
           name: bulkDelete
           schema:
-            type: boolean  
+            type: boolean
       requestBody:
         $ref: "#/components/requestBodies/lzMetadata.lzMetadataEnvListDetails"
-      responses:          
+      responses:
         "201":
           description: Successfully created list of landing zone metadata environments
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/LZMetaDataEnvList"                 
+                $ref: "#/components/schemas/LZMetaDataEnvList"
 
     get:
       operationId: tb_houston_service.lzmetadata_env.read_all
@@ -2229,7 +2229,7 @@ paths:
         - in: query
           name: readActiveOnly
           schema:
-            type: boolean    
+            type: boolean
       responses:
         "200":
           description: Successfully retrieved a list of landing zone metadata environments
@@ -2244,8 +2244,8 @@ paths:
       tags:
         - lzmetadata
       summary: Create or update landing zone metadata for a given group and name
-      description: Create or update landing zone metadata for a given group and name  
-      parameters:      
+      description: Create or update landing zone metadata for a given group and name
+      parameters:
         - in: query
           name: readActiveOnly
           schema:
@@ -2253,7 +2253,7 @@ paths:
         - in: query
           name: bulkDelete
           schema:
-            type: boolean         
+            type: boolean
       requestBody:
         $ref: "#/components/requestBodies/lzMetadata.lzLanVpcListDetails"
       responses:
@@ -2269,15 +2269,15 @@ paths:
       tags:
         - lzmetadata
       summary: Read the landing zone metadata
-      description: Read the landing zone metadata    
-      parameters:      
+      description: Read the landing zone metadata
+      parameters:
         - in: query
           name: readActiveOnly
           schema:
-            type: boolean     
+            type: boolean
       responses:
         "200":
-          description: Successfully ran landing zone metadata 
+          description: Successfully ran landing zone metadata
           content:
             application/json:
               schema:
@@ -2298,7 +2298,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/LZMetaDataFolderStructure"          
+                $ref: "#/components/schemas/LZMetaDataFolderStructure"
 
     get:
       operationId: tb_houston_service.lzfolderstructure.read
@@ -2308,7 +2308,7 @@ paths:
       description: Read the landing zone folder structure metadata
       responses:
         "200":
-          description: Successfully read an landing zone metadata 
+          description: Successfully read an landing zone metadata
           content:
             application/json:
               schema:
@@ -2685,7 +2685,7 @@ paths:
           name: typeId
           schema:
             type: integer
-          required: true               
+          required: true
         - in: query
           name: isRead
           schema:
@@ -2694,27 +2694,27 @@ paths:
           name: isActive
           schema:
             type: boolean
-        - in: query 
+        - in: query
           name: page
           schema:
             type: integer
-        - in: query 
+        - in: query
           name: page_size
           schema:
-            type: integer            
+            type: integer
         - in: query
           name: sort
           schema:
             type: array
             items:
-              type: string      
+              type: string
       requestBody:
         $ref: "#/components/requestBodies/notification.notificationListDetails"
       responses:
         "201":
           description: Successfully created notifications
-            
-    
+
+
     get:
       operationId: tb_houston_service.notification.read_all
       tags:
@@ -2725,7 +2725,7 @@ paths:
         - in: query
           name: typeId
           schema:
-            type: integer            
+            type: integer
         - in: query
           name: isRead
           schema:
@@ -2734,14 +2734,14 @@ paths:
           name: isActive
           schema:
             type: boolean
-        - in: query 
+        - in: query
           name: page
           schema:
             type: integer
-        - in: query 
+        - in: query
           name: page_size
           schema:
-            type: integer            
+            type: integer
         - in: query
           name: sort
           schema:
@@ -2754,7 +2754,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/NotificationList"            
+                $ref: "#/components/schemas/NotificationList"
 
   "/notificationsMeta/":
     get:
@@ -2775,7 +2775,7 @@ paths:
         - in: query
           name: isActive
           schema:
-            type: boolean                                
+            type: boolean
       responses:
         "200":
           description: Successfully read notifications metadata
@@ -2837,7 +2837,7 @@ paths:
           schema:
             type: string
       requestBody:
-        $ref: "#/components/requestBodies/generic.keyValueDetails"             
+        $ref: "#/components/requestBodies/generic.keyValueDetails"
       responses:
         "200":
           description: Successfully update a lzmetadata from the list
@@ -2858,7 +2858,7 @@ paths:
           description: id of the lzmetadata to get from the list
           required: true
           schema:
-            type: string         
+            type: string
       responses:
         "200":
           description: Successfully read a lzmetadata from the list
@@ -2943,7 +2943,7 @@ components:
             properties:
               id:
                 type: integer
-                description: The id of the application that is being deployed      
+                description: The id of the application that is being deployed
 
     activator.activatorDetails:
       content:
@@ -3017,7 +3017,7 @@ components:
             $ref: "#/components/schemas/CD"
       description: CD to create
       required: true
-    
+
     platform.platformDetails:
       content:
         application/json:
@@ -3026,7 +3026,7 @@ components:
             $ref: "#/components/schemas/Platform"
       description: platform to create
       required: true
-    
+
     type.typeDetails:
       content:
         application/json:
@@ -3035,7 +3035,7 @@ components:
             $ref: "#/components/schemas/Type"
       description: Type to create
       required: true
-    
+
     sourceControl.sourceControlDetails:
       content:
         application/json:
@@ -3044,7 +3044,7 @@ components:
             $ref: "#/components/schemas/SourceControl"
       description: SourceControl to create
       required: true
-      
+
     landingZoneAction.landingZoneActionDetails:
       content:
         application/json:
@@ -3071,7 +3071,7 @@ components:
             $ref: "#/components/schemas/LandingZoneWAN"
       description: landingzonewan to create
       required: true
-      
+
     lzMetadata.lzMetadataListDetails:
         content:
           application/json:
@@ -3088,7 +3088,7 @@ components:
             x-body-name: lzLanVpcListDetails
             $ref: "#/components/schemas/LZLanVpcList"
       description: landingzone meta data to create
-      required: true            
+      required: true
 
     lzMetadata.lzMetadataEnvListDetails:
         content:
@@ -3107,7 +3107,7 @@ components:
               $ref: "#/components/schemas/LZMetaDataFolderStructure"
         description: landingzone  folder structure meta data to create
         required: true
-      
+
     bgpRoutingMode.bgpRoutingModeDetails:
       content:
         application/json:
@@ -3143,7 +3143,7 @@ components:
             $ref: "#/components/schemas/Team"
       description: teamDetails to create
       required: true
-    
+
     teammember.teamMemberDetails:
       content:
         application/json:
@@ -3232,14 +3232,14 @@ components:
       description: the solution id to deploy
       required: true
 
-    solution.solutionEnvironmentDetails:  
+    solution.solutionEnvironmentDetails:
       content:
         application/json:
           schema:
             x-body-name: solutionEnvironmentListDetails
             $ref: "#/components/schemas/SolutionEnvironmentList"
       description: Solution environment to create
-      required: true                
+      required: true
 
     solutionresource.solutionResourceDetails:
       content:
@@ -3288,18 +3288,18 @@ components:
     notification.notificationListDetails:
       content:
         application/json:
-          schema:       
-            x-body-name: notificationListDetails             
-            $ref: "#/components/schemas/NotificationList"                 
+          schema:
+            x-body-name: notificationListDetails
+            $ref: "#/components/schemas/NotificationList"
       description: the notifications to create
       required: true
 
     generic.keyValueDetails:
       content:
         application/json:
-          schema:      
-            x-body-name: keyValueDetails    
-            $ref: "#/components/schemas/KeyValue"                         
+          schema:
+            x-body-name: keyValueDetails
+            $ref: "#/components/schemas/KeyValue"
       description: the key value to create
       required: true
 
@@ -3338,7 +3338,7 @@ components:
           description: available
         sensitivity:
           type: string
-          nullable: true          
+          nullable: true
           description: sensitivity
         category:
           type: string
@@ -3371,7 +3371,7 @@ components:
           items:
              type: string
         hosting:
-          type: array          
+          type: array
           nullable: true
           description: hosting
           items:
@@ -3522,7 +3522,7 @@ components:
         accessRequestedById:
           type: integer
           description: User who requested access to the team
-     
+
 
     TeamMember:
       type: object
@@ -3538,7 +3538,7 @@ components:
           description: team Id of the team
         isTeamAdmin:
           type: boolean
-          description: True if a user is a Team admin 
+          description: True if a user is a Team admin
         isActive:
           type: boolean
           description: to activate/deactivate user role from a team
@@ -3571,7 +3571,7 @@ components:
         isActive:
           type: boolean
           description: to activate/deactivate the business unit
-    
+
     LZEnvironment:
       type: object
       properties:
@@ -3652,7 +3652,7 @@ components:
         value:
           type: string
           description: value
-          
+
     Type:
       type: object
       properties:
@@ -3782,7 +3782,7 @@ components:
           description: active
         isFavourite:
           type: boolean
-          description: isFavourite      
+          description: isFavourite
         lastUpdated:
           type: string
           description: "UTC/CUT last updated datetime stamp see: https://github.com/tranquilitybase-io/tb-houston-service/wiki/UTC-Timestamp"
@@ -3812,7 +3812,7 @@ components:
         teamId:
           type: integer
           description: teamId
-        environments: 
+        environments:
           type: array
           items:
             type: integer
@@ -3858,7 +3858,7 @@ components:
           description: solutionId
         environmentId:
           type: integer
-          description: environmentId          
+          description: environmentId
         lastUpdated:
           type: string
           description:  description
@@ -3869,7 +3869,7 @@ components:
     SolutionEnvironmentList:
       type: array
       items:
-        $ref: "#/components/schemas/SolutionEnvironment"          
+        $ref: "#/components/schemas/SolutionEnvironment"
 
     SolutionResource:
       type: object
@@ -3935,7 +3935,7 @@ components:
           type: boolean
           description: to activate/deactivate user role from a team
 
-      
+
     Login:
           type: object
           properties:
@@ -3969,7 +3969,7 @@ components:
         isActive:
           type: boolean
           description: Is active?
-        environments: 
+        environments:
           type: array
           items:
             type: integer
@@ -3990,10 +3990,10 @@ components:
         isActive:
           type: boolean
           description: Is active?
-        environments: 
+        environments:
           type: array
           items:
-            $ref: "#/components/schemas/LZEnvironment"    
+            $ref: "#/components/schemas/LZEnvironment"
 
 
     LZLanVpcResponseList:
@@ -4012,7 +4012,7 @@ components:
         isActive:
           type: boolean
 
-    
+
     LZMetaDataEnvList:
       type: array
       items:
@@ -4058,14 +4058,14 @@ components:
           type: boolean
         teamId:
           type: integer
-  
+
 
     NotificationList:
       type: array
       items:
         anyOf:
-          - $ref: "#/components/schemas/NotificationActivator"                
-          - $ref: "#/components/schemas/NotificationTeam"         
+          - $ref: "#/components/schemas/NotificationActivator"
+          - $ref: "#/components/schemas/NotificationTeam"
 
     Folder:
       type: object
@@ -4073,10 +4073,10 @@ components:
         id:
           type: integer
           description: id
-        parentFolderId: 
+        parentFolderId:
           type: string
           description: parentFolderId
-        folderId: 
+        folderId:
           type: string
           nullable: true
           description: folderId
@@ -4142,7 +4142,7 @@ components:
         key:
           type: string
           description: The key
-        value: 
+        value:
           type: string
           description: The value
 

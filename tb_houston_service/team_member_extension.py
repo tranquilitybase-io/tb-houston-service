@@ -6,6 +6,7 @@ from tb_houston_service.team_extension import expand_team
 
 logger = logging.getLogger("tb_houston_service.teammember")
 
+
 def expand_team_member(a_team_member):
     logger.debug("team_member: %s", a_team_member)
 

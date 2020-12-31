@@ -4,16 +4,17 @@ supports all the ReST actions for the
 system settings collection
 """
 import logging
-from tb_houston_service.tools import ModelTools
-from models.system_settings import SystemSettingsResultSchema
-from tb_houston_service import security
 
 from flask import abort
 
 from config import db
 from models import SystemSettings, SystemSettingsSchema
+from models.system_settings import SystemSettingsResultSchema
+from tb_houston_service import security
+from tb_houston_service.tools import ModelTools
 
 logger = logging.getLogger("tb_houston_service.systemsettings")
+
 
 def read_one():
     """
@@ -27,7 +28,11 @@ def read_one():
     if not (user and user.isAdmin):
         return abort(401, "JWT not valid or user is not an Admin")
 
-    s:SystemSettings = db.session.query(SystemSettings).filter(SystemSettings.userId == user.id).one_or_none()
+    s: SystemSettings = (
+        db.session.query(SystemSettings)
+        .filter(SystemSettings.userId == user.id)
+        .one_or_none()
+    )
     if s is not None:
         resultSchema = SystemSettingsResultSchema()
         data = resultSchema.dump(s)
@@ -50,7 +55,11 @@ def create(settingsDetails):
     if not (user and user.isAdmin):
         return abort(401, "JWT not valid or user is not an Admin")
 
-    s:SystemSettings = db.session.query(SystemSettings).filter(SystemSettings.userId == user.id).one_or_none()
+    s: SystemSettings = (
+        db.session.query(SystemSettings)
+        .filter(SystemSettings.userId == user.id)
+        .one_or_none()
+    )
     if s is None:
         schema = SystemSettingsSchema()
         new_entry = schema.load(settingsDetails, session=db.session)
@@ -79,10 +88,14 @@ def update(settingsDetails):
     if not (user and user.isAdmin):
         return abort(401, "JWT not valid or user is not an Admin")
 
-    s:SystemSettings = db.session.query(SystemSettings).filter(SystemSettings.userId == user.id).one_or_none()
+    s: SystemSettings = (
+        db.session.query(SystemSettings)
+        .filter(SystemSettings.userId == user.id)
+        .one_or_none()
+    )
     if s is not None:
-        s.username = settingsDetails['username']
-        s.token = settingsDetails['token']
+        s.username = settingsDetails["username"]
+        s.token = settingsDetails["token"]
         s.lastUpdated = ModelTools.get_utc_timestamp()
 
         db.session.merge(s)
@@ -107,19 +120,28 @@ def delete():
     if not (user and user.isAdmin):
         return abort(401, "JWT not valid or user is not an Admin")
 
-    s:SystemSettings = db.session.query(SystemSettings).filter(SystemSettings.userId == user.id).one_or_none()
+    s: SystemSettings = (
+        db.session.query(SystemSettings)
+        .filter(SystemSettings.userId == user.id)
+        .one_or_none()
+    )
     if s is not None:
         db.session.delete(s)
         db.session.commit()
 
-        return '', 204
+        return "", 204
 
     return abort(404, "System settings not found")
 
+
 def get_github_credentials(userId):
-    s = db.session.query(SystemSettings).filter(SystemSettings.userId == userId).one_or_none()
+    s = (
+        db.session.query(SystemSettings)
+        .filter(SystemSettings.userId == userId)
+        .one_or_none()
+    )
     if s is None:
         s = SystemSettings()
-        s.username = ''
-        s.token = ''
+        s.username = ""
+        s.token = ""
     return s

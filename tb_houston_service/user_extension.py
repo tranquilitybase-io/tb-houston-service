@@ -6,12 +6,18 @@ from tb_houston_service import team_member_extension
 
 logger = logging.getLogger("tb_houston_service.user_extension")
 
+
 def expand_user(a_user):
-    if a_user:                
-        team_count = db.session.query(TeamMember).filter(TeamMember.userId == a_user.id, TeamMember.isActive).count()
+    if a_user:
+        team_count = (
+            db.session.query(TeamMember)
+            .filter(TeamMember.userId == a_user.id, TeamMember.isActive)
+            .count()
+        )
         a_user.teamCount = team_count
-    
+
     return a_user
+
 
 def expand_team_member(a_team_member):
     # This function is similar to the one in team_member_extension.py but without the user object,
@@ -25,10 +31,15 @@ def expand_team_member(a_team_member):
 
     return a_team_member
 
+
 def expand_user_with_teams(a_user):
     logger.debug("expand_user_with_teams: %s", a_user)
-    if a_user:         
-        a_user.teamMembers = db.session.query(TeamMember).filter(TeamMember.userId == a_user.id, TeamMember.isActive).all()
+    if a_user:
+        a_user.teamMembers = (
+            db.session.query(TeamMember)
+            .filter(TeamMember.userId == a_user.id, TeamMember.isActive)
+            .all()
+        )
         for tm in a_user.teamMembers:
             expand_team_member(tm)
             print(tm)

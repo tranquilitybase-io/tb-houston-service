@@ -1,8 +1,8 @@
-import requests
 import json
 import os
 from pprint import pprint
 
+import requests
 
 HOUSTON_SERVICE_URL = os.environ["HOUSTON_SERVICE_URL"]
 url = f"http://{HOUSTON_SERVICE_URL}/api/notifications/"
@@ -11,7 +11,7 @@ url = f"http://{HOUSTON_SERVICE_URL}/api/notifications/"
 headers = {"Content-Type": "application/json"}
 
 if os.environ.get("TOKEN"):
-   headers["Authorization"] = f"Bearer {os.environ['TOKEN']}"
+    headers["Authorization"] = f"Bearer {os.environ['TOKEN']}"
 
 print(f"headers: {headers}")
 
@@ -36,9 +36,9 @@ def test_notifications():
     # Testing POST request
     oid = create_notification_activators()
     # disabled for now, the automated filter from the token makes the update difficult to test
-    #update_notification_activator(oid)
+    # update_notification_activator(oid)
     oid = create_notification_teams()
-    #update_notification_team(oid)
+    # update_notification_team(oid)
     read_all()
 
 
@@ -52,7 +52,7 @@ def create_notification_activators():
             "importance": 1,
             "message": "User Jon Snow requested access to Activator 2",
             "isRead": False,
-            "activatorId": 2
+            "activatorId": 2,
         },
         {
             "isActive": True,
@@ -60,11 +60,15 @@ def create_notification_activators():
             "importance": 2,
             "message": "User Cersei Lannister requested access to an Activator 3",
             "isRead": False,
-            "activatorId": 3
-        }
+            "activatorId": 3,
+        },
     ]
 
-    resp = requests.post(url + "?typeId=1&isActive=true&isRead=false", headers=headers, data=json.dumps(payload, indent=4))
+    resp = requests.post(
+        url + "?typeId=1&isActive=true&isRead=false",
+        headers=headers,
+        data=json.dumps(payload, indent=4),
+    )
 
     # Validate response headers and body contents, e.g. status code.
     resp_json = resp.json()
@@ -72,7 +76,7 @@ def create_notification_activators():
     oid = 0
     for rj in resp_json:
         print(rj)
-        oid = rj['id']
+        oid = rj["id"]
     assert resp.status_code == 201
     print(f"oid: {oid}")
     return oid
@@ -81,19 +85,16 @@ def create_notification_activators():
 def update_notification_activator(oid):
     # Test POST Then GET
     # Body
-    payload = [
-        {
-            "id": oid,
-            "isActive": False,
-            "importance": 1,
-            "isRead": True
-        }
-    ]
+    payload = [{"id": oid, "isActive": False, "importance": 1, "isRead": True}]
     print(f"payload: {payload}")
 
-    resp = requests.post(url + "?typeId=1&isActive=true&isRead=false&sort=importance:asc", headers=headers, data=json.dumps(payload, indent=4))
+    resp = requests.post(
+        url + "?typeId=1&isActive=true&isRead=false&sort=importance:asc",
+        headers=headers,
+        data=json.dumps(payload, indent=4),
+    )
     # Validate response headers and body contents, e.g. status code.
-    #resp_json = resp.json()
+    # resp_json = resp.json()
     assert resp.status_code == 201
 
 
@@ -107,7 +108,7 @@ def create_notification_teams():
             "importance": 1,
             "message": "User Jon Snow requested access to Team 1",
             "isRead": False,
-            "teamId": 1
+            "teamId": 1,
         },
         {
             "isActive": True,
@@ -115,11 +116,15 @@ def create_notification_teams():
             "importance": 2,
             "message": "User Cersei Lannister requested access to an Team 1",
             "isRead": False,
-            "teamId": 1
-        }
+            "teamId": 1,
+        },
     ]
 
-    resp = requests.post(url + "?typeId=2&isActive=true&isRead=false", headers=headers, data=json.dumps(payload, indent=4))
+    resp = requests.post(
+        url + "?typeId=2&isActive=true&isRead=false",
+        headers=headers,
+        data=json.dumps(payload, indent=4),
+    )
 
     # Validate response headers and body contents, e.g. status code.
     resp_json = resp.json()
@@ -127,7 +132,7 @@ def create_notification_teams():
     oid = 0
     for rj in resp_json:
         print(rj)
-        oid = rj['id']
+        oid = rj["id"]
     assert resp.status_code == 201
     print(f"oid: {oid}")
     return oid
@@ -136,18 +141,15 @@ def create_notification_teams():
 def update_notification_team(oid):
     # Test POST Then GET
     # Body
-    payload = [
-        {
-            "id": oid,
-            "isActive": False,
-            "importance": 1,
-            "isRead": True
-        }
-    ]
+    payload = [{"id": oid, "isActive": False, "importance": 1, "isRead": True}]
 
-    resp = requests.post(url + "?typeId=2&isActive=true&isRead=false&sort=importance:asc", headers=headers, data=json.dumps(payload, indent=4))
+    resp = requests.post(
+        url + "?typeId=2&isActive=true&isRead=false&sort=importance:asc",
+        headers=headers,
+        data=json.dumps(payload, indent=4),
+    )
     # Validate response headers and body contents, e.g. status code.
-    #resp_json = resp.json()
+    # resp_json = resp.json()
     assert resp.status_code == 201
 
 
@@ -161,7 +163,7 @@ def create_notification_application_deployment():
             "importance": 1,
             "message": "User Jon Snow has deployed application 1 successfully",
             "isRead": False,
-            "applicationId": 1
+            "applicationId": 1,
         },
         {
             "isActive": True,
@@ -169,11 +171,15 @@ def create_notification_application_deployment():
             "importance": 2,
             "message": "User Cersei Lannister has deployed application 2 successfully",
             "isRead": False,
-            "applicationId": 2
-        }
+            "applicationId": 2,
+        },
     ]
 
-    resp = requests.post(url + "?typeId=3&isActive=true&isRead=false", headers=headers, data=json.dumps(payload, indent=4))
+    resp = requests.post(
+        url + "?typeId=3&isActive=true&isRead=false",
+        headers=headers,
+        data=json.dumps(payload, indent=4),
+    )
 
     # Validate response headers and body contents, e.g. status code.
     resp_json = resp.json()
@@ -181,7 +187,7 @@ def create_notification_application_deployment():
     oid = 0
     for rj in resp_json:
         print(rj)
-        oid = rj['id']
+        oid = rj["id"]
     assert resp.status_code == 201
     print(f"oid: {oid}")
     return oid
@@ -190,18 +196,15 @@ def create_notification_application_deployment():
 def update_notification_application_deployment(oid):
     # Test POST Then GET
     # Body
-    payload = [
-        {
-            "id": oid,
-            "isActive": False,
-            "importance": 1,
-            "isRead": True
-        }
-    ]
+    payload = [{"id": oid, "isActive": False, "importance": 1, "isRead": True}]
 
-    resp = requests.post(url + "?typeId=3&isActive=true&isRead=false&sort=importance:asc", headers=headers, data=json.dumps(payload, indent=4))
+    resp = requests.post(
+        url + "?typeId=3&isActive=true&isRead=false&sort=importance:asc",
+        headers=headers,
+        data=json.dumps(payload, indent=4),
+    )
     # Validate response headers and body contents, e.g. status code.
-    #resp_json = resp.json()
+    # resp_json = resp.json()
     assert resp.status_code == 201
 
 
@@ -215,7 +218,7 @@ def create_notification_solution_deployment():
             "importance": 1,
             "message": "User Jon Snow has deployed solution 1 successfully",
             "isRead": False,
-            "applicationId": 1
+            "applicationId": 1,
         },
         {
             "isActive": True,
@@ -223,11 +226,15 @@ def create_notification_solution_deployment():
             "importance": 2,
             "message": "User Cersei Lannister has deployed solution 2 successfully",
             "isRead": False,
-            "applicationId": 2
-        }
+            "applicationId": 2,
+        },
     ]
 
-    resp = requests.post(url + "?typeId=4&isActive=true&isRead=false", headers=headers, data=json.dumps(payload, indent=4))
+    resp = requests.post(
+        url + "?typeId=4&isActive=true&isRead=false",
+        headers=headers,
+        data=json.dumps(payload, indent=4),
+    )
 
     # Validate response headers and body contents, e.g. status code.
     resp_json = resp.json()
@@ -235,7 +242,7 @@ def create_notification_solution_deployment():
     oid = 0
     for rj in resp_json:
         print(rj)
-        oid = rj['id']
+        oid = rj["id"]
     assert resp.status_code == 201
     print(f"oid: {oid}")
     return oid
@@ -244,23 +251,23 @@ def create_notification_solution_deployment():
 def update_notification_solution_deployment(oid):
     # Test POST Then GET
     # Body
-    payload = [
-        {
-            "id": oid,
-            "isActive": False,
-            "importance": 1,
-            "isRead": True
-        }
-    ]
+    payload = [{"id": oid, "isActive": False, "importance": 1, "isRead": True}]
 
-    resp = requests.post(url + "?typeId=4&isActive=true&isRead=false&sort=importance:asc", headers=headers, data=json.dumps(payload, indent=4))
+    resp = requests.post(
+        url + "?typeId=4&isActive=true&isRead=false&sort=importance:asc",
+        headers=headers,
+        data=json.dumps(payload, indent=4),
+    )
     # Validate response headers and body contents, e.g. status code.
-    #resp_json = resp.json()
+    # resp_json = resp.json()
     assert resp.status_code == 201
 
 
 def read_all():
-    resp = requests.get(url + "?typeId=1&isActive=true&isRead=false&sort=importance:asc", headers=headers)
+    resp = requests.get(
+        url + "?typeId=1&isActive=true&isRead=false&sort=importance:asc",
+        headers=headers,
+    )
     resp_json = resp.json()
     print(resp_json)
     assert resp.status_code == 200

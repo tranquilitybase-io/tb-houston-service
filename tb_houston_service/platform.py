@@ -3,17 +3,19 @@ This is the deployments module and supports all the ReST actions for the
 platform collection
 """
 from pprint import pformat
-from flask import make_response, abort
 
-from config import db, app
+from flask import abort, make_response
+
+from config import app, db
 from models import Platform, PlatformSchema
+
 
 def read_all():
     """
     This function responds to a request for /api/platform
-    with the complete lists of Platforms 
+    with the complete lists of Platforms
 
-    :return:        json string of list of Platforms 
+    :return:        json string of list of Platforms
     """
     # Create the list of Platforms from our data
     platform = db.session.query(Platform).order_by(Platform.id).all()
@@ -22,6 +24,7 @@ def read_all():
     platform_schema = PlatformSchema(many=True)
     data = platform_schema.dump(platform)
     return data
+
 
 def read_one(id):
     """
@@ -41,12 +44,13 @@ def read_one(id):
     else:
         abort(404, "Platform with id {id} not found".format(id=id))
 
+
 def read_keyValues():
     """
     This function responds to a request for /keyValues/platform
-    with the complete lists of Platforms 
+    with the complete lists of Platforms
 
-    :return:        json string of list of Platforms 
+    :return:        json string of list of Platforms
     """
     # Create the list of Platforms from our data
     platform = db.session.query(Platform).order_by(Platform.id).all()
@@ -63,6 +67,7 @@ def read_keyValues():
     print(keyValues)
     return keyValues
 
+
 def create(platformDetails):
     """
     This function creates a new platform in the platform list
@@ -72,10 +77,14 @@ def create(platformDetails):
     :return:        201 on success, 406 on platform exists
     """
     # Remove id as it's created automatically
-    if 'id' in platformDetails:
-        del platformDetails['id']
+    if "id" in platformDetails:
+        del platformDetails["id"]
     # Does the platform exist already?
-    existing_platform = db.session.query(Platform).filter(Platform.value == platformDetails["value"]).one_or_none()
+    existing_platform = (
+        db.session.query(Platform)
+        .filter(Platform.value == platformDetails["value"])
+        .one_or_none()
+    )
 
     if existing_platform is None:
         schema = PlatformSchema()
@@ -93,6 +102,7 @@ def create(platformDetails):
     else:
         abort(406, "Platform already exists")
 
+
 def update(id, platformDetails):
     """
     This function updates an existing platform in the platform list
@@ -106,7 +116,9 @@ def update(id, platformDetails):
         abort(400, "Key mismatch in path and body")
 
     # Does the platform exist in platform list?
-    existing_platform = db.session.query(Platform).filter(Platform.id == id).one_or_none()
+    existing_platform = (
+        db.session.query(Platform).filter(Platform.id == id).one_or_none()
+    )
 
     # Does platform exist?
 
@@ -126,6 +138,7 @@ def update(id, platformDetails):
     else:
         abort(404, "Platform not found")
 
+
 def delete(id):
     """
     This function deletes a Platform from the Platform list
@@ -134,7 +147,9 @@ def delete(id):
     :return:    200 on successful delete, 404 if not found
     """
     # Does the platform to delete exist?
-    existing_platform = db.session.query(Platform).filter(Platform.id == id).one_or_none()
+    existing_platform = (
+        db.session.query(Platform).filter(Platform.id == id).one_or_none()
+    )
 
     # if found?
     if existing_platform is not None:

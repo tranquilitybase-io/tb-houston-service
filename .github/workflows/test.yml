@@ -56,4 +56,4 @@ jobs:
     - name: Stop Docker Compose
       shell: bash
       run: |
-        docker-compose -f docker-compose.legacy_test.yml down 
+        docker-compose -f docker-compose.legacy_test.yml down

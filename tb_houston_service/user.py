@@ -4,13 +4,17 @@ supports all the ReST actions for the
 user collection
 """
 from pprint import pformat
-from flask import make_response, abort
 
-from config import db, app
+from flask import abort, make_response
+
+from config import app, db
 from models import User, UserSchema
-from tb_houston_service.extendedSchemas import ExtendedUserSchema
-from tb_houston_service.extendedSchemas import ExtendedUserTeamsSchema
 from tb_houston_service import user_extension
+from tb_houston_service.extendedSchemas import (
+    ExtendedUserSchema,
+    ExtendedUserTeamsSchema,
+)
+
 
 def read_all():
     """
@@ -27,6 +31,7 @@ def read_all():
     user_schema = ExtendedUserSchema(many=True)
     data = user_schema.dump(users)
     return data, 200
+
 
 def read_one(oid):
     """
@@ -45,6 +50,7 @@ def read_one(oid):
         data = user_schema.dump(user)
         return data, 200
     return abort(404, f"User with id {oid} not found")
+
 
 def create(userDetails):
     """
@@ -68,9 +74,7 @@ def create(userDetails):
 
     # Does the user exist already?
     existing_user = (
-        db.session.query(User)
-        .filter(User.email == userDetails["email"])
-        .one_or_none()
+        db.session.query(User).filter(User.email == userDetails["email"]).one_or_none()
     )
 
     if existing_user is None:
@@ -89,6 +93,7 @@ def create(userDetails):
 
     # Otherwise, it already exists, that's an error
     return abort(406, "User already exists")
+
 
 def update(oid, userDetails):
     """
@@ -112,7 +117,7 @@ def update(oid, userDetails):
     # Does user exist?
 
     if existing_user is not None:
-        userDetails['id'] = oid
+        userDetails["id"] = oid
         schema = UserSchema()
         update_user = schema.load(userDetails, session=db.session)
         db.session.merge(update_user)
@@ -124,6 +129,7 @@ def update(oid, userDetails):
 
     # otherwise, nope, deployment doesn't exist, so that's an error
     return abort(404, f"User {oid} not found")
+
 
 def delete(oid):
     """

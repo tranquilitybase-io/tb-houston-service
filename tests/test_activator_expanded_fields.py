@@ -1,8 +1,9 @@
-import requests
 import os
 from pprint import pformat
-from tests import pytest_lib
 
+import requests
+
+from tests import pytest_lib
 
 HOUSTON_SERVICE_URL = os.environ["HOUSTON_SERVICE_URL"]
 
@@ -34,7 +35,7 @@ def get():
     print("get Tests")
 
     url = f"http://{HOUSTON_SERVICE_URL}/api/activator/"
-    resp = requests.get(url+"1", headers=headers)
+    resp = requests.get(url + "1", headers=headers)
     # Validate Get All response
     assert resp.status_code == 200
 

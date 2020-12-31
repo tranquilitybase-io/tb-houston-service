@@ -1,8 +1,9 @@
 from config import db, ma
 
+
 class LandingZoneProgressItem(db.Model):
     __tablename__ = "landingzoneprogressitem"
-    __table_args__ = {'schema': 'eagle_db'}
+    __table_args__ = {"schema": "eagle_db"}
     id = db.Column(db.Integer, primary_key=True)
     label = db.Column(db.String)
     completed = db.Column(db.Boolean())
@@ -11,6 +12,7 @@ class LandingZoneProgressItem(db.Model):
         return "<LandingZoneProgressItem(id={self.id!r}, name={self.label!r})>".format(
             self=self
         )
+
 
 class LandingZoneProgressItemSchema(ma.ModelSchema):
     class Meta:

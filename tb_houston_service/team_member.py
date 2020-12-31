@@ -4,13 +4,15 @@ supports all the ReST actions for the
 team collection
 """
 from pprint import pformat
-from flask import make_response, abort
+
+from flask import abort, make_response
 from sqlalchemy import literal_column
 
-from config import db, app
+from config import app, db
 from models import TeamMember, TeamMemberSchema
-from tb_houston_service.team_member_extension import expand_team_member
 from tb_houston_service.extendedSchemas import ExtendedTeamMemberFullSchema
+from tb_houston_service.team_member_extension import expand_team_member
+
 
 def read_all(
     userId=None, teamId=None, active=None, page=None, page_size=None, sort=None
@@ -62,6 +64,7 @@ def read_all(
     app.logger.debug("team members data:")
     app.logger.debug(pformat(data))
     return data
+
 
 def read_all_full_details(
     userId=None, teamId=None, active=None, page=None, page_size=None, sort=None
@@ -116,6 +119,7 @@ def read_all_full_details(
     app.logger.debug(pformat(data))
     return data
 
+
 def read_one(oid):
     """
     Responds to a request for /api/teammember/{oid}
@@ -133,6 +137,7 @@ def read_one(oid):
         return data
     else:
         abort(404, f"Team Member with id {oid} not found")
+
 
 def create(teamMemberDetails):
     """
@@ -170,6 +175,7 @@ def create(teamMemberDetails):
     else:
         abort(406, f"Team member already exists")
 
+
 def update(oid, teamMemberDetails):
     """
     Updates an existing team member in the team list
@@ -204,6 +210,7 @@ def update(oid, teamMemberDetails):
     # otherwise, nope, deployment doesn't exist, so that's an error
     else:
         abort(404, f"Team Member not found")
+
 
 def delete(oid):
     """

@@ -7,9 +7,10 @@ from tb_houston_service.tools import ModelTools
 
 logger = logging.getLogger("tb_houston_service.models")
 
+
 class Solution(db.Model):
     __tablename__ = "solution"
-    __table_args__ = {'schema': 'eagle_db'}
+    __table_args__ = {"schema": "eagle_db"}
     id = db.Column(db.Integer(), primary_key=True)
     isActive = db.Column(db.Boolean)
     lastUpdated = db.Column(db.String(20))
@@ -51,13 +52,13 @@ class SolutionSchema(ma.ModelSchema):
             data["isFavourite"] = False
         if "name" in data:
             data["name"] = data["name"][: Solution.name.type.length]
-        if data.get('ciId') == 0:
+        if data.get("ciId") == 0:
             data["ciId"] = None
-        if data.get('cdId') == 0:
+        if data.get("cdId") == 0:
             data["cdId"] = None
-        if data.get('sourceControlId') == 0:
+        if data.get("sourceControlId") == 0:
             data["sourceControlId"] = None
-        if data.get('isSandbox'):
+        if data.get("isSandbox"):
             data["ciId"] = None
             data["cdId"] = None
             data["sourceControlId"] = None

@@ -1,11 +1,12 @@
 """
 folder_deployment module.
 """
-from pprint import pformat
 import json
+import logging
 import os
 import re
-import logging
+from pprint import pformat
+
 import requests
 
 from config import app
@@ -28,6 +29,7 @@ def create(details):
     logger.debug("create::%s", pformat(resp_json))
     return resp_json, 200
 
+
 def get_create_results(task_id):
     """
     Get the deployment results from the DAC.
@@ -36,6 +38,7 @@ def get_create_results(task_id):
     response = requests.get(create_folder_result_url + task_id, headers=headers)
     resp_json = response.json()
     return resp_json, 200
+
 
 def get_delete_results(task_id):
     """
@@ -46,9 +49,10 @@ def get_delete_results(task_id):
     resp_json = response.json()
     return resp_json, 200
 
+
 def get_folder_id_from_payload(payload):
     """
-    Get the folder id from the payload. 
+    Get the folder id from the payload.
 
     Arguments:
         payload {string} -- The payload returned from the DAC.

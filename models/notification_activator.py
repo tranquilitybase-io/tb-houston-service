@@ -1,8 +1,9 @@
 from config import db, ma
 
+
 class NotificationActivator(db.Model):
     __tablename__ = "notificationActivator"
-    __table_args__ = {'schema': 'eagle_db'}
+    __table_args__ = {"schema": "eagle_db"}
     isActive = db.Column(db.Boolean())
     lastUpdated = db.Column(db.String(20))
     notificationId = db.Column(
@@ -13,7 +14,10 @@ class NotificationActivator(db.Model):
     )
 
     def __repr__(self):
-        return "<NotificationActivator(notificationId={self.notificationId!r}, activatorId={self.activatorId!r})>".format(self=self)
+        return "<NotificationActivator(notificationId={self.notificationId!r}, activatorId={self.activatorId!r})>".format(
+            self=self
+        )
+
 
 class NotificationActivatorSchema(ma.ModelSchema):
     class Meta:

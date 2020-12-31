@@ -3,6 +3,7 @@ Health check: Very basic health check, can extend in future
 """
 from tb_houston_service.extendedSchemas import HealthSchema
 
+
 def check():
     """
     :return:       200.

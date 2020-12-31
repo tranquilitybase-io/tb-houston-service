@@ -3,10 +3,12 @@ This is the deployments module and supports all the ReST actions for the
 sourceControl collection
 """
 from pprint import pformat
-from flask import make_response, abort
 
-from config import db, app
+from flask import abort, make_response
+
+from config import app, db
 from models import SourceControl, SourceControlSchema
+
 
 def read_all():
     """
@@ -23,12 +25,13 @@ def read_all():
     data = sourceControl_schema.dump(sourceControl)
     return data
 
+
 def read_keyValues():
     """
     This function responds to a request for /keyValues/sourceControl
-    with the complete lists of SourceControls 
+    with the complete lists of SourceControls
 
-    :return:        json string of list of SourceControls 
+    :return:        json string of list of SourceControls
     """
     # Create the list of SourceControls from our data
     sourceControl = db.session.query(SourceControl).order_by(SourceControl.id).all()
@@ -44,6 +47,7 @@ def read_keyValues():
         keyValues.append(keyValuePair)
     print(keyValues)
     return keyValues
+
 
 def read_one(id):
     """
@@ -65,6 +69,7 @@ def read_one(id):
     else:
         abort(404, "SourceControl with id {id} not found".format(id=id))
 
+
 def create(sourceControlDetails):
     """
     This function creates a new sourceControl in the sourceControl list
@@ -74,10 +79,14 @@ def create(sourceControlDetails):
     :return:        201 on success, 406 on sourceControl exists
     """
     # Remove id as it's created automatically
-    if 'id' in sourceControlDetails:
-        del sourceControlDetails['id']
+    if "id" in sourceControlDetails:
+        del sourceControlDetails["id"]
     # Does the sourceControl exist already?
-    existing_sourceControl = db.session.query(SourceControl).filter(SourceControl.value == sourceControlDetails["value"]).one_or_none()
+    existing_sourceControl = (
+        db.session.query(SourceControl)
+        .filter(SourceControl.value == sourceControlDetails["value"])
+        .one_or_none()
+    )
 
     if existing_sourceControl is None:
         schema = SourceControlSchema()
@@ -94,6 +103,7 @@ def create(sourceControlDetails):
     # Otherwise, it already exists, that's an error
     else:
         abort(406, "SourceControl already exists")
+
 
 def update(id, sourceControlDetails):
     """
@@ -130,6 +140,7 @@ def update(id, sourceControlDetails):
     # otherwise, nope, deployment doesn't exist, so that's an error
     else:
         abort(404, "SourceControl not found")
+
 
 def delete(id):
     """

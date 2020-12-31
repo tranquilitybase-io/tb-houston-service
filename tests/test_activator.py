@@ -1,9 +1,10 @@
-import requests
 import json
 import os
 from pprint import pprint
-from tests import pytest_lib
 
+import requests
+
+from tests import pytest_lib
 
 HOUSTON_SERVICE_URL = os.environ["HOUSTON_SERVICE_URL"]
 url = f"http://{HOUSTON_SERVICE_URL}/api/activator/"
@@ -63,7 +64,7 @@ def test_activators():
     # Testing GETONE request
     get_meta()
     # Test Get Activator Categories
-    #get_categories()
+    # get_categories()
 
 
 def post():
@@ -122,8 +123,8 @@ def post():
     pprint(f"resp_json: {resp_json}")
     assert resp.status_code == 201
     assert resp_json["activator"] == "test-activator"
-    
-    # Validate CI 
+
+    # Validate CI
     ci_list = resp_json["ci"]
     assert ci_list[0]["id"] == 3
     isinstance(ci_list[0]["value"], str)

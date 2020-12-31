@@ -11,11 +11,11 @@ docker build -t gcr.io/tranquility-base-images/tb-houston-service:experimental .
 docker push gcr.io/tranquility-base-images/tb-houston-service:experimental
 
 ## list existing containers and remove them
-docker container list -a 
+docker container list -a
 docker container rm xxxxxxx
 
-## list existing images and remove them 
-docker image list 
+## list existing images and remove them
+docker image list
 docker image rm xxxxxx
 
 ## Run Docker Image

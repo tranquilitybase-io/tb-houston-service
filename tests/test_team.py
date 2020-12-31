@@ -1,10 +1,11 @@
-import requests
 import json
 import logging
 import os
 from pprint import pprint
-from tests import pytest_lib
 
+import requests
+
+from tests import pytest_lib
 
 LOG_LEVEL = logging.INFO  # DEBUG, INFO, WARNING, ERROR, CRITICAL
 
@@ -50,7 +51,7 @@ def post():
         "description": "Test Team",
         "id": 0,
         "isActive": True,
-        "name": "Team-Test"
+        "name": "Team-Test",
     }
 
     # convert dict to json by json.dumps() for body data.
@@ -87,7 +88,7 @@ def put(id):
         "description": "Test Team Updated",
         "id": id,
         "isActive": False,
-        "name": "Team-Test"
+        "name": "Team-Test",
     }
 
     resp = requests.put(

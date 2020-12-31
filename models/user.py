@@ -7,9 +7,10 @@ from tb_houston_service.tools import ModelTools
 
 logger = logging.getLogger("tb_houston_service.models")
 
+
 class User(db.Model):
     __tablename__ = "user"
-    __table_args__ = {'schema': 'eagle_db'}
+    __table_args__ = {"schema": "eagle_db"}
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(100), unique=True)
     firstName = db.Column(db.String(100))
@@ -20,9 +21,8 @@ class User(db.Model):
     lastUpdated = db.Column(db.String(20))
 
     def __repr__(self):
-        return "<User(id={self.id!r}, email={self.email!r})>".format(
-            self=self
-        )
+        return "<User(id={self.id!r}, email={self.email!r})>".format(self=self)
+
 
 class UserSchema(ma.ModelSchema):
     class Meta:

@@ -1,9 +1,10 @@
-import requests
 import json
 import os
 from pprint import pprint
-from tests import pytest_lib
 
+import requests
+
+from tests import pytest_lib
 
 HOUSTON_SERVICE_URL = os.environ["HOUSTON_SERVICE_URL"]
 url = f"http://{HOUSTON_SERVICE_URL}/api/solution/"
@@ -60,7 +61,7 @@ def post():
         "name": "test",
         "sourceControlId": 1,
         "teamId": 1,
-        "environments": [1, 2, 3]
+        "environments": [1, 2, 3],
     }
 
     # convert dict to json by json.dumps() for body data.
@@ -101,7 +102,7 @@ def put(id):
         "isFavourite": True,
         "name": "test put",
         "sourceControlId": 2,
-        "environments": [1, 3]
+        "environments": [1, 3],
     }
 
     resp = requests.put(
@@ -143,7 +144,7 @@ def get_all():
 def get_one(oid):
     print("get_one Test")
 
-    resp = requests.get(url+str(oid), headers=headers)
+    resp = requests.get(url + str(oid), headers=headers)
     resp_json = resp.json()
     # Validate Get One response
     assert resp.status_code == 200

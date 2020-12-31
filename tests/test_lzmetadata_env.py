@@ -1,7 +1,8 @@
-import requests
 import json
 import logging
 import os
+
+import requests
 
 LOG_LEVEL = logging.DEBUG  # DEBUG, INFO, WARNING, ERROR, CRITICAL
 

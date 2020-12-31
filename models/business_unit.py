@@ -1,8 +1,9 @@
 from config import db, ma
 
+
 class BusinessUnit(db.Model):
     __tablename__ = "businessunit"
-    __table_args__ = {'schema': 'eagle_db'}
+    __table_args__ = {"schema": "eagle_db"}
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
     description = db.Column(db.String(200))
@@ -10,6 +11,7 @@ class BusinessUnit(db.Model):
 
     def __repr__(self):
         return "<BusinessUnit(id={self.id!r}, name={self.name!r})>".format(self=self)
+
 
 class BusinessUnitSchema(ma.ModelSchema):
     class Meta:

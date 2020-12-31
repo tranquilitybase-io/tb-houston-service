@@ -1,8 +1,8 @@
-import requests
 import json
 import os
 from pprint import pprint
 
+import requests
 
 HOUSTON_SERVICE_URL = os.environ["HOUSTON_SERVICE_URL"]
 url = f"http://{HOUSTON_SERVICE_URL}/api/solutionresourcejson/"
