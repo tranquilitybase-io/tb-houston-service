@@ -19,7 +19,7 @@ def is_valid_lzlanvpc(dbsession):
     logger.debug("is_valid_lzlanvpc")
     count = (
         dbsession.query(LZLanVpc)
-        .filter(LZLanVpc.isActive, LZLanVpc.sharedVPCProjectId == None)
+        .filter(LZLanVpc.isActive, LZLanVpc.sharedVPCProjectId is None)
         .count()
     )
     return count == 0

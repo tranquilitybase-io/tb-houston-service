@@ -72,7 +72,7 @@ def post():
     assert resp_json["firstName"] == "test"
     assert resp_json["lastName"] == "test"
     assert resp_json["email"] == "test_email_account"
-    assert resp_json["isActive"] == True
+    assert resp_json["isActive"] is True
     assert resp_headers["content-type"] == "application/json"
     typestest(resp_json)
     return oid
@@ -107,7 +107,7 @@ def put(oid):
     assert resp.status_code == 200
     assert resp_json["firstName"] == f"test{str(oid)}"
     assert resp_json["lastName"] == "test"
-    assert resp_json["isActive"] == False
+    assert resp_json["isActive"] is False
     assert resp_json["email"] == f"test{str(oid)}@test.com"
 
     typestest(resp_json)

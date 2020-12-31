@@ -76,7 +76,7 @@ def add_folders(folders):
                 db.session.query(LZFolderStructureChild)
                 .filter(
                     LZFolderStructureChild.folderId == folder["id"],
-                    LZFolderStructureChild.childId == None,
+                    LZFolderStructureChild.childId is None,
                 )
                 .one_or_none()
             )
@@ -150,7 +150,7 @@ def create(lzFolderStructureDetails):
     try:
         add_folders(lzFolderStructureDetails)
         db.session.commit()
-    except:
+    except BaseException:
         db.session.rollback()
         raise
     finally:

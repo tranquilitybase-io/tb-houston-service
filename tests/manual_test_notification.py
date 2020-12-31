@@ -34,10 +34,12 @@ def typestest(resp):
 
 def test_notifications():
     # Testing POST request
-    oid = create_notification_activators()
+    # oid = create_notification_activators()
+    create_notification_activators()
     # disabled for now, the automated filter from the token makes the update difficult to test
     # update_notification_activator(oid)
-    oid = create_notification_teams()
+    # oid = create_notification_teams()
+    create_notification_teams()
     # update_notification_team(oid)
     read_all()
 

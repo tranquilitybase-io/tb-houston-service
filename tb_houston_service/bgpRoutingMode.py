@@ -82,7 +82,7 @@ def update(oid, bgpRoutingModeDetails):
     app.logger.debug(pformat(bgpRoutingModeDetails))
 
     if bgpRoutingModeDetails.get("id", oid) != oid:
-        abort(400, f"Key mismatch in path and body")
+        abort(400, "Key mismatch in path and body")
 
     # Does the bgpRoutingMode exist in bgpRoutingMode list?
     existing_bgpRoutingMode = (
@@ -105,7 +105,7 @@ def update(oid, bgpRoutingModeDetails):
     # otherwise, nope, deployment doesn't exist, so that's an error
     else:
         db.session.close()
-        abort(404, f"BGPRoutingMode not found")
+        abort(404, "BGPRoutingMode not found")
 
 
 def delete(oid):

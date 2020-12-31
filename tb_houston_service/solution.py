@@ -48,7 +48,7 @@ def read_all(
     )
     with db_session() as dbs:
         # pre-process sort instructions
-        if sort == None:
+        if sort is None:
             solution_query = dbs.query(Solution).order_by(Solution.id)
         else:
             try:
@@ -74,22 +74,22 @@ def read_all(
 
         # Create the list of solutions from our data
         solution_query = solution_query.filter(
-            (isActive == None or Solution.isActive == isActive),
-            (isFavourite == None or Solution.isFavourite == isFavourite),
-            (isSandbox == None or Solution.isSandbox == isSandbox),
+            (isActive is None or Solution.isActive == isActive),
+            (isFavourite is None or Solution.isFavourite == isFavourite),
+            (isSandbox is None or Solution.isSandbox == isSandbox),
             (
-                business_unit_ids == None
+                business_unit_ids is None
                 or Solution.businessUnitId.in_(business_unit_ids)
             ),
         )
 
         # do limit and offset last
-        if page == None or page_size == None:
+        if page is None or page_size is None:
             solutions = solution_query.all()
         else:
             solutions = solution_query.limit(page_size).offset(page * page_size)
 
-        if namesonly == True:
+        if namesonly is True:
             # Serialize the data for the response
             schema = SolutionNamesOnlySchema(many=True)
             data = schema.dump(solutions)
@@ -119,7 +119,7 @@ def read_one(oid):
             .filter(
                 Solution.id == oid,
                 (
-                    business_unit_ids == None
+                    business_unit_ids is None
                     or Solution.businessUnitId.in_(business_unit_ids)
                 ),
             )
@@ -147,28 +147,28 @@ def create(solutionDetails):
     data = None
     with db_session() as dbs:
         # Defaults
-        if solutionDetails.get("isActive") == None:
+        if solutionDetails.get("isActive") is None:
             solutionDetails["isActive"] = True
 
-        if solutionDetails.get("isFavourite") == None:
+        if solutionDetails.get("isFavourite") is None:
             solutionDetails["isFavourite"] = False
 
-        if solutionDetails.get("deployed") == None:
+        if solutionDetails.get("deployed") is None:
             solutionDetails["deployed"] = False
 
-        if solutionDetails.get("deploymentState") == None:
+        if solutionDetails.get("deploymentState") is None:
             solutionDetails["deploymentState"] = ""
 
-        if solutionDetails.get("statusId") == None:
+        if solutionDetails.get("statusId") is None:
             solutionDetails["statusId"] = 0
 
-        if solutionDetails.get("statusCode") == None:
+        if solutionDetails.get("statusCode") is None:
             solutionDetails["statusCode"] = ""
 
-        if solutionDetails.get("statusMessage") == None:
+        if solutionDetails.get("statusMessage") is None:
             solutionDetails["statusMessage"] = ""
 
-        if solutionDetails.get("isSandbox") == None:
+        if solutionDetails.get("isSandbox") is None:
             solutionDetails["isSandbox"] = False
 
         # Remove applications because Solutions don't have
@@ -193,7 +193,8 @@ def create(solutionDetails):
                     f"Unauthorized to create solutions for business unit {business_unit}",
                 )
         else:
-            # initially will let this pass, but in future we could abort if user is not a member of any business units
+            # initially will let this pass, but in future we could abort if user is
+            # not a member of any business units
             pass
 
         # Removing this as the below schema is not expecting this field.
@@ -254,7 +255,8 @@ def update(oid, solutionDetails):
                         f"Unauthorized to update solutions for business unit {business_unit}",
                     )
             else:
-                # initially will let this pass, but in future we could abort if user is not a member of any business units
+                # initially will let this pass, but in future we could abort if user is
+                # not a member of any business units
                 pass
 
             envs = solutionDetails.get("environments")

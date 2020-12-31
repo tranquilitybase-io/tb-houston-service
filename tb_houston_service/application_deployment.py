@@ -89,7 +89,7 @@ def start_deployment(applicationId):
     # deployed successfully.
     with db_session() as dbs:
         deployment_complete = False
-        while deployment_complete == False:
+        while deployment_complete is False:
             app_dep = (
                 dbs.query(ApplicationDeployment)
                 .filter(

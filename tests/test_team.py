@@ -107,6 +107,6 @@ def put(id):
     assert resp.status_code == 200
     assert resp_json["name"] == "Team-Test"
     assert resp_json["description"] == "Test Team Updated"
-    assert resp_json["isActive"] == False
+    assert resp_json["isActive"] is False
 
     typestest(resp_json)

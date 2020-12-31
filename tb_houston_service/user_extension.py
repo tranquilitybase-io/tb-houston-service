@@ -21,9 +21,10 @@ def expand_user(a_user):
 
 def expand_team_member(a_team_member):
     # This function is similar to the one in team_member_extension.py but without the user object,
-    # it's not required when we expand a user with the teams he's a member of: expand_user_with_teams.
+    # it's not required when we expand a user with the teams he's a member of:
+    # expand_user_with_teams.
     logger.debug("expand_team_member: %s", a_team_member)
-    if a_team_member == None:
+    if a_team_member is None:
         return None
 
     tm = db.session.query(Team).filter(Team.id == a_team_member.teamId).one_or_none()

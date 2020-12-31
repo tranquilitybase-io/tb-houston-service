@@ -50,7 +50,7 @@ def read_all(
     # pre-process sort instructions
 
     with db_session() as dbs:
-        if sort == None:
+        if sort is None:
             application_query = db.session.query(Application).order_by(Application.id)
         else:
             try:
@@ -77,18 +77,18 @@ def read_all(
 
         application_query = application_query.filter(
             Activator.id == Application.activatorId,
-            (status == None or Application.status == status),
-            (activatorId == None or Application.activatorId == activatorId),
-            (environment == None or Application.env == environment),
-            (isActive == None or Application.isActive == isActive),
-            (isFavourite == None or Application.isFavourite == isFavourite),
+            (status is None or Application.status == status),
+            (activatorId is None or Application.activatorId == activatorId),
+            (environment is None or Application.env == environment),
+            (isActive is None or Application.isActive == isActive),
+            (isFavourite is None or Application.isFavourite == isFavourite),
             (
-                business_unit_ids == None
+                business_unit_ids is None
                 or Activator.businessUnitId.in_(business_unit_ids)
             ),
         )
 
-        if page == None or page_size == None:
+        if page is None or page_size is None:
             applications = application_query.all()
         else:
             applications = (
@@ -123,7 +123,7 @@ def read_one(oid):
                 Application.id == oid,
                 Activator.id == Application.activatorId,
                 (
-                    business_unit_ids == None
+                    business_unit_ids is None
                     or Activator.businessUnitId.in_(business_unit_ids)
                 ),
             )
@@ -177,7 +177,8 @@ def create(applicationDetails):
                     f"Unauthorized to create applications for business unit {business_unit}",
                 )
         else:
-            # initially will let this pass, but in future we could abort if user is not a member of any business units
+            # initially will let this pass, but in future we could abort if user is
+            # not a member of any business units
             pass
 
         schema = ApplicationSchema()
@@ -229,7 +230,8 @@ def update(oid, applicationDetails):
                         f"Unauthorized to update solutions for business unit {business_unit}",
                     )
             else:
-                # initially will let this pass, but in future we could abort if user is not a member of any business units
+                # initially will let this pass, but in future we could abort if user is
+                # not a member of any business units
                 pass
 
             schema = ApplicationSchema()
@@ -279,7 +281,8 @@ def delete(oid):
                         f"Unauthorized to delete applications for business unit {business_unit}",
                     )
             else:
-                # initially will let this pass, but in future we could abort if user is not a member of any business units
+                # initially will let this pass, but in future we could abort if user is
+                # not a member of any business units
                 pass
 
             existing_application.isActive = False

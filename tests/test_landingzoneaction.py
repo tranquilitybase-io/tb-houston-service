@@ -57,7 +57,7 @@ def post():
     assert resp_json["categoryClass"] == "test-folder-structure"
     assert resp_json["categoryName"] == "testCategory"
     assert resp_json["completionRate"] == 100
-    assert resp_json["locked"] == False
+    assert resp_json["locked"] is False
     assert resp_json["routerLink"] == "testLink"
     assert resp_json["title"] == "Test Landing Zone"
     assert resp_headers["content-type"] == "application/json"
@@ -91,7 +91,7 @@ def put(id):
     id = resp_json["id"]
     # Validate response body for updated values
     assert resp.status_code == 200
-    assert resp_json["locked"] == True
+    assert resp_json["locked"] is True
 
 
 def delete(id):

@@ -98,7 +98,7 @@ def create(ciDetails):
 
     # Otherwise, it already exists, that's an error
     else:
-        abort(406, f"CI already exists")
+        abort(406, "CI already exists")
 
 
 def update(id, ciDetails):
@@ -112,7 +112,7 @@ def update(id, ciDetails):
     app.logger.debug(pformat(ciDetails))
 
     if ciDetails["id"] != id:
-        abort(400, f"Key mismatch in path and body")
+        abort(400, "Key mismatch in path and body")
 
     # Does the ci exist in ci list?
     existing_ci = db.session.query(CI).filter(CI.id == id).one_or_none()
@@ -133,7 +133,7 @@ def update(id, ciDetails):
 
     # otherwise, nope, deployment doesn't exist, so that's an error
     else:
-        abort(404, f"CI not found")
+        abort(404, "CI not found")
 
 
 def delete(id):

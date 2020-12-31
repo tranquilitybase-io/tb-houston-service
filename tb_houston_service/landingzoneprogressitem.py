@@ -105,7 +105,7 @@ def update(oid, landingZoneProgressItemDetails):
     app.logger.debug(landingZoneProgressItemDetails["id"])
 
     if landingZoneProgressItemDetails["id"] != oid:
-        abort(400, f"Key mismatch in path and body")
+        abort(400, "Key mismatch in path and body")
 
     # Does the landingZoneProgressItem exist in landingZoneProgressItems?
     existing_landingZoneProgressItem = (
@@ -133,7 +133,7 @@ def update(oid, landingZoneProgressItemDetails):
 
     # otherwise, nope, landingZoneProgressItem doesn't exist, so that's an error
     else:
-        abort(404, f"LandingZoneProgressItem not found")
+        abort(404, "LandingZoneProgressItem not found")
 
 
 def delete(oid):

@@ -84,7 +84,7 @@ def update(oid, vpnOnPremiseVendorDetails):
     """
     app.logger.debug(pformat(vpnOnPremiseVendorDetails))
     if vpnOnPremiseVendorDetails.get("id", oid) != oid:
-        abort(400, f"Key mismatch in path and body")
+        abort(400, "Key mismatch in path and body")
 
     # Does the vpnOnPremiseVendor exist in vpnOnPremiseVendor list?
     existing_vpnOnPremiseVendor = (

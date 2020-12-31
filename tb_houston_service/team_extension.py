@@ -9,7 +9,7 @@ logger = logging.getLogger("tb_houston_service.solution")
 def expand_team(a_team):
     logger.debug("team: %s", a_team)
 
-    if a_team == None:
+    if a_team is None:
         return None
 
     bu = (

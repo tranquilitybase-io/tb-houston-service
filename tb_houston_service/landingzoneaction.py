@@ -91,7 +91,7 @@ def update(oid, landingZoneActionDetails):
     app.logger.debug(pformat(landingZoneActionDetails))
 
     if landingZoneActionDetails["id"] != oid:
-        abort(400, f"Key mismatch in path and body")
+        abort(400, "Key mismatch in path and body")
 
     # Does the landingZoneAction exist in landingZoneActions?
     existing_landingZoneAction = (
@@ -119,7 +119,7 @@ def update(oid, landingZoneActionDetails):
 
     # otherwise, nope, landingZoneAction doesn't exist, so that's an error
     else:
-        abort(404, f"LandingZoneAction not found")
+        abort(404, "LandingZoneAction not found")
 
 
 def delete(oid):

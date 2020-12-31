@@ -1,12 +1,9 @@
 import json
 import os
-import time
 import unittest
-from pprint import pformat, pprint
+from pprint import pformat
 
 import requests
-
-from tests.Spinner import Spinner
 
 
 class TestLZMetadata(unittest.TestCase):

@@ -342,7 +342,7 @@ class TestDeployment(unittest.TestCase):
         print("Get Test Results")
         with Spinner():
             foundTaskId = False
-            while foundTaskId == False:
+            while foundTaskId is False:
                 j = self.find_application_deployment()
                 print(f"Found application deployment: {j}")
                 taskId = j["taskId"]
@@ -350,7 +350,7 @@ class TestDeployment(unittest.TestCase):
                     foundTaskId = True
 
             done = False
-            while done == False:
+            while done is False:
                 k = self.find_application_deployment()
                 if (
                     k["deploymentState"] == DeploymentStatus.SUCCESS

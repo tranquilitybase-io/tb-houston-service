@@ -100,7 +100,7 @@ def update(oid, landingZoneWANDetails):
     app.logger.debug(pformat(landingZoneWANDetails))
 
     if landingZoneWANDetails["id"] != oid:
-        abort(400, f"Key mismatch in path and body")
+        abort(400, "Key mismatch in path and body")
 
     # Does the landingZoneWAN exist in landingZoneWANs?
     existing_landingZoneWAN = (
@@ -216,7 +216,7 @@ def update(oid, landingZoneWANDetails):
 
     # otherwise, nope, landingZoneWAN doesn't exist, so that's an error
     else:
-        abort(404, f"LandingZoneWAN not found")
+        abort(404, "LandingZoneWAN not found")
 
 
 def delete(oid):

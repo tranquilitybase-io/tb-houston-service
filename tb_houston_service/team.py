@@ -147,7 +147,7 @@ def update(oid, teamDetails):
         return data, 200
 
     # otherwise, nope, deployment doesn't exist, so that's an error
-    abort(404, f"Team not found")
+    abort(404, "Team not found")
 
 
 def patch(oid, teamDetails):
@@ -203,7 +203,7 @@ def patch(oid, teamDetails):
         return data, 200
 
     # otherwise, nope, deployment doesn't exist, so that's an error
-    abort(404, f"Team not found")
+    abort(404, "Team not found")
 
 
 def delete(oid):

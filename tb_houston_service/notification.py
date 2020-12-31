@@ -35,7 +35,7 @@ def read_all(
     logger.debug("read_all: %s", typeId)
     with db_session() as dbs:
         # pre-process sort instructions
-        if sort == None:
+        if sort is None:
             notifications_query = dbs.query(Notification).order_by(
                 Notification.lastUpdated + " desc"
             )
@@ -65,14 +65,14 @@ def read_all(
             abort(404, "No valid user found!")
         toUserId = user.id
         notifications_query = notifications_query.filter(
-            (typeId == None or Notification.typeId == typeId),
-            (toUserId == None or Notification.toUserId == toUserId),
-            (isRead == None or Notification.isRead == isRead),
-            (isActive == None or Notification.isActive == isActive),
+            (typeId is None or Notification.typeId == typeId),
+            (toUserId is None or Notification.toUserId == toUserId),
+            (isRead is None or Notification.isRead == isRead),
+            (isActive is None or Notification.isActive == isActive),
         )
 
         # do limit and offset last
-        if page == None or page_size == None:
+        if page is None or page_size is None:
             notifications = notifications_query.all()
         else:
             notifications = notifications_query.limit(page_size).offset(
@@ -138,9 +138,9 @@ def create(notification, typeId, dbsession):
 
     if not oid:
         # Insert
-        if notification.get("isActive", None) == None:
+        if notification.get("isActive", None) is None:
             notification["isActive"] = True
-        if notification.get("isRead", None) == None:
+        if notification.get("isRead", None) is None:
             notification["isRead"] = False
         if notification.get("typeId") == 1:
             tmp_notification = {}
@@ -371,10 +371,10 @@ def meta(typeId=None, isRead=None, isActive=None):
         count = (
             dbs.query(Notification)
             .filter(
-                (typeId == None or Notification.typeId == typeId),
-                (toUserId == None or Notification.toUserId == toUserId),
-                (isRead == None or Notification.isRead == isRead),
-                (isActive == None or Notification.isActive == isActive),
+                (typeId is None or Notification.typeId == typeId),
+                (toUserId is None or Notification.toUserId == toUserId),
+                (isRead is None or Notification.isRead == isRead),
+                (isActive is None or Notification.isActive == isActive),
             )
             .count()
         )

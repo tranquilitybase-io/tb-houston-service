@@ -9,7 +9,7 @@ class Spinner:
 
     @staticmethod
     def spinning_cursor():
-        while 1:
+        while True:
             for cursor in "|/-\\":
                 yield cursor
 

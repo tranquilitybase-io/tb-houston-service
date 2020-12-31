@@ -82,8 +82,8 @@ def post():
     assert resp_json["env"] == "DEV"
     assert resp_json["status"] == "Active"
     assert resp_json["description"] == "test"
-    assert resp_json["isActive"] == True
-    assert resp_json["isFavourite"] == False
+    assert resp_json["isActive"] is True
+    assert resp_json["isFavourite"] is False
     assert resp_json["resources"][0]["ipaddress"] == "address1"
     assert resp_json["resources"][0]["name"] == "value1"
     assert resp_json["resources"][1]["ipaddress"] == "address2"

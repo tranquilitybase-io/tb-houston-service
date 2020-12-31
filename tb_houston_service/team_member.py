@@ -25,7 +25,7 @@ def read_all(
     """
     # Create the list of team members from our data
     # pre-process sort instructions
-    if sort == None:
+    if sort is None:
         teammember_query = db.session.query(TeamMember).order_by(TeamMember.id)
 
     else:
@@ -48,12 +48,12 @@ def read_all(
             teammember_query = db.session.query(TeamMember).order_by(TeamMember.id)
 
     teammember_query = teammember_query.filter(
-        (userId == None or TeamMember.userId == userId),
-        (teamId == None or TeamMember.teamId == teamId),
-        (active == None or TeamMember.isActive == active),
+        (userId is None or TeamMember.userId == userId),
+        (teamId is None or TeamMember.teamId == teamId),
+        (active is None or TeamMember.isActive == active),
     )
 
-    if page == None or page_size == None:
+    if page is None or page_size is None:
         teammembers = teammember_query.all()
     else:
         teammembers = teammember_query.limit(page_size).offset(page * page_size).all()
@@ -77,7 +77,7 @@ def read_all_full_details(
     """
     # Create the list of team members from our data
     # pre-process sort instructions
-    if sort == None:
+    if sort is None:
         teammember_query = db.session.query(TeamMember).order_by(TeamMember.id)
 
     else:
@@ -100,12 +100,12 @@ def read_all_full_details(
             teammember_query = db.session.query(TeamMember).order_by(TeamMember.id)
 
     teammember_query = teammember_query.filter(
-        (userId == None or TeamMember.userId == userId),
-        (teamId == None or TeamMember.teamId == teamId),
-        (active == None or TeamMember.isActive == active),
+        (userId is None or TeamMember.userId == userId),
+        (teamId is None or TeamMember.teamId == teamId),
+        (active is None or TeamMember.isActive == active),
     )
 
-    if page == None or page_size == None:
+    if page is None or page_size is None:
         teammembers = teammember_query.all()
     else:
         teammembers = teammember_query.limit(page_size).offset(page * page_size).all()
@@ -173,7 +173,7 @@ def create(teamMemberDetails):
 
     # Otherwise, it already exists, that's an error
     else:
-        abort(406, f"Team member already exists")
+        abort(406, "Team member already exists")
 
 
 def update(oid, teamMemberDetails):
@@ -186,7 +186,7 @@ def update(oid, teamMemberDetails):
     """
     app.logger.debug(pformat(teamMemberDetails))
     if teamMemberDetails["id"] != int(oid):
-        abort(400, f"Id mismatch in path and body")
+        abort(400, "Id mismatch in path and body")
 
     # Does the teammembr exist in teammembers list?
     existing_team_member = (
@@ -209,7 +209,7 @@ def update(oid, teamMemberDetails):
 
     # otherwise, nope, deployment doesn't exist, so that's an error
     else:
-        abort(404, f"Team Member not found")
+        abort(404, "Team Member not found")
 
 
 def delete(oid):

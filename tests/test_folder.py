@@ -62,10 +62,10 @@ def post():
     # Validate GET response
     assert resp.status_code == 200
     assert resp_json["parentFolderId"] == rootfolderid
-    assert resp_json["folderId"] == None
+    assert resp_json["folderId"] is None
     assert resp_json["folderName"] == testFolder
     assert resp_json["status"] == DeploymentStatus.PENDING
-    assert resp_json["taskId"] == None
+    assert resp_json["taskId"] is None
     assert resp_headers["content-type"] == "application/json"
     return resp_json
 

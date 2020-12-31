@@ -4,7 +4,6 @@ import shutil
 import tempfile
 from pprint import pformat
 
-# import pycurl
 import git
 import yaml
 from flask import abort
@@ -87,7 +86,7 @@ def create(activatorByURLDetails):
                 .filter(
                     Activator.id == activator_id,
                     (
-                        business_unit_ids == None
+                        business_unit_ids is None
                         or Activator.businessUnitId.in_(business_unit_ids)
                     ),
                 )

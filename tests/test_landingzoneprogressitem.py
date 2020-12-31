@@ -79,5 +79,5 @@ def put(url, oid):
     oid = resp_json["id"]
     # Validate response body for updated values
     assert resp.status_code == 200
-    assert resp_json["completed"] == False
+    assert resp_json["completed"] is False
     assert resp_json["label"] == "Testing-new-progress-item-post"

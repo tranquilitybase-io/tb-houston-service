@@ -106,7 +106,7 @@ def create(lzenvDetails):
 
 
 def logical_delete_all_active():
-    objs = db.session.query(LZEnvironment).filter(LZEnvironment.isActive == True).all()
+    objs = db.session.query(LZEnvironment).filter(LZEnvironment.isActive is True).all()
     for o in objs:
         o.isActive = False
         db.session.add(o)
@@ -129,7 +129,7 @@ def create_all(lzMetadataEnvListDetails, readActiveOnly=False, bulkDelete=False)
         for lze in lzMetadataEnvListDetails:
             create(lze)
         db.session.commit()
-    except:
+    except BaseException:
         db.session.rollback()
         raise
     finally:

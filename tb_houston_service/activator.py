@@ -194,7 +194,8 @@ def create(activatorDetails):
                     f"Unauthorized to create activators for business unit {business_unit}",
                 )
         else:
-            # initially will let this pass, but in future we could abort if user is not a member of any business units
+            # initially will let this pass, but in future we could abort if user is
+            # not a member of any business units
             pass
 
         extraFields = activator_extension.refine_activator_details(activatorDetails)
@@ -260,7 +261,8 @@ def update(oid, activatorDetails):
                         f"Unauthorized to update activators for business unit {business_unit}",
                     )
             else:
-                # initially will let this pass, but in future we could abort if user is not a member of any business units
+                # initially will let this pass, but in future we could abort if user is
+                # not a member of any business units
                 pass
 
             extraFields = activator_extension.refine_activator_details(activatorDetails)
@@ -320,7 +322,8 @@ def delete(oid):
                         f"Unauthorized to delete activators for business unit {business_unit}",
                     )
             else:
-                # initially will let this pass, but in future we could abort if user is not a member of any business units
+                # initially will let this pass, but in future we could abort if user is
+                # not a member of any business units
                 pass
 
             existing_activator.isActive = False
@@ -348,7 +351,8 @@ def notify_user(message, activatorId, toUserId, importance=1):
     )
     # Notify all user
     with db_session() as dbs:
-        # To avoid sending duplicate notifications, send only if no previous active message.
+        # To avoid sending duplicate notifications, send only if no previous
+        # active message.
         existing_notifications = (
             dbs.query(Notification)
             .filter(
@@ -393,7 +397,8 @@ def notify_admins(message, activatorId, fromUserId, importance=1):
     with db_session() as dbs:
         admins = dbs.query(User).filter(User.isAdmin, User.isActive).all()
         for admin in admins:
-            # To avoid sending duplicate notifications, send only if no previous active message.
+            # To avoid sending duplicate notifications, send only if no previous
+            # active message.
             existing_notifications = (
                 dbs.query(Notification)
                 .filter(

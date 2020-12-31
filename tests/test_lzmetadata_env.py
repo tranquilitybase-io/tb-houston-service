@@ -33,7 +33,7 @@ def test_post():
     for j in resp_json:
         print(j)
         if j["name"] == "test-env":
-            assert j["isActive"] == True
+            assert j["isActive"] is True
     assert resp_headers["content-type"] == "application/json"
 
 

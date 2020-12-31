@@ -89,7 +89,7 @@ def update(oid, folderDetails):
     app.logger.debug(f"folder::update: oid: {oid} folderDetails: {folderDetails}")
 
     if folderDetails.get(id, oid) != oid:
-        abort(400, f"id mismatch in path and body")
+        abort(400, "id mismatch in path and body")
 
     # Does the folder exist in folder list?
     existing_folder = db.session.query(Folder).filter(Folder.id == oid).one_or_none()
@@ -150,7 +150,7 @@ def get_folder_meta():
     data[jso["name"]] = jso["isActive"]
     jso = jso["children"][0]
     data[jso["name"]] = jso["isActive"]
-    folder_meta = [k for k in data if data[k] == True]
+    folder_meta = [k for k in data if data[k] is True]
     print(f"folder::get_folder_meta: {folder_meta}")
     return folder_meta
 

@@ -10,7 +10,7 @@ logger = logging.getLogger("tb_houston_service.teammember")
 def expand_team_member(a_team_member):
     logger.debug("team_member: %s", a_team_member)
 
-    if a_team_member == None:
+    if a_team_member is None:
         return None
 
     tm = db.session.query(Team).filter(Team.id == a_team_member.teamId).one_or_none()

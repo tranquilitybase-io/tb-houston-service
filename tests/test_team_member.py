@@ -113,7 +113,7 @@ def put_team_member(teamMemberId, userId, teamId):
     assert resp.status_code == 200
     assert resp_json["userId"] == userId
     assert resp_json["teamId"] == teamId
-    assert resp_json["isActive"] == False
+    assert resp_json["isActive"] is False
 
     typestest(resp_json)
 

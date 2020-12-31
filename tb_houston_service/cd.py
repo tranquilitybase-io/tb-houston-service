@@ -98,7 +98,7 @@ def create(cdDetails):
 
     # Otherwise, it already exists, that's an error
     else:
-        abort(406, f"CD already exists")
+        abort(406, "CD already exists")
 
 
 def update(id, cdDetails):
@@ -112,7 +112,7 @@ def update(id, cdDetails):
     app.logger.debug(pformat(cdDetails))
 
     if cdDetails["id"] != id:
-        abort(400, f"Id mismatch in path and body")
+        abort(400, "Id mismatch in path and body")
 
     # Does the cd exist in cd list?
     existing_cd = db.session.query(CD).filter(CD.id == id).one_or_none()
@@ -133,7 +133,7 @@ def update(id, cdDetails):
 
     # otherwise, nope, deployment doesn't exist, so that's an error
     else:
-        abort(404, f"CD not found")
+        abort(404, "CD not found")
 
 
 def delete(id):

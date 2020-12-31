@@ -308,7 +308,8 @@ def post_onboard():
     resp = requests.post(url, headers=headers, data=json.dumps(payload, indent=4))
     pprint(resp.json())
 
-    # Validate response, expecting 500 as we do not want to clone an actual repo for a unit test
+    # Validate response, expecting 500 as we do not want to clone an actual
+    # repo for a unit test
     assert resp.status_code == 500
 
 

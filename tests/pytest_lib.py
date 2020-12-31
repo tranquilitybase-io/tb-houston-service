@@ -42,7 +42,7 @@ def logical_delete(url, oid):
     assert resp.status_code == 200
     resp_json = resp.json()
     print("resp_json: {resp_json}")
-    assert resp_json.get("isActive") == False
+    assert resp_json.get("isActive") is False
 
 
 def delete_error(url, oid):

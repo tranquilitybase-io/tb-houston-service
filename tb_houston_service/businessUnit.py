@@ -142,7 +142,7 @@ def update(oid, businessUnitDetails):
     :return:       updated businessUnit.
     """
     if businessUnitDetails["id"] != oid:
-        abort(400, f"id mismatch in path and body")
+        abort(400, "id mismatch in path and body")
 
     # Does the businessUnit exist in businessUnit list?
     existing_businessUnit = (

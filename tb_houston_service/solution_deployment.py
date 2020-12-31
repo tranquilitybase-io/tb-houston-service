@@ -134,7 +134,7 @@ def deployment_read_one(oid):
 def start_deployment(solutionId):
     logger.debug("start_deployment")
     deployment_complete = False
-    while deployment_complete == False:
+    while deployment_complete is False:
         sol = db.session.query(Solution).filter(Solution.id == solutionId).one_or_none()
         logger.debug("Is Sandbox : {}".format(sol.isSandbox))
         if sol:
@@ -294,7 +294,7 @@ def create_folder(folderId, folderName):
         next_folder_id = resp_dict["folderId"]
         if status != DeploymentStatus.SUCCESS:
             # The folder creation is not complete
-            if task_id == None:
+            if task_id is None:
                 # Request for folder to be created on the DAC
                 # Obtain a taskId, which is updated on the folder table
                 dac_create_payload = {
@@ -544,7 +544,7 @@ def get_solution_results_from_the_dac(sol, task_id):
     """
     oid = sol.id
     isSandbox: bool = sol.isSandbox
-    logger.debug(f"get_solution_results_from_the_dac: oid: %s taskId: %s", oid, task_id)
+    logger.debug(f"get_solution_results_from_the_dac: oid: {oid} taskId: {task_id}")
     resp_json = None
     try:
         if isSandbox:

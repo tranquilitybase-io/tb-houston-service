@@ -79,7 +79,7 @@ def update(oid, subnetModeDetails):
     app.logger.debug(pformat(subnetModeDetails))
 
     if "id" in subnetModeDetails and subnetModeDetails["id"] != oid:
-        abort(400, f"Key mismatch in path and body")
+        abort(400, "Key mismatch in path and body")
 
     existing_subnetMode = (
         db.session.query(SubnetMode).filter(SubnetMode.id == oid).one_or_none()

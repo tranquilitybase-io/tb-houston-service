@@ -22,6 +22,8 @@ delete_folder_result_url = f"{gcp_dac_url}/dac/folder_async/result/delete/"
 folderid_regex = re.compile(r"folders/(?P<folder>\w+)")
 
 # Send the payload to the DAC
+
+
 def create(details):
     response = requests.post(folder_url, data=json.dumps(details), headers=headers)
     resp_json = response.json()
