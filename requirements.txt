@@ -28,7 +28,6 @@ importlib-metadata==1.5.0
 importlib-resources==1.5.0
 inflection==0.3.1
 itsdangerous==1.1.0
-Jinja2==2.11.2
 jsonschema==3.2.0
 kombu==4.6.8
 lazy-object-proxy==1.4.3
