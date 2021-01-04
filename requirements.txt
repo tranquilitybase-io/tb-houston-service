@@ -78,7 +78,6 @@ toml==0.10.0
 typed-ast==1.4.1
 uritemplate==3.0.1
 urllib3==1.25.8
-vine==5.0.0
 virtualenv==20.0.7
 virtualenv-clone==0.5.3
 wcwidth==0.1.9
