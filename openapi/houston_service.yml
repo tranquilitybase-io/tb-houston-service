@@ -2006,6 +2006,12 @@ paths:
                     routerLink:
                       type: string
                       description: routerLink
+                    dependantOn:
+                      type: integer
+                      description: dependantOn
+                    isOptional:
+                      type: boolean
+                      description: isOptional
 
   /landingzoneaction/:
     post:
@@ -2323,6 +2329,67 @@ paths:
       responses:
         "200":
           description: Successfully deleted the landing zone folder structure metadata
+
+  /sharedservicesprogressitems/:
+    get:
+      operationId: tb_houston_service.sharedservicesprogressitem.read_all
+      tags:
+        - sharedservices
+      summary: Read the entire list of shared services progress items
+      description: Read the list of shared services progress items
+      responses:
+        "200":
+          description: Successfully ran shared services progress item list operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SharedServicesProgressItem"
+
+  /sharedservicesactions/:
+    get:
+      operationId: tb_houston_service.sharedservicesaction.read_all
+      tags:
+        - sharedservices
+      summary: Read the entire list of shared services actions
+      description: Read the list of shared services actions
+      responses:
+        "200":
+          description: Successfully ran shared services action list operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties:
+                    id:
+                      type: integer
+                      description: id
+                    title:
+                      type: string
+                      description: title
+                    categoryName:
+                      type: string
+                      description: categoryName
+                    categoryClass:
+                      type: string
+                      description: categoryClass
+                    completionRate:
+                      type: integer
+                      description: completionRate
+                    locked:
+                      type: boolean
+                      description: locked
+                    routerLink:
+                      type: string
+                      description: routerLink
+                    dependantOn:
+                      type: integer
+                      description: dependantOn
+                    isOptional:
+                      type: boolean
+                      description: isOptional
 
   /keyValues/bgproutingmode/:
     get:
@@ -3609,8 +3676,58 @@ components:
         routerLink:
           type: string
           description: routerLink
+        dependantOn:
+          type: integer
+          description: dependantOn
+        isOptional:
+          type: boolean
+          description: isOptional
 
     LandingZoneProgressItem:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: id
+        label:
+          type: string
+          description: label
+        completed:
+          type: boolean
+          description: completed
+
+    SharedServicesAction:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: id
+        title:
+          type: string
+          description: title
+        categoryName:
+          type: string
+          description: categoryName
+        categoryClass:
+          type: string
+          description: categoryClass
+        completionRate:
+          type: integer
+          description: completionRate
+        locked:
+          type: boolean
+          description: locked
+        routerLink:
+          type: string
+          description: routerLink
+        dependantOn:
+          type: integer
+          description: dependantOn
+        isOptional:
+          type: boolean
+          description: isOptional
+
+    SharedServicesProgressItem:
       type: object
       properties:
         id:

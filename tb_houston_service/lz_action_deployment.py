@@ -73,19 +73,16 @@ def is_valid_lzlanvpc_environment(dbsession):
 def environment_deployment():
     """
     Deployment Steps:
-    sets eagle_db.landingzoneaction.title='Environment' row completionRate col to 100%
-    sets eagle_db.landingzoneaction.title='Wan' row locked col to false
-    sets eagle_db.landingzoneprogressitem.label='Environment' row completed col to true
+    sets eagle_db.landingzoneaction.title='Solutions Environment' row completionRate col to 100%
+    sets eagle_db.landingzoneprogressitem.label='User Environment' row completed col to true
 
     Before state:
-    LandingZoneAction.title == "Environment", completionRate == 0
-    LandingZoneAction.title == "WAN", locked == 1
-    LandingZoneProgressItem.label == "Environment", completed = False
+    LandingZoneAction.title == "Solutions Environment", completionRate == 0
+    LandingZoneProgressItem.label == "User Environment", completed = False
 
     After state:
-    LandingZoneAction.title == "Environment", completionRate == 100
-    LandingZoneAction.title == "WAN", locked == 0
-    LandingZoneProgressItem.label == "Environment", completed = True
+    LandingZoneAction.title == "Solutions Environment", completionRate == 100
+    LandingZoneProgressItem.label == "User Environment", completed = True
     """
     logger.debug("environment_deployment")
 
@@ -106,25 +103,19 @@ def environment_deployment():
 
         lza_environment = (
             dbs.query(LandingZoneAction)
-            .filter(LandingZoneAction.title == "Environment")
+            .filter(LandingZoneAction.title == "Solutions Environment")
             .one()
         )
         logger.debug(lza_environment)
         lza_environment.completionRate = 100
-        lza_wan = (
-            dbs.query(LandingZoneAction).filter(LandingZoneAction.title == "WAN").one()
-        )
-        logger.debug(lza_wan)
-        lza_wan.locked = False
         lzpi_environment = (
             dbs.query(LandingZoneProgressItem)
-            .filter(LandingZoneProgressItem.label == "Environment")
+            .filter(LandingZoneProgressItem.label == "User Environment")
             .one()
         )
         logger.debug(lzpi_environment)
         lzpi_environment.completed = True
         dbs.add(lza_environment)
-        dbs.add(lza_wan)
         dbs.add(lzpi_environment)
         dbs.commit()
         data = {"deployment": True}
