@@ -1,8 +1,8 @@
 from config import db, ma
 
 
-class LandingZoneAction(db.Model):
-    __tablename__ = "landingzoneaction"
+class SharedServicesAction(db.Model):
+    __tablename__ = "sharedservicesaction"
     __table_args__ = {"schema": "eagle_db"}
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String)
@@ -15,13 +15,13 @@ class LandingZoneAction(db.Model):
     isOptional = db.Column(db.Boolean())
 
     def __repr__(self):
-        return "<LandingZoneAction(id={self.id!r}, name={self.title!r})>".format(
+        return "<SharedServicesAction(id={self.id!r}, name={self.title!r})>".format(
             self=self
         )
 
 
-class LandingZoneActionSchema(ma.ModelSchema):
+class SharedServicesActionSchema(ma.ModelSchema):
     class Meta:
-        model = LandingZoneAction
+        model = SharedServicesAction
         include_fk = True
         load_instance = True
