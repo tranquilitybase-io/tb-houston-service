@@ -9,7 +9,6 @@ dnspython==1.16.0
 docker==4.2.0
 entrypoints==0.3
 filelock==3.0.12
-flake8==3.7.9
 Flask==1.1.1
 Flask-Cors==3.0.8
 Flask-Executor==0.9.3
@@ -45,8 +44,6 @@ protobuf==3.6.1
 py==1.8.1
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
-pycodestyle==2.5.0
-pyflakes==2.1.1
 pylint==2.5.0
 pyparsing==2.4.7
 pytest==5.4.1
