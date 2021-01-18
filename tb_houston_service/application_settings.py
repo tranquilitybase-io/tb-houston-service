@@ -7,7 +7,7 @@ from pprint import pformat
 from flask import abort
 
 from config import db
-from models.application_settings import ApplicationSettingsSchema, ApplicationSettings
+from models.application_settings import ApplicationSettings, ApplicationSettingsSchema
 
 logger = logging.getLogger("tb_houston_service.application_settings")
 
@@ -16,7 +16,11 @@ def create_default_settings(dbs, application_id, variables, isOptional):
     # TODO
     schema = ApplicationSettingsSchema()
     for variable in variables or ():
-        var_details = {"applicationId": application_id, "name": variable["name"], "type": variable["type"]}
+        var_details = {
+            "applicationId": application_id,
+            "name": variable["name"],
+            "type": variable["type"],
+        }
     if "value" in variable:
         var_details["value"] = variable["value"]
     else:
@@ -32,8 +36,13 @@ def create_default_settings(dbs, application_id, variables, isOptional):
 def create_application_settings(appSettings):
     if appSettings is not None:
         schema = ApplicationSettingsSchema()
-        new_entry = {"applicationId": appSettings["application_id"], "name": appSettings["name"],
-                     "type": appSettings["type"], "value": appSettings["value"], "isOptional": 0}
+        new_entry = {
+            "applicationId": appSettings["application_id"],
+            "name": appSettings["name"],
+            "type": appSettings["type"],
+            "value": appSettings["value"],
+            "isOptional": 0,
+        }
         new_application_settings = schema.load(new_entry, session=db.session)
         db.session.add(new_application_settings)
         db.session.commit()
@@ -52,8 +61,8 @@ def update_application_settings(applicatioSettings):
     """
     a: ApplicationSettings = (
         db.session.query(ApplicationSettings)
-            .filter(ApplicationSettings.applicaitonId == applicatioSettings.applicationId)
-            .one_or_none()
+        .filter(ApplicationSettings.applicaitonId == applicatioSettings.applicationId)
+        .one_or_none()
     )
     if a is not None:
         a.name = applicatioSettings.name
@@ -76,8 +85,8 @@ def delete_application_settings(applicationId):
     """
     a: ApplicationSettings = (
         db.session.query(ApplicationSettings)
-            .filter(ApplicationSettings.applicaitonId == applicationId)
-            .one_or_none()
+        .filter(ApplicationSettings.applicaitonId == applicationId)
+        .one_or_none()
     )
     if a is not None:
         db.session.delete()
@@ -109,8 +118,8 @@ def read_one_application_settings(applicationId):
     """
     a: ApplicationSettings = (
         db.session.query(ApplicationSettings)
-            .filter(ApplicationSettings.applicaitonId == applicationId)
-            .one_or_none()
+        .filter(ApplicationSettings.applicaitonId == applicationId)
+        .one_or_none()
     )
     if a is not None:
         rs = ApplicationSettingsSchema()
