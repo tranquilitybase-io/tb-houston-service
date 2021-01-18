@@ -15,7 +15,7 @@ class Folder(db.Model):
         return "<Folder(id={self.id!r}, name={self.folderName!r})>".format(self=self)
 
 
-class FolderSchema(ma.ModelSchema):
+class FolderSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Folder
         include_fk = True

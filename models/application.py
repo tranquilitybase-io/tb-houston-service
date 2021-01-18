@@ -28,7 +28,7 @@ class Application(db.Model):
         return "<Application(id={self.id!r}, name={self.name!r})>".format(self=self)
 
 
-class ApplicationSchema(ma.ModelSchema):
+class ApplicationSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Application
         include_fk = True

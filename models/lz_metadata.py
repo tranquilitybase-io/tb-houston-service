@@ -8,7 +8,7 @@ class LZMetadata(db.Model):
     value = db.Column(db.String())
 
 
-class LZMetadataSchema(ma.ModelSchema):
+class LZMetadataSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = LZMetadata
         include_fk = True

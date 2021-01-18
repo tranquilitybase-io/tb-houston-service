@@ -21,7 +21,7 @@ class Team(db.Model):
     accessRequestedById = db.Column(db.Integer, db.ForeignKey("eagle_db.user.id"))
 
 
-class TeamSchema(ma.ModelSchema):
+class TeamSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Team
         include_fk = True

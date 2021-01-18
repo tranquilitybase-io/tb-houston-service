@@ -14,7 +14,7 @@ class LandingZoneProgressItem(db.Model):
         )
 
 
-class LandingZoneProgressItemSchema(ma.ModelSchema):
+class LandingZoneProgressItemSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = LandingZoneProgressItem
         include_fk = True

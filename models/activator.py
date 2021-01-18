@@ -40,7 +40,7 @@ class Activator(db.Model):
         return "<Activator(id={self.id!r}, name={self.name!r})>".format(self=self)
 
 
-class ActivatorSchema(ma.ModelSchema):
+class ActivatorSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Activator
         include_fk = True

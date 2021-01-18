@@ -9,7 +9,7 @@ class VPNOnPremiseVendor(db.Model):
     value = db.Column(db.String)
 
 
-class VPNOnPremiseVendorSchema(ma.ModelSchema):
+class VPNOnPremiseVendorSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = VPNOnPremiseVendor
         include_fk = True

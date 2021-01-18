@@ -19,7 +19,7 @@ class NotificationApplicationDeployment(db.Model):
         )
 
 
-class NotificationApplicationDeploymentSchema(ma.ModelSchema):
+class NotificationApplicationDeploymentSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = NotificationApplicationDeployment
         include_fk = True

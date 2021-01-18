@@ -35,7 +35,7 @@ class LandingZoneWAN(db.Model):
     vpn__vpcName = db.Column(db.String)
 
 
-class LandingZoneWANSchema(ma.ModelSchema):
+class LandingZoneWANSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = LandingZoneWAN
         include_fk = True

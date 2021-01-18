@@ -19,7 +19,7 @@ class ApplicationDeployment(db.Model):
         )
 
 
-class ApplicationDeploymentSchema(ma.ModelSchema):
+class ApplicationDeploymentSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = ApplicationDeployment
         include_fk = True

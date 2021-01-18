@@ -16,7 +16,7 @@ class ActivatorEnvironment(db.Model):
         )
 
 
-class ActivatorEnvironmentSchema(ma.ModelSchema):
+class ActivatorEnvironmentSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = ActivatorEnvironment
         include_fk = True

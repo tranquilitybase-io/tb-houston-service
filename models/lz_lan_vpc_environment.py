@@ -13,7 +13,7 @@ class LZLanVpcEnvironment(db.Model):
         return "<LZLanVpcEnvironment(id={self.id!r})>".format(self=self)
 
 
-class LZLanVpcEnvironmentSchema(ma.ModelSchema):
+class LZLanVpcEnvironmentSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = LZLanVpcEnvironment
         include_fk = True

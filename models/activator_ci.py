@@ -16,7 +16,7 @@ class ActivatorCI(db.Model):
         )
 
 
-class ActivatorCISchema(ma.ModelSchema):
+class ActivatorCISchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = ActivatorCI
         include_fk = True
