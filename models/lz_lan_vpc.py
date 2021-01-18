@@ -13,7 +13,7 @@ class LZLanVpc(db.Model):
         return "<LZLanVpc(id={self.id!r}, name={self.name!r})>".format(self=self)
 
 
-class LZLanVpcSchema(ma.ModelSchema):
+class LZLanVpcSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = LZLanVpc
         include_fk = True

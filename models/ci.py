@@ -11,7 +11,7 @@ class CI(db.Model):
         return "<CI(id={self.id!r}, name={self.id!r})>".format(self=self)
 
 
-class CISchema(ma.ModelSchema):
+class CISchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = CI
         include_fk = True

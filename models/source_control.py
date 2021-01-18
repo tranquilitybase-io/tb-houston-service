@@ -8,7 +8,7 @@ class SourceControl(db.Model):
     value = db.Column(db.String(255))
 
 
-class SourceControlSchema(ma.ModelSchema):
+class SourceControlSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = SourceControl
         include_fk = True

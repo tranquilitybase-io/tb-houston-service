@@ -24,7 +24,7 @@ class User(db.Model):
         return "<User(id={self.id!r}, email={self.email!r})>".format(self=self)
 
 
-class UserSchema(ma.ModelSchema):
+class UserSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = User
         include_fk = True

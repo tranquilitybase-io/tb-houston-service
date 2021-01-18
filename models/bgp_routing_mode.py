@@ -12,7 +12,7 @@ class BGPRoutingMode(db.Model):
         return "<BGPRoutingMode(id={self.id!r}, name={self.key!r})>".format(self=self)
 
 
-class BGPRoutingModeSchema(ma.ModelSchema):
+class BGPRoutingModeSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = BGPRoutingMode
         include_fk = True

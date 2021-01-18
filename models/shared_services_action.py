@@ -20,7 +20,7 @@ class SharedServicesAction(db.Model):
         )
 
 
-class SharedServicesActionSchema(ma.ModelSchema):
+class SharedServicesActionSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = SharedServicesAction
         include_fk = True

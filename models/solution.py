@@ -36,7 +36,7 @@ class Solution(db.Model):
         return "<Solution(id={self.id!r}, name={self.name!r})>".format(self=self)
 
 
-class SolutionSchema(ma.ModelSchema):
+class SolutionSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Solution
         include_fk = True

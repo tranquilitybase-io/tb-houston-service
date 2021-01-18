@@ -16,7 +16,7 @@ class SharedServicesProgressItem(db.Model):
         )
 
 
-class SharedServicesProgressItemSchema(ma.ModelSchema):
+class SharedServicesProgressItemSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = SharedServicesProgressItem
         include_fk = True

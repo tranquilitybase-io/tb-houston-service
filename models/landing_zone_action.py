@@ -20,7 +20,7 @@ class LandingZoneAction(db.Model):
         )
 
 
-class LandingZoneActionSchema(ma.ModelSchema):
+class LandingZoneActionSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = LandingZoneAction
         include_fk = True

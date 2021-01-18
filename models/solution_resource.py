@@ -9,7 +9,7 @@ class SolutionResource(db.Model):
     value = db.Column(db.String(255))
 
 
-class SolutionResourceSchema(ma.ModelSchema):
+class SolutionResourceSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = SolutionResource
         include_fk = True

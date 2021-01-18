@@ -16,7 +16,7 @@ class ActivatorCD(db.Model):
         )
 
 
-class ActivatorCDSchema(ma.ModelSchema):
+class ActivatorCDSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = ActivatorCD
         include_fk = True

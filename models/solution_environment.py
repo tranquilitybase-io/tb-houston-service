@@ -16,7 +16,7 @@ class SolutionEnvironment(db.Model):
         )
 
 
-class SolutionEnvironmentSchema(ma.ModelSchema):
+class SolutionEnvironmentSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = SolutionEnvironment
         include_fk = True

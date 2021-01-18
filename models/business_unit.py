@@ -13,7 +13,7 @@ class BusinessUnit(db.Model):
         return "<BusinessUnit(id={self.id!r}, name={self.name!r})>".format(self=self)
 
 
-class BusinessUnitSchema(ma.ModelSchema):
+class BusinessUnitSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = BusinessUnit
         include_fk = True
