@@ -13,7 +13,7 @@ class NotificationType(db.Model):
         return "<NotificationType(id={self.id!r})>".format(self=self)
 
 
-class NotificationTypeSchema(ma.ModelSchema):
+class NotificationTypeSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = NotificationType
         include_fk = True

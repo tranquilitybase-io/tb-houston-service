@@ -11,7 +11,7 @@ class CD(db.Model):
         return "<CD(id={self.id!r}, name={self.id!r})>".format(self=self)
 
 
-class CDSchema(ma.ModelSchema):
+class CDSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = CD
         include_fk = True

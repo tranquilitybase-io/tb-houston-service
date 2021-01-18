@@ -11,7 +11,7 @@ class TeamMember(db.Model):
     isActive = db.Column(db.Boolean())
 
 
-class TeamMemberSchema(ma.ModelSchema):
+class TeamMemberSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = TeamMember
         include_fk = True

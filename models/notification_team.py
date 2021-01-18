@@ -19,7 +19,7 @@ class NotificationTeam(db.Model):
         )
 
 
-class NotificationTeamSchema(ma.ModelSchema):
+class NotificationTeamSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = NotificationTeam
         include_fk = True

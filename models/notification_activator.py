@@ -19,7 +19,7 @@ class NotificationActivator(db.Model):
         )
 
 
-class NotificationActivatorSchema(ma.ModelSchema):
+class NotificationActivatorSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = NotificationActivator
         include_fk = True

@@ -21,7 +21,7 @@ class SystemSettings(db.Model):
         return f"<SystemSettings(id={self.id!r}, username={self.username!r}, token={self.token!r})>"
 
 
-class SystemSettingsSchema(ma.ModelSchema):
+class SystemSettingsSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = SystemSettings
         include_fk = True
@@ -36,7 +36,7 @@ class SystemSettingsSchema(ma.ModelSchema):
         return data
 
 
-class SystemSettingsResultSchema(ma.ModelSchema):
+class SystemSettingsResultSchema(ma.SQLAlchemyAutoSchema):
     username = fields.Str()
     token = fields.Str()
     lastUpdated = fields.Str()

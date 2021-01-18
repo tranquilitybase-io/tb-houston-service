@@ -14,7 +14,7 @@ class LZFolderStructure(db.Model):
         )
 
 
-class LZFolderStructureSchema(ma.ModelSchema):
+class LZFolderStructureSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = LZFolderStructure
         include_fk = True

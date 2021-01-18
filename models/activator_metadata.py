@@ -20,7 +20,7 @@ class ActivatorMetadata(db.Model):
         )
 
 
-class ActivatorMetadataSchema(ma.ModelSchema):
+class ActivatorMetadataSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = ActivatorMetadata
         include_fk = True

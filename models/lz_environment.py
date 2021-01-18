@@ -14,7 +14,7 @@ class LZEnvironment(db.Model):
         )
 
 
-class LZEnvironmentSchema(ma.ModelSchema):
+class LZEnvironmentSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = LZEnvironment
         include_fk = True

@@ -14,7 +14,7 @@ class LZFolderStructureChild(db.Model):
         return "<LZFolderStructureChild(id={self.id!r}>".format(self=self)
 
 
-class LZFolderStructureChildSchema(ma.ModelSchema):
+class LZFolderStructureChildSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = LZFolderStructure
         include_fk = True

@@ -11,7 +11,7 @@ class Platform(db.Model):
         return "<CI(id={self.id!r}, name={self.id!r})>".format(self=self)
 
 
-class PlatformSchema(ma.ModelSchema):
+class PlatformSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Platform
         include_fk = True

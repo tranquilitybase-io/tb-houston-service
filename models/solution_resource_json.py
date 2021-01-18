@@ -8,7 +8,7 @@ class SolutionResourceJSON(db.Model):
     json = db.Column(db.String(30000))
 
 
-class SolutionResourceJSONSchema(ma.ModelSchema):
+class SolutionResourceJSONSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = SolutionResourceJSON
         include_fk = True

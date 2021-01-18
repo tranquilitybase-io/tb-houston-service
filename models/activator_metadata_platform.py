@@ -18,7 +18,7 @@ class ActivatorMetadataPlatform(db.Model):
         )
 
 
-class ActivatorMetadataPlatformSchema(ma.ModelSchema):
+class ActivatorMetadataPlatformSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = ActivatorMetadataPlatform
         include_fk = True

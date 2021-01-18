@@ -9,7 +9,7 @@ class SubnetMode(db.Model):
     value = db.Column(db.String)
 
 
-class SubnetModeSchema(ma.ModelSchema):
+class SubnetModeSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = SubnetMode
         include_fk = True
