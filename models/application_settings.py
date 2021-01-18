@@ -2,10 +2,10 @@ from config import db, ma
 
 
 class ApplicationSettings(db.Model):
-    __tablename__ = "applicationSettings"
+    __tablename__ = "applicationsettings"
     __table_args__ = {"schema": "eagle_db"}
     id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
-    applicaitonId = db.Column(
+    applicationId = db.Column(
         db.Integer(), db.ForeignKey("eagle_db.application.id")
     )
     name = db.Column(db.String(255))

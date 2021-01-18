@@ -4215,7 +4215,7 @@ components:
     ApplicationSettings:
       type: object
       properties:
-        applicationId:
+        application_id:
           type: integer
           description: application id
         name:

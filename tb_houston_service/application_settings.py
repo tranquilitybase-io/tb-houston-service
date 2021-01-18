@@ -32,10 +32,9 @@ def create_default_settings(dbs, application_id, variables, isOptional):
 def create_application_settings(appSettings):
     if appSettings is not None:
         schema = ApplicationSettingsSchema()
-        new_entry = {"applicationId": appSettings.applicationId, "name": appSettings.name, "type": appSettings.type,
-                     "value": appSettings.value}
+        new_entry = {"applicationId": appSettings["application_id"], "name": appSettings["name"],
+                     "type": appSettings["type"], "value": appSettings["value"], "isOptional": 0}
         new_application_settings = schema.load(new_entry, session=db.session)
-
         db.session.add(new_application_settings)
         db.session.commit()
         data = schema.dump(new_application_settings)
