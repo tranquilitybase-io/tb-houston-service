@@ -5,9 +5,7 @@ class ApplicationSettings(db.Model):
     __tablename__ = "applicationsettings"
     __table_args__ = {"schema": "eagle_db"}
     id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
-    applicationId = db.Column(
-        db.Integer(), db.ForeignKey("eagle_db.application.id")
-    )
+    applicationId = db.Column(db.Integer(), db.ForeignKey("eagle_db.application.id"))
     name = db.Column(db.String(255))
     type = db.Column(db.String(255))
     value = db.Column(db.String(255))
@@ -20,7 +18,7 @@ class ApplicationSettings(db.Model):
         )
 
 
-class ApplicationSettingsSchema(ma.ModelSchema):
+class ApplicationSettingsSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = ApplicationSettings
         include_fk = True
