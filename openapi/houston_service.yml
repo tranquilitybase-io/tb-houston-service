@@ -260,7 +260,7 @@ paths:
       summary: Create a team and add it to the team list
       description: Create a new team in the team list
       requestBody:
-        $ref: '#/components/requestBodies/team.teamDetails'
+        $ref: "#/components/requestBodies/team.teamDetails"
       responses:
         "201":
           description: Successfully created a team
@@ -398,7 +398,7 @@ paths:
       summary: Create a user and add it to the user list
       description: Create a new user in the user list
       requestBody:
-        $ref: '#/components/requestBodies/user.userDetails'
+        $ref: "#/components/requestBodies/user.userDetails"
       responses:
         "201":
           description: Successfully created a user
@@ -511,7 +511,7 @@ paths:
       summary: Create a team memeber and add it to the team list
       description: Create a new team member in the teammembers list
       requestBody:
-        $ref: '#/components/requestBodies/teammember.teamMemberDetails'
+        $ref: "#/components/requestBodies/teammember.teamMemberDetails"
       responses:
         "201":
           description: Successfully created a team member
@@ -644,7 +644,7 @@ paths:
       summary: Create an ci and add it to the ci list
       description: Create a new ci in the ci list
       requestBody:
-        $ref: '#/components/requestBodies/ci.ciDetails'
+        $ref: "#/components/requestBodies/ci.ciDetails"
       responses:
         "201":
           description: Successfully created an ci
@@ -708,7 +708,6 @@ paths:
         "200":
           description: Successfully deleted an CI
 
-
   /keyValues/cd/:
     get:
       operationId: tb_houston_service.cd.read_keyValues
@@ -757,7 +756,7 @@ paths:
       summary: Create a continuous deployment and add it to the continuous deployment list
       description: Create a new continuous deployment in the continuous deployment list
       requestBody:
-        $ref: '#/components/requestBodies/cd.cdDetails'
+        $ref: "#/components/requestBodies/cd.cdDetails"
       responses:
         "201":
           description: Successfully created an continuous deployment
@@ -850,7 +849,7 @@ paths:
       summary: Create a platform and add it to the platform list
       description: Create a new platform in the platform list
       requestBody:
-        $ref: '#/components/requestBodies/platform.platformDetails'
+        $ref: "#/components/requestBodies/platform.platformDetails"
       responses:
         "201":
           description: Successfully created an platform
@@ -944,7 +943,7 @@ paths:
       summary: Create a type and add it to the type list
       description: Create a new type in the type list
       requestBody:
-        $ref: '#/components/requestBodies/type.typeDetails'
+        $ref: "#/components/requestBodies/type.typeDetails"
       responses:
         "201":
           description: Successfully created an type
@@ -1059,7 +1058,7 @@ paths:
       summary: Create an source control type and add it to the source control type list
       description: Create a new soure control in the source control type list
       requestBody:
-        $ref: '#/components/requestBodies/sourceControl.sourceControlDetails'
+        $ref: "#/components/requestBodies/sourceControl.sourceControlDetails"
       responses:
         "201":
           description: Successfully created a source control type
@@ -1396,7 +1395,6 @@ paths:
       responses:
         "201":
           description: Successfully created an Application Deployment
-
 
   /solutiondeployments/:
     get:
@@ -1871,10 +1869,11 @@ paths:
       tags:
         - landingzoneprogressitem
       summary: Create a landing zone progress item and add it to the landing zone progress item list
-      description: Create a new new landing zone progress item in the landing zone progress item
+      description:
+        Create a new new landing zone progress item in the landing zone progress item
         list
       requestBody:
-        $ref: '#/components/requestBodies/landingZoneProgressItem.landingZoneProgressItemDetails'
+        $ref: "#/components/requestBodies/landingZoneProgressItem.landingZoneProgressItemDetails"
       responses:
         "200":
           description: Successfully created a landing zone progress item
@@ -1935,7 +1934,7 @@ paths:
           schema:
             type: integer
       requestBody:
-        $ref: '#/components/requestBodies/landingZoneProgressItem.landingZoneProgressItemDetails'
+        $ref: "#/components/requestBodies/landingZoneProgressItem.landingZoneProgressItemDetails"
       responses:
         "200":
           description: Successfully updated an landing zone progress item
@@ -2779,7 +2778,6 @@ paths:
         "201":
           description: Successfully created notifications
 
-
     get:
       operationId: tb_houston_service.notification.read_all
       tags:
@@ -2940,7 +2938,7 @@ paths:
       summary: Create systemsettings and adds to list
       description: Create systemsettings and adds to list
       requestBody:
-        $ref: '#/components/requestBodies/systemsettings.settingsDetails'
+        $ref: "#/components/requestBodies/systemsettings.settingsDetails"
       responses:
         "201":
           description: Successfully created a system settings
@@ -3033,9 +3031,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ApplicationSettings"
 
-
 components:
-
   # Define the security scheme type (HTTP bearer)
   securitySchemes:
     bearerAuth: # arbotrary name for the security scheme
@@ -3441,7 +3437,6 @@ components:
       description: settingsDetails to create
       required: true
 
-
   schemas:
     Activator:
       type: object
@@ -3657,7 +3652,7 @@ components:
       properties:
         id:
           type: integer
-          description:  id of the team member
+          description: id of the team member
         userId:
           type: integer
           description: user Id of the user
@@ -4039,7 +4034,7 @@ components:
           description: environmentId
         lastUpdated:
           type: string
-          description:  description
+          description: description
         isActive:
           type: boolean
           description: Is active?
@@ -4102,7 +4097,7 @@ components:
       properties:
         id:
           type: integer
-          description:  id of the team member
+          description: id of the team member
         userId:
           type: integer
           description: user Id of the user
