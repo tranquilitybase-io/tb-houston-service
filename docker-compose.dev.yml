@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   gcp-dac:
-    image: gcr.io/tranquility-base-images/tb-gcp-dac-mock
+    image: gcr.io/tranquility-base-images/tb-gcp-dac:latest
     environment:
       HOUSTON_SERVICE_URL: 'houston-service:3000'
       MOCK_MODE: 0
@@ -10,7 +10,7 @@ services:
       - 3100:3100
 
   tb-db:
-    image: gcr.io/tranquility-base-images/tb-db:experimental
+    image: gcr.io/tranquility-base-images/tb-db:issue-94
     command: --default-authentication-plugin=mysql_native_password
     restart: always
     environment:

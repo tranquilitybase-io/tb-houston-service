@@ -13,6 +13,7 @@ from .activator_metadata_variable import (
 )
 from .application import Application, ApplicationSchema
 from .application_deployment import ApplicationDeployment, ApplicationDeploymentSchema
+from .application_settings import ApplicationSettings, ApplicationSettingsSchema
 from .bgp_routing_mode import BGPRoutingMode, BGPRoutingModeSchema
 from .business_unit import BusinessUnit, BusinessUnitSchema
 from .cd import CD, CDSchema
@@ -78,6 +79,8 @@ __all__ = (
     "ApplicationDeploymentSchema",
     "Application",
     "ApplicationSchema",
+    "ApplicationSettings",
+    "ApplicationSettingsSchema",
     "BGPRoutingMode",
     "BGPRoutingModeSchema",
     "BusinessUnit",

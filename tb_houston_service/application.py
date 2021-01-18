@@ -12,6 +12,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from config import db
 from config.db_lib import db_session
 from models import Activator, Application, ApplicationSchema
+from models.application_settings import ApplicationSettingsSchema
 from tb_houston_service import application_extension, security
 from tb_houston_service.extendedSchemas import ExtendedApplicationSchema
 from tb_houston_service.tools import ModelTools
@@ -20,14 +21,14 @@ logger = logging.getLogger("tb_houston_service.application")
 
 
 def read_all(
-    isActive=None,
-    isFavourite=None,
-    status=None,
-    activatorId=None,
-    environment=None,
-    page=None,
-    page_size=None,
-    sort=None,
+        isActive=None,
+        isFavourite=None,
+        status=None,
+        activatorId=None,
+        environment=None,
+        page=None,
+        page_size=None,
+        sort=None,
 ):
     """
     This function responds to a request for /api/applications
@@ -83,8 +84,8 @@ def read_all(
             (isActive is None or Application.isActive == isActive),
             (isFavourite is None or Application.isFavourite == isFavourite),
             (
-                business_unit_ids is None
-                or Activator.businessUnitId.in_(business_unit_ids)
+                    business_unit_ids is None
+                    or Activator.businessUnitId.in_(business_unit_ids)
             ),
         )
 
@@ -119,15 +120,15 @@ def read_one(oid):
         business_unit_ids = security.get_business_units_ids_for_user(dbsession=dbs)
         application = (
             dbs.query(Application)
-            .filter(
+                .filter(
                 Application.id == oid,
                 Activator.id == Application.activatorId,
                 (
-                    business_unit_ids is None
-                    or Activator.businessUnitId.in_(business_unit_ids)
+                        business_unit_ids is None
+                        or Activator.businessUnitId.in_(business_unit_ids)
                 ),
             )
-            .one_or_none()
+                .one_or_none()
         )
 
         logger.debug("application data:")
@@ -167,8 +168,8 @@ def create(applicationDetails):
         if business_unit_ids:
             activator = (
                 dbs.query(Activator)
-                .filter(Activator.id == applicationDetails.get("activatorId"))
-                .one_or_none()
+                    .filter(Activator.id == applicationDetails.get("activatorId"))
+                    .one_or_none()
             )
             business_unit = activator.businessUnitId
             if business_unit not in business_unit_ids:
@@ -220,8 +221,8 @@ def update(oid, applicationDetails):
             if business_unit_ids:
                 activator = (
                     dbs.query(Activator)
-                    .filter(Activator.id == applicationDetails.get("activatorId"))
-                    .one_or_none()
+                        .filter(Activator.id == applicationDetails.get("activatorId"))
+                        .one_or_none()
                 )
                 business_unit = activator.businessUnitId
                 if business_unit and business_unit not in business_unit_ids:
@@ -271,8 +272,8 @@ def delete(oid):
             if business_unit_ids:
                 activator = (
                     dbs.query(Activator)
-                    .filter(Activator.id == existing_application.activatorId)
-                    .one_or_none()
+                        .filter(Activator.id == existing_application.activatorId)
+                        .one_or_none()
                 )
                 business_unit = activator.businessUnitId
                 if business_unit and business_unit not in business_unit_ids:
