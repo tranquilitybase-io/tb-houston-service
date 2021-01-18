@@ -47,6 +47,11 @@ from .notification_solution_deployment import (
 from .notification_team import NotificationTeam, NotificationTeamSchema
 from .notification_type import NotificationType, NotificationTypeSchema
 from .platform import Platform, PlatformSchema
+from .shared_services_action import SharedServicesAction, SharedServicesActionSchema
+from .shared_services_progress_item import (
+    SharedServicesProgressItem,
+    SharedServicesProgressItemSchema,
+)
 from .solution import Solution, SolutionSchema
 from .solution_environment import SolutionEnvironment, SolutionEnvironmentSchema
 from .solution_resource import SolutionResource, SolutionResourceSchema
@@ -123,6 +128,10 @@ __all__ = (
     "NotificationSchema",
     "Platform",
     "PlatformSchema",
+    "SharedServicesAction",
+    "SharedServicesActionSchema",
+    "SharedServicesProgressItem",
+    "SharedServicesProgressItemSchema",
     "SolutionEnvironment",
     "SolutionEnvironmentSchema",
     "SolutionResourceJSON",
