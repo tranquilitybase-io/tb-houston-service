@@ -15,7 +15,8 @@ class User(db.Model):
     email = db.Column(db.String(100), unique=True)
     firstName = db.Column(db.String(100))
     lastName = db.Column(db.String(100))
-    isAdmin = db.Column(db.Boolean(), default=False)
+    isLZAdmin = db.Column(db.Boolean(), default=False)
+    isMCAdmin = db.Column(db.Boolean(), default=False)
     isActive = db.Column(db.Boolean(), default=True)
     showWelcome = db.Column(db.Boolean(), default=True)
     lastUpdated = db.Column(db.String(20))
@@ -24,7 +25,7 @@ class User(db.Model):
         return "<User(id={self.id!r}, email={self.email!r})>".format(self=self)
 
 
-class UserSchema(ma.SQLAlchemyAutoSchema):
+class UserSchema(ma.ModelSchema):
     class Meta:
         model = User
         include_fk = True

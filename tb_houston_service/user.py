@@ -69,8 +69,8 @@ def create(userDetails):
         abort(400, "Unable to set isWelcome in POST operation.")
 
     # Only the original admin can be admin (#303)
-    if "isAdmin" in userDetails:
-        abort(400, "Unable to set isAdmin in POST operation.")
+    if "isLZAdmin" or "isMCAdmin" in userDetails:
+        abort(400, "Unable to set admin rights in POST operation.")
 
     # Does the user exist already?
     existing_user = (
@@ -108,8 +108,8 @@ def update(oid, userDetails):
         abort(400, f"Id {oid} mismatch in path and body")
 
     # Only the original admin can be admin (#303)
-    if "isAdmin" in userDetails:
-        abort(400, "Unable to set isAdmin in PUT operation.")
+    if "isLZAdmin" or "isMCAdmin" in userDetails:
+        abort(400, "Unable to set admin rights in PUT operation.")
 
     # Does the user exist in user list?
     existing_user = db.session.query(User).filter(User.id == oid).one_or_none()
