@@ -588,7 +588,7 @@ def onboard(activatorOnboardDetails):
         with db_session() as dbs:
             user = security.get_valid_user_from_token(dbsession=dbs)
             logger.debug(f"Logged in user {user}")
-            if not (user and user.isAdmin):
+            if not (user and user.isMCAdmin):
                 return abort(401, "JWT not valid or user is not an Admin")
 
             ret = post_repo_data_to_dac(oid, user.id)
