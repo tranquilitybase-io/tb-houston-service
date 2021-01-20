@@ -25,7 +25,7 @@ def read_one():
     """
     user = security.get_valid_user_from_token(dbsession=db.session)
     logger.debug(f"Logged in user {user}")
-    if not (user and user.isAdmin):
+    if not (user and user.isLZAdmin):
         return abort(401, "JWT not valid or user is not an Admin")
 
     s: SystemSettings = (
@@ -52,7 +52,7 @@ def create(settingsDetails):
     """
     user = security.get_valid_user_from_token(dbsession=db.session)
     logger.debug(f"Logged in user {user}")
-    if not (user and user.isAdmin):
+    if not (user and user.isLZAdmin):
         return abort(401, "JWT not valid or user is not an Admin")
 
     s: SystemSettings = (
@@ -85,7 +85,7 @@ def update(settingsDetails):
     """
     user = security.get_valid_user_from_token(dbsession=db.session)
     logger.debug(f"Logged in user {user}")
-    if not (user and user.isAdmin):
+    if not (user and user.isLZAdmin):
         return abort(401, "JWT not valid or user is not an Admin")
 
     s: SystemSettings = (
@@ -117,7 +117,7 @@ def delete():
     """
     user = security.get_valid_user_from_token(dbsession=db.session)
     logger.debug(f"Logged in user {user}")
-    if not (user and user.isAdmin):
+    if not (user and user.isLZAdmin):
         return abort(401, "JWT not valid or user is not an Admin")
 
     s: SystemSettings = (

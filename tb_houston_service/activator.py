@@ -392,10 +392,10 @@ def notify_admins(message, activatorId, fromUserId, importance=1):
         "toUserId": 0,
         "importance": importance,
     }
-    # TODO: Send admin notifications to teammember.isTeamAdmin,
+    # TODO: Send admin notifications to teammember.isTeamAdmin, isMCAdmin
     # joining with activator.businessUnitId when that become available.
     with db_session() as dbs:
-        admins = dbs.query(User).filter(User.isAdmin, User.isActive).all()
+        admins = dbs.query(User).filter(User.isMCAdmin, User.isActive).all()
         for admin in admins:
             # To avoid sending duplicate notifications, send only if no previous
             # active message.

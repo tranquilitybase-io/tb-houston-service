@@ -50,9 +50,12 @@ paths:
                   lastName:
                     type: string
                     description: The user's last name
-                  isAdmin:
+                  isLZAdmin:
                     type: boolean
-                    description: is the user an admin user?
+                    description: Landing Zone user admin?
+                  isMCAdmin:
+                    type: boolean
+                    description: Mission Control user admin?
 
   /health:
     get:

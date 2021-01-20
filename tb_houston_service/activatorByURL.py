@@ -46,7 +46,7 @@ def create(activatorByURLDetails):
     try:
         with db_session() as dbs:
             user = security.get_valid_user_from_token(dbsession=dbs)
-            if not (user and user.isAdmin):
+            if not (user and user.isMCAdmin):
                 return abort(401, "JWT not valid or user is not an Admin")
 
             github_credentials = systemsettings.get_github_credentials(user.id)
