@@ -82,10 +82,7 @@ def read_all(
             (environment is None or Application.env == environment),
             (isActive is None or Application.isActive == isActive),
             (isFavourite is None or Application.isFavourite == isFavourite),
-            (
-                    business_unit_ids is None
-                    or Activator.businessUnitId.in_(business_unit_ids)
-            ),
+            (business_unit_ids is None or Activator.businessUnitId.in_(business_unit_ids)),
         )
 
         if page is None or page_size is None:
@@ -122,21 +119,15 @@ def read_one(oid):
                 .filter(
                 Application.id == oid,
                 Activator.id == Application.activatorId,
-                (
-                        business_unit_ids is None
-                        or Activator.businessUnitId.in_(business_unit_ids)
-                ),
-            )
-                .one_or_none()
+                (business_unit_ids is None or Activator.businessUnitId.in_(business_unit_ids)),
+            ).one_or_none()
         )
 
         logger.debug("application data:")
         logger.debug(pformat(application))
 
         if application is not None:
-            application = application_extension.expand_application(
-                application, dbsession=dbs
-            )
+            application = application_extension.expand_application(application, dbsession=dbs)
             # Serialize the data for the response
             application_schema = ExtendedApplicationSchema()
             data = application_schema.dump(application)
@@ -165,9 +156,7 @@ def create(applicationDetails):
         business_unit_ids = security.get_business_units_ids_for_user(dbsession=dbs)
         if business_unit_ids:
             activator = (
-                dbs.query(Activator)
-                    .filter(Activator.id == applicationDetails.get("activatorId"))
-                    .one_or_none()
+                dbs.query(Activator).filter(Activator.id == applicationDetails.get("activatorId")).one_or_none()
             )
             business_unit = activator.businessUnitId
             if business_unit not in business_unit_ids:
@@ -237,7 +226,6 @@ def update(oid, applicationDetails):
                 # initially will let this pass, but in future we could abort if user is
                 # not a member of any business units
                 pass
-
             schema = ApplicationSchema()
             applicationDetails["id"] = oid
             schema.load(applicationDetails, session=db.session)
