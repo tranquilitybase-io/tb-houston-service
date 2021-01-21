@@ -13,7 +13,6 @@ logger = logging.getLogger("tb_houston_service.application_settings")
 
 
 def create_default_settings(dbs, application_id, variables, isOptional):
-    # TODO
     schema = ApplicationSettingsSchema()
     for variable in variables or ():
         var_details = {

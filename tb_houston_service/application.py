@@ -11,8 +11,8 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from config import db
 from config.db_lib import db_session
-from models import Activator, Application, ApplicationSchema
-from tb_houston_service import application_extension, security
+from models import Activator, Application, ApplicationSchema, ActivatorMetadataVariable, ActivatorMetadataVariableSchema
+from tb_houston_service import application_extension, security, application_settings
 from tb_houston_service.extendedSchemas import ExtendedApplicationSchema
 from tb_houston_service.tools import ModelTools
 
@@ -156,7 +156,6 @@ def create(applicationDetails):
     :return:             201 on success, 406 on application exists
     """
     logger.debug("create: %s", applicationDetails)
-
     with db_session() as dbs:
         # Remove id as it's created automatically
         if "id" in applicationDetails:
@@ -186,6 +185,11 @@ def create(applicationDetails):
         new_application.lastUpdated = ModelTools.get_utc_timestamp()
         dbs.add(new_application)
         dbs.commit()
+        # Call create default application settings
+        activator_variables = (dbs.query(ActivatorMetadataVariable)
+                               .filter(Activator.id == activator.id)
+                               .one_or_none())
+        application_settings.create_default_settings(dbs, new_application.id, activator_variables, False)
 
         schema = ExtendedApplicationSchema()
         data = schema.dump(new_application)
