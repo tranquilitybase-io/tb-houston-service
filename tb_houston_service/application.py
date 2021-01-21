@@ -11,8 +11,8 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from config import db
 from config.db_lib import db_session
-from models import Activator, Application, ApplicationSchema, ActivatorMetadataVariable
-from tb_houston_service import application_extension, security, application_settings
+from models import Activator, ActivatorMetadataVariable, Application, ApplicationSchema
+from tb_houston_service import application_extension, application_settings, security
 from tb_houston_service.extendedSchemas import ExtendedApplicationSchema
 from tb_houston_service.tools import ModelTools
 
@@ -20,14 +20,14 @@ logger = logging.getLogger("tb_houston_service.application")
 
 
 def read_all(
-        isActive=None,
-        isFavourite=None,
-        status=None,
-        activatorId=None,
-        environment=None,
-        page=None,
-        page_size=None,
-        sort=None,
+    isActive=None,
+    isFavourite=None,
+    status=None,
+    activatorId=None,
+    environment=None,
+    page=None,
+    page_size=None,
+    sort=None,
 ):
     """
     This function responds to a request for /api/applications
@@ -82,7 +82,10 @@ def read_all(
             (environment is None or Application.env == environment),
             (isActive is None or Application.isActive == isActive),
             (isFavourite is None or Application.isFavourite == isFavourite),
-            (business_unit_ids is None or Activator.businessUnitId.in_(business_unit_ids)),
+            (
+                business_unit_ids is None
+                or Activator.businessUnitId.in_(business_unit_ids)
+            ),
         )
 
         if page is None or page_size is None:
@@ -116,18 +119,24 @@ def read_one(oid):
         business_unit_ids = security.get_business_units_ids_for_user(dbsession=dbs)
         application = (
             dbs.query(Application)
-                .filter(
+            .filter(
                 Application.id == oid,
                 Activator.id == Application.activatorId,
-                (business_unit_ids is None or Activator.businessUnitId.in_(business_unit_ids)),
-            ).one_or_none()
+                (
+                    business_unit_ids is None
+                    or Activator.businessUnitId.in_(business_unit_ids)
+                ),
+            )
+            .one_or_none()
         )
 
         logger.debug("application data:")
         logger.debug(pformat(application))
 
         if application is not None:
-            application = application_extension.expand_application(application, dbsession=dbs)
+            application = application_extension.expand_application(
+                application, dbsession=dbs
+            )
             # Serialize the data for the response
             application_schema = ExtendedApplicationSchema()
             data = application_schema.dump(application)
@@ -156,7 +165,9 @@ def create(applicationDetails):
         business_unit_ids = security.get_business_units_ids_for_user(dbsession=dbs)
         if business_unit_ids:
             activator = (
-                dbs.query(Activator).filter(Activator.id == applicationDetails.get("activatorId")).one_or_none()
+                dbs.query(Activator)
+                .filter(Activator.id == applicationDetails.get("activatorId"))
+                .one_or_none()
             )
             business_unit = activator.businessUnitId
             if business_unit not in business_unit_ids:
@@ -175,10 +186,14 @@ def create(applicationDetails):
         dbs.add(new_application)
         dbs.commit()
         # Call create default application settings
-        activator_variables = (dbs.query(ActivatorMetadataVariable)
-                               .filter(Activator.id == activator.id)
-                               .one_or_none())
-        application_settings.create_default_settings(dbs, new_application.id, activator_variables, False)
+        activator_variables = (
+            dbs.query(ActivatorMetadataVariable)
+            .filter(Activator.id == activator.id)
+            .one_or_none()
+        )
+        application_settings.create_default_settings(
+            dbs, new_application.id, activator_variables, False
+        )
 
         schema = ExtendedApplicationSchema()
         data = schema.dump(new_application)
@@ -213,8 +228,8 @@ def update(oid, applicationDetails):
             if business_unit_ids:
                 activator = (
                     dbs.query(Activator)
-                        .filter(Activator.id == applicationDetails.get("activatorId"))
-                        .one_or_none()
+                    .filter(Activator.id == applicationDetails.get("activatorId"))
+                    .one_or_none()
                 )
                 business_unit = activator.businessUnitId
                 if business_unit and business_unit not in business_unit_ids:
@@ -263,8 +278,8 @@ def delete(oid):
             if business_unit_ids:
                 activator = (
                     dbs.query(Activator)
-                        .filter(Activator.id == existing_application.activatorId)
-                        .one_or_none()
+                    .filter(Activator.id == existing_application.activatorId)
+                    .one_or_none()
                 )
                 business_unit = activator.businessUnitId
                 if business_unit and business_unit not in business_unit_ids:
