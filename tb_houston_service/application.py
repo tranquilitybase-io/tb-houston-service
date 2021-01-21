@@ -11,7 +11,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from config import db
 from config.db_lib import db_session
-from models import Activator, Application, ApplicationSchema, ActivatorMetadataVariable, ActivatorMetadataVariableSchema
+from models import Activator, Application, ApplicationSchema, ActivatorMetadataVariable
 from tb_houston_service import application_extension, security, application_settings
 from tb_houston_service.extendedSchemas import ExtendedApplicationSchema
 from tb_houston_service.tools import ModelTools
