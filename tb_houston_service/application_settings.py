@@ -13,6 +13,15 @@ logger = logging.getLogger("tb_houston_service.application_settings")
 
 
 def create_default_settings(dbs, application_id, variables, isOptional):
+    """
+    Default method to add application settings,
+    called when application is created
+    :param dbs:
+    :param application_id:
+    :param variables:
+    :param isOptional:
+    :return:
+    """
     schema = ApplicationSettingsSchema()
     for variable in variables or ():
         var_details = {
@@ -33,6 +42,11 @@ def create_default_settings(dbs, application_id, variables, isOptional):
 
 
 def create_application_settings(appSettings):
+    """
+    Create application settings exposed endpoint
+    :param appSettings:
+    :return:
+    """
     if appSettings is not None:
         schema = ApplicationSettingsSchema()
         new_entry = {
