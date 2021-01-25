@@ -27,7 +27,6 @@ pyasn1==0.4.8
 pyasn1-modules==0.2.8
 pylint==2.5.0
 pyparsing==2.4.7
-pytz==2020.5
 PyYAML==5.4.1
 requests==2.25.1
 smmap==3.0.4
