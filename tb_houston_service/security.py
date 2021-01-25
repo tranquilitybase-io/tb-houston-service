@@ -2,7 +2,6 @@ import logging
 import os
 
 import connexion
-import six
 from google.auth.transport import requests
 from google.oauth2 import id_token
 from werkzeug.exceptions import Unauthorized
@@ -48,7 +47,7 @@ def decode_token(token):
         return idinfo
     except ValueError as e:
         logger.error("decode_token failed: %s", e)
-        six.raise_from(Unauthorized, e)
+        raise Unauthorized from e
 
 
 def get_valid_user_from_token(dbsession):
