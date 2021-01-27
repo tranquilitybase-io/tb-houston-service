@@ -1,7 +1,5 @@
 celery==4.4.2
-codacy-coverage==1.3.11
 connexion==2.7.0
-coverage==5.1
 entrypoints==0.3
 filelock==3.0.12
 Flask==1.1.2
