@@ -20,7 +20,6 @@ marshmallow-sqlalchemy==0.24.1
 mccabe==0.6.1
 mysql-connector-python==8.0.23
 openapi-spec-validator==0.2.8
-packaging==20.8
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
 pyparsing==2.4.7
