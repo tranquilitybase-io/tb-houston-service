@@ -24,7 +24,7 @@ pyparsing==2.4.7
 PyYAML==5.4.1
 requests==2.25.1
 SQLAlchemy==1.3.22
-swagger-ui-bundle==0.0.6
+swagger-ui-bundle==0.0.8
 uritemplate==3.0.1
 wcwidth==0.1.9
 websocket-client==0.57.0
