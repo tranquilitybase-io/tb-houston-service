@@ -1,4 +1,4 @@
-celery==4.4.2
+celery==5.0.5
 connexion==2.7.0
 entrypoints==0.3
 filelock==3.0.12
